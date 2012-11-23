@@ -1,156 +1,136 @@
 package com.gq.meter.object;
 
-import java.util.Date;
-
 public class Computer {
-	
-	String assetId;  // uniq identifier abt the asset
-	
-	int cpuLoad ;  // in percentage
-	int totalMemory; 	// bytes
-	int usedMemory;		// bytes
-	int totalVirtualMemory;		// bytes
-	int usedVirtualMemory;		// bytes
-	int totalDiskSpace;		// bytes
-	int usedDiskSpace;		// bytes
-	int uptime;		// seconds
-	int numLoggedInUsers;
-	int numProcesses;
-	int networkBytesIn;	// bytes
-	int networkBytesOut; // bytes
-	
-	double clockSpeed; 	//v2
-	
-	String sysName;
-	String sysIP;	// string
-	String sysDescr; 
-	String sysContact;
-	String sysLocation; // string
-	String extras;	// anything device specific
-	
-	java.util.Date sysDate;
 
-	public Computer(String assetId, int cpuLoad, int totalMemory, int usedMemory,
-			int totalVirtualMemory, int usedVirtualMemory, int totalDiskSpace,
-			int usedDiskSpace, int uptime, int numLoggedInUsers,
-			int numProcesses, int networkBytesIn, int networkBytesOut,
-			double clockSpeed, String sysName, String sysIP, String sysDescr,
-			String sysContact, String sysLocation, String extras, Date sysDate) {
-		super();
-		this.assetId = assetId;
-		this.cpuLoad = cpuLoad;
-		this.totalMemory = totalMemory;
-		this.usedMemory = usedMemory;
-		this.totalVirtualMemory = totalVirtualMemory;
-		this.usedVirtualMemory = usedVirtualMemory;
-		this.totalDiskSpace = totalDiskSpace;
-		this.usedDiskSpace = usedDiskSpace;
-		this.uptime = uptime;
-		this.numLoggedInUsers = numLoggedInUsers;
-		this.numProcesses = numProcesses;
-		this.networkBytesIn = networkBytesIn;
-		this.networkBytesOut = networkBytesOut;
-		this.clockSpeed = clockSpeed;
-		this.sysName = sysName;
-		this.sysIP = sysIP;
-		this.sysDescr = sysDescr;
-		this.sysContact = sysContact;
-		this.sysLocation = sysLocation;
-		this.extras = extras;
-		this.sysDate = sysDate;
-	}
+    String assetId; // uniq identifier abt the asset
 
-	public String getAssetId() {
-		return assetId;
-	}
+    long cpuLoad; // in percentage
+    long totalMemory; // bytes
+    long usedMemory; // bytes
+    long totalVirtualMemory; // bytes
+    long usedVirtualMemory; // bytes
+    long totalDiskSpace; // bytes
+    long usedDiskSpace; // bytes
+    long uptime; // seconds
+    long numLoggedInUsers;
+    long numProcesses;
+    long networkBytesIn; // bytes
+    long networkBytesOut; // bytes
 
-	public void setAssetId(String assetId) {
-		this.assetId = assetId;
-	}
+    double clockSpeed; // v2
 
-	public double getClockSpeed() {
-		return clockSpeed;
-	}
+    String sysName;
+    String sysIP; // string
+    String sysDescr;
+    String sysContact;
+    String sysLocation; // string
+    String extras; // anything device specific
 
-	public void setClockSpeed(double clockSpeed) {
-		this.clockSpeed = clockSpeed;
-	}
-	
-	public int getCpuLoad() {
-		return cpuLoad;
-	}
+    public String getAssetId() {
+        return assetId;
+    }
 
-	public int getTotalMemory() {
-		return totalMemory;
-	}
+    public long getCpuLoad() {
+        return cpuLoad;
+    }
 
-	public int getUsedMemory() {
-		return usedMemory;
-	}
+    public long getTotalMemory() {
+        return totalMemory;
+    }
 
-	public int getTotalVirtualMemory() {
-		return totalVirtualMemory;
-	}
+    public long getUsedMemory() {
+        return usedMemory;
+    }
 
-	public int getUsedVirtualMemory() {
-		return usedVirtualMemory;
-	}
+    public long getTotalVirtualMemory() {
+        return totalVirtualMemory;
+    }
 
-	public int getTotalDiskSpace() {
-		return totalDiskSpace;
-	}
+    public long getUsedVirtualMemory() {
+        return usedVirtualMemory;
+    }
 
-	public int getUsedDiskSpace() {
-		return usedDiskSpace;
-	}
+    public long getTotalDiskSpace() {
+        return totalDiskSpace;
+    }
 
-	public int getUptime() {
-		return uptime;
-	}
+    public long getUsedDiskSpace() {
+        return usedDiskSpace;
+    }
 
-	public int getNumLoggedInUsers() {
-		return numLoggedInUsers;
-	}
+    public long getUptime() {
+        return uptime;
+    }
 
-	public int getNumProcesses() {
-		return numProcesses;
-	}
+    public long getNumLoggedInUsers() {
+        return numLoggedInUsers;
+    }
 
-	public int getNetworkBytesIn() {
-		return networkBytesIn;
-	}
+    public long getNumProcesses() {
+        return numProcesses;
+    }
 
-	public int getNetworkBytesOut() {
-		return networkBytesOut;
-	}
+    public long getNetworkBytesIn() {
+        return networkBytesIn;
+    }
 
-	public String getSysName() {
-		return sysName;
-	}
+    public long getNetworkBytesOut() {
+        return networkBytesOut;
+    }
 
-	public String getSysIP() {
-		return sysIP;
-	}
+    public double getClockSpeed() {
+        return clockSpeed;
+    }
 
-	public String getSysDescr() {
-		return sysDescr;
-	}
+    public String getSysName() {
+        return sysName;
+    }
 
-	public String getSysContact() {
-		return sysContact;
-	}
+    public String getSysIP() {
+        return sysIP;
+    }
 
-	public String getSysLocation() {
-		return sysLocation;
-	}
+    public String getSysDescr() {
+        return sysDescr;
+    }
 
-	public String getExtras() {
-		return extras;
-	}
+    public String getSysContact() {
+        return sysContact;
+    }
 
-	public java.util.Date getSysDate() {
-		return sysDate;
-	} 
-	
-	
+    public String getSysLocation() {
+        return sysLocation;
+    }
+
+    public String getExtras() {
+        return extras;
+    }
+
+    public Computer(String assetId, long cpuLoad, long totalMemory, long usedMemory, long totalVirtualMemory,
+            long usedVirtualMemory, long totalDiskSpace, long usedDiskSpace, long uptime, long numLoggedInUsers,
+            long numProcesses, long networkBytesIn, long networkBytesOut, double clockSpeed, String sysName,
+            String sysIP, String sysDescr, String sysContact, String sysLocation, String extras) {
+        super();
+        this.assetId = assetId;
+        this.cpuLoad = cpuLoad;
+        this.totalMemory = totalMemory;
+        this.usedMemory = usedMemory;
+        this.totalVirtualMemory = totalVirtualMemory;
+        this.usedVirtualMemory = usedVirtualMemory;
+        this.totalDiskSpace = totalDiskSpace;
+        this.usedDiskSpace = usedDiskSpace;
+        this.uptime = uptime;
+        this.numLoggedInUsers = numLoggedInUsers;
+        this.numProcesses = numProcesses;
+        this.networkBytesIn = networkBytesIn;
+        this.networkBytesOut = networkBytesOut;
+        this.clockSpeed = clockSpeed;
+        this.sysName = sysName;
+        this.sysIP = sysIP;
+        this.sysDescr = sysDescr;
+        this.sysContact = sysContact;
+        this.sysLocation = sysLocation;
+        this.extras = extras;
+    }
+
 }
