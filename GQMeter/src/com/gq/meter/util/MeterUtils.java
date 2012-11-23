@@ -27,6 +27,8 @@ import org.snmp4j.smi.VariableBinding;
 import org.snmp4j.transport.DefaultUdpTransportMapping;
 
 import com.gq.meter.ComputerMeter;
+import com.gq.meter.PrinterMeter;
+import com.gq.meter.SwitchMeter;
 
 public class MeterUtils {
 
@@ -95,7 +97,7 @@ public class MeterUtils {
             asset = findAssetType(result);
 
             if (asset == null) {
-                oidString = "1.3.6.1.2.1.2.1"; // Switch
+                oidString = "1.3.6.1.2.1.17.2.6"; // Switch
                 rootOID = new OID(oidString);
                 result = walk(rootOID, target);
                 asset = findAssetType(result);
@@ -136,10 +138,10 @@ public class MeterUtils {
             assetObject = new ComputerMeter().implement(communityString, currIp, target);
             break;
         case MeterConstants.SNMP_PRINTER_ASSET:
-
+            assetObject = new PrinterMeter().implement(communityString, currIp, target);
             break;
         case MeterConstants.SNMP_SWITCH_ASSET:
-
+            assetObject = new SwitchMeter().implement(communityString, currIp, target);
             break;
         case MeterConstants.SNMP_ROUTER_ASSET:
 

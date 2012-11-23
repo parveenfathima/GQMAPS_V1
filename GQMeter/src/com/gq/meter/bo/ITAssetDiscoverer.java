@@ -12,14 +12,8 @@ import org.snmp4j.CommunityTarget;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.gq.meter.ComputerMeter;
-import com.gq.meter.object.Computer;
 import com.gq.meter.object.GQMeterData;
-import com.gq.meter.object.Printer;
 import com.gq.meter.object.ProtocolData;
-import com.gq.meter.object.Router;
-import com.gq.meter.object.Switch;
-import com.gq.meter.util.MeterConstants;
 import com.gq.meter.util.MeterUtils;
 
 /**
@@ -36,7 +30,8 @@ public class ITAssetDiscoverer {
      * @param ipUpperbound
      * @return
      */
-    Gson gson = new GsonBuilder().create();
+    // Gson gson = new GsonBuilder().create();
+    Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
     private List<ProtocolData> findassets(String communityString, String ipLowerbound, String ipUpperbound) {
 
@@ -106,8 +101,6 @@ public class ITAssetDiscoverer {
                 System.out.println("Exception occured while finding the assets : " + e);
             }
             finally {
-                System.out.println("$$$$$$$$$$$$$$$$$ : " + liveAsset.size());
-                System.out.println("################# : " + deadAsset.size());
                 assetsMap.put("liveAssets", liveAsset);
                 assetsMap.put("deadAssets", deadAsset);
             }
