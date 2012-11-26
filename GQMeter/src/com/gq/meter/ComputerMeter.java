@@ -27,7 +27,7 @@ import org.snmp4j.smi.VariableBinding;
 import org.snmp4j.transport.DefaultUdpTransportMapping;
 
 import com.gq.meter.object.Computer;
-import com.gq.meter.object.GQErrorInformation;
+import com.gq.meter.object.assist.InstalledSoftware;
 import com.gq.meter.util.MeterUtils;
 
 public class ComputerMeter implements GQMeter {
@@ -282,10 +282,15 @@ public class ComputerMeter implements GQMeter {
                 System.out.println("Network Bytes Out : " + outBytes);
             } // Linux if loop ends
 
+            // get the list of installed software 
+            List<InstalledSoftware> installedSwList = new LinkedList<InstalledSoftware> ();
+
+            // add code here to walk and populate list - sriram
+            
             Computer compObject = new Computer(assetId, cpuLoad, totalMemory, usedMemory, totalVirtualMemory,
                     usedVirtualMemory, totalDiskSpace, usedDiskSpace, uptime, numLoggedInUsers, numProcesses,
                     networkBytesIn, networkBytesOut, clockSpeed, sysName, sysIP, sysDescr, sysContact, sysLocation,
-                    extras);
+                    extras , installedSwList);
 
             return compObject;
         }
