@@ -1,15 +1,9 @@
 package com.gq.meter.test;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.gq.meter.object.Air;
-import com.gq.meter.object.Computer;
-import com.gq.meter.object.GQMeterData;
 
 public  class ComputerMeter {
 
@@ -33,11 +27,11 @@ public  class ComputerMeter {
 	
 	public static void main(String[] args) throws IOException {
 
-		Computer c = new Computer("sdfsad", 83, 100, 80, 30, 20, 500, 340, 89330, 7, 48, 10000, 22220, 2.34,
+		/*		Computer c = new Computer("sdfsad", 83, 100, 80, 30, 20, 500, 340, 89330, 7, 48, 10000, 22220, 2.34,
 				"name", "192.149.4.4", "desc", "contact", "location", "extras", new Date());
 		
 		Gson gson = new GsonBuilder().create();
-/*
+
 		GQMeterData pd = new GQMeterData("ss", new Date() ,"power" , "v1", "sstatis", "no comment dude" , gson.toJson(c));
 		
 		ComputerMeter cm = new ComputerMeter();

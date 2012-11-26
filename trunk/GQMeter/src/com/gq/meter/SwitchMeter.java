@@ -1,28 +1,16 @@
 package com.gq.meter;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Vector;
 import java.util.concurrent.TimeUnit;
 
 import org.snmp4j.CommunityTarget;
-import org.snmp4j.PDU;
 import org.snmp4j.Snmp;
-import org.snmp4j.Target;
-import org.snmp4j.TransportMapping;
-import org.snmp4j.event.ResponseEvent;
-import org.snmp4j.mp.SnmpConstants;
-import org.snmp4j.smi.Integer32;
-import org.snmp4j.smi.Null;
 import org.snmp4j.smi.OID;
-import org.snmp4j.smi.OctetString;
-import org.snmp4j.smi.UdpAddress;
 import org.snmp4j.smi.VariableBinding;
 import org.snmp4j.transport.DefaultUdpTransportMapping;
 
-import com.gq.meter.object.GQErrorInformation;
 import com.gq.meter.object.Switch;
 import com.gq.meter.util.MeterUtils;
 
