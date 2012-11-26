@@ -1,5 +1,9 @@
 package com.gq.meter.object;
 
+import java.util.List;
+
+import com.gq.meter.object.assist.InstalledSoftware;
+
 public class Computer {
 
     String assetId; // uniq identifier abt the asset
@@ -16,7 +20,9 @@ public class Computer {
     long numProcesses;
     long networkBytesIn; // bytes
     long networkBytesOut; // bytes
-
+    
+    List<InstalledSoftware> installedSwList;
+    
     double clockSpeed; // v2
 
     String sysName;
@@ -26,6 +32,7 @@ public class Computer {
     String sysLocation; // string
     String extras; // anything device specific
 
+    
     public String getAssetId() {
         return assetId;
     }
@@ -109,7 +116,7 @@ public class Computer {
     public Computer(String assetId, long cpuLoad, long totalMemory, long usedMemory, long totalVirtualMemory,
             long usedVirtualMemory, long totalDiskSpace, long usedDiskSpace, long uptime, long numLoggedInUsers,
             long numProcesses, long networkBytesIn, long networkBytesOut, double clockSpeed, String sysName,
-            String sysIP, String sysDescr, String sysContact, String sysLocation, String extras) {
+            String sysIP, String sysDescr, String sysContact, String sysLocation, String extras , List<InstalledSoftware> installedSwList) {
         super();
         this.assetId = assetId;
         this.cpuLoad = cpuLoad;
@@ -131,6 +138,7 @@ public class Computer {
         this.sysContact = sysContact;
         this.sysLocation = sysLocation;
         this.extras = extras;
+        this.installedSwList = installedSwList;
     }
 
 }
