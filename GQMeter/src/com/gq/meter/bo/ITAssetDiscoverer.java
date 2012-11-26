@@ -12,8 +12,8 @@ import org.snmp4j.CommunityTarget;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.gq.meter.object.GQMeterData;
-import com.gq.meter.object.ProtocolData;
+import com.gq.meter.GQMeterData;
+import com.gq.meter.object.assist.ProtocolData;
 import com.gq.meter.util.MeterUtils;
 
 /**
