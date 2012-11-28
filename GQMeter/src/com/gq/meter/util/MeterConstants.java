@@ -9,6 +9,8 @@ public class MeterConstants {
 
     public static final String SNMP_VERSION_2 = "v2c";
 
+    public static final String SNMP_VERSION_3 = "v3";
+
     // first level snmp check octet
 
     public static final String SNMP_CHECK_OCTET = "1.3.6.1.2.1.1"; // Find a minimal value to do walk
