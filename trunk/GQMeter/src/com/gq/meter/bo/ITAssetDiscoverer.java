@@ -8,8 +8,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.snmp4j.CommunityTarget;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.gq.meter.GQMeterResponse;
