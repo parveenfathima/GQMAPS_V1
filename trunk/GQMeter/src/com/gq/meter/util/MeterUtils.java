@@ -33,50 +33,24 @@ import com.gq.meter.SwitchMeter;
 public class MeterUtils {
 
     /**
-     * @param result
-     * @param assetDetails
-     * @return
-     */
-    public static String findAssetType(List<VariableBinding> result) {
-        String assetType = null;
-        for (VariableBinding vb : result) {
-
-            switch (vb.getOid().toString().trim()) {
-
-            case MeterConstants.SNMP_CHECK_COMPUTER_OCTET:
-                assetType = MeterConstants.SNMP_COMPUTER_ASSET;
-                break;
-            case MeterConstants.SNMP_CHECK_PRINTER_OCTET:
-                assetType = MeterConstants.SNMP_PRINTER_ASSET;
-                break;
-            case MeterConstants.SNMP_CHECK_SWITCH_OCTET:
-                assetType = MeterConstants.SNMP_SWITCH_ASSET;
-                break;
-            case MeterConstants.SNMP_CHECK_ROUTER_OCTET:
-                assetType = MeterConstants.SNMP_ROUTER_ASSET;
-                break;
-            }
-        }
-        return assetType;
-    }
-
-    /**
      * @param communityString
      * @param currIp
      * @return
      */
-    public static HashMap<String, Object> isSnmpConfigured(String communityString, String currIp) {
+    public static HashMap<String, String> isSnmpConfigured(String communityString, String currIp) {
         String oidString = MeterConstants.SNMP_CHECK_OCTET;
-        HashMap<String, Object> assetType = null;
+        HashMap<String, String> assetType = null;
         String asset = null;
+        String snmpVersion = MeterConstants.SNMP_VERSION_2;
 
-        CommunityTarget target = MeterUtils.makeTarget(currIp, communityString, MeterConstants.SNMP_VERSION_2);
-        OID rootOID = new OID(oidString.trim());
+        CommunityTarget target = MeterUtils.makeTarget(currIp, communityString, snmpVersion);
+        OID rootOID = new OID(oidString);
         List<VariableBinding> result = walk(rootOID, target);
         if (result == null || result.isEmpty() || result.size() == 0) {
             // may be the device is serving snmp but not version 2 , so lets try version 1
             System.out.println("SNMP Version2 is failed for this device,trying for version1 now");
-            target = makeTarget(currIp, communityString, MeterConstants.SNMP_VERSION_1); // needs to be done only once.
+            snmpVersion = MeterConstants.SNMP_VERSION_1;
+            target = makeTarget(currIp, communityString, snmpVersion); // needs to be done only once.
             result = walk(rootOID, target);
             if (result == null || result.size() == 0 || result.isEmpty()) {
                 // may be the device is not serving snmp at all. so lets get out or throw io exception
@@ -88,32 +62,32 @@ public class MeterUtils {
         oidString = ".1.3.6.1.2.1.25.1.6"; // computer
         rootOID = new OID(oidString);
         result = walk(rootOID, target);
-        asset = findAssetType(result);
+        asset = MeterConstants.SNMP_COMPUTER_ASSET;
 
-        if (asset == null) {
+        if (result == null || result.size() == 0 || result.isEmpty()) {
             oidString = ".1.3.6.1.2.1.25.3.5.1.1"; // Printer
             rootOID = new OID(oidString);
             result = walk(rootOID, target);
-            asset = findAssetType(result);
+            asset = MeterConstants.SNMP_PRINTER_ASSET;
 
-            if (asset == null) {
+            if (result == null || result.size() == 0 || result.isEmpty()) {
                 oidString = "1.3.6.1.2.1.17.2.6"; // Switch
                 rootOID = new OID(oidString);
                 result = walk(rootOID, target);
-                asset = findAssetType(result);
+                asset = MeterConstants.SNMP_SWITCH_ASSET;
 
-                if (asset == null) {
+                if (result == null || result.size() == 0 || result.isEmpty()) {
                     oidString = ".1.3.6.1.2.1.83.1.1.7"; // router
                     rootOID = new OID(oidString);
                     result = walk(rootOID, target);
-                    asset = findAssetType(result);
+                    asset = MeterConstants.SNMP_ROUTER_ASSET;
                 }
             }
         }
         if (asset != null) {
-            assetType = new HashMap<String, Object>();
+            assetType = new HashMap<String, String>();
             assetType.put("asset", asset);
-            assetType.put("target", target);
+            assetType.put("snmpVersion", snmpVersion);
         }
 
         return assetType;
@@ -129,19 +103,19 @@ public class MeterUtils {
      * @param target
      * @return
      */
-    public static Object getAssetObject(String assetType, String communityString, String currIp, CommunityTarget target) {
+    public static Object getAssetObject(String assetType, String communityString, String currIp, String snmpVersion) {
 
         Object assetObject = null;
         switch (assetType.trim()) {
 
         case MeterConstants.SNMP_COMPUTER_ASSET:
-            assetObject = new ComputerMeter().implement(communityString, currIp, target);
+            assetObject = new ComputerMeter().implement(communityString, currIp, snmpVersion);
             break;
         case MeterConstants.SNMP_PRINTER_ASSET:
-            assetObject = new PrinterMeter().implement(communityString, currIp, target);
+            assetObject = new PrinterMeter().implement(communityString, currIp, snmpVersion);
             break;
         case MeterConstants.SNMP_SWITCH_ASSET:
-            assetObject = new SwitchMeter().implement(communityString, currIp, target);
+            assetObject = new SwitchMeter().implement(communityString, currIp, snmpVersion);
             break;
         case MeterConstants.SNMP_ROUTER_ASSET:
 

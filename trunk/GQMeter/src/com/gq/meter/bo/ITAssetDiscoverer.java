@@ -12,7 +12,7 @@ import org.snmp4j.CommunityTarget;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.gq.meter.GQMeterData;
+import com.gq.meter.GQMeterResponse;
 import com.gq.meter.object.assist.ProtocolData;
 import com.gq.meter.util.MeterUtils;
 
@@ -35,33 +35,27 @@ public class ITAssetDiscoverer {
 
     private List<ProtocolData> findassets(String communityString, String ipLowerbound, String ipUpperbound) {
 
-        LinkedList<Object> deadAsset = new LinkedList<Object>(); // Planned to send dead assets to the user
-        LinkedList<Object> liveAsset = new LinkedList<Object>(); // Planned to send dead assets to the user
-        HashMap<String, LinkedList<Object>> assetsMap = new HashMap<String, LinkedList<Object>>();
         Object assetObject = null;
+        HashMap<String, String> assetType = null;
+        String snmpVersion = null;
         String asset = null;
 
         List<ProtocolData> pdList = new LinkedList<ProtocolData>();
 
         if (null != communityString && null != ipLowerbound) {
             try {
-
                 String currIp = ipLowerbound;
                 System.out.println("********************* ip = " + currIp + "*******************");
-                HashMap<String, Object> assetType = null;
-                CommunityTarget target = null;
 
                 assetType = MeterUtils.isSnmpConfigured(communityString, currIp);
                 if (assetType != null && assetType.size() != 0 && !assetType.isEmpty()) {
-                    target = (CommunityTarget) assetType.get("target");
-                    asset = assetType.get("asset").toString();
-                    assetObject = MeterUtils.getAssetObject(asset, communityString, currIp, target);
+                    snmpVersion = assetType.get("snmpVersion");
+                    asset = assetType.get("asset");
+                    assetObject = MeterUtils.getAssetObject(asset, communityString, currIp, snmpVersion);
                     pdList.add(new ProtocolData(asset, gson.toJson(assetObject)));
-                    liveAsset.add(assetObject);
                 }
                 else {
                     System.out.println("Adding asset to the dead asset list");
-                    deadAsset.add(currIp);
                 }
 
                 if (null != ipUpperbound) {
@@ -69,15 +63,13 @@ public class ITAssetDiscoverer {
                         System.out.println("********************* next ip = " + currIp + "*******************");
                         assetType = MeterUtils.isSnmpConfigured(communityString, currIp);
                         if (assetType != null && assetType.size() != 0 && !assetType.isEmpty()) {
-                            target = (CommunityTarget) assetType.get("target");
-                            asset = assetType.get("asset").toString();
-                            assetObject = MeterUtils.getAssetObject(asset, communityString, currIp, target);
+                            snmpVersion = assetType.get("snmpVersion");
+                            asset = assetType.get("asset");
+                            assetObject = MeterUtils.getAssetObject(asset, communityString, currIp, snmpVersion);
                             pdList.add(new ProtocolData(asset, gson.toJson(assetObject)));
-                            // liveAsset.add(assetObject);
                         }
                         else {
                             System.out.println("Adding asset to the dead asset list");
-                            deadAsset.add(currIp);
                         }
                     }
 
@@ -85,24 +77,18 @@ public class ITAssetDiscoverer {
                     System.out.println("********************* next ip = " + currIp + "*******************");
                     assetType = MeterUtils.isSnmpConfigured(communityString, currIp);
                     if (assetType != null && assetType.size() != 0 && !assetType.isEmpty()) {
-                        target = (CommunityTarget) assetType.get("target");
-                        asset = assetType.get("asset").toString();
-                        assetObject = MeterUtils.getAssetObject(asset, communityString, currIp, target);
+                        snmpVersion = assetType.get("snmpVersion");
+                        asset = assetType.get("asset");
+                        assetObject = MeterUtils.getAssetObject(asset, communityString, currIp, snmpVersion);
                         pdList.add(new ProtocolData(asset, gson.toJson(assetObject)));
-                        // liveAsset.add(assetObject);
                     }
                     else {
                         System.out.println("Adding asset to the dead asset list");
-                        deadAsset.add(currIp);
                     }
                 }
             }
             catch (Exception e) {
                 System.out.println("Exception occured while finding the assets : " + e);
-            }
-            finally {
-                assetsMap.put("liveAssets", liveAsset);
-                assetsMap.put("deadAssets", deadAsset);
             }
         }
 
@@ -114,7 +100,7 @@ public class ITAssetDiscoverer {
      * 
      * @param inputFile
      */
-    private GQMeterData readInput(String inputFilePath) {
+    private GQMeterResponse readInput(String inputFilePath) {
         BufferedReader br = null;
         String line = null;
         String assetaArray[] = null;
@@ -123,9 +109,9 @@ public class ITAssetDiscoverer {
         String ipLowerbound = null;
         List<ProtocolData> assetsList = null;
 
-        GQMeterData gqmData = new GQMeterData();
+        GQMeterResponse gqmResponse = new GQMeterResponse();
 
-        gqmData.setGqmid("GQITMeter1");
+        gqmResponse.setGqmid("GQITMeter1");
 
         if (null != inputFilePath && inputFilePath.trim() != "") {
             try {
@@ -154,8 +140,7 @@ public class ITAssetDiscoverer {
                                 assetsList = findassets(communityString, ipLowerbound, ipUpperbound);
                             }
                         }
-
-                        gqmData.addToAssetInformationList(assetsList);
+                        gqmResponse.addToAssetInformationList(assetsList);
                     }
                 }
                 else {
@@ -170,14 +155,14 @@ public class ITAssetDiscoverer {
                     if (null != br) {
                         br.close();
                     }
-                    return gqmData; // returns not null map with all the asset objects value
+                    return gqmResponse; // returns not null map with all the asset objects value
                 }
                 catch (IOException e) {
                     System.out.println("Exception occured while closing the buffer after reading : " + e);
                 }
             }
         }
-        return gqmData;
+        return gqmResponse;
     }
 
     // implement a power meter , this involves 3 distinct steps
@@ -201,10 +186,10 @@ public class ITAssetDiscoverer {
 
         ITAssetDiscoverer itad = new ITAssetDiscoverer();
         String inputFilePath = "C:\\Users\\chandru.p\\AssetDetails.txt";
-        GQMeterData assetsMap = itad.readInput(inputFilePath);
+        GQMeterResponse gqmResponse = itad.readInput(inputFilePath);
         System.out.println("::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::");
 
-        System.out.println("json of GQMeterData = " + itad.gson.toJson(assetsMap)
+        System.out.println("json of GQMeterData = " + itad.gson.toJson(gqmResponse)
                 + " :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::");
         /*
          * Computer c = new Computer("sdfsad", 83, 100, 80, 30, 20, 500, 340, 89330, 7, 48, 10000, 22220, 2.34, "name",
