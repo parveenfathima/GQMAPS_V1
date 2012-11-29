@@ -102,7 +102,6 @@ public class ITAssetDiscoverer {
     private GQMeterResponse readInput(String inputFilePath) {
         BufferedReader br = null;
         String line = null;
-        String assetaArray[] = null;
         String communityString = null;
         String ipUpperbound = null;
         String ipLowerbound = null;
@@ -119,7 +118,7 @@ public class ITAssetDiscoverer {
                 if (assetsInputFile.exists() && assetsInputFile.isFile()) {
                     br = new BufferedReader(new FileReader(assetsInputFile));
                     StringTokenizer sToken = null;
-                    
+
                     while ((line = br.readLine()) != null) {
                         line = line.trim();
                         if (line.length() == 0 || line.startsWith("#")) {
