@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.StringTokenizer;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -53,7 +54,7 @@ public class ITAssetDiscoverer {
                     pdList.add(new ProtocolData(asset, gson.toJson(assetObject)));
                 }
                 else {
-                    System.out.println("Adding asset to the dead asset list");
+                    System.out.println("The asset on the ip : " + currIp + " is not configured with snmp");
                 }
 
                 if (null != ipUpperbound) {
@@ -67,7 +68,7 @@ public class ITAssetDiscoverer {
                             pdList.add(new ProtocolData(asset, gson.toJson(assetObject)));
                         }
                         else {
-                            System.out.println("Adding asset to the dead asset list");
+                            System.out.println("The asset on the ip : " + currIp + " is not configured with snmp");
                         }
                     }
 
@@ -81,7 +82,7 @@ public class ITAssetDiscoverer {
                         pdList.add(new ProtocolData(asset, gson.toJson(assetObject)));
                     }
                     else {
-                        System.out.println("Adding asset to the dead asset list");
+                        System.out.println("The asset on the ip : " + currIp + " is not configured with snmp");
                     }
                 }
             }
@@ -117,26 +118,28 @@ public class ITAssetDiscoverer {
 
                 if (assetsInputFile.exists() && assetsInputFile.isFile()) {
                     br = new BufferedReader(new FileReader(assetsInputFile));
-
+                    StringTokenizer sToken = null;
+                    
                     while ((line = br.readLine()) != null) {
                         line = line.trim();
-                        if (null == line || line.length() == 0 || line.contains("#")) {
+                        if (line.length() == 0 || line.startsWith("#")) {
                             continue;
                         }
-                        else if (line.contains(" ")) {
-                            assetaArray = line.split(" ");
-                            if (assetaArray.length == 2) {
-                                communityString = assetaArray[0];
-                                ipLowerbound = assetaArray[1];
-                                ipUpperbound = null;
-                                assetsList = findassets(communityString, ipLowerbound, ipUpperbound);
-                            }
-                            else if (assetaArray.length == 3) {
-                                communityString = assetaArray[0];
-                                ipLowerbound = assetaArray[1];
-                                ipUpperbound = assetaArray[2];
-                                assetsList = findassets(communityString, ipLowerbound, ipUpperbound);
-                            }
+                        if (line.contains("\t")) {
+                            line = line.replace("\t", " ");
+                            sToken = new StringTokenizer(line, " ");
+                        }
+                        if (sToken.countTokens() == 2) {
+                            communityString = sToken.nextToken().trim();
+                            ipLowerbound = sToken.nextToken().trim();
+                            ipUpperbound = null;
+                            assetsList = findassets(communityString, ipLowerbound, ipUpperbound);
+                        }
+                        else if (sToken.countTokens() == 3) {
+                            communityString = sToken.nextToken().trim();
+                            ipLowerbound = sToken.nextToken().trim();
+                            ipUpperbound = sToken.nextToken().trim();
+                            assetsList = findassets(communityString, ipLowerbound, ipUpperbound);
                         }
                         gqmResponse.addToAssetInformationList(assetsList);
                     }
