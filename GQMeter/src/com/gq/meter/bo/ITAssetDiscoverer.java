@@ -128,6 +128,9 @@ public class ITAssetDiscoverer {
                             line = line.replace("\t", " ");
                             sToken = new StringTokenizer(line, " ");
                         }
+                        else {
+                            sToken = new StringTokenizer(line, " ");
+                        }
                         if (sToken.countTokens() == 2) {
                             communityString = sToken.nextToken().trim();
                             ipLowerbound = sToken.nextToken().trim();
@@ -148,6 +151,7 @@ public class ITAssetDiscoverer {
                 }
             }
             catch (Exception e) {
+                e.printStackTrace();
                 System.out.println("Exception occured : Unable locate the input file for processing : " + e);
             }
             finally {
@@ -185,7 +189,7 @@ public class ITAssetDiscoverer {
     public static void main(String[] args) throws IOException {
 
         ITAssetDiscoverer itad = new ITAssetDiscoverer();
-        String inputFilePath = "C:\\Users\\chandru.p\\AssetDetails.txt";
+        String inputFilePath = "C:\\AssetDetails.txt";
         GQMeterResponse gqmResponse = itad.readInput(inputFilePath);
         System.out.println("::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::");
 
