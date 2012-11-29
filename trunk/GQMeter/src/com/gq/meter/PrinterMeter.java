@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import org.snmp4j.CommunityTarget;
 import org.snmp4j.Snmp;
@@ -13,357 +12,294 @@ import org.snmp4j.smi.VariableBinding;
 import org.snmp4j.transport.DefaultUdpTransportMapping;
 
 import com.gq.meter.object.Printer;
+import com.gq.meter.util.MeterConstants;
 import com.gq.meter.util.MeterUtils;
 
-public class PrinterMeter implements GQMeter {
+public class PrinterMeter implements GQSNMPMeter {
 
-	Snmp snmp = null;
-	String protocolAddress = null;
-	String communityString = null;
+    @Override
+    public GQMeterData implement(String communityString, String ipAddress, String snmpVersion) {
 
-	private static String assetId; // uniq identifier abt the asset
+        Snmp snmp = null;
 
-	private static long uptime; // seconds
-	private static double tonerPercentage;
-	private static long outOfPaperIndicator; // 0 means no paper , v2
-	private static long networkBytesIn; // bytes , v2
-	private static long networkBytesOut; // bytes , v2
-	private static long printsTakenCount; // v2
+        String assetId = null; // unique identifier about the asset
+        String sysName = null;
+        String sysIP = null; // string
+        String sysDescr = null;
+        String sysContact = null;
+        String sysLocation = null; // string
+        String errorCondition = null;
+        String operationalState = null; // for this and the next value , we maintain a table ; need to work more on it.
+        String currentState = null;
+        String mfgModel = null; // v2
+        String isColorPrinter = null;
+        String extras = null; // anything device specific but to be discussed , v2
 
-	private static String sysName;
-	private static String sysIP; // string
-	private static String sysDescr;
-	private static String sysContact;
-	private static String sysLocation; // string
-	private static String errorCondition;
-	private static String operationalState; // for this and the next value , we
-											// maintain a table ; need to work
-											// more on it.
-	private static String currentState;
-	private static String mfgModel; // v2
-	private static String tonerColor;
+        long uptime = 0; // seconds
+        long outOfPaperIndicator = 0; // 0 means no paper , v2
+        long networkBytesIn = 0; // bytes , v2
+        long networkBytesOut = 0; // bytes , v2
+        long printsTakenCount = 0; // v2
 
-	private static String extras; // anything device specific but to be
-									// discussed , v2
+        double tonerPercentage = 0;
 
-	public static final String SNMP_VERSION_1 = "v1";
-	public static final String SNMP_VERSION_2 = "v2c";
-	public static final String SNMP_VERSION_3 = "v3";
+        HashMap<String, String> printerStatus;
 
-	HashMap<String, String> printerStatus;
+        sysIP = ipAddress;
 
-	@Override
-	public Object implement(String communityString, String ipAddress,
-			CommunityTarget target) {
-		if (communityString != null && ipAddress != null) {
+        CommunityTarget target = null;
 
-			try {
-				makeSnmpListen(ipAddress, communityString);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+        List<String> errorList = new LinkedList<String>();
 
-			// The following oid's is used to get system parameters
+        try {
+            snmp = new Snmp(new DefaultUdpTransportMapping());
+            snmp.listen();
+            target = MeterUtils.makeTarget(ipAddress, communityString, snmpVersion);
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
 
-			String oidString = "1.3.6.1.2.1.1";
-			String temp;
-			String tempStr;
+        // The following oid's is used to get system basic info
 
-			OID rootOID = new OID(oidString);
-			List<VariableBinding> result = null;
+        String oidString = "1.3.6.1.2.1.1";
+        String temp;
+        String tempStr;
 
-			result = MeterUtils.walk(rootOID, target); // walk done with the
-														// initial assumption
-														// that device is v2
-			System.out.println("result : " + result);
+        OID rootOID = new OID(oidString);
+        List<VariableBinding> result = null;
 
-			temp = oidString + ".1.0";
-			sysDescr = getSNMPValue(temp, result);
-			System.out.println("System Description : " + sysDescr);
+        result = MeterUtils.walk(rootOID, target); // walk done with the initial assumption that device is v2
+        if (result != null && !result.isEmpty()) {
+            System.out.println("result : " + result);
 
-			temp = oidString + ".3.0";
-			tempStr = getSNMPValue(temp, result);
-			// System.out.println("Uptime : " + tempStr);
-			uptime = upTimeCalc(tempStr);
-			System.out.println("Uptime : " + uptime);
+            temp = oidString + ".1.0";
+            sysDescr = MeterUtils.getSNMPValue(temp, result);
+            System.out.println("System Description : " + sysDescr);
 
-			temp = oidString + ".4.0";
-			sysContact = getSNMPValue(temp, result);
-			System.out.println("System Contact : " + sysContact);
+            temp = oidString + ".3.0";
+            tempStr = MeterUtils.getSNMPValue(temp, result);
+            // System.out.println("Uptime : " + tempStr);
 
-			temp = oidString + ".5.0";
-			sysName = getSNMPValue(temp, result);
-			System.out.println("System Name : " + sysName);
+            uptime = MeterUtils.upTimeCalc(tempStr);
+            System.out.println("Uptime : " + uptime);
 
-			temp = oidString + ".6.0";
-			sysLocation = getSNMPValue(temp, result);
-			System.out.println("System Location : " + sysLocation);
+            temp = oidString + ".4.0";
+            sysContact = MeterUtils.getSNMPValue(temp, result);
+            System.out.println("System Contact : " + sysContact);
 
-			// The below oid's is used to get the toner percentage
+            temp = oidString + ".5.0";
+            sysName = MeterUtils.getSNMPValue(temp, result);
+            System.out.println("System Name : " + sysName);
 
-			oidString = ".1.3.6.1.2.1.43.11.1.1";
-			rootOID = new OID(oidString);
-			result = MeterUtils.walk(rootOID, target);
+            temp = oidString + ".6.0";
+            sysLocation = MeterUtils.getSNMPValue(temp, result);
+            System.out.println("System Location : " + sysLocation);
+        }
+        else {
+            errorList.add("Root OID : 1.3.6.1.2.1.1" + " " + "Basic info of a asset gets failed");
+        }
+        // The below oid's is used to get the toner percentage
 
-			tonerPercentage = tonerPercentageCalc(result, rootOID);
-			System.out.println("Toner Percentage : " + tonerPercentage);
+        oidString = ".1.3.6.1.2.1.43.11.1.1";
+        rootOID = new OID(oidString);
+        result = MeterUtils.walk(rootOID, target);
 
-			oidString = "1.3.6.1.2.1.43.11.1.1.6";
-			rootOID = new OID(oidString);
-			result = MeterUtils.walk(rootOID, target);
+        if (result != null && !result.isEmpty()) {
+            tonerPercentage = tonerPercentageCalc(result, rootOID);
+            System.out.println("Toner Percentage : " + tonerPercentage);
+        }
+        else {
+            errorList.add("Root OID : 1.3.6.1.2.1.43.11.1.1" + " " + "Toner percentage of a printer gets failed");
+        }
 
-			if (result.toString().trim()
-					.contains("1.3.6.1.2.1.43.11.1.1.6.1.1")) {
-				temp = oidString + ".1.1";
-				tonerColor = getSNMPValue(temp, result);
-				System.out.println("Toner Color : " + tonerColor);
-			} else {
-				System.out.println("Toner Color : Color toner printer");
-			}
+        oidString = "1.3.6.1.2.1.43.11.1.1.6";
+        rootOID = new OID(oidString);
+        result = MeterUtils.walk(rootOID, target);
+        if (result != null && !result.isEmpty()) {
+            if (result.size() == 1) {
+                if (result.toString().trim().contains("1.3.6.1.2.1.43.11.1.1.6.1.1")) {
+                    String blackToner = "Black and white printer";
+                    System.out.println("isColorPrinter : " + blackToner);
+                    isColorPrinter = blackToner;
+                }
+            }
+            else {
+                String ColorToner = "Color printer";
+                System.out.println("isColorPrinter : " + ColorToner);
+                isColorPrinter = ColorToner;
+            }
+        }
+        else {
+            errorList.add("Root OID : 1.3.6.1.2.1.43.11.1.1.6" + " " + "Toner color of a printer gets failed");
+        }
 
-			// The following oid's is used to get the errorCondition,
-			// operationalState , currentState , mfgMakeAndModel
+        // The following oid's is used to get the errorCondition,
+        // operationalState , currentState , mfgMakeAndModel
 
-			oidString = "1.3.6.1.2.1.25.3";
-			rootOID = new OID(oidString);
-			result = MeterUtils.walk(rootOID, target);
+        oidString = "1.3.6.1.2.1.25.3";
+        rootOID = new OID(oidString);
+        result = MeterUtils.walk(rootOID, target);
 
-			temp = oidString + ".5.1.2.1";
-			errorCondition = getSNMPValue(temp, result);
-			System.out.println("Error Condition : " + errorCondition);
+        if (result != null && !result.isEmpty()) {
+            temp = oidString + ".5.1.2.1";
+            errorCondition = MeterUtils.getSNMPValue(temp, result);
+            System.out.println("Error Condition : " + errorCondition);
+        }
+        else {
+            errorList.add("Root OID : 1.3.6.1.2.1.25.3" + " " + "Error condition of a printer gets failed");
+        }
 
-			oidString = "1.3.6.1.2.1.25.3";
-			rootOID = new OID(oidString);
-			result = MeterUtils.walk(rootOID, target);
+        oidString = "1.3.6.1.2.1.25.3";
+        rootOID = new OID(oidString);
+        result = MeterUtils.walk(rootOID, target);
 
-			printerStatus = printerStatusCalc(result, rootOID);
-			currentState = printerStatus.get("currentState");
-			System.out.println("Current State : " + currentState);
-			operationalState = printerStatus.get("operationalState");
-			System.out.println("Operational State : " + operationalState);
+        if (result != null && !result.isEmpty()) {
+            printerStatus = printerStatusCalc(result, rootOID);
+            currentState = printerStatus.get("currentState");
+            System.out.println("Current State : " + currentState);
+            operationalState = printerStatus.get("operationalState");
+            System.out.println("Operational State : " + operationalState);
 
-			temp = oidString + ".2.1.3.1";
-			mfgModel = getSNMPValue(temp, result);
-			System.out.println("Manufacture Make And Model : " + mfgModel);
+            temp = oidString + ".2.1.3.1";
+            mfgModel = MeterUtils.getSNMPValue(temp, result);
+            System.out.println("Manufacture Make And Model : " + mfgModel);
+        }
+        else {
+            errorList.add("Root OID : 1.3.6.1.2.1.25.3" + " "
+                    + "current, operational state and mfg model of a printer gets failed");
+        }
 
-			// The below oid's is used to get the asset id
+        // The below oid's is used to get the asset id
 
-			oidString = "1.3.6.1.2.1.43.5.1.1";
-			rootOID = new OID(oidString);
-			result = MeterUtils.walk(rootOID, target);
+        oidString = "1.3.6.1.2.1.43.5.1.1";
+        rootOID = new OID(oidString);
+        result = MeterUtils.walk(rootOID, target);
 
-			temp = oidString + ".17.1";
-			assetId = getSNMPValue(temp, result);
-			System.out.println("Asset Id : " + "Printer" + "-" + assetId);
+        if (result != null && !result.isEmpty()) {
+            temp = oidString + ".17.1";
+            tempStr = MeterUtils.getSNMPValue(temp, result);
+            assetId = MeterConstants.SNMP_PRINTER_ASSET + "-" + tempStr;
+            System.out.println("Asset Id : " + assetId);
+        }
+        else {
+            errorList.add("Root OID : 1.3.6.1.2.1.43.5.1.1" + " " + "asset id of a printer gets failed");
+        }
 
-			Printer printerObject = new Printer(assetId, uptime,
-					tonerPercentage, outOfPaperIndicator, networkBytesIn,
-					networkBytesOut, printsTakenCount, sysName, sysIP,
-					sysDescr, sysContact, sysLocation, errorCondition,
-					operationalState, currentState, mfgModel, tonerColor,
-					extras);
+        Printer printerObject = new Printer(assetId, uptime, tonerPercentage, outOfPaperIndicator, networkBytesIn,
+                networkBytesOut, printsTakenCount, sysName, sysIP, sysDescr, sysContact, sysLocation, errorCondition,
+                operationalState, currentState, mfgModel, isColorPrinter, extras);
 
-			return printerObject;
-		} else {
-			String assetDescr = ""; // put the system ip and if u want system
-									// description
-			List errorList = new LinkedList<String>(); // add the null values
-														// and empty details to
-														// this list and return
-			GQErrorInformation gqerr = new GQErrorInformation(assetDescr,
-					errorList);
-		}
-		return null;
-	}
+        GQErrorInformation GqError = null;
+        List<GQErrorInformation> gqerrorInformationList = new LinkedList<GQErrorInformation>();
+        if (errorList == null || errorList.size() == 0 || errorList.isEmpty()) {
+            gqerrorInformationList.add(GqError);
+        }
+        else {
+            GqError = new GQErrorInformation(sysDescr, errorList);
+            gqerrorInformationList.add(GqError);
+        }
+        GQMeterData gqMeterObject = new GQMeterData(gqerrorInformationList, printerObject);
+        return gqMeterObject;
+    }
 
-	public void makeSnmpListen(String ip, String community) throws IOException {
-		/**
-		 * Port 161 is used for Read and Other operations Port 162 is used for
-		 * the trap generation
-		 */
-		protocolAddress = ip; // "UDP:"+IP+"//"+"161";
-		communityString = community;
-		/**
-		 * Start the SNMP session. If you forget the listen() method you will
-		 * not get any answers because the communication is asynchronous and the
-		 * listen() method listens for answers.
-		 * 
-		 * @throws IOException
-		 */
-		snmp = new Snmp(new DefaultUdpTransportMapping());
-		snmp.listen();
-	}
+    private double tonerPercentageCalc(List<VariableBinding> result, OID rootOid) {
 
-	private String getSNMPValue(String octetString, List<VariableBinding> result) {
+        String totalValue = null;
+        String remainingUsage = null;
+        double totalValueFloat = 0L;
+        double remainingUsagefloat = 0L;
+        double finalTonerPercentage = 0L;
+        String rootId = rootOid.toString();
 
-		for (VariableBinding vb : result) {
-			if (octetString.equals(vb.getOid().toString())) {
-				return vb.getVariable().toString();
-			}
-		} // for loop ends
-		return null;
-	}
+        for (VariableBinding vb : result) {
 
-	public long upTimeCalc(String time) {
-		String dayString = null;
-		String[] upTimeArray = null;
-		String timeString = null;
-		long dayseconds = 0L;
-		long hourSec = 0L;
-		long minSec = 0L;
-		long seconds = 0L;
-		String secondsConc = null;
+            totalValue = rootId + ".8.1.1";
+            remainingUsage = rootId + ".9.1.1";
 
-		if (time.contains(",")) {
-			upTimeArray = time.split(",");
-		}
-		if (upTimeArray != null) {
-			dayString = upTimeArray[0].trim();
-			timeString = upTimeArray[1].trim();
-		} else {
-			timeString = time.trim();
-		}
+            if (totalValue != null && vb.getOid().toString().equals(totalValue)) {
 
-		if (dayString != null) {
-			System.out.println("dayString :" + dayString);
-			if (dayString.split(" ")[1].toString().trim().equals("day")) {
-				long day = Long.parseLong(dayString.replace("day", "").trim());
-				dayseconds = TimeUnit.SECONDS.convert(day, TimeUnit.DAYS);
-			} else {
-				long days = Long
-						.parseLong(dayString.replace("days", "").trim());
-				dayseconds = TimeUnit.SECONDS.convert(days, TimeUnit.DAYS);
-			}
-		}
-		if (timeString != null) {
-			String[] timeArray = timeString.split(":");
+                String totalValuestr = vb.getVariable().toString().trim();
+                totalValueFloat = Double.parseDouble(totalValuestr);
 
-			long hour = Long.parseLong(timeArray[0].trim());
-			hourSec = TimeUnit.SECONDS.convert(hour, TimeUnit.HOURS);
+            }
+            else if (remainingUsage != null && vb.getOid().toString().equals(remainingUsage)) {
 
-			long minutes = Long.parseLong(timeArray[1].trim());
-			minSec = TimeUnit.SECONDS.convert(minutes, TimeUnit.MINUTES);
+                String remainingUsageStr = vb.getVariable().toString().trim();
+                remainingUsagefloat = Double.parseDouble(remainingUsageStr);
 
-			seconds = Long.parseLong(timeArray[2].split("\\.")[0].trim());
-			secondsConc = timeArray[2].split("\\.")[1].trim();
-		}
-		long secs = dayseconds + hourSec + minSec + seconds;
-		String secsString = String.valueOf(secs) + secondsConc;
-		long sec = Long.parseLong(secsString);
+            }
 
-		return sec;
-	}
+        } // for loop ends
+        finalTonerPercentage = (remainingUsagefloat / totalValueFloat) * 100;
+        return finalTonerPercentage;
 
-	public double tonerPercentageCalc(List<VariableBinding> result, OID rootOid) {
+    }
 
-		String totalValue = null;
-		String remainingUsage = null;
-		double totalValueFloat = 0L;
-		double remainingUsagefloat = 0L;
-		double finalTonerPercentage = 0L;
-		String rootId = rootOid.toString();
+    private HashMap<String, String> printerStatusCalc(List<VariableBinding> result, OID rootOid) {
 
-		for (VariableBinding vb : result) {
+        String operationalStateKey = "operationalState";
+        String currentStateKey = "currentState";
+        String currentStatus = null;
+        String operationalStatus = null;
+        String rootId = rootOid.toString();
+        String currentStateOid = rootId + ".5.1.1.1";
+        String operationalStateOid = rootId + ".2.1.5.1";
+        String N_A = "Not Avaiable";
+        // Predefined printer status map
+        HashMap<String, String> printerOperationalStateMap = new HashMap<String, String>();
+        printerOperationalStateMap.put("1", "Unknown");
+        printerOperationalStateMap.put("2", "Running");
+        printerOperationalStateMap.put("3", "Warning");
+        printerOperationalStateMap.put("4", "Testing");
+        printerOperationalStateMap.put("5", "Down");
 
-			totalValue = rootId + ".8.1.1";
-			remainingUsage = rootId + ".9.1.1";
+        HashMap<String, String> printerCurrentStateMap = new HashMap<String, String>();
+        printerCurrentStateMap.put("1", "Other");
+        printerCurrentStateMap.put("2", "Unknown");
+        printerCurrentStateMap.put("3", "Idle");
+        printerCurrentStateMap.put("4", "Printing");
+        printerCurrentStateMap.put("5", "WarmUp");
 
-			if (totalValue != null && vb.getOid().toString().equals(totalValue)) {
+        for (VariableBinding vb : result) {
+            if (currentStateOid != null && vb.getOid().toString().equals(currentStateOid)) {
+                String currentStateValue = vb.getVariable().toString().trim();
+                if (printerCurrentStateMap.containsKey(currentStateValue)) {
+                    currentStatus = printerCurrentStateMap.get(currentStateValue);
+                }
+                else {
+                    currentStatus = N_A;
+                }
 
-				String totalValuestr = vb.getVariable().toString().trim();
-				totalValueFloat = Double.parseDouble(totalValuestr);
-
-			} else if (remainingUsage != null
-					&& vb.getOid().toString().equals(remainingUsage)) {
-
-				String remainingUsageStr = vb.getVariable().toString().trim();
-				remainingUsagefloat = Double.parseDouble(remainingUsageStr);
-
-			}
-
-		} // for loop ends
-		finalTonerPercentage = (remainingUsagefloat / totalValueFloat) * 100;
-		return finalTonerPercentage;
-
-	}
-
-	public HashMap<String, String> printerStatusCalc(
-			List<VariableBinding> result, OID rootOid) {
-
-		String operationalStateKey = "operationalState";
-		String currentStateKey = "currentState";
-		String currentStatus = null;
-		String operationalStatus = null;
-		String rootId = rootOid.toString();
-		String currentStateOid = rootId + ".5.1.1.1";
-		String operationalStateOid = rootId + ".2.1.5.1";
-		String N_A = "Not Avaiable";
-		// Predefined printer status map
-		HashMap<String, String> printerOperationalStateMap = new HashMap<String, String>();
-		printerOperationalStateMap.put("2", "Running");
-		printerOperationalStateMap.put("3", "Warning");
-
-		HashMap<String, String> printerCurrentStateMap = new HashMap<String, String>();
-		printerCurrentStateMap.put("1", "Other");
-		printerCurrentStateMap.put("3", "Idle");
-		for (VariableBinding vb : result) {
-			if (currentStateOid != null
-					&& vb.getOid().toString().equals(currentStateOid)) {
-				String currentStateValue = vb.getVariable().toString().trim(); // has
-																				// the
-																				// value
-																				// 1
-																				// or
-																				// 3
-																				// or
-																				// x
-				if (printerCurrentStateMap.containsKey(currentStateValue)) { // check
-																				// in
-																				// the
-																				// predefined
-																				// map
-																				// whether
-																				// the
-																				// map
-																				// has
-																				// the
-																				// value
-					currentStatus = printerCurrentStateMap
-							.get(currentStateValue); // returns other or idle
-				} else {
-					currentStatus = N_A;
-				}
-
-			} else if (operationalStateOid != null
-					&& vb.getOid().toString().equals(operationalStateOid)) {
-				String operationalStateValue = vb.getVariable().toString()
-						.trim(); // has the value 2 or 3 or x
-				if (printerOperationalStateMap
-						.containsKey(operationalStateValue)) { // check in the
-																// predefined
-																// map whether
-																// the map has
-																// the value
-					operationalStatus = printerOperationalStateMap
-							.get(operationalStateValue); // returns running or
-															// warning
-				} else {
-					operationalStatus = N_A;
-				}
-			}
-		}
-		HashMap<String, String> printerStatus = new HashMap<String, String>(); // return
-																				// the
-																				// status
-																				// of
-																				// the
-																				// printer
-																				// with
-																				// currentstate
-																				// and
-																				// operationalState
-		printerStatus.put(currentStateKey, currentStatus); // current
-		printerStatus.put(operationalStateKey, operationalStatus); // operational
-		return printerStatus;
-	}
+            }
+            else if (operationalStateOid != null && vb.getOid().toString().equals(operationalStateOid)) {
+                String operationalStateValue = vb.getVariable().toString().trim();
+                if (printerOperationalStateMap.containsKey(operationalStateValue)) { // check in the
+                                                                                     // predefined
+                                                                                     // map whether
+                                                                                     // the map has
+                                                                                     // the value
+                    operationalStatus = printerOperationalStateMap.get(operationalStateValue); // returns running or
+                                                                                               // warning
+                }
+                else {
+                    operationalStatus = N_A;
+                }
+            }
+        }
+        HashMap<String, String> printerStatus = new HashMap<String, String>(); // return
+                                                                               // the
+                                                                               // status
+                                                                               // of
+                                                                               // the
+                                                                               // printer
+                                                                               // with
+                                                                               // currentstate
+                                                                               // and
+                                                                               // operationalState
+        printerStatus.put(currentStateKey, currentStatus); // current
+        printerStatus.put(operationalStateKey, operationalStatus); // operational
+        return printerStatus;
+    }
 }

@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Vector;
+import java.util.concurrent.TimeUnit;
 
 import org.snmp4j.CommunityTarget;
 import org.snmp4j.PDU;
@@ -319,6 +320,63 @@ public class MeterUtils {
             System.out.println("Exception occured while doing the snmp walk : " + e);
         }
         return ret;
+    }
+
+    public static String getSNMPValue(String octetString, List<VariableBinding> result) {
+
+        for (VariableBinding vb : result) {
+            if (octetString.equals(vb.getOid().toString())) {
+                return vb.getVariable().toString();
+            }
+        } // for loop ends
+        return null;
+    }
+    
+    public static long upTimeCalc(String time) {
+        String dayString = null;
+        String[] upTimeArray = null;
+        String timeString = null;
+        long dayseconds = 0L;
+        long hourSec = 0L;
+        long minSec = 0L;
+        long seconds = 0L;
+        String secondsConc = null;
+
+        if (time.contains(",")) {
+            upTimeArray = time.split(",");
+        }
+        if (upTimeArray != null) {
+            dayString = upTimeArray[0].trim();
+            timeString = upTimeArray[1].trim();
+        }
+        else {
+            timeString = time.trim();
+        }
+
+        if (dayString != null) {
+            System.out.println("dayString :" + dayString);
+            if (dayString.split(" ")[1].toString().trim().equals("day")) {
+                long day = Long.parseLong(dayString.replace("day", "").trim());
+                dayseconds = TimeUnit.SECONDS.convert(day, TimeUnit.DAYS);
+            }
+            else {
+                long days = Long.parseLong(dayString.replace("days", "").trim());
+                dayseconds = TimeUnit.SECONDS.convert(days, TimeUnit.DAYS);
+            }
+        }
+        if (timeString != null) {
+            String[] timeArray = timeString.split(":");
+
+            long hour = Long.parseLong(timeArray[0].trim());
+            hourSec = TimeUnit.SECONDS.convert(hour, TimeUnit.HOURS);
+
+            long minutes = Long.parseLong(timeArray[1].trim());
+            minSec = TimeUnit.SECONDS.convert(minutes, TimeUnit.MINUTES);
+
+            seconds = Long.parseLong(timeArray[2].split("\\.")[0].trim());
+        }
+        long secs = dayseconds + hourSec + minSec + seconds;
+        return secs;
     }
 
 } // class ends

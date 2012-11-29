@@ -1,15 +1,16 @@
 package com.gq.meter;
 
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
-
 import org.snmp4j.CommunityTarget;
 import org.snmp4j.Snmp;
 import org.snmp4j.smi.OID;
@@ -18,120 +19,133 @@ import org.snmp4j.transport.DefaultUdpTransportMapping;
 
 import com.gq.meter.object.Computer;
 import com.gq.meter.object.assist.InstalledSoftware;
+import com.gq.meter.util.MeterConstants;
 import com.gq.meter.util.MeterUtils;
 
-public class ComputerMeter implements GQMeter {
-    Snmp snmp = null;
-    String protocolAddress = null;
-    String communityString = null;
-
-    private static String assetId; // uniq identifier abt the asset
-
-    private static long cpuLoad; // in percentage
-    private static long totalMemory; // bytes
-    private static long usedMemory; // bytes
-    private static long totalVirtualMemory; // bytes
-    private static long usedVirtualMemory; // bytes
-    private static long totalDiskSpace; // bytes
-    private static long usedDiskSpace; // bytes
-    private static long uptime; // seconds
-    private static long numLoggedInUsers;
-    private static long numProcesses;
-    private static long networkBytesIn; // bytes
-    private static long networkBytesOut; // bytes
-
-    private static double clockSpeed; // v2
-
-    private static String sysName;
-    private static String sysIP; // string
-    private static String sysDescr;
-    private static String sysContact;
-    private static String sysLocation; // string
-    private static String extras; // anything device specific
-
-    public static final String SNMP_VERSION_1 = "v1";
-    public static final String SNMP_VERSION_2 = "v2c";
-    public static final String SNMP_VERSION_3 = "v3";
-
-    HashMap<String, String> networkBytes;
+public class ComputerMeter implements GQSNMPMeter {
 
     @Override
-    public Object implement(String communityString, String ipAddress, CommunityTarget target) {
+    public GQMeterData implement(String communityString, String ipAddress, String snmpVersion) {
+
+        Snmp snmp = null;
+
+        String assetId = null; // unique identifier about the asset
+        String sysName = null;
+        String sysIP = null; // string
+        String sysDescr = null;
+        String sysContact = null;
+        String sysLocation = null; // string
+        String extras = null; // anything device specific
+
+        long cpuLoad = 0; // in percentage
+        long totalMemory = 0; // bytes
+        long usedMemory = 0; // bytes
+        long totalVirtualMemory = 0; // bytes
+        long usedVirtualMemory = 0; // bytes
+        long totalDiskSpace = 0; // bytes
+        long usedDiskSpace = 0; // bytes
+        long uptime = 0; // seconds
+        long numLoggedInUsers = 0;
+        long numProcesses = 0;
+        long networkBytesIn = 0; // bytes
+        long networkBytesOut = 0; // bytes
+
+        double clockSpeed = 0; // v2
+
+        List<InstalledSoftware> installedSwList = null;
+
+        HashMap<String, String> networkBytes = null;
+
         sysIP = ipAddress;
-        if (communityString != null && ipAddress != null) {
-            try {
-                makeSnmpListen(ipAddress, communityString);
-            }
-            catch (IOException e) {
-                e.printStackTrace();
-            }
-            // The following oid's is used to get system parameters
 
-            String oidString = "1.3.6.1.2.1.1";
-            String temp;
-            String tempStr;
-            boolean isLinux = false;
-            boolean isWindows = false;
+        CommunityTarget target = null;
 
-            OID rootOID = new OID(oidString);
-            List<VariableBinding> result = null;
+        List<String> errorList = new LinkedList<String>();
 
-            result = MeterUtils.walk(rootOID, target); // walk done with the initial assumption that device is v2
-            // System.out.println("result : " + result);
+        try {
+            snmp = new Snmp(new DefaultUdpTransportMapping());
+            snmp.listen();
+            target = MeterUtils.makeTarget(ipAddress, communityString, snmpVersion);
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
 
+        // The following oid's is used to get system basic info
+
+        String oidString = "1.3.6.1.2.1.1";
+        String temp;
+        String tempStr;
+        boolean isWindows = false;
+
+        OID rootOID = new OID(oidString);
+        List<VariableBinding> result = null;
+
+        result = MeterUtils.walk(rootOID, target);
+
+        if (result != null && !result.isEmpty()) {
             temp = oidString + ".1.0";
-            sysDescr = getSNMPValue(temp, result);
+            sysDescr = MeterUtils.getSNMPValue(temp, result);
             System.out.println("System Description : " + sysDescr);
 
             if (null != sysDescr) {
-                if (sysDescr.contains("Linux")) {
-                    isLinux = true;
-                }
-                else if (sysDescr.contains("Windows")) {
+                if (sysDescr.contains("Windows")) {
                     isWindows = true;
                 }
             }
 
             temp = oidString + ".3.0";
-            tempStr = getSNMPValue(temp, result);
+            tempStr = MeterUtils.getSNMPValue(temp, result);
             System.out.println("Uptime : " + tempStr);
-            uptime = upTimeCalc(tempStr);
+            uptime = MeterUtils.upTimeCalc(tempStr);
             System.out.println("Uptime in seconds : " + uptime);
 
             temp = oidString + ".4.0";
-            sysContact = getSNMPValue(temp, result);
+            sysContact = MeterUtils.getSNMPValue(temp, result);
             System.out.println("System Contact : " + sysContact);
 
             temp = oidString + ".5.0";
-            sysName = getSNMPValue(temp, result);
+            sysName = MeterUtils.getSNMPValue(temp, result);
             System.out.println("System Name : " + sysName);
 
             temp = oidString + ".6.0";
-            sysLocation = getSNMPValue(temp, result);
+            sysLocation = MeterUtils.getSNMPValue(temp, result);
             System.out.println("System Location : " + sysLocation);
+        }
+        else {
+            errorList.add("Root OID : 1.3.6.1.2.1.1" + " " + "Basic info of a computer gets failed");
+        }
 
-            // The following oid's is used to get no. of users and processes
+        // The following oid's is used to get no. of users and processes
 
-            oidString = "1.3.6.1.2.1.25.1";
-            rootOID = new OID(oidString);
-            result = MeterUtils.walk(rootOID, target);
+        oidString = "1.3.6.1.2.1.25.1";
+        rootOID = new OID(oidString);
+        result = MeterUtils.walk(rootOID, target);
 
+        if (result != null && !result.isEmpty()) {
             temp = oidString + ".5.0";
-            tempStr = getSNMPValue(temp, result);
+            tempStr = MeterUtils.getSNMPValue(temp, result);
             numLoggedInUsers = Integer.parseInt(tempStr);
             System.out.println("Number logged in users : " + numLoggedInUsers);
 
             temp = oidString + ".6.0";
-            tempStr = getSNMPValue(temp, result);
+            tempStr = MeterUtils.getSNMPValue(temp, result);
             numProcesses = Integer.parseInt(tempStr);
             System.out.println("Number of processes : " + numProcesses);
+        }
+        else {
+            errorList.add("Root OID : 1.3.6.1.2.1.25.1" + " " + "No of users and process gets failed in computer ");
+        }
 
-            // The following oid's is used to get disc space, physical memory, virtual memory
+        // The following oid's is used to get disc space, physical memory,
+        // virtual memory
 
-            oidString = "1.3.6.1.2.1.25.2.3.1";
-            rootOID = new OID(oidString);
-            result = MeterUtils.walk(rootOID, target);
+        oidString = "1.3.6.1.2.1.25.2.3.1";
+        rootOID = new OID(oidString);
+        result = MeterUtils.walk(rootOID, target);
 
+        if (result != null && !result.isEmpty()) {
             String variable = null;
 
             if (isWindows) {
@@ -161,7 +175,7 @@ public class ComputerMeter implements GQMeter {
                 System.out.println("Used Disk Space : " + usedDiskSpace);
 
             }
-            else if (isLinux) {
+            else {
                 variable = "/dev/shm";
                 long linuxDriveSize = getMemorycalc(result, rootOID, variable, false);
 
@@ -212,23 +226,33 @@ public class ComputerMeter implements GQMeter {
                     usedMemory = getMemorycalc(result, rootOID, variable, true);
                     System.out.println("Used Memory : " + usedMemory);
                 }
-            } // Linux if loop ends
+            } // else loop ends
+        }
+        else {
+            errorList.add("Root OID : 1.3.6.1.2.1.25.2.3.1" + " " + "HDD and memory info gets failed in computer ");
+        }
+        // The following oid's is used to get cpu load
 
-            // The following oid's is used to get cpu load
+        oidString = ".1.3.6.1.2.1.25.3.3.1.2";
+        rootOID = new OID(oidString);
+        result = MeterUtils.walk(rootOID, target);
 
-            oidString = ".1.3.6.1.2.1.25.3.3.1.2";
+        if (result != null && !result.isEmpty()) {
+            cpuLoad = cpuLoadCalc(result, rootOID);
+            System.out.println("CPU Load : " + cpuLoad);
+        }
+        else {
+            errorList.add("Root OID : 1.3.6.1.2.1.25.3.3.1.2" + " " + "CPU load gets failed in computer ");
+        }
+
+        // the following oid's is used to get network in and out bytes for
+        // windows
+        if (isWindows) {
+            oidString = ".1.3.6.1.2.1.2.2.1";
             rootOID = new OID(oidString);
             result = MeterUtils.walk(rootOID, target);
 
-            cpuLoad = cpuLoadCalc(result, rootOID);
-            System.out.println("CPU Load : " + cpuLoad);
-
-            // the following oid's is used to get network in and out bytes for windows
-            if (isWindows) {
-                oidString = ".1.3.6.1.2.1.2.2.1";
-                rootOID = new OID(oidString);
-                result = MeterUtils.walk(rootOID, target);
-
+            if (result != null && !result.isEmpty()) {
                 HashMap<String, String> winNetworkMap = new HashMap<String, String>();
                 networkBytes = winNetworkBytesCalc(result, rootOID, winNetworkMap);
 
@@ -240,138 +264,96 @@ public class ComputerMeter implements GQMeter {
                 networkBytesOut = Long.parseLong(networkBytesOutStr);
                 System.out.println("Network Bytes Out : " + networkBytesOut);
                 // System.out.println("macWinNetworkValue : "+windowsNetworkBytes.get("macWinNetworkValue"));
-                assetId = "Computer" + "-" + sysDescr.hashCode() + "-" + networkBytes.get("macWinNetworkValue");
+                assetId = MeterConstants.SNMP_COMPUTER_ASSET + "-" + sysDescr.hashCode() + "-"
+                        + networkBytes.get("macWinNetworkValue");
                 System.out.println("Asset Id : " + assetId);
 
-                // the following oid's is used to get network in and out bytes for Linux
+                // the following oid's is used to get network in and out bytes
+                // for Linux
 
             }
-            else if (isLinux) {
-                oidString = ".1.3.6.1.2.1.2.2.1";
-                rootOID = new OID(oidString);
-                result = MeterUtils.walk(rootOID, target);
+            else {
+                errorList
+                        .add("Root OID : 1.3.6.1.2.1.2.2.1" + " " + "Network bytes failed for windows os in computer ");
+            }
+        }
+        else {
+            oidString = ".1.3.6.1.2.1.2.2.1";
+            rootOID = new OID(oidString);
+            result = MeterUtils.walk(rootOID, target);
 
+            if (result != null && !result.isEmpty()) {
                 String[] ethernet = new String[] { "eth0", "eth1", "eth2", "en1", "en2", "en3", "em1", "em2", "em3",
                         "wlan" };
                 HashMap<String, List<Long>> networkMap = new HashMap<String, List<Long>>();
 
-                Long inBytes = 0L;
-                Long outBytes = 0L;
                 networkBytes = networkBytesCalc(result, rootOID, ethernet, networkMap, assetId, sysDescr);
                 for (int i = 0; i < ethernet.length; i++) {
                     if (networkBytes.get(ethernet[i] + "InBytes") != null) {
-                        inBytes = inBytes + Long.parseLong(networkBytes.get(ethernet[i] + "InBytes"));
+                        networkBytesIn = networkBytesIn + Long.parseLong(networkBytes.get(ethernet[i] + "InBytes"));
                     }
                     if (networkBytes.get(ethernet[i] + "OutBytes") != null) {
-                        outBytes = outBytes + Long.parseLong(networkBytes.get(ethernet[i] + "OutBytes"));
+                        networkBytesOut = networkBytesOut + Long.parseLong(networkBytes.get(ethernet[i] + "OutBytes"));
                     }
                 } // for loop ends
-                assetId = "Computer" + "-" + networkBytes.get("assetId");
+                assetId = MeterConstants.SNMP_COMPUTER_ASSET + "-" + networkBytes.get("assetId");
                 System.out.println("Asset Id : " + assetId);
-                System.out.println("Network Bytes In : " + inBytes);
-                System.out.println("Network Bytes Out : " + outBytes);
-            } // Linux if loop ends
+                System.out.println("Network Bytes In : " + networkBytesIn);
+                System.out.println("Network Bytes Out : " + networkBytesOut);
 
-            // get the list of installed software 
-            List<InstalledSoftware> installedSwList = new LinkedList<InstalledSoftware> ();
-
-            // add code here to walk and populate list - sriram
-            
-            Computer compObject = new Computer(assetId, cpuLoad, totalMemory, usedMemory, totalVirtualMemory,
-                    usedVirtualMemory, totalDiskSpace, usedDiskSpace, uptime, numLoggedInUsers, numProcesses,
-                    networkBytesIn, networkBytesOut, clockSpeed, sysName, sysIP, sysDescr, sysContact, sysLocation,
-                    extras , installedSwList);
-
-            return compObject;
-        }
-        else {
-            String assetDescr = ""; // put the system ip and if u want system description
-            List errorList = new LinkedList<String>(); // add the null values and empty details to this list and return
-            GQErrorInformation gqerr = new GQErrorInformation(assetDescr, errorList);
-        }
-        return null;
-    }
-
-    public void makeSnmpListen(String ip, String community) throws IOException {
-        /**
-         * Port 161 is used for Read and Other operations Port 162 is used for the trap generation
-         */
-        protocolAddress = ip; // "UDP:"+IP+"//"+"161";
-        communityString = community;
-        /**
-         * Start the SNMP session. If you forget the listen() method you will not get any answers because the
-         * communication is asynchronous and the listen() method listens for answers.
-         * 
-         * @throws IOException
-         */
-        snmp = new Snmp(new DefaultUdpTransportMapping());
-        snmp.listen();
-    }
-
-    private String getSNMPValue(String octetString, List<VariableBinding> result) {
-
-        for (VariableBinding vb : result) {
-            if (octetString.equals(vb.getOid().toString())) {
-                return vb.getVariable().toString();
-            }
-        } // for loop ends
-        return null;
-    }
-
-    public long upTimeCalc(String time) {
-        String dayString = null;
-        String[] upTimeArray = null;
-        String timeString = null;
-        long dayseconds = 0L;
-        long hourSec = 0L;
-        long minSec = 0L;
-        long seconds = 0L;
-        String secondsConc = null;
-
-        if (time.contains(",")) {
-            upTimeArray = time.split(",");
-        }
-        if (upTimeArray != null) {
-            dayString = upTimeArray[0].trim();
-            timeString = upTimeArray[1].trim();
-        }
-        else {
-            timeString = time.trim();
-        }
-
-        if (dayString != null) {
-            System.out.println("dayString :" + dayString);
-            if (dayString.split(" ")[1].toString().trim().equals("day")) {
-                long day = Long.parseLong(dayString.replace("day", "").trim());
-                dayseconds = TimeUnit.SECONDS.convert(day, TimeUnit.DAYS);
             }
             else {
-                long days = Long.parseLong(dayString.replace("days", "").trim());
-                dayseconds = TimeUnit.SECONDS.convert(days, TimeUnit.DAYS);
+                errorList.add("Root OID : 1.3.6.1.2.1.2.2.1" + " " + "Network bytes gets failed in computer ");
             }
         }
-        if (timeString != null) {
-            String[] timeArray = timeString.split(":");
+        oidString = ".1.3.6.1.2.1.25.6.3.1.4";
+        rootOID = new OID(oidString);
+        List<VariableBinding> appResult = MeterUtils.walk(rootOID, target);
 
-            long hour = Long.parseLong(timeArray[0].trim());
-            hourSec = TimeUnit.SECONDS.convert(hour, TimeUnit.HOURS);
+        if (appResult != null && !appResult.isEmpty()) {
+            oidString = ".1.3.6.1.2.1.25.6.3.1.2";
+            rootOID = new OID(oidString);
+            List<VariableBinding> softwareResult = MeterUtils.walk(rootOID, target);
 
-            long minutes = Long.parseLong(timeArray[1].trim());
-            minSec = TimeUnit.SECONDS.convert(minutes, TimeUnit.MINUTES);
+            oidString = ".1.3.6.1.2.1.25.6.3.1.5";
+            rootOID = new OID(oidString);
+            List<VariableBinding> dateResult = MeterUtils.walk(rootOID, target);
 
-            seconds = Long.parseLong(timeArray[2].split("\\.")[0].trim());
-            secondsConc = timeArray[2].split("\\.")[1].trim();
+            // get the list of installed software
+            installedSwList = installedSwListCalc(appResult, softwareResult, dateResult, rootOID, isWindows);
+
+            for (InstalledSoftware ins : installedSwList) {
+                System.out.println(ins.getName() + " --- " + ins.getInstallDate());
+            }
+
         }
-        long secs = dayseconds + hourSec + minSec + seconds;
-        String secsString = String.valueOf(secs) + secondsConc;
-        long sec = Long.parseLong(secsString);
+        else {
+            errorList.add("Root OID : 1.3.6.1.2.1.25.6.3.1.4" + " " + " List of software gets failed in computer ");
+        }
+        Computer compObject = new Computer(assetId, cpuLoad, totalMemory, usedMemory, totalVirtualMemory,
+                usedVirtualMemory, totalDiskSpace, usedDiskSpace, uptime, numLoggedInUsers, numProcesses,
+                networkBytesIn, networkBytesOut, clockSpeed, sysName, sysIP, sysDescr, sysContact, sysLocation, extras,
+                installedSwList);
 
-        return sec;
+        GQErrorInformation GqError = null;
+        List<GQErrorInformation> gqerrorInformationList = new LinkedList<GQErrorInformation>();
+        if (errorList == null || errorList.size() == 0 || errorList.isEmpty()) {
+            gqerrorInformationList.add(GqError);
+        }
+        else {
+            GqError = new GQErrorInformation(sysDescr, errorList);
+            gqerrorInformationList.add(GqError);
+        }
+        GQMeterData gqMeterObject = new GQMeterData(gqerrorInformationList, compObject);
+        return gqMeterObject;
+
     }
 
-    public long cpuLoadCalc(List<VariableBinding> result, OID rootOid) {
+    private long cpuLoadCalc(List<VariableBinding> result, OID rootOid) {
         long totalCpuValue = 0;
         long totalKeys = 0;
+
+        // gqtodo number format exception not handled - look later
         for (VariableBinding vb : result) {
             totalKeys++;
             String cpuValueStr = vb.getVariable().toString().trim();
@@ -384,7 +366,7 @@ public class ComputerMeter implements GQMeter {
 
     }
 
-    public long getMemorycalc(List<VariableBinding> result, OID rootOid, String variable, boolean isUsed) {
+    private long getMemorycalc(List<VariableBinding> result, OID rootOid, String variable, boolean isUsed) {
 
         String mulBytes = null;
         String mulBytesOID = null;
@@ -444,7 +426,7 @@ public class ComputerMeter implements GQMeter {
         return memory;
     }
 
-    public HashMap<String, String> networkBytesCalc(List<VariableBinding> result, OID rootOid, String[] ethernet,
+    private HashMap<String, String> networkBytesCalc(List<VariableBinding> result, OID rootOid, String[] ethernet,
             HashMap<String, List<Long>> networkMap, String assetId, String sysDescr) {
 
         String networkInOid = null;
@@ -457,7 +439,7 @@ public class ComputerMeter implements GQMeter {
         HashMap<String, String> networkValues = new HashMap<String, String>();
         for (int i = 0; i < ethernet.length; i++) {
             for (VariableBinding vb : result) {
-                if (vb.getVariable().toString().trim().equals(ethernet[i])) {
+                if (vb.getVariable().toString().trim().equalsIgnoreCase(ethernet[i])) {
                     String lastchar = String.valueOf(vb.getOid().last());
 
                     macOid = rootId + "." + "6" + "." + lastchar;
@@ -507,7 +489,8 @@ public class ComputerMeter implements GQMeter {
                     }
 
                     // Check MAC address and return the max value of {"eth0",
-                    // "eth1", "eth2", "en1" , "en2","en3", "em1", "em2" , "em3", "wlan"}
+                    // "eth1", "eth2", "en1" , "en2","en3", "em1", "em2" ,
+                    // "em3", "wlan"}
                     // in the return values
                     Set<String> uniqueValues = new HashSet<String>(macOidMap.get(ethernet[i]).values());
                     if (macOidMap.get(ethernet[i]).size() > 1 && uniqueValues != null) {
@@ -529,16 +512,19 @@ public class ComputerMeter implements GQMeter {
                 } // if loop ends
             } // 2nd for loop ends
         } // 1st for loop ends
+
         Set<String> uniqueValues = new HashSet<String>(macOidMap.get("eth0").values());
+
         if (macOidMap.get("eth0") != null && macOidMap.get("eth0").size() != 0) {
-            String eth0MacAddress = uniqueValues.toString().substring(1, uniqueValues.toString().length() - 1);
+            String eth0MacAddress = uniqueValues.toString().substring(1, uniqueValues.toString().length() - 1).trim()
+                    .replaceAll(":", "");
             assetId = String.valueOf(sysDescr.hashCode()) + "-" + eth0MacAddress;
             networkValues.put("assetId", assetId);
         }
         return networkValues;
     } // network bytes calculation for Linux gets over
 
-    public HashMap<String, String> winNetworkBytesCalc(List<VariableBinding> result, OID rootOid,
+    private HashMap<String, String> winNetworkBytesCalc(List<VariableBinding> result, OID rootOid,
             HashMap<String, String> winNetworkMap) {
 
         String networkInOid = null;
@@ -567,7 +553,7 @@ public class ComputerMeter implements GQMeter {
                     macWinNetworkId = rootId + "." + "6" + "." + lastchar;
                     for (VariableBinding vbs : result) {
                         if (macWinNetworkId != null && vbs.getOid().toString().contains(macWinNetworkId)) {
-                            String macWinNetworkValue = vbs.getVariable().toString().trim();
+                            String macWinNetworkValue = vbs.getVariable().toString().trim().replaceAll(":", "");
                             winNetworkMap.put("macWinNetworkValue", macWinNetworkValue);
                         }
                     }// for loop ends
@@ -586,4 +572,76 @@ public class ComputerMeter implements GQMeter {
         return winNetworkMap;
 
     } // network bytes calculation for windows gets over.
+
+    /**
+     * This method used to return the installed s/w and its installed date in a list
+     * 
+     * @param appResult
+     * @param softwareResult
+     * @param dateResult
+     * @param rootOid
+     * @return
+     */
+    private List<InstalledSoftware> installedSwListCalc(List<VariableBinding> appResult,
+            List<VariableBinding> softwareResult, List<VariableBinding> dateResult, OID rootOid, boolean isWindows) {
+
+        LinkedList<InstalledSoftware> installedSwList = new LinkedList<InstalledSoftware>();
+        InstalledSoftware ins = null;
+        try {
+            for (int i = 0; i < appResult.size(); i++) {
+                if (appResult.get(i).getVariable().toString().trim().equals("4")) {
+                    String softwareName = softwareResult.get(i).getVariable().toString().trim();
+                    Date installDate = getDate(dateResult.get(i).getVariable().toString().trim(), isWindows);
+                    ins = new InstalledSoftware(softwareName, installDate);
+                    installedSwList.add(ins);
+                }
+            }
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+        return installedSwList;
+    }
+
+    private static Date getDate(String hexDate, boolean isWindows) {
+        Date newDate = null;
+        if (!isWindows) {
+            hexDate = hexDate.substring(0, hexDate.length() - 12);
+        }
+        String year = hexDate.split(":")[0] + hexDate.split(":")[1];
+        int intOfYear = Integer.parseInt(year, 16);
+        String yearStr = Integer.toString(intOfYear);
+
+        String month = hexDate.split(":")[2];
+        int intOfMonth = Integer.parseInt(month, 16);
+        String monthStr = Integer.toString(intOfMonth);
+
+        String day = hexDate.split(":")[3];
+        int intOfDay = Integer.parseInt(day, 16);
+        String dayStr = Integer.toString(intOfDay);
+
+        String hour = hexDate.split(":")[4];
+        int intOfHour = Integer.parseInt(hour, 16);
+        String hourStr = Integer.toString(intOfHour);
+
+        String minute = hexDate.split(":")[5];
+        int intOfMinute = Integer.parseInt(minute, 16);
+        String minuteStr = Integer.toString(intOfMinute);
+
+        String second = hexDate.split(":")[6];
+        int intOfSecond = Integer.parseInt(second, 16);
+        String secondStr = Integer.toString(intOfSecond);
+
+        String datestr = yearStr + "-" + monthStr + "-" + dayStr + " " + hourStr + ":" + minuteStr + ":" + secondStr;
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        try {
+            newDate = sdf.parse(datestr);
+        }
+        catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        return newDate;
+
+    }
 }

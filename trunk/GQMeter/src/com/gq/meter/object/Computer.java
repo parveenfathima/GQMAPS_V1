@@ -112,6 +112,10 @@ public class Computer {
     public String getExtras() {
         return extras;
     }
+    
+    public List<InstalledSoftware> getInstalledSwList() {
+		return installedSwList;
+	}
 
     public Computer(String assetId, long cpuLoad, long totalMemory, long usedMemory, long totalVirtualMemory,
             long usedVirtualMemory, long totalDiskSpace, long usedDiskSpace, long uptime, long numLoggedInUsers,
