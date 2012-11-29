@@ -20,7 +20,7 @@ public class Printer {
     String operationalState; // for this and the next value , we maintain a table ; need to work more on it.
     String currentState;
     String mfgModel;// v2
-    String tonerColor;
+    String isColorPrinter;
 
     String extras; // anything device specific but to be discussed , v2
 
@@ -88,8 +88,8 @@ public class Printer {
         return mfgModel;
     }
 
-    public String getTonerColor() {
-        return tonerColor;
+    public String getIsColorPrinter() {
+        return isColorPrinter;
     }
 
     public String getExtras() {
@@ -99,7 +99,7 @@ public class Printer {
     public Printer(String assetId, long uptime, double tonerPercentage, long outOfPaperIndicator, long networkBytesIn,
             long networkBytesOut, long printsTakenCount, String sysName, String sysIP, String sysDescr,
             String sysContact, String sysLocation, String errorCondition, String operationalState, String currentState,
-            String mfgModel, String tonerColor, String extras) {
+            String mfgModel, String isColorPrinter, String extras) {
         super();
         this.assetId = assetId;
         this.uptime = uptime;
@@ -117,7 +117,7 @@ public class Printer {
         this.operationalState = operationalState;
         this.currentState = currentState;
         this.mfgModel = mfgModel;
-        this.tonerColor = tonerColor;
+        this.isColorPrinter = isColorPrinter;
         this.extras = extras;
     }
 
