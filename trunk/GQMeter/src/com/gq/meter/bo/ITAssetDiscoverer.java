@@ -11,7 +11,6 @@ import java.util.StringTokenizer;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.gq.meter.GQErrorInformation;
 import com.gq.meter.GQMeterResponse;
 import com.gq.meter.object.assist.ProtocolData;
 import com.gq.meter.util.MeterProtocols;
