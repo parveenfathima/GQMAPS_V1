@@ -33,8 +33,6 @@ public class ITAssetDiscoverer {
      */
     // Gson gson = new GsonBuilder().create();
     Gson gson = new GsonBuilder().setPrettyPrinting().create();
-    List<GQErrorInformation> errorInformationList = new LinkedList<GQErrorInformation>();
-    GQMeterResponse gqmResponse = new GQMeterResponse();
 
     private List<ProtocolData> findassets(String communityString, String ipLowerbound, String ipUpperbound) {
 
@@ -133,7 +131,7 @@ public class ITAssetDiscoverer {
         String ipLowerbound = null;
         List<ProtocolData> assetsList = null;
 
-        // GQMeterResponse gqmResponse = new GQMeterResponse();
+        GQMeterResponse gqmResponse = new GQMeterResponse();
 
         gqmResponse.setGqmid("GQMeterResponse");
 
