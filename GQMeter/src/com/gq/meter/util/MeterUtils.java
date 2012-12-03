@@ -29,7 +29,7 @@ import org.snmp4j.transport.DefaultUdpTransportMapping;
 
 import com.gq.meter.ComputerMeter;
 import com.gq.meter.PrinterMeter;
-import com.gq.meter.SwitchMeter;
+import com.gq.meter.ISRMeter;
 
 public class MeterUtils {
 
@@ -116,7 +116,7 @@ public class MeterUtils {
             assetObject = new PrinterMeter().implement(communityString, currIp, snmpVersion);
             break;
         case MeterConstants.SNMP_SWITCH_ASSET:
-            assetObject = new SwitchMeter().implement(communityString, currIp, snmpVersion);
+            assetObject = new ISRMeter().implement(communityString, currIp, snmpVersion);
             break;
         case MeterConstants.SNMP_ROUTER_ASSET:
 
@@ -331,7 +331,7 @@ public class MeterUtils {
         } // for loop ends
         return null;
     }
-    
+
     public static long upTimeCalc(String time) {
         String dayString = null;
         String[] upTimeArray = null;

@@ -1,15 +1,14 @@
 package com.gq.meter.object;
 
-public class Switch {
+public class IntegratedSwitchRouter {
 
     String assetId; // uniq identifier abt the asset
 
     long uptime; // seconds
     long numberOfPorts;
     long numberOfPortsUp;
-    long networkBytesIn; // bytes , v2
-    long networkBytesOut; // bytes , v2
-    long costToRoot; // v2
+    long networkBytesIn; // bytes
+    long networkBytesOut; // bytes
 
     String sysName;
     String sysIP; // string
@@ -43,10 +42,6 @@ public class Switch {
         return networkBytesOut;
     }
 
-    public long getCostToRoot() {
-        return costToRoot;
-    }
-
     public String getSysName() {
         return sysName;
     }
@@ -71,9 +66,9 @@ public class Switch {
         return extras;
     }
 
-    public Switch(String assetId, long uptime, long numberOfPorts, long numberOfPortsUp, long networkBytesIn,
-            long networkBytesOut, long costToRoot, String sysName, String sysIP, String sysDescr, String sysContact,
-            String sysLocation, String extras) {
+    public IntegratedSwitchRouter(String assetId, long uptime, long numberOfPorts, long numberOfPortsUp,
+            long networkBytesIn, long networkBytesOut, String sysName, String sysIP, String sysDescr,
+            String sysContact, String sysLocation, String extras) {
         super();
         this.assetId = assetId;
         this.uptime = uptime;
@@ -81,7 +76,6 @@ public class Switch {
         this.numberOfPortsUp = numberOfPortsUp;
         this.networkBytesIn = networkBytesIn;
         this.networkBytesOut = networkBytesOut;
-        this.costToRoot = costToRoot;
         this.sysName = sysName;
         this.sysIP = sysIP;
         this.sysDescr = sysDescr;
