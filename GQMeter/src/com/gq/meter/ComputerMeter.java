@@ -20,6 +20,7 @@ import org.snmp4j.transport.DefaultUdpTransportMapping;
 import com.gq.meter.object.Computer;
 import com.gq.meter.object.assist.InstalledSoftware;
 import com.gq.meter.util.MeterConstants;
+import com.gq.meter.util.MeterProtocols;
 import com.gq.meter.util.MeterUtils;
 
 public class ComputerMeter implements GQSNMPMeter {
@@ -264,7 +265,7 @@ public class ComputerMeter implements GQSNMPMeter {
                 networkBytesOut = Long.parseLong(networkBytesOutStr);
                 System.out.println("Network Bytes Out : " + networkBytesOut);
                 // System.out.println("macWinNetworkValue : "+windowsNetworkBytes.get("macWinNetworkValue"));
-                assetId = MeterConstants.SNMP_COMPUTER_ASSET + "-" + sysDescr.hashCode() + "-"
+                assetId = MeterProtocols.COMPUTER + "-" + sysDescr.hashCode() + "-"
                         + networkBytes.get("macWinNetworkValue");
                 System.out.println("Asset Id : " + assetId);
 
@@ -296,7 +297,7 @@ public class ComputerMeter implements GQSNMPMeter {
                         networkBytesOut = networkBytesOut + Long.parseLong(networkBytes.get(ethernet[i] + "OutBytes"));
                     }
                 } // for loop ends
-                assetId = MeterConstants.SNMP_COMPUTER_ASSET + "-" + networkBytes.get("assetId");
+                assetId = MeterProtocols.COMPUTER + "-" + networkBytes.get("assetId");
                 System.out.println("Asset Id : " + assetId);
                 System.out.println("Network Bytes In : " + networkBytesIn);
                 System.out.println("Network Bytes Out : " + networkBytesOut);

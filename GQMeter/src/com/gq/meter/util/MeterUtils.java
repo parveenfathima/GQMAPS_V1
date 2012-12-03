@@ -40,10 +40,8 @@ public class MeterUtils {
      */
     public static HashMap<String, String> isSnmpConfigured(String communityString, String currIp) {
         String oidString = MeterConstants.SNMP_CHECK_OCTET;
-        HashMap<String, String> assetType = null;
-        String asset = null;
+        HashMap<String, String> assetDetails = new HashMap<String, String>();
         String snmpVersion = MeterConstants.SNMP_VERSION_2;
-
         CommunityTarget target = MeterUtils.makeTarget(currIp, communityString, snmpVersion);
         OID rootOID = new OID(oidString);
         List<VariableBinding> result = walk(rootOID, target);
@@ -55,44 +53,47 @@ public class MeterUtils {
             result = walk(rootOID, target);
             if (result == null || result.size() == 0 || result.isEmpty()) {
                 // may be the device is not serving snmp at all. so lets get out or throw io exception
-                System.out.println("SNMP Version2 && version1 are failed ");
-                return assetType; // if snmp is configured & the SNMP_CHECK_OCTET doesn't exist then return null;
+                System.out.println("SNMP Version2 && version1 are failed, The asset is not configure with SNMP ");
+                return assetDetails; // if snmp is configured & the SNMP_CHECK_OCTET doesn't exist then return null;
             }
         }
+        assetDetails.put("snmpVersion", snmpVersion);
+        assetDetails.put("assetDesc", result.get(0).getVariable().toString());
+        return assetDetails;
+    }
+
+    /**
+     * @return
+     * 
+     */
+    public static MeterProtocols getAssetType(String communityString, String currIp, String snmpVersion) {
+        CommunityTarget target = MeterUtils.makeTarget(currIp, communityString, snmpVersion);
+        String oidString = MeterConstants.SNMP_CHECK_PRINTER_OCTET; // Printer
+        MeterProtocols mProtocol = null;
         // call diff walks
-        oidString = ".1.3.6.1.2.1.25.1.6"; // computer
-        rootOID = new OID(oidString);
-        result = walk(rootOID, target);
-        asset = MeterConstants.SNMP_COMPUTER_ASSET;
+
+        OID rootOID = new OID(oidString);
+        List<VariableBinding> result = walk(rootOID, target);
+        mProtocol = MeterProtocols.PRINTER;
 
         if (result == null || result.size() == 0 || result.isEmpty()) {
-            oidString = ".1.3.6.1.2.1.25.3.5.1.1"; // Printer
+            oidString = MeterConstants.SNMP_CHECK_ISR_OCTET; // ISR
             rootOID = new OID(oidString);
             result = walk(rootOID, target);
-            asset = MeterConstants.SNMP_PRINTER_ASSET;
+            mProtocol = MeterProtocols.ISR;
 
             if (result == null || result.size() == 0 || result.isEmpty()) {
-                oidString = "1.3.6.1.2.1.17.2.6"; // Switch
+                oidString = MeterConstants.SNMP_CHECK_COMPUTER_OCTET; // Computer
                 rootOID = new OID(oidString);
                 result = walk(rootOID, target);
-                asset = MeterConstants.SNMP_SWITCH_ASSET;
-
+                mProtocol = MeterProtocols.COMPUTER;
                 if (result == null || result.size() == 0 || result.isEmpty()) {
-                    oidString = ".1.3.6.1.2.1.83.1.1.7"; // router
-                    rootOID = new OID(oidString);
-                    result = walk(rootOID, target);
-                    asset = MeterConstants.SNMP_ROUTER_ASSET;
+                    mProtocol = MeterProtocols.UNKNOWN;
+                    return mProtocol;
                 }
             }
         }
-        if (asset != null) {
-            assetType = new HashMap<String, String>();
-            assetType.put("asset", asset);
-            assetType.put("snmpVersion", snmpVersion);
-        }
-
-        return assetType;
-
+        return mProtocol;
     }
 
     /**
@@ -104,22 +105,20 @@ public class MeterUtils {
      * @param target
      * @return
      */
-    public static Object getAssetObject(String assetType, String communityString, String currIp, String snmpVersion) {
+    public static Object getAssetObject(MeterProtocols protocol, String communityString, String currIp,
+            String snmpVersion) {
 
         Object assetObject = null;
-        switch (assetType.trim()) {
+        switch (protocol) {
 
-        case MeterConstants.SNMP_COMPUTER_ASSET:
-            assetObject = new ComputerMeter().implement(communityString, currIp, snmpVersion);
-            break;
-        case MeterConstants.SNMP_PRINTER_ASSET:
+        case PRINTER:
             assetObject = new PrinterMeter().implement(communityString, currIp, snmpVersion);
             break;
-        case MeterConstants.SNMP_SWITCH_ASSET:
+        case ISR:
             assetObject = new ISRMeter().implement(communityString, currIp, snmpVersion);
             break;
-        case MeterConstants.SNMP_ROUTER_ASSET:
-
+        case COMPUTER:
+            assetObject = new ComputerMeter().implement(communityString, currIp, snmpVersion);
             break;
         }
 

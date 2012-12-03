@@ -13,22 +13,12 @@ public class MeterConstants {
 
     // first level snmp check octet
 
-    public static final String SNMP_CHECK_OCTET = "1.3.6.1.2.1.1"; // Find a minimal value to do walk
+    public static final String SNMP_CHECK_OCTET = "1.3.6.1.2.1.1.1"; // Find a minimal value to do walk
 
-    public static final String SNMP_CHECK_PRINTER_OCTET = "1.3.6.1.2.1.25.3.5.1.1.1"; // Printer serial number
+    public static final String SNMP_CHECK_PRINTER_OCTET = "1.3.6.1.2.1.43.11.1.1"; // Printer tonner oid
 
-    public static final String SNMP_CHECK_COMPUTER_OCTET = "1.3.6.1.2.1.25.1.6.0"; // Number of process
+    public static final String SNMP_CHECK_COMPUTER_OCTET = "1.3.6.1.2.1.25.3.3.1.2"; // Cpu load of computer
 
-    public static final String SNMP_CHECK_SWITCH_OCTET = "1.3.6.1.2.1.17.2.6.0"; // Number of ports
-
-    public static final String SNMP_CHECK_ROUTER_OCTET = "1.3.6.1.2.1.83.1.1.7.0";// find
-
-    public static final String SNMP_COMPUTER_ASSET = "COMPUTER";
-
-    public static final String SNMP_PRINTER_ASSET = "PRINTER";
-
-    public static final String SNMP_ROUTER_ASSET = "ROUTER";
-
-    public static final String SNMP_SWITCH_ASSET = "SWITCH";
+    public static final String SNMP_CHECK_ISR_OCTET = "1.3.6.1.2.1.47.1.1.1.1.2"; // ISR octet
 
 } // class ends
