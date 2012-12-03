@@ -1,6 +1,7 @@
 package com.gq.meter;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -10,11 +11,11 @@ import org.snmp4j.smi.OID;
 import org.snmp4j.smi.VariableBinding;
 import org.snmp4j.transport.DefaultUdpTransportMapping;
 
-import com.gq.meter.object.Switch;
+import com.gq.meter.object.IntegratedSwitchRouter;
 import com.gq.meter.util.MeterConstants;
 import com.gq.meter.util.MeterUtils;
 
-public class SwitchMeter implements GQSNMPMeter {
+public class ISRMeter implements GQSNMPMeter {
 
     @Override
     public GQMeterData implement(String communityString, String ipAddress, String snmpVersion) {
@@ -34,9 +35,10 @@ public class SwitchMeter implements GQSNMPMeter {
         long numberOfPortsUp = 0;
         long networkBytesIn = 0; // bytes , v2
         long networkBytesOut = 0; // bytes , v2
-        long costToRoot = 0; // v2
 
         sysIP = ipAddress;
+
+        HashMap<String, Long> networkBytes = null;
 
         CommunityTarget target = null;
 
@@ -127,8 +129,29 @@ public class SwitchMeter implements GQSNMPMeter {
             errorList.add("Root OID : 1.3.6.1.2.1.2.2.1.7" + " "
                     + "Total active ports and asset id of switch gets failed");
         }
-        Switch switchObject = new Switch(assetId, uptime, numberOfPorts, numberOfPortsUp, networkBytesIn,
-                networkBytesOut, costToRoot, sysName, sysIP, sysDescr, sysContact, sysLocation, extras);
+
+        // The following oid's is used to get the network in and out bytes
+        oidString = ".1.3.6.1.2.1.2.2.1";
+        rootOID = new OID(oidString);
+        result = MeterUtils.walk(rootOID, target);
+
+        if (result != null && !result.isEmpty()) {
+
+            HashMap<String, Long> switchNetworkMap = new HashMap<String, Long>();
+            networkBytes = switchNetworkBytesCalc(result, rootOID, switchNetworkMap);
+
+            networkBytesIn = networkBytes.get("InBytes");
+            System.out.println("Network Bytes In : " + networkBytesIn);
+
+            networkBytesOut = networkBytes.get("OutBytes");
+            System.out.println("Network Bytes Out : " + networkBytesOut);
+        }
+        else {
+            errorList.add("Root OID : 1.3.6.1.2.1.2.2.1" + " " + "Network In and Out bytes gets failed");
+        }
+        IntegratedSwitchRouter switchObject = new IntegratedSwitchRouter(assetId, uptime, numberOfPorts,
+                numberOfPortsUp, networkBytesIn, networkBytesOut, sysName, sysIP, sysDescr, sysContact, sysLocation,
+                extras);
 
         GQErrorInformation GqError = null;
         List<GQErrorInformation> gqerrorInformationList = new LinkedList<GQErrorInformation>();
@@ -169,4 +192,51 @@ public class SwitchMeter implements GQSNMPMeter {
         return totalActivePorts;
 
     }
+
+    private HashMap<String, Long> switchNetworkBytesCalc(List<VariableBinding> result, OID rootOid,
+            HashMap<String, Long> switchNetworkMap) {
+
+        String networkInOid = null;
+        String networkOutOid = null;
+        long switchNetworkIn = 0;
+        long switchNetworkOut = 0;
+        String rootId = rootOid.toString();
+
+        for (VariableBinding vb : result) {
+            String lastchar = String.valueOf(vb.getOid().last());
+
+            networkInOid = rootId + "." + "10" + "." + lastchar;
+
+            networkOutOid = rootId + "." + "16" + "." + lastchar;
+
+            if (networkInOid != null && vb.getOid().toString().contains(networkInOid)) {
+
+                String switchNetworkInVal = vb.getVariable().toString().trim();
+                if (!switchNetworkInVal.equalsIgnoreCase("0")) {
+
+                    String switchNetworkInStr = vb.getVariable().toString().trim();
+                    long switchNetworkInValue = Long.parseLong(switchNetworkInStr);
+                    switchNetworkIn = switchNetworkIn + switchNetworkInValue;
+
+                    switchNetworkMap.put("InBytes", switchNetworkIn);
+
+                } // 2nd if loop ends
+
+            } // if loop ends
+            else if (networkOutOid != null && vb.getOid().toString().contains(networkOutOid)) {
+                String switchNetworkOutVal = vb.getVariable().toString().trim();
+                if (!switchNetworkOutVal.equalsIgnoreCase("0")) {
+                    String switchNetworkOutStr = vb.getVariable().toString().trim();
+                    long switchNetworkOutValue = Long.parseLong(switchNetworkOutStr);
+                    switchNetworkOut = switchNetworkIn + switchNetworkOutValue;
+
+                    switchNetworkMap.put("OutBytes", switchNetworkOut);
+                }
+            }
+
+        } // for loop ends
+        return switchNetworkMap;
+
+    } // network bytes calculation for switch gets over.
+
 }
