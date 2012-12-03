@@ -11,8 +11,10 @@ import java.util.StringTokenizer;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.gq.meter.GQErrorInformation;
 import com.gq.meter.GQMeterResponse;
 import com.gq.meter.object.assist.ProtocolData;
+import com.gq.meter.util.MeterProtocols;
 import com.gq.meter.util.MeterUtils;
 
 /**
@@ -31,64 +33,88 @@ public class ITAssetDiscoverer {
      */
     // Gson gson = new GsonBuilder().create();
     Gson gson = new GsonBuilder().setPrettyPrinting().create();
+    List<GQErrorInformation> errorInformationList = new LinkedList<GQErrorInformation>();
+    GQMeterResponse gqmResponse = new GQMeterResponse();
 
     private List<ProtocolData> findassets(String communityString, String ipLowerbound, String ipUpperbound) {
 
         Object assetObject = null;
-        HashMap<String, String> assetType = null;
+        HashMap<String, String> snmpDetails = null;
         String snmpVersion = null;
-        String asset = null;
+        String assetDesc = null;
+        MeterProtocols mProtocol = null;
 
         List<ProtocolData> pdList = new LinkedList<ProtocolData>();
+        try {
+            if (null != communityString && null != ipLowerbound) {
+                try {
+                    String currIp = ipLowerbound;
+                    System.out.println("********************* ip = " + currIp + "*******************");
 
-        if (null != communityString && null != ipLowerbound) {
-            try {
-                String currIp = ipLowerbound;
-                System.out.println("********************* ip = " + currIp + "*******************");
+                    snmpDetails = MeterUtils.isSnmpConfigured(communityString, currIp);
+                    if (snmpDetails != null && snmpDetails.size() != 0 && !snmpDetails.isEmpty()) {
+                        snmpVersion = snmpDetails.get("snmpVersion");
+                        assetDesc = snmpDetails.get("assetDesc");
+                        mProtocol = MeterUtils.getAssetType(communityString, currIp, snmpVersion);
 
-                assetType = MeterUtils.isSnmpConfigured(communityString, currIp);
-                if (assetType != null && assetType.size() != 0 && !assetType.isEmpty()) {
-                    snmpVersion = assetType.get("snmpVersion");
-                    asset = assetType.get("asset");
-                    assetObject = MeterUtils.getAssetObject(asset, communityString, currIp, snmpVersion);
-                    pdList.add(new ProtocolData(asset, gson.toJson(assetObject)));
-                }
-                else {
-                    System.out.println("The asset on the ip : " + currIp + " is not configured with snmp");
-                }
-
-                if (null != ipUpperbound) {
-                    while (!(currIp = MeterUtils.nextIpAddress(currIp)).equals(ipUpperbound)) {
-                        System.out.println("********************* next ip = " + currIp + "*******************");
-                        assetType = MeterUtils.isSnmpConfigured(communityString, currIp);
-                        if (assetType != null && assetType.size() != 0 && !assetType.isEmpty()) {
-                            snmpVersion = assetType.get("snmpVersion");
-                            asset = assetType.get("asset");
-                            assetObject = MeterUtils.getAssetObject(asset, communityString, currIp, snmpVersion);
-                            pdList.add(new ProtocolData(asset, gson.toJson(assetObject)));
+                        if (!mProtocol.equals(MeterProtocols.UNKNOWN)) {
+                            assetObject = MeterUtils.getAssetObject(mProtocol, communityString, currIp, snmpVersion);
+                            pdList.add(new ProtocolData(mProtocol, gson.toJson(assetObject)));
                         }
                         else {
-                            System.out.println("The asset on the ip : " + currIp + " is not configured with snmp");
+                            pdList.add(new ProtocolData(mProtocol, assetDesc));
+                        }
+
+                    }
+
+                    if (null != ipUpperbound) {
+                        while (!(currIp = MeterUtils.nextIpAddress(currIp)).equals(ipUpperbound)) {
+                            System.out.println("********************* next ip = " + currIp + "*******************");
+                            snmpDetails = MeterUtils.isSnmpConfigured(communityString, currIp);
+                            if (snmpDetails != null && snmpDetails.size() != 0 && !snmpDetails.isEmpty()) {
+                                snmpVersion = snmpDetails.get("snmpVersion");
+                                assetDesc = snmpDetails.get("assetDesc");
+                                mProtocol = MeterUtils.getAssetType(communityString, currIp, snmpVersion);
+
+                                if (!mProtocol.equals(MeterProtocols.UNKNOWN)) {
+                                    assetObject = MeterUtils.getAssetObject(mProtocol, communityString, currIp,
+                                            snmpVersion);
+                                    pdList.add(new ProtocolData(mProtocol, gson.toJson(assetObject)));
+                                }
+                                else {
+                                    pdList.add(new ProtocolData(mProtocol, assetDesc));
+                                }
+                            }
+                        }
+
+                        currIp = ipUpperbound;
+                        System.out.println("********************* next ip = " + currIp + "*******************");
+                        snmpDetails = MeterUtils.isSnmpConfigured(communityString, currIp);
+                        if (snmpDetails != null && snmpDetails.size() != 0 && !snmpDetails.isEmpty()) {
+                            snmpVersion = snmpDetails.get("snmpVersion");
+                            assetDesc = snmpDetails.get("assetDesc");
+                            mProtocol = MeterUtils.getAssetType(communityString, currIp, snmpVersion);
+
+                            if (!mProtocol.equals(MeterProtocols.UNKNOWN)) {
+                                assetObject = MeterUtils
+                                        .getAssetObject(mProtocol, communityString, currIp, snmpVersion);
+                                pdList.add(new ProtocolData(mProtocol, gson.toJson(assetObject)));
+                            }
+                            else {
+                                pdList.add(new ProtocolData(mProtocol, assetDesc));
+                            }
                         }
                     }
 
-                    currIp = ipUpperbound;
-                    System.out.println("********************* next ip = " + currIp + "*******************");
-                    assetType = MeterUtils.isSnmpConfigured(communityString, currIp);
-                    if (assetType != null && assetType.size() != 0 && !assetType.isEmpty()) {
-                        snmpVersion = assetType.get("snmpVersion");
-                        asset = assetType.get("asset");
-                        assetObject = MeterUtils.getAssetObject(asset, communityString, currIp, snmpVersion);
-                        pdList.add(new ProtocolData(asset, gson.toJson(assetObject)));
-                    }
-                    else {
-                        System.out.println("The asset on the ip : " + currIp + " is not configured with snmp");
-                    }
+                }
+                catch (Exception e) {
+                    e.printStackTrace();
+                    System.out.println("Exception occured while finding the assets : " + e);
                 }
             }
-            catch (Exception e) {
-                System.out.println("Exception occured while finding the assets : " + e);
-            }
+        }
+        catch (Exception e) {
+            e.printStackTrace();
         }
 
         return pdList;
@@ -107,9 +133,9 @@ public class ITAssetDiscoverer {
         String ipLowerbound = null;
         List<ProtocolData> assetsList = null;
 
-        GQMeterResponse gqmResponse = new GQMeterResponse();
+        // GQMeterResponse gqmResponse = new GQMeterResponse();
 
-        gqmResponse.setGqmid("GQITMeter1");
+        gqmResponse.setGqmid("GQMeterResponse");
 
         if (null != inputFilePath && inputFilePath.trim() != "") {
             try {
@@ -189,7 +215,7 @@ public class ITAssetDiscoverer {
     public static void main(String[] args) throws IOException {
 
         ITAssetDiscoverer itad = new ITAssetDiscoverer();
-        String inputFilePath = "C:\\AssetDetails.txt";
+        String inputFilePath = "C:\\Users\\chandru.p\\AssetDetails.txt";
         GQMeterResponse gqmResponse = itad.readInput(inputFilePath);
         System.out.println("::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::");
 

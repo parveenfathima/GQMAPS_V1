@@ -12,7 +12,7 @@ import org.snmp4j.smi.VariableBinding;
 import org.snmp4j.transport.DefaultUdpTransportMapping;
 
 import com.gq.meter.object.Printer;
-import com.gq.meter.util.MeterConstants;
+import com.gq.meter.util.MeterProtocols;
 import com.gq.meter.util.MeterUtils;
 
 public class PrinterMeter implements GQSNMPMeter {
@@ -180,7 +180,7 @@ public class PrinterMeter implements GQSNMPMeter {
         if (result != null && !result.isEmpty()) {
             temp = oidString + ".17.1";
             tempStr = MeterUtils.getSNMPValue(temp, result);
-            assetId = MeterConstants.SNMP_PRINTER_ASSET + "-" + tempStr;
+            assetId = MeterProtocols.PRINTER + "-" + tempStr;
             System.out.println("Asset Id : " + assetId);
         }
         else {

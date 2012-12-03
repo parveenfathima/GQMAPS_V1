@@ -12,7 +12,7 @@ import org.snmp4j.smi.VariableBinding;
 import org.snmp4j.transport.DefaultUdpTransportMapping;
 
 import com.gq.meter.object.IntegratedSwitchRouter;
-import com.gq.meter.util.MeterConstants;
+import com.gq.meter.util.MeterProtocols;
 import com.gq.meter.util.MeterUtils;
 
 public class ISRMeter implements GQSNMPMeter {
@@ -67,7 +67,7 @@ public class ISRMeter implements GQSNMPMeter {
                                                    // initial assumption
                                                    // that device is v2
         if (result != null && !result.isEmpty()) {
-            System.out.println("result : " + result);
+            // System.out.println("result : " + result);
 
             temp = oidString + ".1.0";
             sysDescr = MeterUtils.getSNMPValue(temp, result);
@@ -122,7 +122,7 @@ public class ISRMeter implements GQSNMPMeter {
             String switchAssetId = sysDescr + sysName;
             int assetIdVal = switchAssetId.hashCode();
             String assetIdStr = Integer.toString(assetIdVal);
-            assetId = MeterConstants.SNMP_SWITCH_ASSET + "-" + assetIdStr + "-" + numberOfPorts;
+            assetId = MeterProtocols.ISR + "-" + assetIdStr + "-" + numberOfPorts;
             System.out.println("assetId : " + assetId);
         }
         else {
