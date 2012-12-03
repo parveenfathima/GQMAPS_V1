@@ -212,7 +212,7 @@ public class ITAssetDiscoverer {
     public static void main(String[] args) throws IOException {
 
         ITAssetDiscoverer itad = new ITAssetDiscoverer();
-        String inputFilePath = "C:\\Users\\chandru.p\\AssetDetails.txt";
+        String inputFilePath = "C:\\AssetDetails.txt";
         GQMeterResponse gqmResponse = itad.readInput(inputFilePath);
         System.out.println("::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::");
 
