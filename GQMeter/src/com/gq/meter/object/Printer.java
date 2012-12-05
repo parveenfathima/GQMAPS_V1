@@ -7,8 +7,6 @@ public class Printer {
     long upTime; // seconds
     double tonerPercentage;
     long outOfPaperIndicator; // 0 means no paper , v2
-    long networkBytesIn; // bytes , v2
-    long networkBytesOut; // bytes , v2
     long printsTakenCount; // v2
 
     String sysName;
@@ -38,14 +36,6 @@ public class Printer {
 
     public long getOutOfPaperIndicator() {
         return outOfPaperIndicator;
-    }
-
-    public long getNetworkBytesIn() {
-        return networkBytesIn;
-    }
-
-    public long getNetworkBytesOut() {
-        return networkBytesOut;
     }
 
     public long getPrintsTakenCount() {
@@ -96,17 +86,15 @@ public class Printer {
         return extras;
     }
 
-    public Printer(String assetId, long upTime, double tonerPercentage, long outOfPaperIndicator, long networkBytesIn,
-            long networkBytesOut, long printsTakenCount, String sysName, String sysIP, String sysDescr,
-            String sysContact, String sysLocation, String errorCondition, String operationalState, String currentState,
-            String mfgModel, String isColorPrinter, String extras) {
+    public Printer(String assetId, long upTime, double tonerPercentage, long outOfPaperIndicator,
+            long printsTakenCount, String sysName, String sysIP, String sysDescr, String sysContact,
+            String sysLocation, String errorCondition, String operationalState, String currentState, String mfgModel,
+            String isColorPrinter, String extras) {
         super();
         this.assetId = assetId;
         this.upTime = upTime;
         this.tonerPercentage = tonerPercentage;
         this.outOfPaperIndicator = outOfPaperIndicator;
-        this.networkBytesIn = networkBytesIn;
-        this.networkBytesOut = networkBytesOut;
         this.printsTakenCount = printsTakenCount;
         this.sysName = sysName;
         this.sysIP = sysIP;
