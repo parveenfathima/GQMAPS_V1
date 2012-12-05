@@ -21,4 +21,8 @@ public class MeterConstants {
 
     public static final String SNMP_CHECK_ISR_OCTET = "1.3.6.1.2.1.47.1.1.1.1.2"; // ISR octet
 
+    public static final String COLOR_PRINTER = "color";
+
+    public static final String BLACKWHITE_PRINTER = "black";
+
 } // class ends

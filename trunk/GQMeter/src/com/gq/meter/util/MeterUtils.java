@@ -353,7 +353,6 @@ public class MeterUtils {
         }
 
         if (dayString != null) {
-            System.out.println("dayString :" + dayString);
             if (dayString.split(" ")[1].toString().trim().equals("day")) {
                 long day = Long.parseLong(dayString.replace("day", "").trim());
                 dayseconds = TimeUnit.SECONDS.convert(day, TimeUnit.DAYS);

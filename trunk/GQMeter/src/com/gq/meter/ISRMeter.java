@@ -2,8 +2,10 @@ package com.gq.meter;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import org.snmp4j.CommunityTarget;
 import org.snmp4j.Snmp;
@@ -28,9 +30,10 @@ public class ISRMeter implements GQSNMPMeter {
         String sysDescr = null;
         String sysContact = null;
         String sysLocation = null; // string
+        String connectedDevices = null;
         String extras = null; // anything device specific but to be discussed v2
 
-        long uptime = 0; // seconds
+        long upTime = 0; // seconds
         long numberOfPorts = 0;
         long numberOfPortsUp = 0;
         long networkBytesIn = 0; // bytes , v2
@@ -76,8 +79,8 @@ public class ISRMeter implements GQSNMPMeter {
             temp = oidString + ".3.0";
             tempStr = MeterUtils.getSNMPValue(temp, result);
             // System.out.println("Uptime : " + tempStr);
-            uptime = MeterUtils.upTimeCalc(tempStr);
-            System.out.println("Uptime : " + uptime);
+            upTime = MeterUtils.upTimeCalc(tempStr);
+            System.out.println("Uptime : " + upTime);
 
             temp = oidString + ".4.0";
             sysContact = MeterUtils.getSNMPValue(temp, result);
@@ -119,11 +122,6 @@ public class ISRMeter implements GQSNMPMeter {
             numberOfPortsUp = activePortsCalc(result, rootOID);
             System.out.println("Total Active Ports : " + numberOfPortsUp);
 
-            String switchAssetId = sysDescr + sysName;
-            int assetIdVal = switchAssetId.hashCode();
-            String assetIdStr = Integer.toString(assetIdVal);
-            assetId = MeterProtocols.ISR + "-" + assetIdStr + "-" + numberOfPorts;
-            System.out.println("assetId : " + assetId);
         }
         else {
             errorList.add("Root OID : 1.3.6.1.2.1.2.2.1.7" + " "
@@ -149,20 +147,45 @@ public class ISRMeter implements GQSNMPMeter {
         else {
             errorList.add("Root OID : 1.3.6.1.2.1.2.2.1" + " " + "Network In and Out bytes gets failed");
         }
-        IntegratedSwitchRouter switchObject = new IntegratedSwitchRouter(assetId, uptime, numberOfPorts,
-                numberOfPortsUp, networkBytesIn, networkBytesOut, sysName, sysIP, sysDescr, sysContact, sysLocation,
-                extras);
 
-        GQErrorInformation GqError = null;
-        List<GQErrorInformation> gqerrorInformationList = new LinkedList<GQErrorInformation>();
-        if (errorList == null || errorList.size() == 0 || errorList.isEmpty()) {
-            gqerrorInformationList.add(GqError);
+        // The following oid's is used to get the devices that are connected to ISR.
+        oidString = ".1.3.6.1.2.1.31.1.1.1.18";
+        rootOID = new OID(oidString);
+        result = MeterUtils.walk(rootOID, target);
+
+        if (result != null && !result.isEmpty()) {
+
+            connectedDevices = ConnectedDevicesCalc(result, rootOID);
+            System.out.println("Connected Device : " + connectedDevices);
         }
         else {
-            GqError = new GQErrorInformation(sysDescr, errorList);
-            gqerrorInformationList.add(GqError);
+            errorList.add("Root OID : 1.3.6.1.2.1.31.1.1.1.18" + " " + "Connected devices gets failed");
         }
-        GQMeterData gqMeterObject = new GQMeterData(gqerrorInformationList, switchObject);
+
+        // The following oid's is used to get the asset ID.
+        oidString = "1.3.6.1.2.1.2.2.1.6";
+        rootOID = new OID(oidString);
+        result = MeterUtils.walk(rootOID, target);
+
+        if (result != null && !result.isEmpty()) {
+            temp = oidString + ".1";
+            String assetIdVal = MeterUtils.getSNMPValue(temp, result);
+            assetId = MeterProtocols.ISR + "-" + assetIdVal.replaceAll(":", "");
+            System.out.println("Asset ID : " + assetId);
+        }
+        else {
+            errorList.add("Root OID : 1.3.6.1.2.1.2.2.1.6" + " " + "Asset ID gets failed");
+        }
+
+        IntegratedSwitchRouter switchObject = new IntegratedSwitchRouter(assetId, upTime, numberOfPorts,
+                numberOfPortsUp, networkBytesIn, networkBytesOut, sysName, sysIP, sysDescr, sysContact, sysLocation,
+                connectedDevices, extras);
+
+        GQErrorInformation gqErrorInfo = null;
+        if (errorList != null) {
+            gqErrorInfo = new GQErrorInformation(sysDescr, errorList);
+        }
+        GQMeterData gqMeterObject = new GQMeterData(gqErrorInfo, switchObject);
         return gqMeterObject;
     }
 
@@ -238,5 +261,20 @@ public class ISRMeter implements GQSNMPMeter {
         return switchNetworkMap;
 
     } // network bytes calculation for switch gets over.
+
+    private String ConnectedDevicesCalc(List<VariableBinding> result, OID rootOid) {
+        Set<String> connectedDevice = new HashSet<String>();
+        String value = null;
+        for (VariableBinding vb : result) {
+            value = vb.getVariable().toString();
+            if (value != null && value.trim().length() != 0) {
+                value = value.replaceAll("[<>]", "").trim().toUpperCase();
+                connectedDevice.add(value);
+            }
+        }
+        String connectedDevices = connectedDevice.toString().substring(1, connectedDevice.toString().length() - 1);
+        return connectedDevices;
+
+    }
 
 }

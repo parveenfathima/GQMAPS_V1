@@ -4,7 +4,7 @@ public class Printer {
 
     String assetId; // uniq identifier abt the asset
 
-    long uptime; // seconds
+    long upTime; // seconds
     double tonerPercentage;
     long outOfPaperIndicator; // 0 means no paper , v2
     long networkBytesIn; // bytes , v2
@@ -28,8 +28,8 @@ public class Printer {
         return assetId;
     }
 
-    public long getUptime() {
-        return uptime;
+    public long getUpTime() {
+        return upTime;
     }
 
     public double getTonerPercentage() {
@@ -96,13 +96,13 @@ public class Printer {
         return extras;
     }
 
-    public Printer(String assetId, long uptime, double tonerPercentage, long outOfPaperIndicator, long networkBytesIn,
+    public Printer(String assetId, long upTime, double tonerPercentage, long outOfPaperIndicator, long networkBytesIn,
             long networkBytesOut, long printsTakenCount, String sysName, String sysIP, String sysDescr,
             String sysContact, String sysLocation, String errorCondition, String operationalState, String currentState,
             String mfgModel, String isColorPrinter, String extras) {
         super();
         this.assetId = assetId;
-        this.uptime = uptime;
+        this.upTime = upTime;
         this.tonerPercentage = tonerPercentage;
         this.outOfPaperIndicator = outOfPaperIndicator;
         this.networkBytesIn = networkBytesIn;

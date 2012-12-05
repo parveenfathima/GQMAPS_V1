@@ -12,6 +12,7 @@ import org.snmp4j.smi.VariableBinding;
 import org.snmp4j.transport.DefaultUdpTransportMapping;
 
 import com.gq.meter.object.Printer;
+import com.gq.meter.util.MeterConstants;
 import com.gq.meter.util.MeterProtocols;
 import com.gq.meter.util.MeterUtils;
 
@@ -35,7 +36,7 @@ public class PrinterMeter implements GQSNMPMeter {
         String isColorPrinter = null;
         String extras = null; // anything device specific but to be discussed , v2
 
-        long uptime = 0; // seconds
+        long upTime = 0; // seconds
         long outOfPaperIndicator = 0; // 0 means no paper , v2
         long networkBytesIn = 0; // bytes , v2
         long networkBytesOut = 0; // bytes , v2
@@ -72,7 +73,6 @@ public class PrinterMeter implements GQSNMPMeter {
 
         result = MeterUtils.walk(rootOID, target); // walk done with the initial assumption that device is v2
         if (result != null && !result.isEmpty()) {
-            System.out.println("result : " + result);
 
             temp = oidString + ".1.0";
             sysDescr = MeterUtils.getSNMPValue(temp, result);
@@ -82,8 +82,8 @@ public class PrinterMeter implements GQSNMPMeter {
             tempStr = MeterUtils.getSNMPValue(temp, result);
             // System.out.println("Uptime : " + tempStr);
 
-            uptime = MeterUtils.upTimeCalc(tempStr);
-            System.out.println("Uptime : " + uptime);
+            upTime = MeterUtils.upTimeCalc(tempStr);
+            System.out.println("Uptime : " + upTime);
 
             temp = oidString + ".4.0";
             sysContact = MeterUtils.getSNMPValue(temp, result);
@@ -118,17 +118,15 @@ public class PrinterMeter implements GQSNMPMeter {
         rootOID = new OID(oidString);
         result = MeterUtils.walk(rootOID, target);
         if (result != null && !result.isEmpty()) {
-            if (result.size() == 1) {
+            if (result.size() <= 2) {
                 if (result.toString().trim().contains("1.3.6.1.2.1.43.11.1.1.6.1.1")) {
-                    String blackToner = "Black and white printer";
-                    System.out.println("isColorPrinter : " + blackToner);
-                    isColorPrinter = blackToner;
+                    System.out.println("isColorPrinter : " + MeterConstants.BLACKWHITE_PRINTER);
+                    isColorPrinter = MeterConstants.BLACKWHITE_PRINTER;
                 }
             }
             else {
-                String ColorToner = "Color printer";
-                System.out.println("isColorPrinter : " + ColorToner);
-                isColorPrinter = ColorToner;
+                System.out.println("isColorPrinter : " + MeterConstants.COLOR_PRINTER);
+                isColorPrinter = MeterConstants.COLOR_PRINTER;
             }
         }
         else {
@@ -172,35 +170,32 @@ public class PrinterMeter implements GQSNMPMeter {
         }
 
         // The below oid's is used to get the asset id
+        // Asset id = mac id of a printer
 
-        oidString = "1.3.6.1.2.1.43.5.1.1";
+        oidString = ".1.3.6.1.2.1.2.2.1";
         rootOID = new OID(oidString);
         result = MeterUtils.walk(rootOID, target);
 
         if (result != null && !result.isEmpty()) {
-            temp = oidString + ".17.1";
-            tempStr = MeterUtils.getSNMPValue(temp, result);
-            assetId = MeterProtocols.PRINTER + "-" + tempStr;
-            System.out.println("Asset Id : " + assetId);
+            String assetVal = assetCalc(result, rootOID);
+            assetId = MeterProtocols.PRINTER + "-" + assetVal;
+            System.out.println("Asset ID : " + assetId);
+
         }
         else {
-            errorList.add("Root OID : 1.3.6.1.2.1.43.5.1.1" + " " + "asset id of a printer gets failed");
+            errorList.add("Root OID : .1.3.6.1.2.1.2.2.1" + " " + "asset id of a printer gets failed");
         }
 
-        Printer printerObject = new Printer(assetId, uptime, tonerPercentage, outOfPaperIndicator, networkBytesIn,
+        Printer printerObject = new Printer(assetId, upTime, tonerPercentage, outOfPaperIndicator, networkBytesIn,
                 networkBytesOut, printsTakenCount, sysName, sysIP, sysDescr, sysContact, sysLocation, errorCondition,
                 operationalState, currentState, mfgModel, isColorPrinter, extras);
 
-        GQErrorInformation GqError = null;
-        List<GQErrorInformation> gqerrorInformationList = new LinkedList<GQErrorInformation>();
-        if (errorList == null || errorList.size() == 0 || errorList.isEmpty()) {
-            gqerrorInformationList.add(GqError);
+        GQErrorInformation gqErrorInfo = null;
+
+        if (errorList != null) {
+            gqErrorInfo = new GQErrorInformation(sysDescr, errorList);
         }
-        else {
-            GqError = new GQErrorInformation(sysDescr, errorList);
-            gqerrorInformationList.add(GqError);
-        }
-        GQMeterData gqMeterObject = new GQMeterData(gqerrorInformationList, printerObject);
+        GQMeterData gqMeterObject = new GQMeterData(gqErrorInfo, printerObject);
         return gqMeterObject;
     }
 
@@ -301,5 +296,26 @@ public class PrinterMeter implements GQSNMPMeter {
         printerStatus.put(currentStateKey, currentStatus); // current
         printerStatus.put(operationalStateKey, operationalStatus); // operational
         return printerStatus;
+    }
+
+    private String assetCalc(List<VariableBinding> result, OID rootOid) {
+        String rootId = rootOid.toString();
+        String lastchar = null;
+        String assetOid = null;
+        String assetStr = null;
+
+        for (VariableBinding vb : result) {
+            if (vb.getVariable().toString().trim().equals("6")) {
+                lastchar = String.valueOf(vb.getOid().last());
+                assetOid = rootId + ".6" + "." + lastchar;
+
+            }
+            if (assetOid != null && vb.getOid().toString().trim().equals(assetOid)) {
+                assetStr = vb.getVariable().toString().trim().replaceAll(":", "");
+
+            }
+        }
+        return assetStr;
+
     }
 }
