@@ -4,7 +4,7 @@ public class IntegratedSwitchRouter {
 
     String assetId; // uniq identifier abt the asset
 
-    long uptime; // seconds
+    long upTime; // seconds
     long numberOfPorts;
     long numberOfPortsUp;
     long networkBytesIn; // bytes
@@ -15,6 +15,7 @@ public class IntegratedSwitchRouter {
     String sysDescr;
     String sysContact;
     String sysLocation; // string
+    String connectedDevices;
 
     String extras; // anything device specific but to be discussed , v2
 
@@ -22,8 +23,8 @@ public class IntegratedSwitchRouter {
         return assetId;
     }
 
-    public long getUptime() {
-        return uptime;
+    public long getUpTime() {
+        return upTime;
     }
 
     public long getNumberOfPorts() {
@@ -62,16 +63,20 @@ public class IntegratedSwitchRouter {
         return sysLocation;
     }
 
+    public String getConnectedDevices() {
+        return connectedDevices;
+    }
+
     public String getExtras() {
         return extras;
     }
 
-    public IntegratedSwitchRouter(String assetId, long uptime, long numberOfPorts, long numberOfPortsUp,
+    public IntegratedSwitchRouter(String assetId, long upTime, long numberOfPorts, long numberOfPortsUp,
             long networkBytesIn, long networkBytesOut, String sysName, String sysIP, String sysDescr,
-            String sysContact, String sysLocation, String extras) {
+            String sysContact, String sysLocation, String connectedDevices, String extras) {
         super();
         this.assetId = assetId;
-        this.uptime = uptime;
+        this.upTime = upTime;
         this.numberOfPorts = numberOfPorts;
         this.numberOfPortsUp = numberOfPortsUp;
         this.networkBytesIn = networkBytesIn;
@@ -81,6 +86,7 @@ public class IntegratedSwitchRouter {
         this.sysDescr = sysDescr;
         this.sysContact = sysContact;
         this.sysLocation = sysLocation;
+        this.connectedDevices = connectedDevices;
         this.extras = extras;
     }
 

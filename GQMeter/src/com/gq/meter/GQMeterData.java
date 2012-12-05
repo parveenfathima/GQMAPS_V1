@@ -1,28 +1,24 @@
 package com.gq.meter;
 
-import java.util.List;
-
 public class GQMeterData {
 
-    List<GQErrorInformation> errorInformationList ;
-    
+    GQErrorInformation errorInformation;
+
     // will be one of the meter objects like computer , printer , air
     Object meterData;
 
-	public GQMeterData(List<GQErrorInformation> errorInformationList,
-			Object meterData) {
-		super();
-		this.errorInformationList = errorInformationList;
-		this.meterData = meterData;
-	}
+    public GQMeterData(GQErrorInformation errorInformation, Object meterData) {
+        super();
+        this.errorInformation = errorInformation;
+        this.meterData = meterData;
+    }
 
-	public List<GQErrorInformation> getErrorInformationList() {
-		return errorInformationList;
-	}
+    public GQErrorInformation getErrorInformation() {
+        return errorInformation;
+    }
 
-	public Object getMeterData() {
-		return meterData;
-	}
-    
-    
+    public Object getMeterData() {
+        return meterData;
+    }
+
 }

@@ -15,14 +15,14 @@ public class Computer {
     long usedVirtualMemory; // bytes
     long totalDiskSpace; // bytes
     long usedDiskSpace; // bytes
-    long uptime; // seconds
+    long upTime; // seconds
     long numLoggedInUsers;
     long numProcesses;
     long networkBytesIn; // bytes
     long networkBytesOut; // bytes
-    
+
     List<InstalledSoftware> installedSwList;
-    
+
     double clockSpeed; // v2
 
     String sysName;
@@ -32,7 +32,6 @@ public class Computer {
     String sysLocation; // string
     String extras; // anything device specific
 
-    
     public String getAssetId() {
         return assetId;
     }
@@ -65,8 +64,8 @@ public class Computer {
         return usedDiskSpace;
     }
 
-    public long getUptime() {
-        return uptime;
+    public long getUpTime() {
+        return upTime;
     }
 
     public long getNumLoggedInUsers() {
@@ -112,15 +111,16 @@ public class Computer {
     public String getExtras() {
         return extras;
     }
-    
+
     public List<InstalledSoftware> getInstalledSwList() {
-		return installedSwList;
-	}
+        return installedSwList;
+    }
 
     public Computer(String assetId, long cpuLoad, long totalMemory, long usedMemory, long totalVirtualMemory,
-            long usedVirtualMemory, long totalDiskSpace, long usedDiskSpace, long uptime, long numLoggedInUsers,
+            long usedVirtualMemory, long totalDiskSpace, long usedDiskSpace, long upTime, long numLoggedInUsers,
             long numProcesses, long networkBytesIn, long networkBytesOut, double clockSpeed, String sysName,
-            String sysIP, String sysDescr, String sysContact, String sysLocation, String extras , List<InstalledSoftware> installedSwList) {
+            String sysIP, String sysDescr, String sysContact, String sysLocation, String extras,
+            List<InstalledSoftware> installedSwList) {
         super();
         this.assetId = assetId;
         this.cpuLoad = cpuLoad;
@@ -130,7 +130,7 @@ public class Computer {
         this.usedVirtualMemory = usedVirtualMemory;
         this.totalDiskSpace = totalDiskSpace;
         this.usedDiskSpace = usedDiskSpace;
-        this.uptime = uptime;
+        this.upTime = upTime;
         this.numLoggedInUsers = numLoggedInUsers;
         this.numProcesses = numProcesses;
         this.networkBytesIn = networkBytesIn;

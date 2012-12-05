@@ -19,7 +19,6 @@ import org.snmp4j.transport.DefaultUdpTransportMapping;
 
 import com.gq.meter.object.Computer;
 import com.gq.meter.object.assist.InstalledSoftware;
-import com.gq.meter.util.MeterConstants;
 import com.gq.meter.util.MeterProtocols;
 import com.gq.meter.util.MeterUtils;
 
@@ -45,7 +44,7 @@ public class ComputerMeter implements GQSNMPMeter {
         long usedVirtualMemory = 0; // bytes
         long totalDiskSpace = 0; // bytes
         long usedDiskSpace = 0; // bytes
-        long uptime = 0; // seconds
+        long upTime = 0; // seconds
         long numLoggedInUsers = 0;
         long numProcesses = 0;
         long networkBytesIn = 0; // bytes
@@ -98,9 +97,8 @@ public class ComputerMeter implements GQSNMPMeter {
 
             temp = oidString + ".3.0";
             tempStr = MeterUtils.getSNMPValue(temp, result);
+            upTime = MeterUtils.upTimeCalc(tempStr);
             System.out.println("Uptime : " + tempStr);
-            uptime = MeterUtils.upTimeCalc(tempStr);
-            System.out.println("Uptime in seconds : " + uptime);
 
             temp = oidString + ".4.0";
             sysContact = MeterUtils.getSNMPValue(temp, result);
@@ -127,13 +125,17 @@ public class ComputerMeter implements GQSNMPMeter {
         if (result != null && !result.isEmpty()) {
             temp = oidString + ".5.0";
             tempStr = MeterUtils.getSNMPValue(temp, result);
-            numLoggedInUsers = Integer.parseInt(tempStr);
-            System.out.println("Number logged in users : " + numLoggedInUsers);
+            if (tempStr != null) {
+                numLoggedInUsers = Integer.parseInt(tempStr);
+                System.out.println("Number logged in users : " + numLoggedInUsers);
+            }
 
             temp = oidString + ".6.0";
             tempStr = MeterUtils.getSNMPValue(temp, result);
-            numProcesses = Integer.parseInt(tempStr);
-            System.out.println("Number of processes : " + numProcesses);
+            if (tempStr != null) {
+                numProcesses = Integer.parseInt(tempStr);
+                System.out.println("Number of processes : " + numProcesses);
+            }
         }
         else {
             errorList.add("Root OID : 1.3.6.1.2.1.25.1" + " " + "No of users and process gets failed in computer ");
@@ -152,8 +154,9 @@ public class ComputerMeter implements GQSNMPMeter {
             if (isWindows) {
                 variable = ":\\";
                 long windowsDriveSize = getMemorycalc(result, rootOID, variable, false);
-
+                System.out.println("windosDriveSize : " + windowsDriveSize);
                 long usedWindowsDriveSize = getMemorycalc(result, rootOID, variable, true);
+                System.out.println("usedWindowsDriveSize : " + usedWindowsDriveSize);
 
                 variable = "physical memory";
                 totalMemory = getMemorycalc(result, rootOID, variable, false);
@@ -246,8 +249,9 @@ public class ComputerMeter implements GQSNMPMeter {
             errorList.add("Root OID : 1.3.6.1.2.1.25.3.3.1.2" + " " + "CPU load gets failed in computer ");
         }
 
-        // the following oid's is used to get network in and out bytes for
+        // the following oid's is used to get network in and out bytes and asset id for
         // windows
+        // Asset id = Sysdesc's hascode and mac id.
         if (isWindows) {
             oidString = ".1.3.6.1.2.1.2.2.1";
             rootOID = new OID(oidString);
@@ -265,11 +269,10 @@ public class ComputerMeter implements GQSNMPMeter {
                 networkBytesOut = Long.parseLong(networkBytesOutStr);
                 System.out.println("Network Bytes Out : " + networkBytesOut);
                 // System.out.println("macWinNetworkValue : "+windowsNetworkBytes.get("macWinNetworkValue"));
-                assetId = MeterProtocols.COMPUTER + "-" + sysDescr.hashCode() + "-"
-                        + networkBytes.get("macWinNetworkValue");
+                assetId = MeterProtocols.COMPUTER + "-" + networkBytes.get("macWinNetworkValue");
                 System.out.println("Asset Id : " + assetId);
 
-                // the following oid's is used to get network in and out bytes
+                // the following oid's is used to get network in and out bytes and asset id for
                 // for Linux
 
             }
@@ -332,22 +335,16 @@ public class ComputerMeter implements GQSNMPMeter {
             errorList.add("Root OID : 1.3.6.1.2.1.25.6.3.1.4" + " " + " List of software gets failed in computer ");
         }
         Computer compObject = new Computer(assetId, cpuLoad, totalMemory, usedMemory, totalVirtualMemory,
-                usedVirtualMemory, totalDiskSpace, usedDiskSpace, uptime, numLoggedInUsers, numProcesses,
+                usedVirtualMemory, totalDiskSpace, usedDiskSpace, upTime, numLoggedInUsers, numProcesses,
                 networkBytesIn, networkBytesOut, clockSpeed, sysName, sysIP, sysDescr, sysContact, sysLocation, extras,
                 installedSwList);
 
-        GQErrorInformation GqError = null;
-        List<GQErrorInformation> gqerrorInformationList = new LinkedList<GQErrorInformation>();
-        if (errorList == null || errorList.size() == 0 || errorList.isEmpty()) {
-            gqerrorInformationList.add(GqError);
+        GQErrorInformation gqErrorInfo = null;
+        if (errorList != null) {
+            gqErrorInfo = new GQErrorInformation(sysDescr, errorList);
         }
-        else {
-            GqError = new GQErrorInformation(sysDescr, errorList);
-            gqerrorInformationList.add(GqError);
-        }
-        GQMeterData gqMeterObject = new GQMeterData(gqerrorInformationList, compObject);
+        GQMeterData gqMeterObject = new GQMeterData(gqErrorInfo, compObject);
         return gqMeterObject;
-
     }
 
     private long cpuLoadCalc(List<VariableBinding> result, OID rootOid) {
@@ -376,6 +373,7 @@ public class ComputerMeter implements GQSNMPMeter {
         String usedMultiplyOID = null;
         String usedMultiply = null;
         String rootId = rootOid.toString();
+        Long memory = 0L;
 
         for (VariableBinding vb : result) {
 
@@ -404,26 +402,25 @@ public class ComputerMeter implements GQSNMPMeter {
                 else {
                     usedMultiplyOID = rootId + "." + "6" + "." + lastValue;
                 }
+                for (VariableBinding vbs : result) {
+                    if (vbs.getOid().toString().trim().equals(mulBytesOID)) {
+                        mulBytes = vbs.getVariable().toString().trim();
+                    }
+                    else if (!isUsed && vbs.getOid().toString().trim().equals(toMultiplyOID)) {
+                        toMultiply = vbs.getVariable().toString().trim();
+                    }
+                    else if (isUsed && vbs.getOid().toString().trim().equals(usedMultiplyOID)) {
+                        usedMultiply = vbs.getVariable().toString().trim();
+                    }
+                }
+                if (!isUsed && mulBytes != null && toMultiply != null) {
+                    memory = memory + Long.parseLong(mulBytes.trim()) * Long.parseLong(toMultiply.trim());
+                }
+                else if (isUsed && mulBytes != null && usedMultiply != null) {
+                    memory = memory + Long.parseLong(mulBytes.trim()) * Long.parseLong(usedMultiply.trim());
+                }
             } // if loop ends
-
-            else if (mulBytesOID != null && vb.toString().contains(mulBytesOID)) {
-                mulBytes = vb.getVariable().toString().trim();
-            }
-            else if (!isUsed && toMultiplyOID != null && vb.toString().contains(toMultiplyOID)) {
-                toMultiply = vb.getVariable().toString().trim();
-            }
-            else if (isUsed && usedMultiplyOID != null && vb.toString().contains(usedMultiplyOID)) {
-                usedMultiply = vb.getVariable().toString().trim();
-            }
         } // for loop ends
-
-        Long memory = 0L;
-        if (!isUsed && mulBytes != null && toMultiply != null) {
-            memory = Long.parseLong(mulBytes.trim()) * Long.parseLong(toMultiply.trim());
-        }
-        else if (isUsed && mulBytes != null && usedMultiply != null) {
-            memory = Long.parseLong(mulBytes.trim()) * Long.parseLong(usedMultiply.trim());
-        }
         return memory;
     }
 
@@ -519,7 +516,7 @@ public class ComputerMeter implements GQSNMPMeter {
         if (macOidMap.get("eth0") != null && macOidMap.get("eth0").size() != 0) {
             String eth0MacAddress = uniqueValues.toString().substring(1, uniqueValues.toString().length() - 1).trim()
                     .replaceAll(":", "");
-            assetId = String.valueOf(sysDescr.hashCode()) + "-" + eth0MacAddress;
+            assetId = eth0MacAddress;
             networkValues.put("assetId", assetId);
         }
         return networkValues;
