@@ -38,8 +38,6 @@ public class PrinterMeter implements GQSNMPMeter {
 
         long upTime = 0; // seconds
         long outOfPaperIndicator = 0; // 0 means no paper , v2
-        long networkBytesIn = 0; // bytes , v2
-        long networkBytesOut = 0; // bytes , v2
         long printsTakenCount = 0; // v2
 
         double tonerPercentage = 0;
@@ -186,9 +184,9 @@ public class PrinterMeter implements GQSNMPMeter {
             errorList.add("Root OID : .1.3.6.1.2.1.2.2.1" + " " + "asset id of a printer gets failed");
         }
 
-        Printer printerObject = new Printer(assetId, upTime, tonerPercentage, outOfPaperIndicator, networkBytesIn,
-                networkBytesOut, printsTakenCount, sysName, sysIP, sysDescr, sysContact, sysLocation, errorCondition,
-                operationalState, currentState, mfgModel, isColorPrinter, extras);
+        Printer printerObject = new Printer(assetId, upTime, tonerPercentage, outOfPaperIndicator, printsTakenCount,
+                sysName, sysIP, sysDescr, sysContact, sysLocation, errorCondition, operationalState, currentState,
+                mfgModel, isColorPrinter, extras);
 
         GQErrorInformation gqErrorInfo = null;
 
