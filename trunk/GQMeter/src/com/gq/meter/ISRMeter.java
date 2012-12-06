@@ -14,6 +14,7 @@ import org.snmp4j.smi.VariableBinding;
 import org.snmp4j.transport.DefaultUdpTransportMapping;
 
 import com.gq.meter.object.IntegratedSwitchRouter;
+import com.gq.meter.util.MeterConstants;
 import com.gq.meter.util.MeterProtocols;
 import com.gq.meter.util.MeterUtils;
 
@@ -23,7 +24,6 @@ public class ISRMeter implements GQSNMPMeter {
     public GQMeterData implement(String communityString, String ipAddress, String snmpVersion) {
 
         Snmp snmp = null;
-
         String assetId = null; // unique identifier about the asset
         String sysName = null;
         String sysIP = null; // string
@@ -40,11 +40,8 @@ public class ISRMeter implements GQSNMPMeter {
         long networkBytesOut = 0; // bytes , v2
 
         sysIP = ipAddress;
-
-        HashMap<String, Long> networkBytes = null;
-
         CommunityTarget target = null;
-
+        HashMap<String, Long> networkBytes = null;
         List<String> errorList = new LinkedList<String>();
 
         try {
@@ -56,7 +53,6 @@ public class ISRMeter implements GQSNMPMeter {
             e.printStackTrace();
             return null;
         }
-
         // The following oid's is used to get system parameters
 
         String oidString = "1.3.6.1.2.1.1";
@@ -66,39 +62,30 @@ public class ISRMeter implements GQSNMPMeter {
         OID rootOID = new OID(oidString);
         List<VariableBinding> result = null;
 
-        result = MeterUtils.walk(rootOID, target); // walk done with the
-                                                   // initial assumption
-                                                   // that device is v2
+        result = MeterUtils.walk(rootOID, target); // walk done with the initial assumption that device is v2
         if (result != null && !result.isEmpty()) {
-            // System.out.println("result : " + result);
 
             temp = oidString + ".1.0";
             sysDescr = MeterUtils.getSNMPValue(temp, result);
-            System.out.println("System Description : " + sysDescr);
 
             temp = oidString + ".3.0";
             tempStr = MeterUtils.getSNMPValue(temp, result);
-            // System.out.println("Uptime : " + tempStr);
             upTime = MeterUtils.upTimeCalc(tempStr);
-            System.out.println("Uptime : " + upTime);
 
             temp = oidString + ".4.0";
             sysContact = MeterUtils.getSNMPValue(temp, result);
-            System.out.println("System Contact : " + sysContact);
 
             temp = oidString + ".5.0";
             sysName = MeterUtils.getSNMPValue(temp, result);
-            System.out.println("System Name : " + sysName);
 
             temp = oidString + ".6.0";
             sysLocation = MeterUtils.getSNMPValue(temp, result);
-            System.out.println("System Location : " + sysLocation);
         }
         else {
-            errorList.add("Root OID : 1.3.6.1.2.1.1" + " " + "Basic info of a asset gets failed");
+            errorList.add("Root OID : 1.3.6.1.2.1.1" + " " + MeterConstants.STANDARD_SYSTEM_ATTRIBUTES_ERROR);
         }
+        // The following oid's is used to get number of ports
 
-        // The following oid's is used to get number of parameters
         oidString = "1.3.6.1.2.1.2.1";
         rootOID = new OID(oidString);
         result = MeterUtils.walk(rootOID, target);
@@ -107,28 +94,25 @@ public class ISRMeter implements GQSNMPMeter {
             temp = oidString + ".0";
             tempStr = MeterUtils.getSNMPValue(temp, result);
             numberOfPorts = Integer.parseInt(tempStr);
-            System.out.println("Number Of Ports : " + numberOfPorts);
         }
         else {
-            errorList.add("Root OID : 1.3.6.1.2.1.1" + " " + "Number of ports of switch gets failed");
+            errorList.add("Root OID : 1.3.6.1.2.1.1" + " " + "Unable to determine number of ports");
         }
-
         // The following oid's is used to get number of active ports
+
         oidString = "1.3.6.1.2.1.2.2.1.7";
         rootOID = new OID(oidString);
         result = MeterUtils.walk(rootOID, target);
 
         if (result != null && !result.isEmpty()) {
             numberOfPortsUp = activePortsCalc(result, rootOID);
-            System.out.println("Total Active Ports : " + numberOfPortsUp);
 
         }
         else {
-            errorList.add("Root OID : 1.3.6.1.2.1.2.2.1.7" + " "
-                    + "Total active ports and asset id of switch gets failed");
+            errorList.add("Root OID : 1.3.6.1.2.1.2.2.1.7" + " " + "Unable to determine total number of active ports");
         }
-
         // The following oid's is used to get the network in and out bytes
+
         oidString = ".1.3.6.1.2.1.2.2.1";
         rootOID = new OID(oidString);
         result = MeterUtils.walk(rootOID, target);
@@ -137,18 +121,14 @@ public class ISRMeter implements GQSNMPMeter {
 
             HashMap<String, Long> switchNetworkMap = new HashMap<String, Long>();
             networkBytes = switchNetworkBytesCalc(result, rootOID, switchNetworkMap);
-
             networkBytesIn = networkBytes.get("InBytes");
-            System.out.println("Network Bytes In : " + networkBytesIn);
-
             networkBytesOut = networkBytes.get("OutBytes");
-            System.out.println("Network Bytes Out : " + networkBytesOut);
         }
         else {
-            errorList.add("Root OID : 1.3.6.1.2.1.2.2.1" + " " + "Network In and Out bytes gets failed");
+            errorList.add("Root OID : 1.3.6.1.2.1.2.2.1" + " " + "Unable to get network bandwidth details");
         }
-
         // The following oid's is used to get the devices that are connected to ISR.
+
         oidString = ".1.3.6.1.2.1.31.1.1.1.18";
         rootOID = new OID(oidString);
         result = MeterUtils.walk(rootOID, target);
@@ -156,13 +136,12 @@ public class ISRMeter implements GQSNMPMeter {
         if (result != null && !result.isEmpty()) {
 
             connectedDevices = ConnectedDevicesCalc(result, rootOID);
-            System.out.println("Connected Device : " + connectedDevices);
         }
         else {
-            errorList.add("Root OID : 1.3.6.1.2.1.31.1.1.1.18" + " " + "Connected devices gets failed");
+            errorList.add("Root OID : 1.3.6.1.2.1.31.1.1.1.18" + " " + "Unable to provide list of connected devices");
         }
-
         // The following oid's is used to get the asset ID.
+
         oidString = "1.3.6.1.2.1.2.2.1.6";
         rootOID = new OID(oidString);
         result = MeterUtils.walk(rootOID, target);
@@ -171,10 +150,9 @@ public class ISRMeter implements GQSNMPMeter {
             temp = oidString + ".1";
             String assetIdVal = MeterUtils.getSNMPValue(temp, result);
             assetId = MeterProtocols.ISR + "-" + assetIdVal.replaceAll(":", "");
-            System.out.println("Asset ID : " + assetId);
         }
         else {
-            errorList.add("Root OID : 1.3.6.1.2.1.2.2.1.6" + " " + "Asset ID gets failed");
+            errorList.add("Root OID : 1.3.6.1.2.1.2.2.1.6" + " " + MeterConstants.ASSET_ID_ERROR);
         }
 
         IntegratedSwitchRouter switchObject = new IntegratedSwitchRouter(assetId, upTime, numberOfPorts,
@@ -182,7 +160,7 @@ public class ISRMeter implements GQSNMPMeter {
                 connectedDevices, extras);
 
         GQErrorInformation gqErrorInfo = null;
-        if (errorList != null) {
+        if (errorList != null && !errorList.isEmpty()) {
             gqErrorInfo = new GQErrorInformation(sysDescr, errorList);
         }
         GQMeterData gqMeterObject = new GQMeterData(gqErrorInfo, switchObject);
@@ -197,7 +175,6 @@ public class ISRMeter implements GQSNMPMeter {
         for (VariableBinding vb : result) {
 
             String lastchar = String.valueOf(vb.getOid().last());
-
             totalPorts = rootId + "." + lastchar;
 
             if (totalPorts != null && vb.getOid().toString().equals(totalPorts)) {
@@ -205,15 +182,10 @@ public class ISRMeter implements GQSNMPMeter {
                 String activeAndInactivePorts = vb.getVariable().toString().trim();
                 if (!activeAndInactivePorts.equalsIgnoreCase("2")) {
                     totalActivePorts++;
-                    /*
-                     * String activePorts = vb.getVariable().toString().trim(); System.out.println("activePorts : "
-                     * +activePorts);
-                     */
                 }
             }
         }
         return totalActivePorts;
-
     }
 
     private HashMap<String, Long> switchNetworkBytesCalc(List<VariableBinding> result, OID rootOid,
@@ -240,11 +212,9 @@ public class ISRMeter implements GQSNMPMeter {
                     String switchNetworkInStr = vb.getVariable().toString().trim();
                     long switchNetworkInValue = Long.parseLong(switchNetworkInStr);
                     switchNetworkIn = switchNetworkIn + switchNetworkInValue;
-
                     switchNetworkMap.put("InBytes", switchNetworkIn);
 
                 } // 2nd if loop ends
-
             } // if loop ends
             else if (networkOutOid != null && vb.getOid().toString().contains(networkOutOid)) {
                 String switchNetworkOutVal = vb.getVariable().toString().trim();
@@ -252,11 +222,9 @@ public class ISRMeter implements GQSNMPMeter {
                     String switchNetworkOutStr = vb.getVariable().toString().trim();
                     long switchNetworkOutValue = Long.parseLong(switchNetworkOutStr);
                     switchNetworkOut = switchNetworkIn + switchNetworkOutValue;
-
                     switchNetworkMap.put("OutBytes", switchNetworkOut);
                 }
             }
-
         } // for loop ends
         return switchNetworkMap;
 
@@ -274,7 +242,6 @@ public class ISRMeter implements GQSNMPMeter {
         }
         String connectedDevices = connectedDevice.toString().substring(1, connectedDevice.toString().length() - 1);
         return connectedDevices;
-
     }
 
 }
