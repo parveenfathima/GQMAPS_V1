@@ -25,4 +25,8 @@ public class MeterConstants {
 
     public static final String BLACKWHITE_PRINTER = "black";
 
+    public static final String STANDARD_SYSTEM_ATTRIBUTES_ERROR = "Unable to get standard system attributes";
+
+    public static final String ASSET_ID_ERROR = "Unable to collate asset ID";
+
 } // class ends
