@@ -1,16 +1,18 @@
 package com.gq.meter.bo;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.StringTokenizer;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.gq.meter.GQErrorInformation;
 import com.gq.meter.GQMeterResponse;
 import com.gq.meter.object.assist.ProtocolData;
 import com.gq.meter.util.MeterProtocols;
@@ -32,86 +34,60 @@ public class ITAssetDiscoverer {
      */
     // Gson gson = new GsonBuilder().create();
     Gson gson = new GsonBuilder().setPrettyPrinting().create();
+    private GQMeterResponse gqmResponse = new GQMeterResponse();
 
-    private List<ProtocolData> findassets(String communityString, String ipLowerbound, String ipUpperbound) {
+    private List<ProtocolData> findassets(List<HashMap<String, LinkedList<String>>> assetsInputList) {
 
         Object assetObject = null;
         HashMap<String, String> snmpDetails = null;
         String snmpVersion = null;
         String assetDesc = null;
         MeterProtocols mProtocol = null;
+        String communityString = null;
+        String ipAddress = null;
+        List<String> errorList = null;
+        GQErrorInformation gqErrInfo = null;
+        List<GQErrorInformation> gqerrorInfoList = new LinkedList<GQErrorInformation>();
 
         List<ProtocolData> pdList = new LinkedList<ProtocolData>();
         try {
-            if (null != communityString && null != ipLowerbound) {
-                try {
-                    String currIp = ipLowerbound;
-                    System.out.println("********************* ip = " + currIp + "*******************");
 
-                    snmpDetails = MeterUtils.isSnmpConfigured(communityString, currIp);
-                    if (snmpDetails != null && snmpDetails.size() != 0 && !snmpDetails.isEmpty()) {
-                        snmpVersion = snmpDetails.get("snmpVersion");
-                        assetDesc = snmpDetails.get("assetDesc");
-                        mProtocol = MeterUtils.getAssetType(communityString, currIp, snmpVersion);
+            for (HashMap<String, LinkedList<String>> map : assetsInputList) {
 
-                        if (!mProtocol.equals(MeterProtocols.UNKNOWN)) {
-                            assetObject = MeterUtils.getAssetObject(mProtocol, communityString, currIp, snmpVersion);
-                            pdList.add(new ProtocolData(mProtocol, gson.toJson(assetObject)));
-                        }
-                        else {
-                            pdList.add(new ProtocolData(mProtocol, assetDesc));
-                        }
+                for (Entry<String, LinkedList<String>> entry : map.entrySet()) {
+                    communityString = entry.getKey();
 
-                    }
-
-                    if (null != ipUpperbound) {
-                        while (!(currIp = MeterUtils.nextIpAddress(currIp)).equals(ipUpperbound)) {
-                            System.out.println("********************* next ip = " + currIp + "*******************");
-                            snmpDetails = MeterUtils.isSnmpConfigured(communityString, currIp);
-                            if (snmpDetails != null && snmpDetails.size() != 0 && !snmpDetails.isEmpty()) {
-                                snmpVersion = snmpDetails.get("snmpVersion");
-                                assetDesc = snmpDetails.get("assetDesc");
-                                mProtocol = MeterUtils.getAssetType(communityString, currIp, snmpVersion);
-
-                                if (!mProtocol.equals(MeterProtocols.UNKNOWN)) {
-                                    assetObject = MeterUtils.getAssetObject(mProtocol, communityString, currIp,
-                                            snmpVersion);
-                                    pdList.add(new ProtocolData(mProtocol, gson.toJson(assetObject)));
-                                }
-                                else {
-                                    pdList.add(new ProtocolData(mProtocol, assetDesc));
-                                }
-                            }
-                        }
-
-                        currIp = ipUpperbound;
-                        System.out.println("********************* next ip = " + currIp + "*******************");
-                        snmpDetails = MeterUtils.isSnmpConfigured(communityString, currIp);
+                    for (String ipaddresses : entry.getValue()) {
+                        ipAddress = ipaddresses;
+                        System.out.println("CommunityString : " + communityString + " - Ipaddress : " + ipAddress);
+                        snmpDetails = MeterUtils.isSnmpConfigured(communityString, ipAddress);
                         if (snmpDetails != null && snmpDetails.size() != 0 && !snmpDetails.isEmpty()) {
                             snmpVersion = snmpDetails.get("snmpVersion");
                             assetDesc = snmpDetails.get("assetDesc");
-                            mProtocol = MeterUtils.getAssetType(communityString, currIp, snmpVersion);
+                            mProtocol = MeterUtils.getAssetType(communityString, ipAddress, snmpVersion);
 
                             if (!mProtocol.equals(MeterProtocols.UNKNOWN)) {
-                                assetObject = MeterUtils
-                                        .getAssetObject(mProtocol, communityString, currIp, snmpVersion);
+                                assetObject = MeterUtils.getAssetObject(mProtocol, communityString, ipAddress,
+                                        snmpVersion);
                                 pdList.add(new ProtocolData(mProtocol, gson.toJson(assetObject)));
                             }
                             else {
-                                pdList.add(new ProtocolData(mProtocol, assetDesc));
+                                errorList = new LinkedList<String>();
+                                errorList.add(ipAddress + " - " + mProtocol.name() + " : Can't to find the asset type");
+                                gqErrInfo = new GQErrorInformation(assetDesc, errorList);
+                                gqerrorInfoList.add(gqErrInfo);
                             }
+
                         }
                     }
-
-                }
-                catch (Exception e) {
-                    e.printStackTrace();
-                    System.out.println("Exception occured while finding the assets : " + e);
                 }
             }
         }
         catch (Exception e) {
             e.printStackTrace();
+        }
+        finally {
+            gqmResponse.setErrorInformationList(gqerrorInfoList); // Added the errors to the GQMResponse
         }
 
         return pdList;
@@ -123,68 +99,80 @@ public class ITAssetDiscoverer {
      * @param inputFile
      */
     private GQMeterResponse readInput(String inputFilePath) {
-        BufferedReader br = null;
-        String line = null;
+        InputStream assetFileStream = null;
         String communityString = null;
         String ipUpperbound = null;
         String ipLowerbound = null;
         List<ProtocolData> assetsList = null;
-
-        GQMeterResponse gqmResponse = new GQMeterResponse();
+        StringTokenizer sToken = null;
+        File assetsInputFile = null;
+        LinkedList<String> ipList = null;
+        HashMap<String, LinkedList<String>> communityIPMap = null;
+        List<HashMap<String, LinkedList<String>>> assetsInputList = new LinkedList<HashMap<String, LinkedList<String>>>();
 
         gqmResponse.setGqmid("GQMeterResponse");
-
         if (null != inputFilePath && inputFilePath.trim() != "") {
             try {
-                File assetsInputFile = new File(inputFilePath);
-
+                assetsInputFile = new File(inputFilePath);
                 if (assetsInputFile.exists() && assetsInputFile.isFile()) {
-                    br = new BufferedReader(new FileReader(assetsInputFile));
-                    StringTokenizer sToken = null;
+                    assetFileStream = new FileInputStream(assetsInputFile);
+                    String inputAssets = MeterUtils.read(assetFileStream);
 
-                    while ((line = br.readLine()) != null) {
+                    if (inputAssets == null || inputAssets.trim().length() == 0) {
+                        System.out.println("*** The asset file is empty ***");
+                        System.exit(1);
+                    }
+                    String assetLines[] = inputAssets.trim().split("\n");
+
+                    for (String line : assetLines) {
                         line = line.trim();
                         if (line.length() == 0 || line.startsWith("#")) {
                             continue;
                         }
-                        if (line.contains("\t")) {
-                            line = line.replace("\t", " ");
-                            sToken = new StringTokenizer(line, " ");
+                        line = line.replace("\t", " ");
+                        sToken = new StringTokenizer(line, " ");
+                        if (sToken.countTokens() == 2 || sToken.countTokens() == 3) {
+                            communityString = sToken.nextToken().trim();
+                            ipLowerbound = sToken.nextToken().trim();
+
+                            ipList = new LinkedList<String>();
+                            ipList.add(ipLowerbound);
+                            if (sToken.hasMoreTokens()) {
+                                ipUpperbound = sToken.nextToken().trim();
+                                while (!(ipLowerbound = MeterUtils.nextIpAddress(ipLowerbound)).equals(ipUpperbound)) {
+                                    ipList.add(ipLowerbound);
+                                }
+                                ipList.add(ipUpperbound);
+                            }
+                            communityIPMap = new HashMap<String, LinkedList<String>>();
+                            communityIPMap.put(communityString, ipList);
+                            assetsInputList.add(communityIPMap);
                         }
                         else {
-                            sToken = new StringTokenizer(line, " ");
+                            System.out.println("INVALID : entry -" + line);
+                            System.out.println("Usage : COMMUNITY_STRING IP_LOWER_BOUND IP_UPPER_BOUND");
                         }
-                        if (sToken.countTokens() == 2) {
-                            communityString = sToken.nextToken().trim();
-                            ipLowerbound = sToken.nextToken().trim();
-                            ipUpperbound = null;
-                            assetsList = findassets(communityString, ipLowerbound, ipUpperbound);
-                        }
-                        else if (sToken.countTokens() == 3) {
-                            communityString = sToken.nextToken().trim();
-                            ipLowerbound = sToken.nextToken().trim();
-                            ipUpperbound = sToken.nextToken().trim();
-                            assetsList = findassets(communityString, ipLowerbound, ipUpperbound);
-                        }
-                        gqmResponse.addToAssetInformationList(assetsList);
                     }
+                    assetsList = findassets(assetsInputList);
+                    gqmResponse.addToAssetInformationList(assetsList);
                 }
                 else {
-                    System.out.println("Exception occured : Unable locate the input file for processing");
+                    System.out.println("Exception occured : Unable to locate the input file");
+                    System.exit(1);
                 }
             }
-            catch (Exception e) {
+            catch (NullPointerException | IOException | ArrayIndexOutOfBoundsException e) {
                 e.printStackTrace();
-                System.out.println("Exception occured : Unable locate the input file for processing : " + e);
+                System.out.println("Exception occured : Unable to locate the input file for processing : " + e);
             }
             finally {
                 try {
-                    if (null != br) {
-                        br.close();
+                    if (null != assetFileStream) {
+                        assetFileStream.close();
                     }
                     return gqmResponse; // returns not null map with all the asset objects value
                 }
-                catch (IOException e) {
+                catch (Exception e) {
                     System.out.println("Exception occured while closing the buffer after reading : " + e);
                 }
             }
@@ -210,14 +198,20 @@ public class ITAssetDiscoverer {
     }
 
     public static void main(String[] args) throws IOException {
-
+        Long startTime = System.currentTimeMillis();
+        if (args.length != 2) {
+            System.out.println("Usage : ASSETDETAILS_FILE_PATH REST_URL");
+            System.exit(1);
+        }
         ITAssetDiscoverer itad = new ITAssetDiscoverer();
-        String inputFilePath = "C:\\Users\\yogalakshmi.s\\AssetDetails.txt";
+        String inputFilePath = args[0].trim();
+        String restUrl = args[1].trim();
         GQMeterResponse gqmResponse = itad.readInput(inputFilePath);
         System.out.println("::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::");
-
-        System.out.println("json of GQMeterData = " + itad.gson.toJson(gqmResponse)
-                + " :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::");
+        System.out.println("json of GQMeterData = " + itad.gson.toJson(gqmResponse));
+        System.out.println("::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::");
+        long endTime = System.currentTimeMillis();
+        System.out.println("Total duration taken : " + (endTime - startTime));
         /*
          * Computer c = new Computer("sdfsad", 83, 100, 80, 30, 20, 500, 340, 89330, 7, 48, 10000, 22220, 2.34, "name",
          * "192.149.4.4", "desc", "contact", "location", "extras", new Date());
