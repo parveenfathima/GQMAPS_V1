@@ -2,6 +2,7 @@ package com.gq.meter.object;
 
 import java.util.List;
 
+import com.gq.meter.object.assist.ConnectedDevices;
 import com.gq.meter.object.assist.InstalledSoftware;
 
 public class Computer {
@@ -22,6 +23,7 @@ public class Computer {
     long networkBytesOut; // bytes
 
     List<InstalledSoftware> installedSwList;
+    List<ConnectedDevices> connectedDevices;
 
     double clockSpeed; // v2
 
@@ -116,11 +118,15 @@ public class Computer {
         return installedSwList;
     }
 
+    public List<ConnectedDevices> getConnectedDevices() {
+        return connectedDevices;
+    }
+
     public Computer(String assetId, long cpuLoad, long totalMemory, long usedMemory, long totalVirtualMemory,
             long usedVirtualMemory, long totalDiskSpace, long usedDiskSpace, long upTime, long numLoggedInUsers,
             long numProcesses, long networkBytesIn, long networkBytesOut, double clockSpeed, String sysName,
             String sysIP, String sysDescr, String sysContact, String sysLocation, String extras,
-            List<InstalledSoftware> installedSwList) {
+            List<InstalledSoftware> installedSwList, List<ConnectedDevices> connectedDevices) {
         super();
         this.assetId = assetId;
         this.cpuLoad = cpuLoad;
@@ -143,6 +149,7 @@ public class Computer {
         this.sysLocation = sysLocation;
         this.extras = extras;
         this.installedSwList = installedSwList;
+        this.connectedDevices = connectedDevices;
     }
 
 }

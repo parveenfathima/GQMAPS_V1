@@ -39,6 +39,7 @@ public class MeterUtils {
      * @return
      */
     public static HashMap<String, String> isSnmpConfigured(String communityString, String currIp) {
+        long computerstartTime = System.currentTimeMillis();
         String oidString = MeterConstants.SNMP_CHECK_OCTET;
         HashMap<String, String> assetDetails = new HashMap<String, String>();
         String snmpVersion = MeterConstants.SNMP_VERSION_2;
@@ -54,11 +55,17 @@ public class MeterUtils {
             if (result == null || result.size() == 0 || result.isEmpty()) {
                 // may be the device is not serving snmp at all. so lets get out or throw io exception
                 System.out.println("SNMP Version2 && version1 are failed, The asset is not configure with SNMP ");
+                long computerendTime = System.currentTimeMillis();
+                System.out.println("### Time taken to find isSnmpConfigured or not : "
+                        + (computerendTime - computerstartTime));
                 return assetDetails; // if snmp is configured & the SNMP_CHECK_OCTET doesn't exist then return null;
             }
         }
         assetDetails.put("snmpVersion", snmpVersion);
         assetDetails.put("assetDesc", result.get(0).getVariable().toString());
+
+        long computerendTime = System.currentTimeMillis();
+        System.out.println("*** Time taken to find isSnmpConfigured or not : " + (computerendTime - computerstartTime));
         return assetDetails;
     }
 

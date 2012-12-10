@@ -22,7 +22,7 @@ public class ISRMeter implements GQSNMPMeter {
 
     @Override
     public GQMeterData implement(String communityString, String ipAddress, String snmpVersion) {
-
+        long computerstartTime = System.currentTimeMillis();
         Snmp snmp = null;
         String assetId = null; // unique identifier about the asset
         String sysName = null;
@@ -164,6 +164,9 @@ public class ISRMeter implements GQSNMPMeter {
             gqErrorInfo = new GQErrorInformation(sysDescr, errorList);
         }
         GQMeterData gqMeterObject = new GQMeterData(gqErrorInfo, switchObject);
+
+        long computerendTime = System.currentTimeMillis();
+        System.out.println("Time taken bye the isr meter is : " + (computerendTime - computerstartTime));
         return gqMeterObject;
     }
 
