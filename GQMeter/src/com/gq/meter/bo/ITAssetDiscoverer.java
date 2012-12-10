@@ -59,6 +59,7 @@ public class ITAssetDiscoverer {
 
                     for (String ipaddresses : entry.getValue()) {
                         ipAddress = ipaddresses;
+                        System.out.println("********************************************************************");
                         System.out.println("CommunityString : " + communityString + " - Ipaddress : " + ipAddress);
                         snmpDetails = MeterUtils.isSnmpConfigured(communityString, ipAddress);
                         if (snmpDetails != null && snmpDetails.size() != 0 && !snmpDetails.isEmpty()) {

@@ -21,7 +21,7 @@ public class PrinterMeter implements GQSNMPMeter {
 
     @Override
     public GQMeterData implement(String communityString, String ipAddress, String snmpVersion) {
-
+        long computerstartTime = System.currentTimeMillis();
         Snmp snmp = null;
         String assetId = null; // unique identifier about the asset
         String sysName = null;
@@ -169,6 +169,8 @@ public class PrinterMeter implements GQSNMPMeter {
             gqErrorInfo = new GQErrorInformation(sysDescr, errorList);
         }
         GQMeterData gqMeterObject = new GQMeterData(gqErrorInfo, printerObject);
+        long computerendTime = System.currentTimeMillis();
+        System.out.println("Time taken bye the printer meter is : " + (computerendTime - computerstartTime));
         return gqMeterObject;
     }
 

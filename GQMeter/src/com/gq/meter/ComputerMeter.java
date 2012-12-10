@@ -1,6 +1,7 @@
 package com.gq.meter;
 
 import java.io.IOException;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -10,6 +11,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Set;
 import org.snmp4j.CommunityTarget;
 import org.snmp4j.Snmp;
@@ -18,6 +20,7 @@ import org.snmp4j.smi.VariableBinding;
 import org.snmp4j.transport.DefaultUdpTransportMapping;
 
 import com.gq.meter.object.Computer;
+import com.gq.meter.object.assist.ConnectedDevices;
 import com.gq.meter.object.assist.InstalledSoftware;
 import com.gq.meter.util.MeterConstants;
 import com.gq.meter.util.MeterProtocols;
@@ -27,7 +30,7 @@ public class ComputerMeter implements GQSNMPMeter {
 
     @Override
     public GQMeterData implement(String communityString, String ipAddress, String snmpVersion) {
-
+        long computerstartTime = System.currentTimeMillis();
         Snmp snmp = null;
         String assetId = null; // unique identifier about the asset
         String sysName = null; // string
@@ -55,6 +58,7 @@ public class ComputerMeter implements GQSNMPMeter {
         CommunityTarget target = null;
         HashMap<String, String> networkBytes = null;
         List<InstalledSoftware> installedSwList = null;
+        List<ConnectedDevices> connectedDevicesList = null;
         List<String> errorList = new LinkedList<String>();
 
         try {
@@ -275,16 +279,25 @@ public class ComputerMeter implements GQSNMPMeter {
             errorList.add("Root OID : 1.3.6.1.2.1.25.6.3.1.4" + " " + "Unable to get list of installed software");
         }
 
+        oidString = ".1.3.6.1.2.1.6.13.1.1";
+        rootOID = new OID(oidString);
+        result = MeterUtils.walk(rootOID, target);
+        // System.out.println("Result : " + result);
+
+        connectedDevicesList = ConnectedDevicesCalc(result, rootOID, ipAddress);
+
         Computer compObject = new Computer(assetId, cpuLoad, totalMemory, usedMemory, totalVirtualMemory,
                 usedVirtualMemory, totalDiskSpace, usedDiskSpace, upTime, numLoggedInUsers, numProcesses,
                 networkBytesIn, networkBytesOut, clockSpeed, sysName, sysIP, sysDescr, sysContact, sysLocation, extras,
-                installedSwList);
+                installedSwList, connectedDevicesList);
 
         GQErrorInformation gqErrorInfo = null;
         if (errorList != null && !errorList.isEmpty()) {
             gqErrorInfo = new GQErrorInformation(sysDescr, errorList);
         }
         GQMeterData gqMeterObject = new GQMeterData(gqErrorInfo, compObject);
+        long computerendTime = System.currentTimeMillis();
+        System.out.println("Time taken bye the computer meter is : " + (computerendTime - computerstartTime));
         return gqMeterObject;
     }
 
@@ -559,4 +572,45 @@ public class ComputerMeter implements GQSNMPMeter {
         return newDate;
     }
 
+    private List<ConnectedDevices> ConnectedDevicesCalc(List<VariableBinding> result, OID rootOid, String ipAddress) {
+
+        String rootId = rootOid.toString();
+        String finalIP = null;
+        String port = null;
+
+        LinkedList<ConnectedDevices> connectedDevicesList = new LinkedList<ConnectedDevices>();
+        ConnectedDevices Conn = null;
+
+        HashMap<String, String> device = new HashMap<String, String>();
+        for (VariableBinding vb : result) {
+            String expectedOID = rootId + "." + ipAddress;
+            if (expectedOID != null && vb.getOid().toString().contains(expectedOID)) {
+
+                String targetOID = vb.getOid().toString();
+                port = targetOID.toString().trim().split("\\.")[14];
+                String concatenate = expectedOID + "." + port + ".";
+                String targetIP = targetOID.replaceAll(concatenate, "");
+
+                finalIP = targetIP.substring(0, targetIP.lastIndexOf('.', targetIP.lastIndexOf('.')));
+
+                if (finalIP.trim() != ipAddress) {
+                    device.put(port, finalIP);
+                    // System.out.println("device : " + device);
+                }
+            }
+        }
+        for (Entry<String, String> entry : device.entrySet()) {
+            String ports = entry.getKey();
+            String ipad = entry.getValue();
+            Conn = new ConnectedDevices(ipad, ports);
+            connectedDevicesList.add(Conn);
+        }
+
+        // for (ConnectedDevices cd : connectedDevicesList) {
+        // System.out.println(cd.getConnectedPort() + "-------" + cd.getIpAddress());
+        // }
+
+        return connectedDevicesList;
+
+    }
 }
