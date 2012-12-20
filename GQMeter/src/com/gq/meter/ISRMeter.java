@@ -54,107 +54,112 @@ public class ISRMeter implements GQSNMPMeter {
             return null;
         }
         // The following oid's is used to get system parameters
+        try {
+            String oidString = "1.3.6.1.2.1.1";
+            String temp;
+            String tempStr;
 
-        String oidString = "1.3.6.1.2.1.1";
-        String temp;
-        String tempStr;
+            OID rootOID = new OID(oidString);
+            List<VariableBinding> result = null;
 
-        OID rootOID = new OID(oidString);
-        List<VariableBinding> result = null;
+            result = MeterUtils.walk(rootOID, target); // walk done with the initial assumption that device is v2
+            if (result != null && !result.isEmpty()) {
 
-        result = MeterUtils.walk(rootOID, target); // walk done with the initial assumption that device is v2
-        if (result != null && !result.isEmpty()) {
+                temp = oidString + ".1.0";
+                sysDescr = MeterUtils.getSNMPValue(temp, result);
 
-            temp = oidString + ".1.0";
-            sysDescr = MeterUtils.getSNMPValue(temp, result);
+                temp = oidString + ".3.0";
+                tempStr = MeterUtils.getSNMPValue(temp, result);
+                upTime = MeterUtils.upTimeCalc(tempStr);
 
-            temp = oidString + ".3.0";
-            tempStr = MeterUtils.getSNMPValue(temp, result);
-            upTime = MeterUtils.upTimeCalc(tempStr);
+                temp = oidString + ".4.0";
+                sysContact = MeterUtils.getSNMPValue(temp, result);
 
-            temp = oidString + ".4.0";
-            sysContact = MeterUtils.getSNMPValue(temp, result);
+                temp = oidString + ".5.0";
+                sysName = MeterUtils.getSNMPValue(temp, result);
 
-            temp = oidString + ".5.0";
-            sysName = MeterUtils.getSNMPValue(temp, result);
+                temp = oidString + ".6.0";
+                sysLocation = MeterUtils.getSNMPValue(temp, result);
+            }
+            else {
+                errorList.add("Root OID : 1.3.6.1.2.1.1" + " " + MeterConstants.STANDARD_SYSTEM_ATTRIBUTES_ERROR);
+            }
+            // The following oid's is used to get number of ports
 
-            temp = oidString + ".6.0";
-            sysLocation = MeterUtils.getSNMPValue(temp, result);
+            oidString = "1.3.6.1.2.1.2.1";
+            rootOID = new OID(oidString);
+            result = MeterUtils.walk(rootOID, target);
+
+            if (result != null && !result.isEmpty()) {
+                temp = oidString + ".0";
+                tempStr = MeterUtils.getSNMPValue(temp, result);
+                numberOfPorts = Integer.parseInt(tempStr);
+            }
+            else {
+                errorList.add("Root OID : 1.3.6.1.2.1.1" + " " + "Unable to determine number of ports");
+            }
+            // The following oid's is used to get number of active ports
+
+            oidString = "1.3.6.1.2.1.2.2.1.7";
+            rootOID = new OID(oidString);
+            result = MeterUtils.walk(rootOID, target);
+
+            if (result != null && !result.isEmpty()) {
+                numberOfPortsUp = activePortsCalc(result, rootOID);
+
+            }
+            else {
+                errorList.add("Root OID : 1.3.6.1.2.1.2.2.1.7" + " "
+                        + "Unable to determine total number of active ports");
+            }
+            // The following oid's is used to get the network in and out bytes
+
+            oidString = ".1.3.6.1.2.1.2.2.1";
+            rootOID = new OID(oidString);
+            result = MeterUtils.walk(rootOID, target);
+
+            if (result != null && !result.isEmpty()) {
+
+                HashMap<String, Long> switchNetworkMap = new HashMap<String, Long>();
+                networkBytes = switchNetworkBytesCalc(result, rootOID, switchNetworkMap);
+                networkBytesIn = networkBytes.get("InBytes");
+                networkBytesOut = networkBytes.get("OutBytes");
+            }
+            else {
+                errorList.add("Root OID : 1.3.6.1.2.1.2.2.1" + " " + "Unable to get network bandwidth details");
+            }
+            // The following oid's is used to get the devices that are connected to ISR.
+
+            oidString = ".1.3.6.1.2.1.31.1.1.1.18";
+            rootOID = new OID(oidString);
+            result = MeterUtils.walk(rootOID, target);
+
+            if (result != null && !result.isEmpty()) {
+
+                connectedDevices = ConnectedDevicesCalc(result, rootOID);
+            }
+            else {
+                errorList.add("Root OID : 1.3.6.1.2.1.31.1.1.1.18" + " "
+                        + "Unable to provide list of connected devices");
+            }
+            // The following oid's is used to get the asset ID.
+
+            oidString = "1.3.6.1.2.1.2.2.1.6";
+            rootOID = new OID(oidString);
+            result = MeterUtils.walk(rootOID, target);
+
+            if (result != null && !result.isEmpty()) {
+                temp = oidString + ".1";
+                String assetIdVal = MeterUtils.getSNMPValue(temp, result);
+                assetId = MeterProtocols.ISR + "-" + assetIdVal.replaceAll(":", "");
+            }
+            else {
+                errorList.add("Root OID : 1.3.6.1.2.1.2.2.1.6" + " " + MeterConstants.ASSET_ID_ERROR);
+            }
         }
-        else {
-            errorList.add("Root OID : 1.3.6.1.2.1.1" + " " + MeterConstants.STANDARD_SYSTEM_ATTRIBUTES_ERROR);
+        catch (Exception e) {
+            errorList.add(ipAddress + " " + e.getMessage());
         }
-        // The following oid's is used to get number of ports
-
-        oidString = "1.3.6.1.2.1.2.1";
-        rootOID = new OID(oidString);
-        result = MeterUtils.walk(rootOID, target);
-
-        if (result != null && !result.isEmpty()) {
-            temp = oidString + ".0";
-            tempStr = MeterUtils.getSNMPValue(temp, result);
-            numberOfPorts = Integer.parseInt(tempStr);
-        }
-        else {
-            errorList.add("Root OID : 1.3.6.1.2.1.1" + " " + "Unable to determine number of ports");
-        }
-        // The following oid's is used to get number of active ports
-
-        oidString = "1.3.6.1.2.1.2.2.1.7";
-        rootOID = new OID(oidString);
-        result = MeterUtils.walk(rootOID, target);
-
-        if (result != null && !result.isEmpty()) {
-            numberOfPortsUp = activePortsCalc(result, rootOID);
-
-        }
-        else {
-            errorList.add("Root OID : 1.3.6.1.2.1.2.2.1.7" + " " + "Unable to determine total number of active ports");
-        }
-        // The following oid's is used to get the network in and out bytes
-
-        oidString = ".1.3.6.1.2.1.2.2.1";
-        rootOID = new OID(oidString);
-        result = MeterUtils.walk(rootOID, target);
-
-        if (result != null && !result.isEmpty()) {
-
-            HashMap<String, Long> switchNetworkMap = new HashMap<String, Long>();
-            networkBytes = switchNetworkBytesCalc(result, rootOID, switchNetworkMap);
-            networkBytesIn = networkBytes.get("InBytes");
-            networkBytesOut = networkBytes.get("OutBytes");
-        }
-        else {
-            errorList.add("Root OID : 1.3.6.1.2.1.2.2.1" + " " + "Unable to get network bandwidth details");
-        }
-        // The following oid's is used to get the devices that are connected to ISR.
-
-        oidString = ".1.3.6.1.2.1.31.1.1.1.18";
-        rootOID = new OID(oidString);
-        result = MeterUtils.walk(rootOID, target);
-
-        if (result != null && !result.isEmpty()) {
-
-            connectedDevices = ConnectedDevicesCalc(result, rootOID);
-        }
-        else {
-            errorList.add("Root OID : 1.3.6.1.2.1.31.1.1.1.18" + " " + "Unable to provide list of connected devices");
-        }
-        // The following oid's is used to get the asset ID.
-
-        oidString = "1.3.6.1.2.1.2.2.1.6";
-        rootOID = new OID(oidString);
-        result = MeterUtils.walk(rootOID, target);
-
-        if (result != null && !result.isEmpty()) {
-            temp = oidString + ".1";
-            String assetIdVal = MeterUtils.getSNMPValue(temp, result);
-            assetId = MeterProtocols.ISR + "-" + assetIdVal.replaceAll(":", "");
-        }
-        else {
-            errorList.add("Root OID : 1.3.6.1.2.1.2.2.1.6" + " " + MeterConstants.ASSET_ID_ERROR);
-        }
-
         IntegratedSwitchRouter switchObject = new IntegratedSwitchRouter(assetId, upTime, numberOfPorts,
                 numberOfPortsUp, networkBytesIn, networkBytesOut, sysName, sysIP, sysDescr, sysContact, sysLocation,
                 connectedDevices, extras);

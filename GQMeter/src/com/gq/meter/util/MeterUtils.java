@@ -28,6 +28,7 @@ import org.snmp4j.smi.VariableBinding;
 import org.snmp4j.transport.DefaultUdpTransportMapping;
 
 import com.gq.meter.ComputerMeter;
+import com.gq.meter.GQMeterData;
 import com.gq.meter.PrinterMeter;
 import com.gq.meter.ISRMeter;
 
@@ -112,11 +113,20 @@ public class MeterUtils {
      * @param target
      * @return
      */
-    public static Object getAssetObject(MeterProtocols protocol, String communityString, String currIp,
+    public static GQMeterData getAssetObject(MeterProtocols protocol, String communityString, String currIp,
             String snmpVersion) {
 
-        Object assetObject = null;
-        switch (protocol) {
+        GQMeterData assetObject = null;
+        if (protocol.equals(MeterProtocols.PRINTER)) {
+            assetObject = new PrinterMeter().implement(communityString, currIp, snmpVersion);
+        }
+        else if (protocol.equals(MeterProtocols.ISR)) {
+            assetObject = new ISRMeter().implement(communityString, currIp, snmpVersion);
+        }
+        else if (protocol.equals(MeterProtocols.COMPUTER)) {
+            assetObject = new ComputerMeter().implement(communityString, currIp, snmpVersion);
+        }
+        /*switch (protocol) {
 
         case PRINTER:
             assetObject = new PrinterMeter().implement(communityString, currIp, snmpVersion);
@@ -127,7 +137,7 @@ public class MeterUtils {
         case COMPUTER:
             assetObject = new ComputerMeter().implement(communityString, currIp, snmpVersion);
             break;
-        }
+        }*/
 
         return assetObject;
     }
