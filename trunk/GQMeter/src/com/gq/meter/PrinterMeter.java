@@ -56,107 +56,111 @@ public class PrinterMeter implements GQSNMPMeter {
             return null;
         }
         // The following oid's is used to get system basic info
+        try {
+            String oidString = "1.3.6.1.2.1.1";
+            String temp;
+            String tempStr;
 
-        String oidString = "1.3.6.1.2.1.1";
-        String temp;
-        String tempStr;
+            OID rootOID = new OID(oidString);
+            List<VariableBinding> result = null;
 
-        OID rootOID = new OID(oidString);
-        List<VariableBinding> result = null;
+            result = MeterUtils.walk(rootOID, target); // walk done with the initial assumption that device is v2
+            if (result != null && !result.isEmpty()) {
 
-        result = MeterUtils.walk(rootOID, target); // walk done with the initial assumption that device is v2
-        if (result != null && !result.isEmpty()) {
+                temp = oidString + ".1.0";
+                sysDescr = MeterUtils.getSNMPValue(temp, result);
 
-            temp = oidString + ".1.0";
-            sysDescr = MeterUtils.getSNMPValue(temp, result);
+                temp = oidString + ".3.0";
+                tempStr = MeterUtils.getSNMPValue(temp, result);
+                upTime = MeterUtils.upTimeCalc(tempStr);
 
-            temp = oidString + ".3.0";
-            tempStr = MeterUtils.getSNMPValue(temp, result);
-            upTime = MeterUtils.upTimeCalc(tempStr);
+                temp = oidString + ".4.0";
+                sysContact = MeterUtils.getSNMPValue(temp, result);
 
-            temp = oidString + ".4.0";
-            sysContact = MeterUtils.getSNMPValue(temp, result);
+                temp = oidString + ".5.0";
+                sysName = MeterUtils.getSNMPValue(temp, result);
 
-            temp = oidString + ".5.0";
-            sysName = MeterUtils.getSNMPValue(temp, result);
-
-            temp = oidString + ".6.0";
-            sysLocation = MeterUtils.getSNMPValue(temp, result);
-        }
-        else {
-            errorList.add("Root OID : 1.3.6.1.2.1.1" + " " + MeterConstants.STANDARD_SYSTEM_ATTRIBUTES_ERROR);
-        }
-        // The below oid's is used to get the toner percentage
-
-        oidString = ".1.3.6.1.2.1.43.11.1.1";
-        rootOID = new OID(oidString);
-        result = MeterUtils.walk(rootOID, target);
-
-        if (result != null && !result.isEmpty()) {
-            tonerPercentage = tonerPercentageCalc(result, rootOID);
-        }
-        else {
-            errorList.add("Root OID : 1.3.6.1.2.1.43.11.1.1" + " " + "Unable to get the toner percentage");
-        }
-        // The below oid's is used to determine color printer
-
-        oidString = "1.3.6.1.2.1.43.11.1.1.6";
-        rootOID = new OID(oidString);
-        result = MeterUtils.walk(rootOID, target);
-        if (result != null && !result.isEmpty()) {
-            if (result.size() <= 2) {
-                isColorPrinter = MeterConstants.BLACKWHITE_PRINTER;
+                temp = oidString + ".6.0";
+                sysLocation = MeterUtils.getSNMPValue(temp, result);
             }
             else {
-                isColorPrinter = MeterConstants.COLOR_PRINTER;
+                errorList.add("Root OID : 1.3.6.1.2.1.1" + " " + MeterConstants.STANDARD_SYSTEM_ATTRIBUTES_ERROR);
+            }
+            // The below oid's is used to get the toner percentage
+
+            oidString = ".1.3.6.1.2.1.43.11.1.1";
+            rootOID = new OID(oidString);
+            result = MeterUtils.walk(rootOID, target);
+
+            if (result != null && !result.isEmpty()) {
+                tonerPercentage = tonerPercentageCalc(result, rootOID);
+            }
+            else {
+                errorList.add("Root OID : 1.3.6.1.2.1.43.11.1.1" + " " + "Unable to get the toner percentage");
+            }
+            // The below oid's is used to determine color printer
+
+            oidString = "1.3.6.1.2.1.43.11.1.1.6";
+            rootOID = new OID(oidString);
+            result = MeterUtils.walk(rootOID, target);
+            if (result != null && !result.isEmpty()) {
+                if (result.size() <= 2) {
+                    isColorPrinter = MeterConstants.BLACKWHITE_PRINTER;
+                }
+                else {
+                    isColorPrinter = MeterConstants.COLOR_PRINTER;
+                }
+            }
+            else {
+                errorList.add("Root OID : 1.3.6.1.2.1.43.11.1.1.6" + " "
+                        + "Unable to determine if printer is a color printer");
+            }
+            // The following oid's is used to get the errorCondition, operationalState , currentState , mfgMakeAndModel
+
+            oidString = "1.3.6.1.2.1.25.3";
+            rootOID = new OID(oidString);
+            result = MeterUtils.walk(rootOID, target);
+
+            if (result != null && !result.isEmpty()) {
+                temp = oidString + ".5.1.2.1";
+                errorCondition = MeterUtils.getSNMPValue(temp, result);
+            }
+            else {
+                errorList.add("Root OID : 1.3.6.1.2.1.25.3" + " " + "Unable to determine printer error condition");
+            }
+
+            oidString = "1.3.6.1.2.1.25.3";
+            rootOID = new OID(oidString);
+            result = MeterUtils.walk(rootOID, target);
+
+            if (result != null && !result.isEmpty()) {
+                printerStatus = printerStatusCalc(result, rootOID);
+                currentState = printerStatus.get("currentState");
+                operationalState = printerStatus.get("operationalState");
+
+                temp = oidString + ".2.1.3.1";
+                mfgModel = MeterUtils.getSNMPValue(temp, result);
+            }
+            else {
+                errorList.add("Root OID : 1.3.6.1.2.1.25.3" + " "
+                        + "Unable to determine manufacture model, current state and operational state of the printer");
+            }
+            // The below oid's is used to get the asset id
+
+            oidString = ".1.3.6.1.2.1.2.2.1";
+            rootOID = new OID(oidString);
+            result = MeterUtils.walk(rootOID, target);
+
+            if (result != null && !result.isEmpty()) {
+                String assetVal = assetCalc(result, rootOID);
+                assetId = MeterProtocols.PRINTER + "-" + assetVal;
+            }
+            else {
+                errorList.add("Root OID : .1.3.6.1.2.1.2.2.1" + " " + MeterConstants.ASSET_ID_ERROR);
             }
         }
-        else {
-            errorList.add("Root OID : 1.3.6.1.2.1.43.11.1.1.6" + " "
-                    + "Unable to determine if printer is a color printer");
-        }
-        // The following oid's is used to get the errorCondition, operationalState , currentState , mfgMakeAndModel
-
-        oidString = "1.3.6.1.2.1.25.3";
-        rootOID = new OID(oidString);
-        result = MeterUtils.walk(rootOID, target);
-
-        if (result != null && !result.isEmpty()) {
-            temp = oidString + ".5.1.2.1";
-            errorCondition = MeterUtils.getSNMPValue(temp, result);
-        }
-        else {
-            errorList.add("Root OID : 1.3.6.1.2.1.25.3" + " " + "Unable to determine printer error condition");
-        }
-
-        oidString = "1.3.6.1.2.1.25.3";
-        rootOID = new OID(oidString);
-        result = MeterUtils.walk(rootOID, target);
-
-        if (result != null && !result.isEmpty()) {
-            printerStatus = printerStatusCalc(result, rootOID);
-            currentState = printerStatus.get("currentState");
-            operationalState = printerStatus.get("operationalState");
-
-            temp = oidString + ".2.1.3.1";
-            mfgModel = MeterUtils.getSNMPValue(temp, result);
-        }
-        else {
-            errorList.add("Root OID : 1.3.6.1.2.1.25.3" + " "
-                    + "Unable to determine manufacture model, current state and operational state of the printer");
-        }
-        // The below oid's is used to get the asset id
-
-        oidString = ".1.3.6.1.2.1.2.2.1";
-        rootOID = new OID(oidString);
-        result = MeterUtils.walk(rootOID, target);
-
-        if (result != null && !result.isEmpty()) {
-            String assetVal = assetCalc(result, rootOID);
-            assetId = MeterProtocols.PRINTER + "-" + assetVal;
-        }
-        else {
-            errorList.add("Root OID : .1.3.6.1.2.1.2.2.1" + " " + MeterConstants.ASSET_ID_ERROR);
+        catch (Exception e) {
+            errorList.add(ipAddress + " " + e.getMessage());
         }
 
         Printer printerObject = new Printer(assetId, upTime, tonerPercentage, outOfPaperIndicator, printsTakenCount,

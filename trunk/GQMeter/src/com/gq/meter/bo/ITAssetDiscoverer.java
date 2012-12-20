@@ -13,6 +13,7 @@ import java.util.StringTokenizer;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.gq.meter.GQErrorInformation;
+import com.gq.meter.GQMeterData;
 import com.gq.meter.GQMeterResponse;
 import com.gq.meter.object.assist.ProtocolData;
 import com.gq.meter.util.MeterProtocols;
@@ -38,7 +39,7 @@ public class ITAssetDiscoverer {
 
     private List<ProtocolData> findassets(List<HashMap<String, LinkedList<String>>> assetsInputList) {
 
-        Object assetObject = null;
+        GQMeterData assetObject = null;
         HashMap<String, String> snmpDetails = null;
         String snmpVersion = null;
         String assetDesc = null;
@@ -70,11 +71,23 @@ public class ITAssetDiscoverer {
                             if (!mProtocol.equals(MeterProtocols.UNKNOWN)) {
                                 assetObject = MeterUtils.getAssetObject(mProtocol, communityString, ipAddress,
                                         snmpVersion);
-                                pdList.add(new ProtocolData(mProtocol, gson.toJson(assetObject)));
+
+                                if (assetObject == null) {
+                                    errorList = new LinkedList<String>();
+                                    errorList.add(ipAddress + " - " + mProtocol.name()
+                                            + " : Can't fetch the meter details");
+                                    gqerrorInfoList.add(new GQErrorInformation(assetDesc, errorList));
+                                }
+                                else {
+                                    pdList.add(new ProtocolData(mProtocol, gson.toJson(assetObject.getMeterData())));
+                                    if (assetObject.getErrorInformation() != null) {
+                                        gqerrorInfoList.add(assetObject.getErrorInformation());
+                                    }
+                                }
                             }
                             else {
                                 errorList = new LinkedList<String>();
-                                errorList.add(ipAddress + " - " + mProtocol.name() + " : Can't to find the asset type");
+                                errorList.add(ipAddress + " - " + mProtocol.name() + " : Can't find the asset type");
                                 gqErrInfo = new GQErrorInformation(assetDesc, errorList);
                                 gqerrorInfoList.add(gqErrInfo);
                             }
