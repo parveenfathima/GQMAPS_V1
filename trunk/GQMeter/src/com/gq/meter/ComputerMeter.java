@@ -22,6 +22,7 @@ import org.snmp4j.transport.DefaultUdpTransportMapping;
 import com.gq.meter.object.Computer;
 import com.gq.meter.object.assist.ConnectedDevices;
 import com.gq.meter.object.assist.InstalledSoftware;
+import com.gq.meter.object.assist.Process;
 import com.gq.meter.util.MeterConstants;
 import com.gq.meter.util.MeterProtocols;
 import com.gq.meter.util.MeterUtils;
@@ -59,6 +60,7 @@ public class ComputerMeter implements GQSNMPMeter {
         HashMap<String, String> networkBytes = null;
         List<InstalledSoftware> installedSwList = null;
         List<ConnectedDevices> connectedDevicesList = null;
+        List<Process> ProcessList = null;
         List<String> errorList = new LinkedList<String>();
 
         try {
@@ -294,6 +296,29 @@ public class ComputerMeter implements GQSNMPMeter {
                 errorList.add("Root OID : 1.3.6.1.2.1.6.13.1.1" + " "
                         + "Unable to get port number and ip address of connected devices");
             }
+
+            // The following OID is used to get the System run name, cpu and memory share for a particular process .
+
+            if (result != null && !result.isEmpty()) {
+                oidString = ".1.3.6.1.2.1.25.4.2.1.2";
+                rootOID = new OID(oidString);
+                List<VariableBinding> sysRunNameResult = MeterUtils.walk(rootOID, target);
+
+                oidString = ".1.3.6.1.2.1.25.5.1.1.1";
+                rootOID = new OID(oidString);
+                List<VariableBinding> cpuShareResult = MeterUtils.walk(rootOID, target);
+
+                oidString = ".1.3.6.1.2.1.25.5.1.1.2";
+                rootOID = new OID(oidString);
+                List<VariableBinding> memShareResult = MeterUtils.walk(rootOID, target);
+
+                ProcessList = ProcessCalc(result, rootOID, sysRunNameResult, cpuShareResult, memShareResult);
+            }
+
+            else {
+                errorList.add("Root OID : .1.3.6.1.2.1.25" + " "
+                        + "Unable to get the system run name, cpu and memory share");
+            }
         }
         catch (Exception e) {
             errorList.add(ipAddress + " " + e.getMessage());
@@ -302,7 +327,7 @@ public class ComputerMeter implements GQSNMPMeter {
         Computer compObject = new Computer(assetId, cpuLoad, totalMemory, usedMemory, totalVirtualMemory,
                 usedVirtualMemory, totalDiskSpace, usedDiskSpace, upTime, numLoggedInUsers, numProcesses,
                 networkBytesIn, networkBytesOut, clockSpeed, sysName, sysIP, sysDescr, sysContact, sysLocation, extras,
-                installedSwList, connectedDevicesList);
+                installedSwList, connectedDevicesList, ProcessList);
 
         GQErrorInformation gqErrorInfo = null;
         if (errorList != null && !errorList.isEmpty()) {
@@ -590,49 +615,27 @@ public class ComputerMeter implements GQSNMPMeter {
         String rootId = rootOid.toString();
         String finalIP = null;
         String port = null;
-        String portname = null;
-        String portNameAndNumber = null;
-        String N_A = "Not Avaiable";
+        /*
+         * String portname = null; String portNameAndNumber = null; String N_A = "Not Avaiable";
+         */
 
         LinkedList<ConnectedDevices> connectedDevicesList = new LinkedList<ConnectedDevices>();
         ConnectedDevices Conn = null;
 
         HashMap<String, String> device = new HashMap<String, String>();
 
-        HashMap<String, String> portmap = new HashMap<String, String>();
-        portmap.put("7", "echo");
-        portmap.put("9", "discard");
-        portmap.put("13", "daytime");
-        portmap.put("17", "quotd");
-        portmap.put("20", "ftp-data");
-        portmap.put("21", "ftp");
-        portmap.put("22", "ssh");
-        portmap.put("23", "telnet");
-        portmap.put("25", "smtp");
-        portmap.put("37", "time");
-        portmap.put("53", "domain");
-        portmap.put("70", "gopher");
-        portmap.put("79", "finger");
-        portmap.put("80", "http");
-        portmap.put("110", "pop3");
-        portmap.put("111", "sunrpc");
-        portmap.put("113", "auth");
-        portmap.put("119", "nntp");
-        portmap.put("123", "ntp");
-        portmap.put("143", "imap2");
-        portmap.put("161", "snmp");
-        portmap.put("194", "irc");
-        portmap.put("220", "imap3");
-        portmap.put("389", "ldap");
-        portmap.put("443", "https");
-        portmap.put("873", "rsync");
-        portmap.put("2049", "nfs");
-        portmap.put("3306", "mysql");
-        portmap.put("6000", "X Window System");
-        portmap.put("6667", "ircd");
-        portmap.put("8080", "webcache");
-        portmap.put("5432", "postgres");
-        portmap.put("32860", "nlockmgr");
+        /*
+         * HashMap<String, String> portmap = new HashMap<String, String>(); portmap.put("7", "echo"); portmap.put("9",
+         * "discard"); portmap.put("13", "daytime"); portmap.put("17", "quotd"); portmap.put("20", "ftp-data");
+         * portmap.put("21", "ftp"); portmap.put("22", "ssh"); portmap.put("23", "telnet"); portmap.put("25", "smtp");
+         * portmap.put("37", "time"); portmap.put("53", "domain"); portmap.put("70", "gopher"); portmap.put("79",
+         * "finger"); portmap.put("80", "http"); portmap.put("110", "pop3"); portmap.put("111", "sunrpc");
+         * portmap.put("113", "auth"); portmap.put("119", "nntp"); portmap.put("123", "ntp"); portmap.put("143",
+         * "imap2"); portmap.put("161", "snmp"); portmap.put("194", "irc"); portmap.put("220", "imap3");
+         * portmap.put("389", "ldap"); portmap.put("443", "https"); portmap.put("873", "rsync"); portmap.put("2049",
+         * "nfs"); portmap.put("3306", "mysql"); portmap.put("6000", "X Window System"); portmap.put("6667", "ircd");
+         * portmap.put("8080", "webcache"); portmap.put("5432", "postgres"); portmap.put("32860", "nlockmgr");
+         */
 
         for (VariableBinding vb : result) {
             String expectedOID = rootId + "." + ipAddress;
@@ -654,16 +657,14 @@ public class ComputerMeter implements GQSNMPMeter {
             String ports = entry.getKey();
             String ipAddr = entry.getValue();
 
-            if (portmap.containsKey(ports)) {
-                portname = portmap.get(ports);
-                portNameAndNumber = ports + "[" + portname + "]";
+            /*
+             * if (portmap.containsKey(ports)) { portname = portmap.get(ports); portNameAndNumber = ports + "[" +
+             * portname + "]";
+             * 
+             * } else { portNameAndNumber = N_A; }
+             */
 
-            }
-            else {
-                portNameAndNumber = N_A;
-            }
-
-            Conn = new ConnectedDevices(ipAddr, portNameAndNumber);
+            Conn = new ConnectedDevices(ipAddr, ports);
             connectedDevicesList.add(Conn);
 
         }
@@ -671,4 +672,25 @@ public class ComputerMeter implements GQSNMPMeter {
         return connectedDevicesList;
 
     }
+
+    private List<Process> ProcessCalc(List<VariableBinding> result, OID rootOid,
+            List<VariableBinding> sysRunNameResult, List<VariableBinding> cpuShareResult,
+            List<VariableBinding> memShareResult) {
+
+        LinkedList<Process> ProcessList = new LinkedList<Process>();
+        Process process = null;
+        String runName = null;
+        int cpuShare = 0;
+        int memShare = 0;
+        for (int i = 0; i < sysRunNameResult.size(); i++) {
+            runName = sysRunNameResult.get(i).getVariable().toString().trim();
+            cpuShare = Integer.parseInt(cpuShareResult.get(i).getVariable().toString().trim());
+            memShare = Integer.parseInt(memShareResult.get(i).getVariable().toString().trim());
+            process = new Process(runName, cpuShare, memShare);
+            ProcessList.add(process);
+        }
+        return ProcessList;
+
+    }
+
 }

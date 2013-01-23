@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.gq.meter.object.assist.ConnectedDevices;
 import com.gq.meter.object.assist.InstalledSoftware;
+import com.gq.meter.object.assist.Process;
 
 public class Computer {
 
@@ -24,8 +25,9 @@ public class Computer {
 
     List<InstalledSoftware> installedSwList;
     List<ConnectedDevices> connectedDevices;
+    List<Process> process;
 
-    double clockSpeed; // v2
+	double clockSpeed; // v2
 
     String sysName;
     String sysIP; // string
@@ -122,11 +124,15 @@ public class Computer {
         return connectedDevices;
     }
 
+    public List<Process> getProcess() {
+		return process;
+	}
+    
     public Computer(String assetId, long cpuLoad, long totalMemory, long usedMemory, long totalVirtualMemory,
             long usedVirtualMemory, long totalDiskSpace, long usedDiskSpace, long upTime, long numLoggedInUsers,
             long numProcesses, long networkBytesIn, long networkBytesOut, double clockSpeed, String sysName,
             String sysIP, String sysDescr, String sysContact, String sysLocation, String extras,
-            List<InstalledSoftware> installedSwList, List<ConnectedDevices> connectedDevices) {
+            List<InstalledSoftware> installedSwList, List<ConnectedDevices> connectedDevices, List<Process> process) {
         super();
         this.assetId = assetId;
         this.cpuLoad = cpuLoad;
@@ -150,6 +156,7 @@ public class Computer {
         this.extras = extras;
         this.installedSwList = installedSwList;
         this.connectedDevices = connectedDevices;
+        this.process = process;
     }
 
 }
