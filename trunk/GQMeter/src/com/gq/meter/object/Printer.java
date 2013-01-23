@@ -1,5 +1,9 @@
 package com.gq.meter.object;
 
+import java.util.List;
+
+import com.gq.meter.object.assist.ConnectedDevices;
+
 public class Printer {
 
     String assetId; // uniq identifier abt the asset
@@ -8,6 +12,10 @@ public class Printer {
     double tonerPercentage;
     long outOfPaperIndicator; // 0 means no paper , v2
     long printsTakenCount; // v2
+    long totalMemory; // bytes
+    long usedMemory; // bytes
+    long totalDiskSpace; // bytes
+    long usedDiskSpace; // bytes
 
     String sysName;
     String sysIP; // string
@@ -21,6 +29,8 @@ public class Printer {
     String isColorPrinter;
 
     String extras; // anything device specific but to be discussed , v2
+
+    List<ConnectedDevices> connectedDevices;
 
     public String getAssetId() {
         return assetId;
@@ -82,6 +92,26 @@ public class Printer {
         return isColorPrinter;
     }
 
+    public long getTotalMemory() {
+        return totalMemory;
+    }
+
+    public long getTotalDiskSpace() {
+        return totalDiskSpace;
+    }
+
+    public long getUsedMemory() {
+        return usedMemory;
+    }
+
+    public long getUsedDiskSpace() {
+        return usedDiskSpace;
+    }
+
+    public List<ConnectedDevices> getConnectedDevices() {
+        return connectedDevices;
+    }
+
     public String getExtras() {
         return extras;
     }
@@ -89,7 +119,8 @@ public class Printer {
     public Printer(String assetId, long upTime, double tonerPercentage, long outOfPaperIndicator,
             long printsTakenCount, String sysName, String sysIP, String sysDescr, String sysContact,
             String sysLocation, String errorCondition, String operationalState, String currentState, String mfgModel,
-            String isColorPrinter, String extras) {
+            String isColorPrinter, long totalMemory, long totalDiskSpace, long usedMemory, long usedDiskSpace,
+            List<ConnectedDevices> connectedDevices, String extras) {
         super();
         this.assetId = assetId;
         this.upTime = upTime;
@@ -106,6 +137,11 @@ public class Printer {
         this.currentState = currentState;
         this.mfgModel = mfgModel;
         this.isColorPrinter = isColorPrinter;
+        this.totalMemory = totalMemory;
+        this.totalDiskSpace = totalDiskSpace;
+        this.usedMemory = usedMemory;
+        this.usedDiskSpace = usedDiskSpace;
+        this.connectedDevices = connectedDevices;
         this.extras = extras;
     }
 

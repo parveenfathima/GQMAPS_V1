@@ -5,6 +5,7 @@ import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map.Entry;
 
 import org.snmp4j.CommunityTarget;
 import org.snmp4j.Snmp;
@@ -13,11 +14,51 @@ import org.snmp4j.smi.VariableBinding;
 import org.snmp4j.transport.DefaultUdpTransportMapping;
 
 import com.gq.meter.object.Printer;
+import com.gq.meter.object.assist.ConnectedDevices;
 import com.gq.meter.util.MeterConstants;
 import com.gq.meter.util.MeterProtocols;
 import com.gq.meter.util.MeterUtils;
 
 public class PrinterMeter implements GQSNMPMeter {
+
+    static HashMap<Integer, String> printerOperationalStateMap = new HashMap<Integer, String>();
+    static HashMap<Integer, String> printerCurrentStateMap = new HashMap<Integer, String>();
+    static HashMap<Integer, String> printerErrorConditionMap = new HashMap<Integer, String>();
+
+    static {
+        // Predefined printer status map
+
+        printerOperationalStateMap.put(1, "Unknown");
+        printerOperationalStateMap.put(2, "Running");
+        printerOperationalStateMap.put(3, "Warning");
+        printerOperationalStateMap.put(4, "Testing");
+        printerOperationalStateMap.put(5, "Down");
+
+        printerCurrentStateMap.put(1, "Other");
+        printerCurrentStateMap.put(2, "Unknown");
+        printerCurrentStateMap.put(3, "Idle");
+        printerCurrentStateMap.put(4, "Printing");
+        printerCurrentStateMap.put(5, "WarmUp");
+
+        printerErrorConditionMap.put(0, "No Error");
+        printerErrorConditionMap.put(2, "Warming up");
+        printerErrorConditionMap.put(8, "Cartridge Removed");
+        printerErrorConditionMap.put(11, "Paper Out");
+        printerErrorConditionMap.put(12, "Open or no EP");
+        printerErrorConditionMap.put(13, "Paper Jam");
+        printerErrorConditionMap.put(14, "No paper cart Or no toner cart");
+        printerErrorConditionMap.put(16, "Toner low");
+        printerErrorConditionMap.put(18, "MIO not ready");
+        printerErrorConditionMap.put(20, "Memory OverFlow");
+        printerErrorConditionMap.put(21, "Printer Over run");
+        printerErrorConditionMap.put(22, "EIO configuration Error");
+        printerErrorConditionMap.put(23, "I/O not ready");
+        printerErrorConditionMap.put(24, "Job memory full");
+        printerErrorConditionMap.put(30, "PS error");
+        printerErrorConditionMap.put(40, "Data transfer error");
+        printerErrorConditionMap.put(41, "Temporary print engine failure");
+        printerErrorConditionMap.put(49, "A Communication or critical Firmware Error");
+    }
 
     @Override
     public GQMeterData implement(String communityString, String ipAddress, String snmpVersion) {
@@ -40,11 +81,16 @@ public class PrinterMeter implements GQSNMPMeter {
         long outOfPaperIndicator = 0; // 0 means no paper , v2
         long printsTakenCount = 0; // v2
         double tonerPercentage = 0;
+        long totalMemory = 0; // bytes
+        long usedMemory = 0; // bytes
+        long totalDiskSpace = 0; // bytes
+        long usedDiskSpace = 0; // bytes
 
         sysIP = ipAddress;
         CommunityTarget target = null;
         HashMap<String, String> printerStatus;
         List<String> errorList = new LinkedList<String>();
+        List<ConnectedDevices> connectedDevicesList = null;
 
         try {
             snmp = new Snmp(new DefaultUdpTransportMapping());
@@ -122,22 +168,10 @@ public class PrinterMeter implements GQSNMPMeter {
             result = MeterUtils.walk(rootOID, target);
 
             if (result != null && !result.isEmpty()) {
-                temp = oidString + ".5.1.2.1";
-                errorCondition = MeterUtils.getSNMPValue(temp, result);
-            }
-            else {
-                errorList.add("Root OID : 1.3.6.1.2.1.25.3" + " " + "Unable to determine printer error condition");
-            }
-
-            oidString = "1.3.6.1.2.1.25.3";
-            rootOID = new OID(oidString);
-            result = MeterUtils.walk(rootOID, target);
-
-            if (result != null && !result.isEmpty()) {
                 printerStatus = printerStatusCalc(result, rootOID);
                 currentState = printerStatus.get("currentState");
                 operationalState = printerStatus.get("operationalState");
-
+                errorCondition = printerStatus.get("errorCondition");
                 temp = oidString + ".2.1.3.1";
                 mfgModel = MeterUtils.getSNMPValue(temp, result);
             }
@@ -158,6 +192,44 @@ public class PrinterMeter implements GQSNMPMeter {
             else {
                 errorList.add("Root OID : .1.3.6.1.2.1.2.2.1" + " " + MeterConstants.ASSET_ID_ERROR);
             }
+
+            oidString = "1.3.6.1.2.1.25.2.3.1";
+            rootOID = new OID(oidString);
+            result = MeterUtils.walk(rootOID, target);
+            if (result != null && !result.isEmpty()) {
+                String OID = null;
+
+                OID = "1.3.6.1.2.1.25.2.1.2";
+                totalMemory = MemHardDiscCalc(result, rootOID, OID, false);
+                usedMemory = MemHardDiscCalc(result, rootOID, OID, true);
+
+                OID = "1.3.6.1.2.1.25.2.1.4";
+                long mainTotalDiskSpace = MemHardDiscCalc(result, rootOID, OID, false);
+                long mainUsedDiskSpace = MemHardDiscCalc(result, rootOID, OID, true);
+
+                OID = "1.3.6.1.2.1.25.2.1.9";
+                long subTotalDiskSpace = MemHardDiscCalc(result, rootOID, OID, false);
+                long subusedDiskSpace = MemHardDiscCalc(result, rootOID, OID, true);
+
+                totalDiskSpace = mainTotalDiskSpace + subTotalDiskSpace;
+                usedDiskSpace = mainUsedDiskSpace + subusedDiskSpace;
+            }
+            else {
+                errorList.add("Root OID : 1.3.6.1.2.1.25.2.3.1" + " " + "Unable to get disk and memory details");
+            }
+
+            // the following oid's is used to get the ip and port no of devices that is connected.
+            if (result != null && !result.isEmpty()) {
+                oidString = ".1.3.6.1.2.1.6.13.1.1";
+                rootOID = new OID(oidString);
+                result = MeterUtils.walk(rootOID, target);
+
+                connectedDevicesList = ConnectedDevicesCalc(result, rootOID, ipAddress);
+            }
+            else {
+                errorList.add("Root OID : 1.3.6.1.2.1.6.13.1.1" + " "
+                        + "Unable to get port number and ip address of connected devices");
+            }
         }
         catch (Exception e) {
             errorList.add(ipAddress + " " + e.getMessage());
@@ -165,7 +237,8 @@ public class PrinterMeter implements GQSNMPMeter {
 
         Printer printerObject = new Printer(assetId, upTime, tonerPercentage, outOfPaperIndicator, printsTakenCount,
                 sysName, sysIP, sysDescr, sysContact, sysLocation, errorCondition, operationalState, currentState,
-                mfgModel, isColorPrinter, extras);
+                mfgModel, isColorPrinter, totalMemory, totalDiskSpace, usedMemory, usedDiskSpace, connectedDevicesList,
+                extras);
 
         GQErrorInformation gqErrorInfo = null;
 
@@ -176,6 +249,49 @@ public class PrinterMeter implements GQSNMPMeter {
         long computerendTime = System.currentTimeMillis();
         System.out.println("Time taken bye the printer meter is : " + (computerendTime - computerstartTime));
         return gqMeterObject;
+    }
+
+    private long MemHardDiscCalc(List<VariableBinding> result, OID rootOid, String OID, boolean isUsed) {
+        String mulBytes = null;
+        String mulBytesOID = null;
+        String toMultiply = null;
+        String toMultiplyOID = null;
+        String usedMultiplyOID = null;
+        String usedMultiply = null;
+        String rootId = rootOid.toString();
+        Long memHdd = 0L;
+
+        for (VariableBinding vb : result) {
+            String temp = vb.getVariable().toString().trim();
+            if (temp.trim().equals(OID)) {
+                String lastValue = String.valueOf(vb.getOid().last());
+                mulBytesOID = rootId + "." + "4" + "." + lastValue;
+                if (!isUsed) {
+                    toMultiplyOID = rootId + "." + "5" + "." + lastValue;
+                }
+                else {
+                    usedMultiplyOID = rootId + "." + "6" + "." + lastValue;
+                }
+                for (VariableBinding vbs : result) {
+                    if (vbs.getOid().toString().trim().equals(mulBytesOID)) {
+                        mulBytes = vbs.getVariable().toString().trim();
+                    }
+                    else if (!isUsed && vbs.getOid().toString().trim().equals(toMultiplyOID)) {
+                        toMultiply = vbs.getVariable().toString().trim();
+                    }
+                    else if (isUsed && vbs.getOid().toString().trim().equals(usedMultiplyOID)) {
+                        usedMultiply = vbs.getVariable().toString().trim();
+                    }
+                }
+                if (!isUsed && mulBytes != null && toMultiply != null) {
+                    memHdd = memHdd + Long.parseLong(mulBytes.trim()) * Long.parseLong(toMultiply.trim());
+                }
+                else if (isUsed && mulBytes != null && usedMultiply != null) {
+                    memHdd = memHdd + Long.parseLong(mulBytes.trim()) * Long.parseLong(usedMultiply.trim());
+                }
+            }
+        }
+        return memHdd;
     }
 
     private double tonerPercentageCalc(List<VariableBinding> result, OID rootOid) {
@@ -215,48 +331,52 @@ public class PrinterMeter implements GQSNMPMeter {
 
         String operationalStateKey = "operationalState";
         String currentStateKey = "currentState";
+        String errorConditionKey = "errorCondition";
         String currentStatus = null;
         String operationalStatus = null;
+        String errorConditionalStatus = null;
         String rootId = rootOid.toString();
         String currentStateOid = rootId + ".5.1.1.1";
         String operationalStateOid = rootId + ".2.1.5.1";
+        String errorConditionOid = rootId + ".5.1.2.1";
         String N_A = "Not Avaiable";
-
-        // Predefined printer status map
-        HashMap<String, String> printerOperationalStateMap = new HashMap<String, String>();
-        printerOperationalStateMap.put("1", "Unknown");
-        printerOperationalStateMap.put("2", "Running");
-        printerOperationalStateMap.put("3", "Warning");
-        printerOperationalStateMap.put("4", "Testing");
-        printerOperationalStateMap.put("5", "Down");
-
-        HashMap<String, String> printerCurrentStateMap = new HashMap<String, String>();
-        printerCurrentStateMap.put("1", "Other");
-        printerCurrentStateMap.put("2", "Unknown");
-        printerCurrentStateMap.put("3", "Idle");
-        printerCurrentStateMap.put("4", "Printing");
-        printerCurrentStateMap.put("5", "WarmUp");
 
         for (VariableBinding vb : result) {
             if (currentStateOid != null && vb.getOid().toString().equals(currentStateOid)) {
-                String currentStateValue = vb.getVariable().toString().trim();
+                String currentStateValueStr = vb.getVariable().toString().trim();
+                int currentStateValue = Integer.parseInt(currentStateValueStr);
                 // check in the predefined map whether the map has the value
                 if (printerCurrentStateMap.containsKey(currentStateValue)) {
-                    currentStatus = printerCurrentStateMap.get(currentStateValue);
+                    currentStatus = currentStateValue + " " + "-" + " " + printerCurrentStateMap.get(currentStateValue);
                 }
                 else {
-                    currentStatus = N_A;
+                    currentStatus = currentStateValue + " " + "-" + " " + N_A;
                 }
 
             }
             else if (operationalStateOid != null && vb.getOid().toString().equals(operationalStateOid)) {
-                String operationalStateValue = vb.getVariable().toString().trim();
+                String operationalStateValueStr = vb.getVariable().toString().trim();
+                int operationalStateValue = Integer.parseInt(operationalStateValueStr);
                 // check in the predefined map whether the map has the value
                 if (printerOperationalStateMap.containsKey(operationalStateValue)) {
-                    operationalStatus = printerOperationalStateMap.get(operationalStateValue);
+                    operationalStatus = operationalStateValue + " " + "-" + " "
+                            + printerOperationalStateMap.get(operationalStateValue);
                 }
                 else {
-                    operationalStatus = N_A;
+                    operationalStatus = operationalStateValue + " " + "-" + " " + N_A;
+                }
+            }
+
+            else if (errorConditionOid != null && vb.getOid().toString().equals(errorConditionOid)) {
+                String errorConditionValueStr = vb.getVariable().toString().trim();
+                int errorConditionValue = Integer.parseInt(errorConditionValueStr);
+                // check in the predefined map whether the map has the value
+                if (printerErrorConditionMap.containsKey(errorConditionValue)) {
+                    errorConditionalStatus = errorConditionValue + " " + "-" + " "
+                            + printerErrorConditionMap.get(errorConditionValue);
+                }
+                else {
+                    errorConditionalStatus = errorConditionValue + " " + "-" + " " + N_A;
                 }
             }
         }
@@ -265,6 +385,7 @@ public class PrinterMeter implements GQSNMPMeter {
 
         printerStatus.put(currentStateKey, currentStatus); // current
         printerStatus.put(operationalStateKey, operationalStatus); // operational
+        printerStatus.put(errorConditionKey, errorConditionalStatus); // errorCondition
         return printerStatus;
     }
 
@@ -287,4 +408,43 @@ public class PrinterMeter implements GQSNMPMeter {
         }
         return assetStr;
     }
+
+    private List<ConnectedDevices> ConnectedDevicesCalc(List<VariableBinding> result, OID rootOid, String ipAddress) {
+
+        String rootId = rootOid.toString();
+        String finalIP = null;
+        String port = null;
+        LinkedList<ConnectedDevices> connectedDevicesList = new LinkedList<ConnectedDevices>();
+        ConnectedDevices Conn = null;
+
+        HashMap<String, String> device = new HashMap<String, String>();
+
+        for (VariableBinding vb : result) {
+            String expectedOID = rootId + "." + ipAddress;
+            if (expectedOID != null && vb.getOid().toString().contains(expectedOID)) {
+
+                String targetOID = vb.getOid().toString();
+                port = targetOID.toString().trim().split("\\.")[14];
+                String concatenate = expectedOID + "." + port + ".";
+                String targetIP = targetOID.replaceAll(concatenate, "");
+
+                finalIP = targetIP.substring(0, targetIP.lastIndexOf('.', targetIP.lastIndexOf('.')));
+
+                if (!finalIP.trim().equals(ipAddress) && !finalIP.trim().equals("0.0.0.0")) {
+                    device.put(port, finalIP);
+                }
+            }
+        }
+        for (Entry<String, String> entry : device.entrySet()) {
+            String ports = entry.getKey();
+            String ipAddr = entry.getValue();
+            Conn = new ConnectedDevices(ipAddr, ports);
+            connectedDevicesList.add(Conn);
+
+        }
+
+        return connectedDevicesList;
+
+    }
+
 }
