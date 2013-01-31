@@ -1,8 +1,9 @@
 package com.gq.meter.object;
 
+import java.util.HashSet;
+
 import java.util.List;
 
-import com.gq.meter.object.assist.ConnectedDevices;
 import com.gq.meter.object.assist.InstalledSoftware;
 import com.gq.meter.object.assist.Process;
 
@@ -24,16 +25,17 @@ public class Computer {
     long networkBytesOut; // bytes
 
     List<InstalledSoftware> installedSwList;
-    List<ConnectedDevices> connectedDevices;
+    HashSet<String> connectedDevices;
     List<Process> process;
 
-	double clockSpeed; // v2
+    double clockSpeed; // v2
 
     String sysName;
     String sysIP; // string
     String sysDescr;
     String sysContact;
     String sysLocation; // string
+    String os;
     String extras; // anything device specific
 
     public String getAssetId() {
@@ -120,19 +122,23 @@ public class Computer {
         return installedSwList;
     }
 
-    public List<ConnectedDevices> getConnectedDevices() {
+    public HashSet<String> getConnectedDevices() {
         return connectedDevices;
     }
 
     public List<Process> getProcess() {
-		return process;
-	}
-    
+        return process;
+    }
+
+    public String getOs() {
+        return os;
+    }
+
     public Computer(String assetId, long cpuLoad, long totalMemory, long usedMemory, long totalVirtualMemory,
             long usedVirtualMemory, long totalDiskSpace, long usedDiskSpace, long upTime, long numLoggedInUsers,
             long numProcesses, long networkBytesIn, long networkBytesOut, double clockSpeed, String sysName,
-            String sysIP, String sysDescr, String sysContact, String sysLocation, String extras,
-            List<InstalledSoftware> installedSwList, List<ConnectedDevices> connectedDevices, List<Process> process) {
+            String sysIP, String sysDescr, String sysContact, String sysLocation, String os, String extras,
+            List<InstalledSoftware> installedSwList, HashSet<String> connectedDevices, List<Process> process) {
         super();
         this.assetId = assetId;
         this.cpuLoad = cpuLoad;
@@ -153,6 +159,7 @@ public class Computer {
         this.sysDescr = sysDescr;
         this.sysContact = sysContact;
         this.sysLocation = sysLocation;
+        this.os = os;
         this.extras = extras;
         this.installedSwList = installedSwList;
         this.connectedDevices = connectedDevices;

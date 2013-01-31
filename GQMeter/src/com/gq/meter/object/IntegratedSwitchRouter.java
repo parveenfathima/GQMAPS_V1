@@ -1,5 +1,9 @@
 package com.gq.meter.object;
 
+import java.util.HashSet;
+
+import java.util.List;
+
 public class IntegratedSwitchRouter {
 
     String assetId; // uniq identifier abt the asset
@@ -15,7 +19,8 @@ public class IntegratedSwitchRouter {
     String sysDescr;
     String sysContact;
     String sysLocation; // string
-    String connectedDevices;
+
+    HashSet<String> connectedDevices;
 
     String extras; // anything device specific but to be discussed , v2
 
@@ -63,7 +68,7 @@ public class IntegratedSwitchRouter {
         return sysLocation;
     }
 
-    public String getConnectedDevices() {
+    public HashSet<String> getConnectedDevices() {
         return connectedDevices;
     }
 
@@ -73,7 +78,7 @@ public class IntegratedSwitchRouter {
 
     public IntegratedSwitchRouter(String assetId, long upTime, long numberOfPorts, long numberOfPortsUp,
             long networkBytesIn, long networkBytesOut, String sysName, String sysIP, String sysDescr,
-            String sysContact, String sysLocation, String connectedDevices, String extras) {
+            String sysContact, String sysLocation, HashSet<String> connectedDevices, String extras) {
         super();
         this.assetId = assetId;
         this.upTime = upTime;

@@ -20,7 +20,6 @@ import org.snmp4j.smi.VariableBinding;
 import org.snmp4j.transport.DefaultUdpTransportMapping;
 
 import com.gq.meter.object.Computer;
-import com.gq.meter.object.assist.ConnectedDevices;
 import com.gq.meter.object.assist.InstalledSoftware;
 import com.gq.meter.object.assist.Process;
 import com.gq.meter.util.MeterConstants;
@@ -30,7 +29,19 @@ import com.gq.meter.util.MeterUtils;
 public class ComputerMeter implements GQSNMPMeter {
 
     @Override
-    public GQMeterData implement(String communityString, String ipAddress, String snmpVersion) {
+    public GQMeterData implement(String communityString, String ipAddress, String snmpVersion,
+            LinkedList<String> toggleSwitches) {
+        System.out.println(" ::::::::::::::::: " + toggleSwitches.size());
+        for (String s : toggleSwitches) {
+            System.out.println(" list contains  : " + s);
+        }
+
+        // iterate list, compare the values with the meter constants then call the appropriate block
+
+        // process/conn_devices/inst_sw
+        // supose size is equals 3 then full
+        // if equals 0 then full
+        // if size equals 1 or 2 then read the value from the list and call the appropriate blocks
         long computerstartTime = System.currentTimeMillis();
         Snmp snmp = null;
         String assetId = null; // unique identifier about the asset
@@ -39,6 +50,7 @@ public class ComputerMeter implements GQSNMPMeter {
         String sysDescr = null; // string
         String sysContact = null; // string
         String sysLocation = null; // string
+        String os = null;
         String extras = null; // anything device specific but to be discussed v2
 
         long cpuLoad = 0; // in percentage
@@ -59,7 +71,7 @@ public class ComputerMeter implements GQSNMPMeter {
         CommunityTarget target = null;
         HashMap<String, String> networkBytes = null;
         List<InstalledSoftware> installedSwList = null;
-        List<ConnectedDevices> connectedDevicesList = null;
+        HashSet<String> connectedDevices = null;
         List<Process> ProcessList = null;
         List<String> errorList = new LinkedList<String>();
 
@@ -74,6 +86,7 @@ public class ComputerMeter implements GQSNMPMeter {
         }
         // The following oid's is used to get system basic info
         try {
+
             String oidString = "1.3.6.1.2.1.1";
             String temp;
             String tempStr;
@@ -90,7 +103,14 @@ public class ComputerMeter implements GQSNMPMeter {
 
                 if (null != sysDescr) {
                     if (sysDescr.contains("Windows")) {
+                        os = "Windows";
                         isWindows = true;
+                    }
+                    else if (sysDescr.contains("Linux")) {
+                        os = "Linux";
+                    }
+                    else {
+                        os = "Unix";
                     }
                 }
                 temp = oidString + ".3.0";
@@ -131,87 +151,28 @@ public class ComputerMeter implements GQSNMPMeter {
             else {
                 errorList.add("Root OID : 1.3.6.1.2.1.25.1" + " " + "Unable to get number of users and processes");
             }
-            // The following oid's is used to get disc space, physical memory, virtual memory
 
-            oidString = "1.3.6.1.2.1.25.2.3.1";
-            rootOID = new OID(oidString);
-            result = MeterUtils.walk(rootOID, target);
+            // the following oid's is used to get the asset id for linux.
 
-            if (result != null && !result.isEmpty()) {
-                String variable = null;
+            if (!isWindows) {
+                oidString = ".1.3.6.1.2.1.2.2.1";
+                rootOID = new OID(oidString);
+                result = MeterUtils.walk(rootOID, target);
+                if (result != null && !result.isEmpty()) {
+                    String[] ethernet = new String[] { "eth0", "eth1", "eth2", "en1", "en2", "en3", "em1", "em2",
+                            "em3", "wlan" };
 
-                if (isWindows) {
-                    variable = ":\\";
-                    long windowsDriveSize = getMemorycalc(result, rootOID, variable, false);
-                    long usedWindowsDriveSize = getMemorycalc(result, rootOID, variable, true);
-
-                    variable = "physical memory";
-                    totalMemory = getMemorycalc(result, rootOID, variable, false);
-                    usedMemory = getMemorycalc(result, rootOID, variable, true);
-
-                    variable = "virtual memory";
-                    totalVirtualMemory = getMemorycalc(result, rootOID, variable, false);
-                    usedVirtualMemory = getMemorycalc(result, rootOID, variable, true);
-
-                    totalDiskSpace = windowsDriveSize + totalVirtualMemory;
-                    usedDiskSpace = usedWindowsDriveSize + usedVirtualMemory;
-
+                    HashMap<String, List<Long>> networkMap = new HashMap<String, List<Long>>();
+                    networkBytes = linuxAssetIdCalc(result, rootOID, ethernet, networkMap, assetId, sysDescr);
+                    assetId = MeterProtocols.COMPUTER + "-" + networkBytes.get("assetId");
                 }
                 else {
-                    variable = "/dev/shm";
-                    long linuxDriveSize = getMemorycalc(result, rootOID, variable, false);
-                    long usedLinuxDriveSize = getMemorycalc(result, rootOID, variable, true);
-
-                    variable = "/home";
-                    long homeSize = getMemorycalc(result, rootOID, variable, false);
-                    long usedHomeSize = getMemorycalc(result, rootOID, variable, true);
-
-                    variable = "swap space";
-                    totalVirtualMemory = getMemorycalc(result, rootOID, variable, false);
-                    usedVirtualMemory = getMemorycalc(result, rootOID, variable, true);
-
-                    variable = "/";
-                    long DiskSpace1 = getMemorycalc(result, rootOID, variable, false);
-                    long usedtotalDiskSpace1 = getMemorycalc(result, rootOID, variable, true);
-
-                    variable = "/boot";
-                    long DiskSpace2 = getMemorycalc(result, rootOID, variable, false);
-                    long UsedtotalDiskSpace2 = getMemorycalc(result, rootOID, variable, true);
-
-                    totalDiskSpace = linuxDriveSize + totalVirtualMemory + DiskSpace1 + DiskSpace2 + homeSize;
-                    usedDiskSpace = usedLinuxDriveSize + usedVirtualMemory + usedtotalDiskSpace1 + UsedtotalDiskSpace2
-                            + usedHomeSize;
-
-                    variable = "real memory";
-                    totalMemory = getMemorycalc(result, rootOID, variable, false);
-
-                    if (totalMemory == 0L) {
-                        variable = "physical memory";
-                        totalMemory = getMemorycalc(result, rootOID, variable, false);
-                        usedMemory = getMemorycalc(result, rootOID, variable, true);
-                    }
-                    else {
-                        usedMemory = getMemorycalc(result, rootOID, variable, true);
-                    }
-                } // else loop ends
+                    errorList.add("Root OID : 1.3.6.1.2.1.2.2.1" + " "
+                            + "Unable to get network bandwidth details and unable to collate asset ID");
+                }
             }
-            else {
-                errorList.add("Root OID : 1.3.6.1.2.1.25.2.3.1" + " " + "Unable to get disk and memory details");
-            }
-            // The following oid's is used to get CPU load
 
-            oidString = ".1.3.6.1.2.1.25.3.3.1.2";
-            rootOID = new OID(oidString);
-            result = MeterUtils.walk(rootOID, target);
-
-            if (result != null && !result.isEmpty()) {
-                cpuLoad = cpuLoadCalc(result, rootOID);
-            }
-            else {
-                errorList.add("Root OID : 1.3.6.1.2.1.25.3.3.1.2" + " " + "Unable to compute CPU load");
-            }
-            // the following oid's is used to get network in and out bytes and asset id for windows
-
+            // the following oid's is used to get the asset id for windows.
             if (isWindows) {
                 oidString = ".1.3.6.1.2.1.2.2.1";
                 rootOID = new OID(oidString);
@@ -219,105 +180,217 @@ public class ComputerMeter implements GQSNMPMeter {
 
                 if (result != null && !result.isEmpty()) {
                     HashMap<String, String> winNetworkMap = new HashMap<String, String>();
-                    networkBytes = winNetworkBytesCalc(result, rootOID, winNetworkMap);
+                    networkBytes = winAssetIdCalc(result, rootOID, winNetworkMap);
 
-                    String networkBytesInStr = networkBytes.get("InBytes");
-                    networkBytesIn = Long.parseLong(networkBytesInStr);
-
-                    String networkBytesOutStr = networkBytes.get("OutBytes");
-                    networkBytesOut = Long.parseLong(networkBytesOutStr);
                     assetId = MeterProtocols.COMPUTER + "-" + networkBytes.get("macWinNetworkValue");
 
                 }
-                else {
-                    errorList.add("Root OID : 1.3.6.1.2.1.2.2.1" + " "
-                            + "Unable to get network bandwidth details and unable to collate asset ID");
-                }
             }
-            // the following oid's is used to get network in and out bytes and asset id for Linux
 
-            else {
-                oidString = ".1.3.6.1.2.1.2.2.1";
-                rootOID = new OID(oidString);
-                result = MeterUtils.walk(rootOID, target);
+            // The following oid's is used to get disc space, physical memory, virtual memory
 
-                if (result != null && !result.isEmpty()) {
-                    String[] ethernet = new String[] { "eth0", "eth1", "eth2", "en1", "en2", "en3", "em1", "em2",
-                            "em3", "wlan" };
+            for (String element : toggleSwitches) // or sArray
+            {
 
-                    HashMap<String, List<Long>> networkMap = new HashMap<String, List<Long>>();
-                    networkBytes = networkBytesCalc(result, rootOID, ethernet, networkMap, assetId, sysDescr);
-                    for (int i = 0; i < ethernet.length; i++) {
-                        if (networkBytes.get(ethernet[i] + "InBytes") != null) {
-                            networkBytesIn = networkBytesIn + Long.parseLong(networkBytes.get(ethernet[i] + "InBytes"));
+                if (element.equalsIgnoreCase(MeterConstants.FULL_DETAILS)
+                        || element.equalsIgnoreCase(MeterConstants.SNAPSHOT)) {
+                    oidString = "1.3.6.1.2.1.25.2.3.1";
+                    rootOID = new OID(oidString);
+                    result = MeterUtils.walk(rootOID, target);
+
+                    if (result != null && !result.isEmpty()) {
+                        String variable = null;
+
+                        if (isWindows) {
+                            variable = ":\\";
+                            long windowsDriveSize = getMemorycalc(result, rootOID, variable, false);
+                            long usedWindowsDriveSize = getMemorycalc(result, rootOID, variable, true);
+
+                            variable = "physical memory";
+                            totalMemory = getMemorycalc(result, rootOID, variable, false);
+                            usedMemory = getMemorycalc(result, rootOID, variable, true);
+
+                            variable = "virtual memory";
+                            totalVirtualMemory = getMemorycalc(result, rootOID, variable, false);
+                            usedVirtualMemory = getMemorycalc(result, rootOID, variable, true);
+
+                            totalDiskSpace = windowsDriveSize + totalVirtualMemory;
+                            usedDiskSpace = usedWindowsDriveSize + usedVirtualMemory;
+
                         }
-                        if (networkBytes.get(ethernet[i] + "OutBytes") != null) {
-                            networkBytesOut = networkBytesOut
-                                    + Long.parseLong(networkBytes.get(ethernet[i] + "OutBytes"));
+                        else {
+                            variable = "/dev/shm";
+                            long linuxDriveSize = getMemorycalc(result, rootOID, variable, false);
+                            long usedLinuxDriveSize = getMemorycalc(result, rootOID, variable, true);
+
+                            variable = "/home";
+                            long homeSize = getMemorycalc(result, rootOID, variable, false);
+                            long usedHomeSize = getMemorycalc(result, rootOID, variable, true);
+
+                            variable = "swap space";
+                            totalVirtualMemory = getMemorycalc(result, rootOID, variable, false);
+                            usedVirtualMemory = getMemorycalc(result, rootOID, variable, true);
+
+                            variable = "/";
+                            long DiskSpace1 = getMemorycalc(result, rootOID, variable, false);
+                            long usedtotalDiskSpace1 = getMemorycalc(result, rootOID, variable, true);
+
+                            variable = "/boot";
+                            long DiskSpace2 = getMemorycalc(result, rootOID, variable, false);
+                            long UsedtotalDiskSpace2 = getMemorycalc(result, rootOID, variable, true);
+
+                            totalDiskSpace = linuxDriveSize + totalVirtualMemory + DiskSpace1 + DiskSpace2 + homeSize;
+                            usedDiskSpace = usedLinuxDriveSize + usedVirtualMemory + usedtotalDiskSpace1
+                                    + UsedtotalDiskSpace2 + usedHomeSize;
+
+                            variable = "real memory";
+                            totalMemory = getMemorycalc(result, rootOID, variable, false);
+
+                            if (totalMemory == 0L) {
+                                variable = "physical memory";
+                                totalMemory = getMemorycalc(result, rootOID, variable, false);
+                                usedMemory = getMemorycalc(result, rootOID, variable, true);
+                            }
+                            else {
+                                usedMemory = getMemorycalc(result, rootOID, variable, true);
+                            }
+                        } // else loop ends
+                    }
+                    else {
+                        errorList
+                                .add("Root OID : 1.3.6.1.2.1.25.2.3.1" + " " + "Unable to get disk and memory details");
+                    }
+                    // The following oid's is used to get CPU load
+
+                    oidString = ".1.3.6.1.2.1.25.3.3.1.2";
+                    rootOID = new OID(oidString);
+                    result = MeterUtils.walk(rootOID, target);
+
+                    if (result != null && !result.isEmpty()) {
+                        cpuLoad = cpuLoadCalc(result, rootOID);
+                    }
+                    else {
+                        errorList.add("Root OID : 1.3.6.1.2.1.25.3.3.1.2" + " " + "Unable to compute CPU load");
+                    }
+                    // the following oid's is used to get network in and out bytes for windows
+
+                    if (isWindows) {
+                        oidString = ".1.3.6.1.2.1.2.2.1";
+                        rootOID = new OID(oidString);
+                        result = MeterUtils.walk(rootOID, target);
+
+                        if (result != null && !result.isEmpty()) {
+                            HashMap<String, String> winNetworkMap = new HashMap<String, String>();
+                            networkBytes = winNetworkBytesCalc(result, rootOID, winNetworkMap);
+
+                            String networkBytesInStr = networkBytes.get("InBytes");
+                            networkBytesIn = Long.parseLong(networkBytesInStr);
+
+                            String networkBytesOutStr = networkBytes.get("OutBytes");
+                            networkBytesOut = Long.parseLong(networkBytesOutStr);
+                            // assetId = MeterProtocols.COMPUTER + "-" + networkBytes.get("macWinNetworkValue");
+
                         }
-                    } // for loop ends
-                    assetId = MeterProtocols.COMPUTER + "-" + networkBytes.get("assetId");
+
+                        else {
+                            errorList.add("Root OID : 1.3.6.1.2.1.2.2.1" + " "
+                                    + "Unable to get network bandwidth details and unable to collate asset ID");
+                        }
+                    }
+                    // the following oid's is used to get network in and out bytes for Linux
+
+                    else {
+                        oidString = ".1.3.6.1.2.1.2.2.1";
+                        rootOID = new OID(oidString);
+                        result = MeterUtils.walk(rootOID, target);
+
+                        if (result != null && !result.isEmpty()) {
+                            String[] ethernet = new String[] { "eth0", "eth1", "eth2", "en1", "en2", "en3", "em1",
+                                    "em2", "em3", "wlan" };
+
+                            HashMap<String, List<Long>> networkMap = new HashMap<String, List<Long>>();
+                            networkBytes = networkBytesCalc(result, rootOID, ethernet, networkMap, assetId, sysDescr);
+                            for (int i = 0; i < ethernet.length; i++) {
+                                if (networkBytes.get(ethernet[i] + "InBytes") != null) {
+                                    networkBytesIn = networkBytesIn
+                                            + Long.parseLong(networkBytes.get(ethernet[i] + "InBytes"));
+                                }
+                                if (networkBytes.get(ethernet[i] + "OutBytes") != null) {
+                                    networkBytesOut = networkBytesOut
+                                            + Long.parseLong(networkBytes.get(ethernet[i] + "OutBytes"));
+                                }
+                            } // for loop ends
+                              // assetId = MeterProtocols.COMPUTER + "-" + networkBytes.get("assetId");
+                        }
+                        else {
+                            errorList.add("Root OID : 1.3.6.1.2.1.2.2.1" + " "
+                                    + "Unable to get network bandwidth details  and unable to collate asset ID");
+                        }
+                    }
                 }
-                else {
-                    errorList.add("Root OID : 1.3.6.1.2.1.2.2.1" + " "
-                            + "Unable to get network bandwidth details  and unable to collate asset ID");
+
+                // the following oid's is used to get the installed software list
+
+                if (element.equalsIgnoreCase(MeterConstants.FULL_DETAILS)
+                        || element.equalsIgnoreCase(MeterConstants.INSTALLED_SOFTWARE)) {
+                    oidString = ".1.3.6.1.2.1.25.6.3.1.4";
+                    rootOID = new OID(oidString);
+                    List<VariableBinding> appResult = MeterUtils.walk(rootOID, target);
+
+                    if (appResult != null && !appResult.isEmpty()) {
+                        oidString = ".1.3.6.1.2.1.25.6.3.1.2";
+                        rootOID = new OID(oidString);
+                        List<VariableBinding> softwareResult = MeterUtils.walk(rootOID, target);
+
+                        oidString = ".1.3.6.1.2.1.25.6.3.1.5";
+                        rootOID = new OID(oidString);
+                        List<VariableBinding> dateResult = MeterUtils.walk(rootOID, target);
+
+                        installedSwList = installedSwListCalc(appResult, softwareResult, dateResult, rootOID, isWindows);
+                    }
+                    else {
+                        errorList.add("Root OID : 1.3.6.1.2.1.25.6.3.1.4" + " "
+                                + "Unable to get list of installed software");
+                    }
                 }
-            }
-            // the following oid's is used to get the installed software list
+                // the following oid's is used to get the ip and port no of devices that is connected.
+                if (element.equalsIgnoreCase(MeterConstants.FULL_DETAILS)
+                        || element.equalsIgnoreCase(MeterConstants.CONNECTED_DEVICES)) {
+                    if (result != null && !result.isEmpty()) {
+                        oidString = ".1.3.6.1.2.1.6.13.1.1";
+                        rootOID = new OID(oidString);
+                        result = MeterUtils.walk(rootOID, target);
+                        connectedDevices = ConnectedDevicesCalc(result, ipAddress);
+                    }
+                    else {
+                        errorList.add("Root OID : 1.3.6.1.2.1.6.13.1.1" + " "
+                                + "Unable to get port number and ip address of connected devices");
+                    }
+                }
+                // The following OID is used to get the System run name, cpu and memory share for a particular process .
+                if (element.equalsIgnoreCase(MeterConstants.FULL_DETAILS)
+                        || element.equalsIgnoreCase(MeterConstants.PROCESS)) {
+                    if (result != null && !result.isEmpty()) {
+                        oidString = ".1.3.6.1.2.1.25.4.2.1.2";
+                        rootOID = new OID(oidString);
+                        List<VariableBinding> sysRunNameResult = MeterUtils.walk(rootOID, target);
 
-            oidString = ".1.3.6.1.2.1.25.6.3.1.4";
-            rootOID = new OID(oidString);
-            List<VariableBinding> appResult = MeterUtils.walk(rootOID, target);
+                        oidString = ".1.3.6.1.2.1.25.5.1.1.1";
+                        rootOID = new OID(oidString);
+                        List<VariableBinding> cpuShareResult = MeterUtils.walk(rootOID, target);
 
-            if (appResult != null && !appResult.isEmpty()) {
-                oidString = ".1.3.6.1.2.1.25.6.3.1.2";
-                rootOID = new OID(oidString);
-                List<VariableBinding> softwareResult = MeterUtils.walk(rootOID, target);
+                        oidString = ".1.3.6.1.2.1.25.5.1.1.2";
+                        rootOID = new OID(oidString);
+                        List<VariableBinding> memShareResult = MeterUtils.walk(rootOID, target);
 
-                oidString = ".1.3.6.1.2.1.25.6.3.1.5";
-                rootOID = new OID(oidString);
-                List<VariableBinding> dateResult = MeterUtils.walk(rootOID, target);
+                        ProcessList = ProcessCalc(result, rootOID, sysRunNameResult, cpuShareResult, memShareResult);
+                    }
 
-                installedSwList = installedSwListCalc(appResult, softwareResult, dateResult, rootOID, isWindows);
-            }
-            else {
-                errorList.add("Root OID : 1.3.6.1.2.1.25.6.3.1.4" + " " + "Unable to get list of installed software");
-            }
-
-            // the following oid's is used to get the ip and port no of devices that is connected.
-            if (result != null && !result.isEmpty()) {
-                oidString = ".1.3.6.1.2.1.6.13.1.1";
-                rootOID = new OID(oidString);
-                result = MeterUtils.walk(rootOID, target);
-
-                connectedDevicesList = ConnectedDevicesCalc(result, rootOID, ipAddress);
-            }
-            else {
-                errorList.add("Root OID : 1.3.6.1.2.1.6.13.1.1" + " "
-                        + "Unable to get port number and ip address of connected devices");
-            }
-
-            // The following OID is used to get the System run name, cpu and memory share for a particular process .
-
-            if (result != null && !result.isEmpty()) {
-                oidString = ".1.3.6.1.2.1.25.4.2.1.2";
-                rootOID = new OID(oidString);
-                List<VariableBinding> sysRunNameResult = MeterUtils.walk(rootOID, target);
-
-                oidString = ".1.3.6.1.2.1.25.5.1.1.1";
-                rootOID = new OID(oidString);
-                List<VariableBinding> cpuShareResult = MeterUtils.walk(rootOID, target);
-
-                oidString = ".1.3.6.1.2.1.25.5.1.1.2";
-                rootOID = new OID(oidString);
-                List<VariableBinding> memShareResult = MeterUtils.walk(rootOID, target);
-
-                ProcessList = ProcessCalc(result, rootOID, sysRunNameResult, cpuShareResult, memShareResult);
-            }
-
-            else {
-                errorList.add("Root OID : .1.3.6.1.2.1.25" + " "
-                        + "Unable to get the system run name, cpu and memory share");
+                    else {
+                        errorList.add("Root OID : .1.3.6.1.2.1.25" + " "
+                                + "Unable to get the system run name, cpu and memory share");
+                    }
+                }
             }
         }
         catch (Exception e) {
@@ -326,8 +399,8 @@ public class ComputerMeter implements GQSNMPMeter {
 
         Computer compObject = new Computer(assetId, cpuLoad, totalMemory, usedMemory, totalVirtualMemory,
                 usedVirtualMemory, totalDiskSpace, usedDiskSpace, upTime, numLoggedInUsers, numProcesses,
-                networkBytesIn, networkBytesOut, clockSpeed, sysName, sysIP, sysDescr, sysContact, sysLocation, extras,
-                installedSwList, connectedDevicesList, ProcessList);
+                networkBytesIn, networkBytesOut, clockSpeed, sysName, sysIP, sysDescr, sysContact, sysLocation, os,
+                extras, installedSwList, connectedDevices, ProcessList);
 
         GQErrorInformation gqErrorInfo = null;
         if (errorList != null && !errorList.isEmpty()) {
@@ -337,6 +410,7 @@ public class ComputerMeter implements GQSNMPMeter {
         long computerendTime = System.currentTimeMillis();
         System.out.println("Time taken bye the computer meter is : " + (computerendTime - computerstartTime));
         return gqMeterObject;
+
     }
 
     private long cpuLoadCalc(List<VariableBinding> result, OID rootOid) {
@@ -549,6 +623,70 @@ public class ComputerMeter implements GQSNMPMeter {
 
     } // network bytes calculation for windows gets over.
 
+    private HashMap<String, String> linuxAssetIdCalc(List<VariableBinding> result, OID rootOid, String[] ethernet,
+            HashMap<String, List<Long>> networkMap, String assetId, String sysDescr) {
+        String macOid = null;
+        String rootId = rootOid.toString();
+        HashMap<String, HashMap<String, String>> macOidMap = new HashMap<String, HashMap<String, String>>();
+        HashMap<String, String> networkValues = new HashMap<String, String>();
+        for (int i = 0; i < ethernet.length; i++) {
+            for (VariableBinding vb : result) {
+                if (vb.getVariable().toString().trim().equalsIgnoreCase(ethernet[i])) {
+                    String lastchar = String.valueOf(vb.getOid().last());
+
+                    macOid = rootId + "." + "6" + "." + lastchar;
+                    for (VariableBinding vbs : result) {
+
+                        if (vbs.getOid().toString().trim().equals(macOid)) {
+                            if (macOidMap.get(ethernet[i]) == null || macOidMap.get(ethernet[i]).size() == 0
+                                    || macOidMap.get(ethernet[i]).isEmpty()) {
+                                HashMap<String, String> macMap = new HashMap<String, String>();
+                                macMap.put(vbs.getOid().toString(), vbs.getVariable().toString());
+                                macOidMap.put(ethernet[i], macMap);
+                            }
+                            else {
+                                macOidMap.get(ethernet[i]).put(vbs.getOid().toString(), vbs.getVariable().toString());
+                            }
+                        }
+
+                    }
+                }
+            }
+        }
+        Set<String> uniqueValues = new HashSet<String>(macOidMap.get("eth0").values());
+        if (macOidMap.get("eth0") != null && macOidMap.get("eth0").size() != 0) {
+            String eth0MacAddress = uniqueValues.toString().substring(1, uniqueValues.toString().length() - 1).trim()
+                    .replaceAll(":", "");
+            assetId = eth0MacAddress;
+            networkValues.put("assetId", assetId);
+        }
+        return networkValues;
+
+    }
+
+    private HashMap<String, String> winAssetIdCalc(List<VariableBinding> result, OID rootOid,
+            HashMap<String, String> winNetworkMap) {
+
+        String macWinNetworkId = null;
+
+        String rootId = rootOid.toString();
+
+        for (VariableBinding vb : result) {
+            String lastchar = String.valueOf(vb.getOid().last());
+
+            macWinNetworkId = rootId + "." + "6" + "." + lastchar;
+            for (VariableBinding vbs : result) {
+                if (macWinNetworkId != null && vbs.getOid().toString().contains(macWinNetworkId)) {
+                    String macWinNetworkValue = vbs.getVariable().toString().trim().replaceAll(":", "");
+                    winNetworkMap.put("macWinNetworkValue", macWinNetworkValue);
+                }
+            }// for loop ends
+
+        }
+        return winNetworkMap;
+
+    }
+
     private List<InstalledSoftware> installedSwListCalc(List<VariableBinding> appResult,
             List<VariableBinding> softwareResult, List<VariableBinding> dateResult, OID rootOid, boolean isWindows) {
 
@@ -610,67 +748,31 @@ public class ComputerMeter implements GQSNMPMeter {
         return newDate;
     }
 
-    private List<ConnectedDevices> ConnectedDevicesCalc(List<VariableBinding> result, OID rootOid, String ipAddress) {
+    private HashSet<String> ConnectedDevicesCalc(List<VariableBinding> result, String ipAddress) {
 
-        String rootId = rootOid.toString();
-        String finalIP = null;
-        String port = null;
-        /*
-         * String portname = null; String portNameAndNumber = null; String N_A = "Not Avaiable";
-         */
-
-        LinkedList<ConnectedDevices> connectedDevicesList = new LinkedList<ConnectedDevices>();
-        ConnectedDevices Conn = null;
-
-        HashMap<String, String> device = new HashMap<String, String>();
-
-        /*
-         * HashMap<String, String> portmap = new HashMap<String, String>(); portmap.put("7", "echo"); portmap.put("9",
-         * "discard"); portmap.put("13", "daytime"); portmap.put("17", "quotd"); portmap.put("20", "ftp-data");
-         * portmap.put("21", "ftp"); portmap.put("22", "ssh"); portmap.put("23", "telnet"); portmap.put("25", "smtp");
-         * portmap.put("37", "time"); portmap.put("53", "domain"); portmap.put("70", "gopher"); portmap.put("79",
-         * "finger"); portmap.put("80", "http"); portmap.put("110", "pop3"); portmap.put("111", "sunrpc");
-         * portmap.put("113", "auth"); portmap.put("119", "nntp"); portmap.put("123", "ntp"); portmap.put("143",
-         * "imap2"); portmap.put("161", "snmp"); portmap.put("194", "irc"); portmap.put("220", "imap3");
-         * portmap.put("389", "ldap"); portmap.put("443", "https"); portmap.put("873", "rsync"); portmap.put("2049",
-         * "nfs"); portmap.put("3306", "mysql"); portmap.put("6000", "X Window System"); portmap.put("6667", "ircd");
-         * portmap.put("8080", "webcache"); portmap.put("5432", "postgres"); portmap.put("32860", "nlockmgr");
-         */
+        HashSet<String> connectedDevices = new HashSet<String>();
 
         for (VariableBinding vb : result) {
-            String expectedOID = rootId + "." + ipAddress;
-            if (expectedOID != null && vb.getOid().toString().contains(expectedOID)) {
+            String expectedStr = vb.getVariable().toString();
+            if (expectedStr != null && vb.getOid().toString().contains(expectedStr)
+                    && expectedStr.equalsIgnoreCase("5")) {
 
                 String targetOID = vb.getOid().toString();
-                port = targetOID.toString().trim().split("\\.")[14];
-                String concatenate = expectedOID + "." + port + ".";
-                String targetIP = targetOID.replaceAll(concatenate, "");
+                String[] preFinalOID = targetOID.toString().split("\\.");
+                String one = preFinalOID[15];
+                String two = preFinalOID[16];
+                String three = preFinalOID[17];
+                String four = preFinalOID[18];
+                String Final = one + "." + two + "." + three + "." + four;
 
-                finalIP = targetIP.substring(0, targetIP.lastIndexOf('.', targetIP.lastIndexOf('.')));
-
-                if (!finalIP.trim().equals(ipAddress) && !finalIP.trim().equals("0.0.0.0")) {
-                    device.put(port, finalIP);
+                if (!Final.trim().equals(ipAddress) && !Final.trim().equals("0.0.0.0")
+                        && !Final.trim().equals("127.0.0.1")) {
+                    connectedDevices.add(Final);
                 }
+
             }
         }
-        for (Entry<String, String> entry : device.entrySet()) {
-            String ports = entry.getKey();
-            String ipAddr = entry.getValue();
-
-            /*
-             * if (portmap.containsKey(ports)) { portname = portmap.get(ports); portNameAndNumber = ports + "[" +
-             * portname + "]";
-             * 
-             * } else { portNameAndNumber = N_A; }
-             */
-
-            Conn = new ConnectedDevices(ipAddr, ports);
-            connectedDevicesList.add(Conn);
-
-        }
-
-        return connectedDevicesList;
-
+        return connectedDevices;
     }
 
     private List<Process> ProcessCalc(List<VariableBinding> result, OID rootOid,

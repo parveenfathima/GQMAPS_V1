@@ -1,8 +1,8 @@
 package com.gq.meter.object;
 
-import java.util.List;
+import java.util.HashSet;
 
-import com.gq.meter.object.assist.ConnectedDevices;
+import java.util.List;
 
 public class Printer {
 
@@ -30,7 +30,7 @@ public class Printer {
 
     String extras; // anything device specific but to be discussed , v2
 
-    List<ConnectedDevices> connectedDevices;
+    HashSet<String> connectedDevices;
 
     public String getAssetId() {
         return assetId;
@@ -108,7 +108,7 @@ public class Printer {
         return usedDiskSpace;
     }
 
-    public List<ConnectedDevices> getConnectedDevices() {
+    public HashSet<String> getConnectedDevices() {
         return connectedDevices;
     }
 
@@ -120,7 +120,7 @@ public class Printer {
             long printsTakenCount, String sysName, String sysIP, String sysDescr, String sysContact,
             String sysLocation, String errorCondition, String operationalState, String currentState, String mfgModel,
             String isColorPrinter, long totalMemory, long totalDiskSpace, long usedMemory, long usedDiskSpace,
-            List<ConnectedDevices> connectedDevices, String extras) {
+            HashSet<String> connectedDevices, String extras) {
         super();
         this.assetId = assetId;
         this.upTime = upTime;
