@@ -29,4 +29,20 @@ public class MeterConstants {
 
     public static final String ASSET_ID_ERROR = "Unable to collate asset ID";
 
+    public static final String INSTALLED_SOFTWARE = "inst_sw";
+
+    public static final String CONNECTED_DEVICES = "conn_devices";
+
+    public static final String PROCESS = "process";
+
+    public static final String SNAPSHOT = "snapshot";
+
+    public static final String COMPUTER_SWITCHS = "@computer";
+
+    public static final String PRINTER_SWITCHS = "@printer";
+
+    public static final String ISR_SWITCHS = "@isr";
+
+    public static final String FULL_DETAILS = "full";
+
 } // class ends

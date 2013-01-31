@@ -42,18 +42,20 @@ public class MeterUtils {
     public static HashMap<String, String> isSnmpConfigured(String communityString, String currIp) {
         long computerstartTime = System.currentTimeMillis();
         String oidString = MeterConstants.SNMP_CHECK_OCTET;
-        HashMap<String, String> assetDetails = new HashMap<String, String>();
         String snmpVersion = MeterConstants.SNMP_VERSION_2;
+
+        HashMap<String, String> assetDetails = new HashMap<String, String>();
         CommunityTarget target = MeterUtils.makeTarget(currIp, communityString, snmpVersion);
         OID rootOID = new OID(oidString);
         List<VariableBinding> result = walk(rootOID, target);
-        if (result == null || result.isEmpty() || result.size() == 0) {
+
+        if (result == null || result.isEmpty()) {
             // may be the device is serving snmp but not version 2 , so lets try version 1
             System.out.println("SNMP Version2 is failed for this device,trying for version1 now");
             snmpVersion = MeterConstants.SNMP_VERSION_1;
             target = makeTarget(currIp, communityString, snmpVersion); // needs to be done only once.
             result = walk(rootOID, target);
-            if (result == null || result.size() == 0 || result.isEmpty()) {
+            if (result == null || result.isEmpty()) {
                 // may be the device is not serving snmp at all. so lets get out or throw io exception
                 System.out.println("SNMP Version2 && version1 are failed, The asset is not configure with SNMP ");
                 long computerendTime = System.currentTimeMillis();
@@ -62,6 +64,7 @@ public class MeterUtils {
                 return assetDetails; // if snmp is configured & the SNMP_CHECK_OCTET doesn't exist then return null;
             }
         }
+
         assetDetails.put("snmpVersion", snmpVersion);
         assetDetails.put("assetDesc", result.get(0).getVariable().toString());
 
@@ -114,30 +117,25 @@ public class MeterUtils {
      * @return
      */
     public static GQMeterData getAssetObject(MeterProtocols protocol, String communityString, String currIp,
-            String snmpVersion) {
+            String snmpVersion, LinkedList<String> switchList) {
 
         GQMeterData assetObject = null;
         if (protocol.equals(MeterProtocols.PRINTER)) {
-            assetObject = new PrinterMeter().implement(communityString, currIp, snmpVersion);
+            assetObject = new PrinterMeter().implement(communityString, currIp, snmpVersion, switchList);
         }
         else if (protocol.equals(MeterProtocols.ISR)) {
-            assetObject = new ISRMeter().implement(communityString, currIp, snmpVersion);
+            assetObject = new ISRMeter().implement(communityString, currIp, snmpVersion, switchList);
         }
         else if (protocol.equals(MeterProtocols.COMPUTER)) {
-            assetObject = new ComputerMeter().implement(communityString, currIp, snmpVersion);
+            assetObject = new ComputerMeter().implement(communityString, currIp, snmpVersion, switchList);
         }
-        /*switch (protocol) {
-
-        case PRINTER:
-            assetObject = new PrinterMeter().implement(communityString, currIp, snmpVersion);
-            break;
-        case ISR:
-            assetObject = new ISRMeter().implement(communityString, currIp, snmpVersion);
-            break;
-        case COMPUTER:
-            assetObject = new ComputerMeter().implement(communityString, currIp, snmpVersion);
-            break;
-        }*/
+        /*
+         * switch (protocol) {
+         * 
+         * case PRINTER: assetObject = new PrinterMeter().implement(communityString, currIp, snmpVersion); break; case
+         * ISR: assetObject = new ISRMeter().implement(communityString, currIp, snmpVersion); break; case COMPUTER:
+         * assetObject = new ComputerMeter().implement(communityString, currIp, snmpVersion); break; }
+         */
 
         return assetObject;
     }
@@ -394,4 +392,62 @@ public class MeterUtils {
         return secs;
     }
 
+    public static HashMap<MeterProtocols, LinkedList<String>> manageSwitches(String line,
+            HashMap<MeterProtocols, LinkedList<String>> assetSwitches) {
+        if (line.toLowerCase().startsWith(MeterConstants.COMPUTER_SWITCHS)) {
+            line = line.replace(MeterConstants.COMPUTER_SWITCHS, "").trim();
+            LinkedList<String> compSwitchList = null;
+
+            if (line.contains(MeterConstants.FULL_DETAILS)) {
+                compSwitchList = new LinkedList<String>();
+                compSwitchList.add(MeterConstants.FULL_DETAILS);
+                assetSwitches.put(MeterProtocols.COMPUTER, compSwitchList);
+            }
+            else {
+                compSwitchList = new LinkedList<String>();
+                for (String switches : line.split("\\|")) {
+                    compSwitchList.add(switches);
+                }
+                assetSwitches.put(MeterProtocols.COMPUTER, compSwitchList);
+            }
+
+        }
+        else if (line.toLowerCase().startsWith(MeterConstants.PRINTER_SWITCHS)) {
+            line = line.replace(MeterConstants.PRINTER_SWITCHS, "").trim();
+            LinkedList<String> printerSwitchList = null;
+
+            if (line.contains(MeterConstants.FULL_DETAILS)) {
+                printerSwitchList = new LinkedList<String>();
+                printerSwitchList.add(MeterConstants.FULL_DETAILS);
+                assetSwitches.put(MeterProtocols.PRINTER, printerSwitchList);
+            }
+            else {
+                printerSwitchList = new LinkedList<String>();
+                for (String switches : line.split("\\|")) {
+                    printerSwitchList.add(switches);
+                }
+                assetSwitches.put(MeterProtocols.PRINTER, printerSwitchList);
+            }
+
+        }
+        else if (line.toLowerCase().startsWith(MeterConstants.ISR_SWITCHS)) {
+            line = line.replace(MeterConstants.ISR_SWITCHS, "").trim();
+            LinkedList<String> isrSwitchList = null;
+
+            if (line.contains(MeterConstants.FULL_DETAILS)) {
+                isrSwitchList = new LinkedList<String>();
+                isrSwitchList.add(MeterConstants.FULL_DETAILS);
+                assetSwitches.put(MeterProtocols.ISR, isrSwitchList);
+            }
+            else {
+                isrSwitchList = new LinkedList<String>();
+                for (String switches : line.split("\\|")) {
+                    isrSwitchList.add(switches);
+                }
+                assetSwitches.put(MeterProtocols.ISR, isrSwitchList);
+            }
+        }
+        return assetSwitches;
+
+    }
 } // class ends

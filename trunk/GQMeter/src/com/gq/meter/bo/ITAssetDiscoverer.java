@@ -16,6 +16,7 @@ import com.gq.meter.GQErrorInformation;
 import com.gq.meter.GQMeterData;
 import com.gq.meter.GQMeterResponse;
 import com.gq.meter.object.assist.ProtocolData;
+import com.gq.meter.util.MeterConstants;
 import com.gq.meter.util.MeterProtocols;
 import com.gq.meter.util.MeterUtils;
 
@@ -34,8 +35,12 @@ public class ITAssetDiscoverer {
      * @return
      */
     // Gson gson = new GsonBuilder().create();
-    Gson gson = new GsonBuilder().setPrettyPrinting().create();
+    public Gson gson = new GsonBuilder().setPrettyPrinting().create();
     private GQMeterResponse gqmResponse = new GQMeterResponse();
+    List<String> errorList = null;
+    GQErrorInformation gqErrInfo = null;
+    List<GQErrorInformation> gqerrorInfoList = null;
+    HashMap<MeterProtocols, LinkedList<String>> switches = new HashMap<MeterProtocols, LinkedList<String>>();
 
     private List<ProtocolData> findassets(List<HashMap<String, LinkedList<String>>> assetsInputList) {
 
@@ -46,9 +51,7 @@ public class ITAssetDiscoverer {
         MeterProtocols mProtocol = null;
         String communityString = null;
         String ipAddress = null;
-        List<String> errorList = null;
-        GQErrorInformation gqErrInfo = null;
-        List<GQErrorInformation> gqerrorInfoList = new LinkedList<GQErrorInformation>();
+        gqerrorInfoList = new LinkedList<GQErrorInformation>();
 
         List<ProtocolData> pdList = new LinkedList<ProtocolData>();
         try {
@@ -63,14 +66,15 @@ public class ITAssetDiscoverer {
                         System.out.println("********************************************************************");
                         System.out.println("CommunityString : " + communityString + " - Ipaddress : " + ipAddress);
                         snmpDetails = MeterUtils.isSnmpConfigured(communityString, ipAddress);
-                        if (snmpDetails != null && snmpDetails.size() != 0 && !snmpDetails.isEmpty()) {
+
+                        if (snmpDetails != null && snmpDetails.size() != 0) {
                             snmpVersion = snmpDetails.get("snmpVersion");
                             assetDesc = snmpDetails.get("assetDesc");
                             mProtocol = MeterUtils.getAssetType(communityString, ipAddress, snmpVersion);
 
                             if (!mProtocol.equals(MeterProtocols.UNKNOWN)) {
                                 assetObject = MeterUtils.getAssetObject(mProtocol, communityString, ipAddress,
-                                        snmpVersion);
+                                        snmpVersion, switches.get(mProtocol));
 
                                 if (assetObject == null) {
                                     errorList = new LinkedList<String>();
@@ -93,6 +97,12 @@ public class ITAssetDiscoverer {
                             }
 
                         }
+                        else {
+                            errorList = new LinkedList<String>();
+                            errorList.add(ipAddress + " -  : Can't reach the asset");
+                            gqErrInfo = new GQErrorInformation(assetDesc, errorList);
+                            gqerrorInfoList.add(gqErrInfo);
+                        }
                     }
                 }
             }
@@ -108,7 +118,7 @@ public class ITAssetDiscoverer {
     }
 
     /**
-     * The file shoud be kept in a place where we look for it and read.
+     * The file should be kept in a place where we look for it and read.
      * 
      * @param inputFile
      */
@@ -123,12 +133,14 @@ public class ITAssetDiscoverer {
         LinkedList<String> ipList = null;
         HashMap<String, LinkedList<String>> communityIPMap = null;
         List<HashMap<String, LinkedList<String>>> assetsInputList = new LinkedList<HashMap<String, LinkedList<String>>>();
+        gqerrorInfoList = new LinkedList<GQErrorInformation>();
 
         gqmResponse.setGqmid("GQMeterResponse");
         if (null != inputFilePath && inputFilePath.trim() != "") {
             try {
                 assetsInputFile = new File(inputFilePath);
                 if (assetsInputFile.exists() && assetsInputFile.isFile()) {
+
                     assetFileStream = new FileInputStream(assetsInputFile);
                     String inputAssets = MeterUtils.read(assetFileStream);
 
@@ -136,35 +148,58 @@ public class ITAssetDiscoverer {
                         System.out.println("*** The asset file is empty ***");
                         System.exit(1);
                     }
-                    String assetLines[] = inputAssets.trim().split("\n");
+                    String assetLines[] = inputAssets.trim().replace("\t", " ").split("\n");
 
                     for (String line : assetLines) {
                         line = line.trim();
                         if (line.length() == 0 || line.startsWith("#")) {
                             continue;
                         }
-                        line = line.replace("\t", " ");
-                        sToken = new StringTokenizer(line, " ");
-                        if (sToken.countTokens() == 2 || sToken.countTokens() == 3) {
-                            communityString = sToken.nextToken().trim();
-                            ipLowerbound = sToken.nextToken().trim();
-
-                            ipList = new LinkedList<String>();
-                            ipList.add(ipLowerbound);
-                            if (sToken.hasMoreTokens()) {
-                                ipUpperbound = sToken.nextToken().trim();
-                                while (!(ipLowerbound = MeterUtils.nextIpAddress(ipLowerbound)).equals(ipUpperbound)) {
-                                    ipList.add(ipLowerbound);
-                                }
-                                ipList.add(ipUpperbound);
-                            }
-                            communityIPMap = new HashMap<String, LinkedList<String>>();
-                            communityIPMap.put(communityString, ipList);
-                            assetsInputList.add(communityIPMap);
+                        // line ! starts with @ for switches
+                        if (line.startsWith("@")) {
+                            MeterUtils.manageSwitches(line, switches);
                         }
                         else {
-                            System.out.println("INVALID : entry -" + line);
-                            System.out.println("Usage : COMMUNITY_STRING IP_LOWER_BOUND IP_UPPER_BOUND");
+                            sToken = new StringTokenizer(line, " ");
+
+                            if (sToken.countTokens() == 2 || sToken.countTokens() == 3) {
+                                communityString = sToken.nextToken().trim();
+                                ipLowerbound = sToken.nextToken().trim();
+
+                                if (sToken.hasMoreTokens()) {
+                                    ipUpperbound = sToken.nextToken().trim();
+
+                                    if (ipLowerbound.compareTo(ipUpperbound) == -1) {
+                                        ipList = new LinkedList<String>();
+                                        ipList.add(ipLowerbound);
+
+                                        while (!(ipLowerbound = MeterUtils.nextIpAddress(ipLowerbound))
+                                                .equals(ipUpperbound)) {
+                                            ipList.add(ipLowerbound);
+                                        }
+
+                                        ipList.add(ipUpperbound);
+                                    }
+                                    else {
+                                        System.out.println(sToken + " -  : Invalid ip range");
+                                        errorList = new LinkedList<String>();
+                                        errorList.add(sToken + " -  : Invalid ip range");
+                                        gqErrInfo = new GQErrorInformation("Invalid asset ip range", errorList);
+                                        gqerrorInfoList.add(gqErrInfo);
+                                    }
+                                }
+                                else {
+                                    ipList = new LinkedList<String>();
+                                    ipList.add(ipLowerbound);
+                                }
+                                communityIPMap = new HashMap<String, LinkedList<String>>();
+                                communityIPMap.put(communityString, ipList);
+                                assetsInputList.add(communityIPMap);
+                            }
+                            else {
+                                System.out.println("INVALID : entry -" + line);
+                                System.out.println("Usage : COMMUNITY_STRING IP_LOWER_BOUND IP_UPPER_BOUND");
+                            }
                         }
                     }
                     assetsList = findassets(assetsInputList);
@@ -175,7 +210,7 @@ public class ITAssetDiscoverer {
                     System.exit(1);
                 }
             }
-            catch (NullPointerException | IOException | ArrayIndexOutOfBoundsException e) {
+            catch (Exception e) {
                 e.printStackTrace();
                 System.out.println("Exception occured : Unable to locate the input file for processing : " + e);
             }
@@ -184,6 +219,7 @@ public class ITAssetDiscoverer {
                     if (null != assetFileStream) {
                         assetFileStream.close();
                     }
+                    gqmResponse.setErrorInformationList(gqerrorInfoList); // Added the errors to the GQMResponse
                     return gqmResponse; // returns not null map with all the asset objects value
                 }
                 catch (Exception e) {
@@ -212,6 +248,7 @@ public class ITAssetDiscoverer {
     }
 
     public static void main(String[] args) throws IOException {
+
         Long startTime = System.currentTimeMillis();
         if (args.length != 2) {
             System.out.println("Usage : ASSETDETAILS_FILE_PATH REST_URL");
@@ -226,6 +263,7 @@ public class ITAssetDiscoverer {
         System.out.println("::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::");
         long endTime = System.currentTimeMillis();
         System.out.println("Total duration taken : " + (endTime - startTime));
+
         /*
          * Computer c = new Computer("sdfsad", 83, 100, 80, 30, 20, 500, 340, 89330, 7, 48, 10000, 22220, 2.34, "name",
          * "192.149.4.4", "desc", "contact", "location", "extras", new Date());

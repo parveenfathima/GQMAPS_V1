@@ -1,8 +1,10 @@
 package com.gq.meter;
 
 import java.io.IOException;
+
 import java.text.DecimalFormat;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
@@ -14,7 +16,6 @@ import org.snmp4j.smi.VariableBinding;
 import org.snmp4j.transport.DefaultUdpTransportMapping;
 
 import com.gq.meter.object.Printer;
-import com.gq.meter.object.assist.ConnectedDevices;
 import com.gq.meter.util.MeterConstants;
 import com.gq.meter.util.MeterProtocols;
 import com.gq.meter.util.MeterUtils;
@@ -61,7 +62,14 @@ public class PrinterMeter implements GQSNMPMeter {
     }
 
     @Override
-    public GQMeterData implement(String communityString, String ipAddress, String snmpVersion) {
+    public GQMeterData implement(String communityString, String ipAddress, String snmpVersion,
+            LinkedList<String> toggleSwitches) {
+
+        System.out.println("::::::::::::::::: " + toggleSwitches.size());
+        for (String s : toggleSwitches) {
+            System.out.println(" list contains : " + s);
+        }
+
         long computerstartTime = System.currentTimeMillis();
         Snmp snmp = null;
         String assetId = null; // unique identifier about the asset
@@ -70,6 +78,7 @@ public class PrinterMeter implements GQSNMPMeter {
         String sysDescr = null;
         String sysContact = null;
         String sysLocation = null;
+
         String errorCondition = null;
         String operationalState = null;
         String currentState = null;
@@ -90,7 +99,7 @@ public class PrinterMeter implements GQSNMPMeter {
         CommunityTarget target = null;
         HashMap<String, String> printerStatus;
         List<String> errorList = new LinkedList<String>();
-        List<ConnectedDevices> connectedDevicesList = null;
+        HashSet<String> connectedDevices = null;
 
         try {
             snmp = new Snmp(new DefaultUdpTransportMapping());
@@ -132,18 +141,21 @@ public class PrinterMeter implements GQSNMPMeter {
             else {
                 errorList.add("Root OID : 1.3.6.1.2.1.1" + " " + MeterConstants.STANDARD_SYSTEM_ATTRIBUTES_ERROR);
             }
-            // The below oid's is used to get the toner percentage
 
-            oidString = ".1.3.6.1.2.1.43.11.1.1";
+            // The below oid's is used to get the asset id
+
+            oidString = ".1.3.6.1.2.1.2.2.1";
             rootOID = new OID(oidString);
             result = MeterUtils.walk(rootOID, target);
 
             if (result != null && !result.isEmpty()) {
-                tonerPercentage = tonerPercentageCalc(result, rootOID);
+                String assetVal = assetCalc(result, rootOID);
+                assetId = MeterProtocols.PRINTER + "-" + assetVal;
             }
             else {
-                errorList.add("Root OID : 1.3.6.1.2.1.43.11.1.1" + " " + "Unable to get the toner percentage");
+                errorList.add("Root OID : .1.3.6.1.2.1.2.2.1" + " " + MeterConstants.ASSET_ID_ERROR);
             }
+
             // The below oid's is used to determine color printer
 
             oidString = "1.3.6.1.2.1.43.11.1.1.6";
@@ -161,7 +173,8 @@ public class PrinterMeter implements GQSNMPMeter {
                 errorList.add("Root OID : 1.3.6.1.2.1.43.11.1.1.6" + " "
                         + "Unable to determine if printer is a color printer");
             }
-            // The following oid's is used to get the errorCondition, operationalState , currentState , mfgMakeAndModel
+            // The following oid's is used to get the errorCondition, operationalState , currentState ,
+            // mfgMakeAndModel
 
             oidString = "1.3.6.1.2.1.25.3";
             rootOID = new OID(oidString);
@@ -179,56 +192,65 @@ public class PrinterMeter implements GQSNMPMeter {
                 errorList.add("Root OID : 1.3.6.1.2.1.25.3" + " "
                         + "Unable to determine manufacture model, current state and operational state of the printer");
             }
-            // The below oid's is used to get the asset id
 
-            oidString = ".1.3.6.1.2.1.2.2.1";
-            rootOID = new OID(oidString);
-            result = MeterUtils.walk(rootOID, target);
+            for (String element : toggleSwitches) // or sArray
+            {
 
-            if (result != null && !result.isEmpty()) {
-                String assetVal = assetCalc(result, rootOID);
-                assetId = MeterProtocols.PRINTER + "-" + assetVal;
-            }
-            else {
-                errorList.add("Root OID : .1.3.6.1.2.1.2.2.1" + " " + MeterConstants.ASSET_ID_ERROR);
-            }
+                if (element.equalsIgnoreCase(MeterConstants.FULL_DETAILS)
+                        || element.equalsIgnoreCase(MeterConstants.SNAPSHOT)) {
+                    // The below oid's is used to get the toner percentage
 
-            oidString = "1.3.6.1.2.1.25.2.3.1";
-            rootOID = new OID(oidString);
-            result = MeterUtils.walk(rootOID, target);
-            if (result != null && !result.isEmpty()) {
-                String OID = null;
+                    oidString = ".1.3.6.1.2.1.43.11.1.1";
+                    rootOID = new OID(oidString);
+                    result = MeterUtils.walk(rootOID, target);
 
-                OID = "1.3.6.1.2.1.25.2.1.2";
-                totalMemory = MemHardDiscCalc(result, rootOID, OID, false);
-                usedMemory = MemHardDiscCalc(result, rootOID, OID, true);
+                    if (result != null && !result.isEmpty()) {
+                        tonerPercentage = tonerPercentageCalc(result, rootOID);
+                    }
+                    else {
+                        errorList.add("Root OID : 1.3.6.1.2.1.43.11.1.1" + " " + "Unable to get the toner percentage");
+                    }
+                    oidString = "1.3.6.1.2.1.25.2.3.1";
+                    rootOID = new OID(oidString);
+                    result = MeterUtils.walk(rootOID, target);
+                    if (result != null && !result.isEmpty()) {
+                        String OID = null;
 
-                OID = "1.3.6.1.2.1.25.2.1.4";
-                long mainTotalDiskSpace = MemHardDiscCalc(result, rootOID, OID, false);
-                long mainUsedDiskSpace = MemHardDiscCalc(result, rootOID, OID, true);
+                        OID = "1.3.6.1.2.1.25.2.1.2";
+                        totalMemory = MemHardDiscCalc(result, rootOID, OID, false);
+                        usedMemory = MemHardDiscCalc(result, rootOID, OID, true);
 
-                OID = "1.3.6.1.2.1.25.2.1.9";
-                long subTotalDiskSpace = MemHardDiscCalc(result, rootOID, OID, false);
-                long subusedDiskSpace = MemHardDiscCalc(result, rootOID, OID, true);
+                        OID = "1.3.6.1.2.1.25.2.1.4";
+                        long mainTotalDiskSpace = MemHardDiscCalc(result, rootOID, OID, false);
+                        long mainUsedDiskSpace = MemHardDiscCalc(result, rootOID, OID, true);
 
-                totalDiskSpace = mainTotalDiskSpace + subTotalDiskSpace;
-                usedDiskSpace = mainUsedDiskSpace + subusedDiskSpace;
-            }
-            else {
-                errorList.add("Root OID : 1.3.6.1.2.1.25.2.3.1" + " " + "Unable to get disk and memory details");
-            }
+                        OID = "1.3.6.1.2.1.25.2.1.9";
+                        long subTotalDiskSpace = MemHardDiscCalc(result, rootOID, OID, false);
+                        long subusedDiskSpace = MemHardDiscCalc(result, rootOID, OID, true);
 
-            // the following oid's is used to get the ip and port no of devices that is connected.
-            if (result != null && !result.isEmpty()) {
-                oidString = ".1.3.6.1.2.1.6.13.1.1";
-                rootOID = new OID(oidString);
-                result = MeterUtils.walk(rootOID, target);
+                        totalDiskSpace = mainTotalDiskSpace + subTotalDiskSpace;
+                        usedDiskSpace = mainUsedDiskSpace + subusedDiskSpace;
+                    }
+                    else {
+                        errorList
+                                .add("Root OID : 1.3.6.1.2.1.25.2.3.1" + " " + "Unable to get disk and memory details");
+                    }
+                }
+                // the following oid's is used to get the ip and port no of devices that is connected.
 
-                connectedDevicesList = ConnectedDevicesCalc(result, rootOID, ipAddress);
-            }
-            else {
-                errorList.add("Root OID : 1.3.6.1.2.1.6.13.1.1" + " "
-                        + "Unable to get port number and ip address of connected devices");
+                if (element.equalsIgnoreCase(MeterConstants.FULL_DETAILS)
+                        || element.equalsIgnoreCase(MeterConstants.CONNECTED_DEVICES)) {
+                    if (result != null && !result.isEmpty()) {
+                        oidString = ".1.3.6.1.2.1.6.13.1.1";
+                        rootOID = new OID(oidString);
+                        result = MeterUtils.walk(rootOID, target);
+                        connectedDevices = ConnectedDevicesCalc(result, ipAddress);
+                    }
+                    else {
+                        errorList.add("Root OID : 1.3.6.1.2.1.6.13.1.1" + " "
+                                + "Unable to get port number and ip address of connected devices");
+                    }
+                }
             }
         }
         catch (Exception e) {
@@ -237,7 +259,7 @@ public class PrinterMeter implements GQSNMPMeter {
 
         Printer printerObject = new Printer(assetId, upTime, tonerPercentage, outOfPaperIndicator, printsTakenCount,
                 sysName, sysIP, sysDescr, sysContact, sysLocation, errorCondition, operationalState, currentState,
-                mfgModel, isColorPrinter, totalMemory, totalDiskSpace, usedMemory, usedDiskSpace, connectedDevicesList,
+                mfgModel, isColorPrinter, totalMemory, totalDiskSpace, usedMemory, usedDiskSpace, connectedDevices,
                 extras);
 
         GQErrorInformation gqErrorInfo = null;
@@ -409,42 +431,30 @@ public class PrinterMeter implements GQSNMPMeter {
         return assetStr;
     }
 
-    private List<ConnectedDevices> ConnectedDevicesCalc(List<VariableBinding> result, OID rootOid, String ipAddress) {
+    private HashSet<String> ConnectedDevicesCalc(List<VariableBinding> result, String ipAddress) {
 
-        String rootId = rootOid.toString();
-        String finalIP = null;
-        String port = null;
-        LinkedList<ConnectedDevices> connectedDevicesList = new LinkedList<ConnectedDevices>();
-        ConnectedDevices Conn = null;
-
-        HashMap<String, String> device = new HashMap<String, String>();
+        HashSet<String> connectedDevices = new HashSet<String>();
 
         for (VariableBinding vb : result) {
-            String expectedOID = rootId + "." + ipAddress;
-            if (expectedOID != null && vb.getOid().toString().contains(expectedOID)) {
+            String expectedStr = vb.getVariable().toString();
+            if (expectedStr != null && vb.getOid().toString().contains(expectedStr)
+                    && expectedStr.equalsIgnoreCase("5")) {
 
                 String targetOID = vb.getOid().toString();
-                port = targetOID.toString().trim().split("\\.")[14];
-                String concatenate = expectedOID + "." + port + ".";
-                String targetIP = targetOID.replaceAll(concatenate, "");
+                String[] preFinalOID = targetOID.toString().split("\\.");
+                String one = preFinalOID[15];
+                String two = preFinalOID[16];
+                String three = preFinalOID[17];
+                String four = preFinalOID[18];
+                String Final = one + "." + two + "." + three + "." + four;
 
-                finalIP = targetIP.substring(0, targetIP.lastIndexOf('.', targetIP.lastIndexOf('.')));
-
-                if (!finalIP.trim().equals(ipAddress) && !finalIP.trim().equals("0.0.0.0")) {
-                    device.put(port, finalIP);
+                if (!Final.trim().equals(ipAddress) && !Final.trim().equals("0.0.0.0")
+                        && !Final.trim().equals("127.0.0.1")) {
+                    connectedDevices.add(Final);
                 }
+
             }
         }
-        for (Entry<String, String> entry : device.entrySet()) {
-            String ports = entry.getKey();
-            String ipAddr = entry.getValue();
-            Conn = new ConnectedDevices(ipAddr, ports);
-            connectedDevicesList.add(Conn);
-
-        }
-
-        return connectedDevicesList;
-
+        return connectedDevices;
     }
-
 }
