@@ -33,21 +33,22 @@ public class ISRMeter implements GQSNMPMeter {
 
         long computerstartTime = System.currentTimeMillis();
         Snmp snmp = null;
+        // ASSET
         String assetId = null; // unique identifier about the asset
         String sysName = null;
-        String sysIP = null; // string
         String sysDescr = null;
         String sysContact = null;
         String sysLocation = null; // string
         String extras = null; // anything device specific but to be discussed v2
 
+        // SNAPSHOT
+        String sysIP = null; // string
         long upTime = 0; // seconds
         long numberOfPorts = 0;
         long numberOfPortsUp = 0;
         long networkBytesIn = 0; // bytes , v2
         long networkBytesOut = 0; // bytes , v2
 
-        sysIP = ipAddress;
         CommunityTarget target = null;
         HashMap<String, Long> networkBytes = null;
         HashSet<String> connectedDevices = null;
@@ -76,10 +77,6 @@ public class ISRMeter implements GQSNMPMeter {
 
                 temp = oidString + ".1.0";
                 sysDescr = MeterUtils.getSNMPValue(temp, result);
-
-                temp = oidString + ".3.0";
-                tempStr = MeterUtils.getSNMPValue(temp, result);
-                upTime = MeterUtils.upTimeCalc(tempStr);
 
                 temp = oidString + ".4.0";
                 sysContact = MeterUtils.getSNMPValue(temp, result);
@@ -114,6 +111,20 @@ public class ISRMeter implements GQSNMPMeter {
                 if (element.equalsIgnoreCase(MeterConstants.FULL_DETAILS)
                         || element.equalsIgnoreCase(MeterConstants.SNAPSHOT)) {
                     // The following oid's is used to get number of ports
+
+                    sysIP = ipAddress;
+
+                    oidString = "1.3.6.1.2.1.1";
+                    rootOID = new OID(oidString);
+
+                    result = MeterUtils.walk(rootOID, target); // walk done with the initial assumption that device is
+                                                               // v2
+                    if (result != null && !result.isEmpty()) {
+
+                        temp = oidString + ".3.0";
+                        tempStr = MeterUtils.getSNMPValue(temp, result);
+                        upTime = MeterUtils.upTimeCalc(tempStr);
+                    }
 
                     oidString = "1.3.6.1.2.1.2.1";
                     rootOID = new OID(oidString);

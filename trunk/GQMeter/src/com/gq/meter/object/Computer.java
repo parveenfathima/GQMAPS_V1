@@ -35,7 +35,6 @@ public class Computer {
     String sysDescr;
     String sysContact;
     String sysLocation; // string
-    String os;
     String extras; // anything device specific
 
     public String getAssetId() {
@@ -130,14 +129,10 @@ public class Computer {
         return process;
     }
 
-    public String getOs() {
-        return os;
-    }
-
     public Computer(String assetId, long cpuLoad, long totalMemory, long usedMemory, long totalVirtualMemory,
             long usedVirtualMemory, long totalDiskSpace, long usedDiskSpace, long upTime, long numLoggedInUsers,
             long numProcesses, long networkBytesIn, long networkBytesOut, double clockSpeed, String sysName,
-            String sysIP, String sysDescr, String sysContact, String sysLocation, String os, String extras,
+            String sysIP, String sysDescr, String sysContact, String sysLocation, String extras,
             List<InstalledSoftware> installedSwList, HashSet<String> connectedDevices, List<Process> process) {
         super();
         this.assetId = assetId;
@@ -159,7 +154,6 @@ public class Computer {
         this.sysDescr = sysDescr;
         this.sysContact = sysContact;
         this.sysLocation = sysLocation;
-        this.os = os;
         this.extras = extras;
         this.installedSwList = installedSwList;
         this.connectedDevices = connectedDevices;
