@@ -39,20 +39,23 @@ public class ComputerMeter implements GQSNMPMeter {
         // iterate list, compare the values with the meter constants then call the appropriate block
 
         // process/conn_devices/inst_sw
-        // supose size is equals 3 then full
+        // suppose size is equals 3 then full
         // if equals 0 then full
         // if size equals 1 or 2 then read the value from the list and call the appropriate blocks
+
         long computerstartTime = System.currentTimeMillis();
+
         Snmp snmp = null;
+        // ASSET
         String assetId = null; // unique identifier about the asset
         String sysName = null; // string
-        String sysIP = null; // string
         String sysDescr = null; // string
         String sysContact = null; // string
         String sysLocation = null; // string
-        String os = null;
         String extras = null; // anything device specific but to be discussed v2
 
+        // SNAPSHOT
+        String sysIP = null; // string
         long cpuLoad = 0; // in percentage
         long totalMemory = 0; // bytes
         long usedMemory = 0; // bytes
@@ -67,7 +70,6 @@ public class ComputerMeter implements GQSNMPMeter {
         long networkBytesOut = 0; // bytes
         double clockSpeed = 0; // v2
 
-        sysIP = ipAddress;
         CommunityTarget target = null;
         HashMap<String, String> networkBytes = null;
         List<InstalledSoftware> installedSwList = null;
@@ -84,6 +86,7 @@ public class ComputerMeter implements GQSNMPMeter {
             e.printStackTrace();
             return null;
         }
+
         // The following oid's is used to get system basic info
         try {
 
@@ -103,20 +106,9 @@ public class ComputerMeter implements GQSNMPMeter {
 
                 if (null != sysDescr) {
                     if (sysDescr.contains("Windows")) {
-                        os = "Windows";
                         isWindows = true;
                     }
-                    else if (sysDescr.contains("Linux")) {
-                        os = "Linux";
-                    }
-                    else {
-                        os = "Unix";
-                    }
                 }
-                temp = oidString + ".3.0";
-                tempStr = MeterUtils.getSNMPValue(temp, result);
-                upTime = MeterUtils.upTimeCalc(tempStr);
-
                 temp = oidString + ".4.0";
                 sysContact = MeterUtils.getSNMPValue(temp, result);
 
@@ -128,48 +120,6 @@ public class ComputerMeter implements GQSNMPMeter {
             }
             else {
                 errorList.add("Root OID : 1.3.6.1.2.1.1" + " " + MeterConstants.STANDARD_SYSTEM_ATTRIBUTES_ERROR);
-            }
-            // The following oid's is used to get no. of users and processes
-
-            oidString = "1.3.6.1.2.1.25.1";
-            rootOID = new OID(oidString);
-            result = MeterUtils.walk(rootOID, target);
-
-            if (result != null && !result.isEmpty()) {
-                temp = oidString + ".5.0";
-                tempStr = MeterUtils.getSNMPValue(temp, result);
-                if (tempStr != null) {
-                    numLoggedInUsers = Integer.parseInt(tempStr);
-                }
-
-                temp = oidString + ".6.0";
-                tempStr = MeterUtils.getSNMPValue(temp, result);
-                if (tempStr != null) {
-                    numProcesses = Integer.parseInt(tempStr);
-                }
-            }
-            else {
-                errorList.add("Root OID : 1.3.6.1.2.1.25.1" + " " + "Unable to get number of users and processes");
-            }
-
-            // the following oid's is used to get the asset id for linux.
-
-            if (!isWindows) {
-                oidString = ".1.3.6.1.2.1.2.2.1";
-                rootOID = new OID(oidString);
-                result = MeterUtils.walk(rootOID, target);
-                if (result != null && !result.isEmpty()) {
-                    String[] ethernet = new String[] { "eth0", "eth1", "eth2", "en1", "en2", "en3", "em1", "em2",
-                            "em3", "wlan" };
-
-                    HashMap<String, List<Long>> networkMap = new HashMap<String, List<Long>>();
-                    networkBytes = linuxAssetIdCalc(result, rootOID, ethernet, networkMap, assetId, sysDescr);
-                    assetId = MeterProtocols.COMPUTER + "-" + networkBytes.get("assetId");
-                }
-                else {
-                    errorList.add("Root OID : 1.3.6.1.2.1.2.2.1" + " "
-                            + "Unable to get network bandwidth details and unable to collate asset ID");
-                }
             }
 
             // the following oid's is used to get the asset id for windows.
@@ -187,13 +137,70 @@ public class ComputerMeter implements GQSNMPMeter {
                 }
             }
 
-            // The following oid's is used to get disc space, physical memory, virtual memory
+            // the following oid's is used to get the asset id for linux.
+
+            else {
+                oidString = ".1.3.6.1.2.1.2.2.1";
+                rootOID = new OID(oidString);
+                result = MeterUtils.walk(rootOID, target);
+                if (result != null && !result.isEmpty()) {
+                    String[] ethernet = new String[] { "eth0", "eth1", "eth2", "en1", "en2", "en3", "em1", "em2",
+                            "em3", "wlan" };
+
+                    HashMap<String, List<Long>> networkMap = new HashMap<String, List<Long>>();
+                    networkBytes = linuxAssetIdCalc(result, rootOID, ethernet, networkMap, assetId, sysDescr);
+                    assetId = MeterProtocols.COMPUTER + "-" + networkBytes.get("assetId");
+                }
+                else {
+                    errorList.add("Root OID : 1.3.6.1.2.1.2.2.1" + " "
+                            + "Unable to get network bandwidth details and unable to collate asset ID");
+                }
+            }
 
             for (String element : toggleSwitches) // or sArray
             {
 
                 if (element.equalsIgnoreCase(MeterConstants.FULL_DETAILS)
                         || element.equalsIgnoreCase(MeterConstants.SNAPSHOT)) {
+                    sysIP = ipAddress;
+
+                    oidString = "1.3.6.1.2.1.1";
+                    rootOID = new OID(oidString);
+
+                    result = MeterUtils.walk(rootOID, target); // walk done with the initial assumption that device is
+                                                               // v2
+                    if (result != null && !result.isEmpty()) {
+
+                        temp = oidString + ".3.0";
+                        tempStr = MeterUtils.getSNMPValue(temp, result);
+                        upTime = MeterUtils.upTimeCalc(tempStr);
+                    }
+
+                    // The following oid's is used to get no. of users and processes
+                    oidString = "1.3.6.1.2.1.25.1";
+                    rootOID = new OID(oidString);
+                    result = MeterUtils.walk(rootOID, target);
+
+                    if (result != null && !result.isEmpty()) {
+                        temp = oidString + ".5.0";
+                        tempStr = MeterUtils.getSNMPValue(temp, result);
+                        if (tempStr != null) {
+                            numLoggedInUsers = Integer.parseInt(tempStr);
+                        }
+
+                        temp = oidString + ".6.0";
+                        tempStr = MeterUtils.getSNMPValue(temp, result);
+                        if (tempStr != null) {
+                            numProcesses = Integer.parseInt(tempStr);
+                        }
+                    }
+                    else {
+                        errorList.add("Root OID : 1.3.6.1.2.1.25.1" + " "
+                                + "Unable to get number of users and processes");
+                    }
+
+                    // The following oid's is used to get disc space, physical memory, virtual memory
+
                     oidString = "1.3.6.1.2.1.25.2.3.1";
                     rootOID = new OID(oidString);
                     result = MeterUtils.walk(rootOID, target);
@@ -399,8 +406,8 @@ public class ComputerMeter implements GQSNMPMeter {
 
         Computer compObject = new Computer(assetId, cpuLoad, totalMemory, usedMemory, totalVirtualMemory,
                 usedVirtualMemory, totalDiskSpace, usedDiskSpace, upTime, numLoggedInUsers, numProcesses,
-                networkBytesIn, networkBytesOut, clockSpeed, sysName, sysIP, sysDescr, sysContact, sysLocation, os,
-                extras, installedSwList, connectedDevices, ProcessList);
+                networkBytesIn, networkBytesOut, clockSpeed, sysName, sysIP, sysDescr, sysContact, sysLocation, extras,
+                installedSwList, connectedDevices, ProcessList);
 
         GQErrorInformation gqErrorInfo = null;
         if (errorList != null && !errorList.isEmpty()) {

@@ -72,13 +72,16 @@ public class PrinterMeter implements GQSNMPMeter {
 
         long computerstartTime = System.currentTimeMillis();
         Snmp snmp = null;
+
+        // ASSET
         String assetId = null; // unique identifier about the asset
         String sysName = null;
-        String sysIP = null;
         String sysDescr = null;
         String sysContact = null;
         String sysLocation = null;
 
+        // SNAPSHOT
+        String sysIP = null;
         String errorCondition = null;
         String operationalState = null;
         String currentState = null;
@@ -95,7 +98,6 @@ public class PrinterMeter implements GQSNMPMeter {
         long totalDiskSpace = 0; // bytes
         long usedDiskSpace = 0; // bytes
 
-        sysIP = ipAddress;
         CommunityTarget target = null;
         HashMap<String, String> printerStatus;
         List<String> errorList = new LinkedList<String>();
@@ -125,10 +127,6 @@ public class PrinterMeter implements GQSNMPMeter {
                 temp = oidString + ".1.0";
                 sysDescr = MeterUtils.getSNMPValue(temp, result);
 
-                temp = oidString + ".3.0";
-                tempStr = MeterUtils.getSNMPValue(temp, result);
-                upTime = MeterUtils.upTimeCalc(tempStr);
-
                 temp = oidString + ".4.0";
                 sysContact = MeterUtils.getSNMPValue(temp, result);
 
@@ -156,48 +154,63 @@ public class PrinterMeter implements GQSNMPMeter {
                 errorList.add("Root OID : .1.3.6.1.2.1.2.2.1" + " " + MeterConstants.ASSET_ID_ERROR);
             }
 
-            // The below oid's is used to determine color printer
-
-            oidString = "1.3.6.1.2.1.43.11.1.1.6";
-            rootOID = new OID(oidString);
-            result = MeterUtils.walk(rootOID, target);
-            if (result != null && !result.isEmpty()) {
-                if (result.size() <= 2) {
-                    isColorPrinter = MeterConstants.BLACKWHITE_PRINTER;
-                }
-                else {
-                    isColorPrinter = MeterConstants.COLOR_PRINTER;
-                }
-            }
-            else {
-                errorList.add("Root OID : 1.3.6.1.2.1.43.11.1.1.6" + " "
-                        + "Unable to determine if printer is a color printer");
-            }
-            // The following oid's is used to get the errorCondition, operationalState , currentState ,
-            // mfgMakeAndModel
-
-            oidString = "1.3.6.1.2.1.25.3";
-            rootOID = new OID(oidString);
-            result = MeterUtils.walk(rootOID, target);
-
-            if (result != null && !result.isEmpty()) {
-                printerStatus = printerStatusCalc(result, rootOID);
-                currentState = printerStatus.get("currentState");
-                operationalState = printerStatus.get("operationalState");
-                errorCondition = printerStatus.get("errorCondition");
-                temp = oidString + ".2.1.3.1";
-                mfgModel = MeterUtils.getSNMPValue(temp, result);
-            }
-            else {
-                errorList.add("Root OID : 1.3.6.1.2.1.25.3" + " "
-                        + "Unable to determine manufacture model, current state and operational state of the printer");
-            }
-
             for (String element : toggleSwitches) // or sArray
             {
 
                 if (element.equalsIgnoreCase(MeterConstants.FULL_DETAILS)
                         || element.equalsIgnoreCase(MeterConstants.SNAPSHOT)) {
+                    sysIP = ipAddress;
+
+                    oidString = "1.3.6.1.2.1.1";
+                    rootOID = new OID(oidString);
+
+                    result = MeterUtils.walk(rootOID, target); // walk done with the initial assumption that device is
+                                                               // v2
+                    if (result != null && !result.isEmpty()) {
+
+                        temp = oidString + ".3.0";
+                        tempStr = MeterUtils.getSNMPValue(temp, result);
+                        upTime = MeterUtils.upTimeCalc(tempStr);
+                    }
+                    // The below oid's is used to determine color printer
+
+                    oidString = "1.3.6.1.2.1.43.11.1.1.6";
+                    rootOID = new OID(oidString);
+                    result = MeterUtils.walk(rootOID, target);
+                    if (result != null && !result.isEmpty()) {
+                        if (result.size() <= 2) {
+                            isColorPrinter = MeterConstants.BLACKWHITE_PRINTER;
+                        }
+                        else {
+                            isColorPrinter = MeterConstants.COLOR_PRINTER;
+                        }
+                    }
+                    else {
+                        errorList.add("Root OID : 1.3.6.1.2.1.43.11.1.1.6" + " "
+                                + "Unable to determine if printer is a color printer");
+                    }
+                    // The following oid's is used to get the errorCondition, operationalState , currentState ,
+                    // mfgMakeAndModel
+
+                    oidString = "1.3.6.1.2.1.25.3";
+                    rootOID = new OID(oidString);
+                    result = MeterUtils.walk(rootOID, target);
+
+                    if (result != null && !result.isEmpty()) {
+                        printerStatus = printerStatusCalc(result, rootOID);
+                        currentState = printerStatus.get("currentState");
+                        operationalState = printerStatus.get("operationalState");
+                        errorCondition = printerStatus.get("errorCondition");
+                        temp = oidString + ".2.1.3.1";
+                        mfgModel = MeterUtils.getSNMPValue(temp, result);
+                    }
+                    else {
+                        errorList
+                                .add("Root OID : 1.3.6.1.2.1.25.3"
+                                        + " "
+                                        + "Unable to determine manufacture model, current state and operational state of the printer");
+                    }
+
                     // The below oid's is used to get the toner percentage
 
                     oidString = ".1.3.6.1.2.1.43.11.1.1";
