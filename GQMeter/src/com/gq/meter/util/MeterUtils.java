@@ -6,9 +6,11 @@ import java.io.StringWriter;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Scanner;
 import java.util.Vector;
 import java.util.concurrent.TimeUnit;
 
@@ -55,6 +57,7 @@ public class MeterUtils {
             snmpVersion = MeterConstants.SNMP_VERSION_1;
             target = makeTarget(currIp, communityString, snmpVersion); // needs to be done only once.
             result = walk(rootOID, target);
+
             if (result == null || result.isEmpty()) {
                 // may be the device is not serving snmp at all. so lets get out or throw io exception
                 System.out.println("SNMP Version2 && version1 are failed, The asset is not configure with SNMP ");
@@ -62,8 +65,8 @@ public class MeterUtils {
                 System.out.println("### Time taken to find isSnmpConfigured or not : "
                         + (computerendTime - computerstartTime));
                 return assetDetails; // if snmp is configured & the SNMP_CHECK_OCTET doesn't exist then return null;
-            }
-        }
+            }// 2nd if ends
+        }// 1st if ends
 
         assetDetails.put("snmpVersion", snmpVersion);
         assetDetails.put("assetDesc", result.get(0).getVariable().toString());
@@ -74,8 +77,10 @@ public class MeterUtils {
     }
 
     /**
+     * @param communityString
+     * @param currIp
+     * @param snmpVersion
      * @return
-     * 
      */
     public static MeterProtocols getAssetType(String communityString, String currIp, String snmpVersion) {
         CommunityTarget target = MeterUtils.makeTarget(currIp, communityString, snmpVersion);
@@ -110,10 +115,11 @@ public class MeterUtils {
     /**
      * This method used to returns the asset object with all the informations
      * 
-     * @param assetType
+     * @param protocol
      * @param communityString
      * @param currIp
-     * @param target
+     * @param snmpVersion
+     * @param switchList
      * @return
      */
     public static GQMeterData getAssetObject(MeterProtocols protocol, String communityString, String currIp,
@@ -189,7 +195,7 @@ public class MeterUtils {
                 }
                 break;
             }
-        }
+        }// for loop ends
 
         return new StringBuilder().append(tokens[0]).append('.').append(tokens[1]).append('.').append(tokens[2])
                 .append('.').append(tokens[3]).toString();
@@ -235,6 +241,9 @@ public class MeterUtils {
     /**
      * This method returns a Target, which contains information about where the data should be fetched and how.
      * 
+     * @param protocolAddress
+     * @param communityString
+     * @param version
      * @return
      */
     public static CommunityTarget makeTarget(String protocolAddress, String communityString, String version) {
@@ -336,6 +345,11 @@ public class MeterUtils {
         return ret;
     }
 
+    /**
+     * @param octetString
+     * @param result
+     * @return
+     */
     public static String getSNMPValue(String octetString, List<VariableBinding> result) {
 
         for (VariableBinding vb : result) {
@@ -346,6 +360,10 @@ public class MeterUtils {
         return null;
     }
 
+    /**
+     * @param time
+     * @return
+     */
     public static long upTimeCalc(String time) {
         String dayString = null;
         String[] upTimeArray = null;
@@ -392,6 +410,11 @@ public class MeterUtils {
         return secs;
     }
 
+    /**
+     * @param line
+     * @param assetSwitches
+     * @return
+     */
     public static HashMap<MeterProtocols, LinkedList<String>> manageSwitches(String line,
             HashMap<MeterProtocols, LinkedList<String>> assetSwitches) {
         if (line.toLowerCase().startsWith(MeterConstants.COMPUTER_SWITCHS)) {
@@ -448,6 +471,36 @@ public class MeterUtils {
             }
         }
         return assetSwitches;
-
     }
+
+    /**
+     * This method used to convert the given ip address to a numeric value
+     * @param ip
+     * @return
+     */
+    private static Long toNumeric(String ip) {
+        /*long numericIp = 0l;
+        try (Scanner sc = new Scanner(ip)) {
+            Scanner scIp = sc.useDelimiter("\\.");
+            numericIp = (scIp.nextLong() << 24) + (scIp.nextLong() << 16) + (scIp.nextLong() << 8) + (scIp.nextLong());
+        }
+        catch (Exception e) {
+            System.out.println("Exception occured while parsing the ip" + e);
+        }*/
+        Scanner sc = new Scanner(ip).useDelimiter("\\.");
+        long numericIp = (sc.nextLong() << 24) + (sc.nextLong() << 16) + (sc.nextLong() << 8) + (sc.nextLong());
+        return numericIp;
+    }
+
+    
+    /**
+     * Overrding the Comaprator class comapare method to comapre two ip's numeric values
+     */
+    public static Comparator<String> ipComparator = new Comparator<String>() {
+        @Override
+        public int compare(String ip1, String ip2) {
+            return toNumeric(ip1).compareTo(toNumeric(ip2));
+        }
+    };
+
 } // class ends
