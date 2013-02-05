@@ -1,13 +1,11 @@
 package com.gq.meter;
 
 import java.io.IOException;
-
 import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map.Entry;
 
 import org.snmp4j.CommunityTarget;
 import org.snmp4j.Snmp;
@@ -64,11 +62,6 @@ public class PrinterMeter implements GQSNMPMeter {
     @Override
     public GQMeterData implement(String communityString, String ipAddress, String snmpVersion,
             LinkedList<String> toggleSwitches) {
-
-        System.out.println("::::::::::::::::: " + toggleSwitches.size());
-        for (String s : toggleSwitches) {
-            System.out.println(" list contains : " + s);
-        }
 
         long computerstartTime = System.currentTimeMillis();
         Snmp snmp = null;
@@ -141,7 +134,6 @@ public class PrinterMeter implements GQSNMPMeter {
             }
 
             // The below oid's is used to get the asset id
-
             oidString = ".1.3.6.1.2.1.2.2.1";
             rootOID = new OID(oidString);
             result = MeterUtils.walk(rootOID, target);
@@ -154,9 +146,7 @@ public class PrinterMeter implements GQSNMPMeter {
                 errorList.add("Root OID : .1.3.6.1.2.1.2.2.1" + " " + MeterConstants.ASSET_ID_ERROR);
             }
 
-            for (String element : toggleSwitches) // or sArray
-            {
-
+            for (String element : toggleSwitches) {
                 if (element.equalsIgnoreCase(MeterConstants.FULL_DETAILS)
                         || element.equalsIgnoreCase(MeterConstants.SNAPSHOT)) {
                     sysIP = ipAddress;
@@ -167,16 +157,16 @@ public class PrinterMeter implements GQSNMPMeter {
                     result = MeterUtils.walk(rootOID, target); // walk done with the initial assumption that device is
                                                                // v2
                     if (result != null && !result.isEmpty()) {
-
                         temp = oidString + ".3.0";
                         tempStr = MeterUtils.getSNMPValue(temp, result);
                         upTime = MeterUtils.upTimeCalc(tempStr);
                     }
-                    // The below oid's is used to determine color printer
 
+                    // The below oid's is used to determine color printer
                     oidString = "1.3.6.1.2.1.43.11.1.1.6";
                     rootOID = new OID(oidString);
                     result = MeterUtils.walk(rootOID, target);
+
                     if (result != null && !result.isEmpty()) {
                         if (result.size() <= 2) {
                             isColorPrinter = MeterConstants.BLACKWHITE_PRINTER;
@@ -189,9 +179,9 @@ public class PrinterMeter implements GQSNMPMeter {
                         errorList.add("Root OID : 1.3.6.1.2.1.43.11.1.1.6" + " "
                                 + "Unable to determine if printer is a color printer");
                     }
+
                     // The following oid's is used to get the errorCondition, operationalState , currentState ,
                     // mfgMakeAndModel
-
                     oidString = "1.3.6.1.2.1.25.3";
                     rootOID = new OID(oidString);
                     result = MeterUtils.walk(rootOID, target);
@@ -206,13 +196,10 @@ public class PrinterMeter implements GQSNMPMeter {
                     }
                     else {
                         errorList
-                                .add("Root OID : 1.3.6.1.2.1.25.3"
-                                        + " "
-                                        + "Unable to determine manufacture model, current state and operational state of the printer");
+                                .add("Root OID : 1.3.6.1.2.1.25.3 - Unable to determine manufacture model, current state and operational state of the printer");
                     }
 
                     // The below oid's is used to get the toner percentage
-
                     oidString = ".1.3.6.1.2.1.43.11.1.1";
                     rootOID = new OID(oidString);
                     result = MeterUtils.walk(rootOID, target);
@@ -223,9 +210,11 @@ public class PrinterMeter implements GQSNMPMeter {
                     else {
                         errorList.add("Root OID : 1.3.6.1.2.1.43.11.1.1" + " " + "Unable to get the toner percentage");
                     }
+
                     oidString = "1.3.6.1.2.1.25.2.3.1";
                     rootOID = new OID(oidString);
                     result = MeterUtils.walk(rootOID, target);
+
                     if (result != null && !result.isEmpty()) {
                         String OID = null;
 
@@ -245,14 +234,14 @@ public class PrinterMeter implements GQSNMPMeter {
                         usedDiskSpace = mainUsedDiskSpace + subusedDiskSpace;
                     }
                     else {
-                        errorList
-                                .add("Root OID : 1.3.6.1.2.1.25.2.3.1" + " " + "Unable to get disk and memory details");
+                        errorList.add("Root OID : 1.3.6.1.2.1.25.2.3.1 - Unable to get disk and memory details");
                     }
                 }
-                // the following oid's is used to get the ip and port no of devices that is connected.
 
+                // the following oid's is used to get the ip and port no of devices that is connected.
                 if (element.equalsIgnoreCase(MeterConstants.FULL_DETAILS)
                         || element.equalsIgnoreCase(MeterConstants.CONNECTED_DEVICES)) {
+
                     if (result != null && !result.isEmpty()) {
                         oidString = ".1.3.6.1.2.1.6.13.1.1";
                         rootOID = new OID(oidString);
@@ -263,8 +252,9 @@ public class PrinterMeter implements GQSNMPMeter {
                         errorList.add("Root OID : 1.3.6.1.2.1.6.13.1.1" + " "
                                 + "Unable to get port number and ip address of connected devices");
                     }
+
                 }
-            }
+            }// for loop ends
         }
         catch (Exception e) {
             errorList.add(ipAddress + " " + e.getMessage());
@@ -280,12 +270,20 @@ public class PrinterMeter implements GQSNMPMeter {
         if (errorList != null && !errorList.isEmpty()) {
             gqErrorInfo = new GQErrorInformation(sysDescr, errorList);
         }
+
         GQMeterData gqMeterObject = new GQMeterData(gqErrorInfo, printerObject);
         long computerendTime = System.currentTimeMillis();
         System.out.println("Time taken bye the printer meter is : " + (computerendTime - computerstartTime));
         return gqMeterObject;
     }
 
+    /**
+     * @param result
+     * @param rootOid
+     * @param OID
+     * @param isUsed
+     * @return
+     */
     private long MemHardDiscCalc(List<VariableBinding> result, OID rootOid, String OID, boolean isUsed) {
         String mulBytes = null;
         String mulBytesOID = null;
@@ -301,12 +299,14 @@ public class PrinterMeter implements GQSNMPMeter {
             if (temp.trim().equals(OID)) {
                 String lastValue = String.valueOf(vb.getOid().last());
                 mulBytesOID = rootId + "." + "4" + "." + lastValue;
+
                 if (!isUsed) {
                     toMultiplyOID = rootId + "." + "5" + "." + lastValue;
                 }
                 else {
                     usedMultiplyOID = rootId + "." + "6" + "." + lastValue;
                 }
+
                 for (VariableBinding vbs : result) {
                     if (vbs.getOid().toString().trim().equals(mulBytesOID)) {
                         mulBytes = vbs.getVariable().toString().trim();
@@ -317,7 +317,8 @@ public class PrinterMeter implements GQSNMPMeter {
                     else if (isUsed && vbs.getOid().toString().trim().equals(usedMultiplyOID)) {
                         usedMultiply = vbs.getVariable().toString().trim();
                     }
-                }
+                }// for loop ends
+
                 if (!isUsed && mulBytes != null && toMultiply != null) {
                     memHdd = memHdd + Long.parseLong(mulBytes.trim()) * Long.parseLong(toMultiply.trim());
                 }
@@ -329,6 +330,11 @@ public class PrinterMeter implements GQSNMPMeter {
         return memHdd;
     }
 
+    /**
+     * @param result
+     * @param rootOid
+     * @return
+     */
     private double tonerPercentageCalc(List<VariableBinding> result, OID rootOid) {
 
         String totalValue = null;
@@ -362,6 +368,11 @@ public class PrinterMeter implements GQSNMPMeter {
         return finalTonerPercentage;
     }
 
+    /**
+     * @param result
+     * @param rootOid
+     * @return
+     */
     private HashMap<String, String> printerStatusCalc(List<VariableBinding> result, OID rootOid) {
 
         String operationalStateKey = "operationalState";
@@ -424,6 +435,11 @@ public class PrinterMeter implements GQSNMPMeter {
         return printerStatus;
     }
 
+    /**
+     * @param result
+     * @param rootOid
+     * @return
+     */
     private String assetCalc(List<VariableBinding> result, OID rootOid) {
         String rootId = rootOid.toString();
         String lastchar = null;
@@ -444,6 +460,11 @@ public class PrinterMeter implements GQSNMPMeter {
         return assetStr;
     }
 
+    /**
+     * @param result
+     * @param ipAddress
+     * @return
+     */
     private HashSet<String> ConnectedDevicesCalc(List<VariableBinding> result, String ipAddress) {
 
         HashSet<String> connectedDevices = new HashSet<String>();

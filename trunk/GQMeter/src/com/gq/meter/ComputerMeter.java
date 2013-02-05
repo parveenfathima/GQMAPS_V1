@@ -1,7 +1,6 @@
 package com.gq.meter;
 
 import java.io.IOException;
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -11,8 +10,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.Set;
+
 import org.snmp4j.CommunityTarget;
 import org.snmp4j.Snmp;
 import org.snmp4j.smi.OID;
@@ -35,13 +34,6 @@ public class ComputerMeter implements GQSNMPMeter {
         for (String s : toggleSwitches) {
             System.out.println(" list contains  : " + s);
         }
-
-        // iterate list, compare the values with the meter constants then call the appropriate block
-
-        // process/conn_devices/inst_sw
-        // suppose size is equals 3 then full
-        // if equals 0 then full
-        // if size equals 1 or 2 then read the value from the list and call the appropriate blocks
 
         long computerstartTime = System.currentTimeMillis();
 
@@ -135,14 +127,14 @@ public class ComputerMeter implements GQSNMPMeter {
                     assetId = MeterProtocols.COMPUTER + "-" + networkBytes.get("macWinNetworkValue");
 
                 }
-            }
+            }// if ends
 
             // the following oid's is used to get the asset id for linux.
-
             else {
                 oidString = ".1.3.6.1.2.1.2.2.1";
                 rootOID = new OID(oidString);
                 result = MeterUtils.walk(rootOID, target);
+
                 if (result != null && !result.isEmpty()) {
                     String[] ethernet = new String[] { "eth0", "eth1", "eth2", "en1", "en2", "en3", "em1", "em2",
                             "em3", "wlan" };
@@ -155,10 +147,9 @@ public class ComputerMeter implements GQSNMPMeter {
                     errorList.add("Root OID : 1.3.6.1.2.1.2.2.1" + " "
                             + "Unable to get network bandwidth details and unable to collate asset ID");
                 }
-            }
+            }// else ends
 
-            for (String element : toggleSwitches) // or sArray
-            {
+            for (String element : toggleSwitches) {
 
                 if (element.equalsIgnoreCase(MeterConstants.FULL_DETAILS)
                         || element.equalsIgnoreCase(MeterConstants.SNAPSHOT)) {
@@ -170,7 +161,6 @@ public class ComputerMeter implements GQSNMPMeter {
                     result = MeterUtils.walk(rootOID, target); // walk done with the initial assumption that device is
                                                                // v2
                     if (result != null && !result.isEmpty()) {
-
                         temp = oidString + ".3.0";
                         tempStr = MeterUtils.getSNMPValue(temp, result);
                         upTime = MeterUtils.upTimeCalc(tempStr);
@@ -224,7 +214,7 @@ public class ComputerMeter implements GQSNMPMeter {
                             totalDiskSpace = windowsDriveSize + totalVirtualMemory;
                             usedDiskSpace = usedWindowsDriveSize + usedVirtualMemory;
 
-                        }
+                        }// if ends
                         else {
                             variable = "/dev/shm";
                             long linuxDriveSize = getMemorycalc(result, rootOID, variable, false);
@@ -267,8 +257,8 @@ public class ComputerMeter implements GQSNMPMeter {
                         errorList
                                 .add("Root OID : 1.3.6.1.2.1.25.2.3.1" + " " + "Unable to get disk and memory details");
                     }
-                    // The following oid's is used to get CPU load
 
+                    // The following oid's is used to get CPU load
                     oidString = ".1.3.6.1.2.1.25.3.3.1.2";
                     rootOID = new OID(oidString);
                     result = MeterUtils.walk(rootOID, target);
@@ -279,8 +269,8 @@ public class ComputerMeter implements GQSNMPMeter {
                     else {
                         errorList.add("Root OID : 1.3.6.1.2.1.25.3.3.1.2" + " " + "Unable to compute CPU load");
                     }
-                    // the following oid's is used to get network in and out bytes for windows
 
+                    // the following oid's is used to get network in and out bytes for windows
                     if (isWindows) {
                         oidString = ".1.3.6.1.2.1.2.2.1";
                         rootOID = new OID(oidString);
@@ -296,16 +286,14 @@ public class ComputerMeter implements GQSNMPMeter {
                             String networkBytesOutStr = networkBytes.get("OutBytes");
                             networkBytesOut = Long.parseLong(networkBytesOutStr);
                             // assetId = MeterProtocols.COMPUTER + "-" + networkBytes.get("macWinNetworkValue");
-
                         }
-
                         else {
                             errorList.add("Root OID : 1.3.6.1.2.1.2.2.1" + " "
                                     + "Unable to get network bandwidth details and unable to collate asset ID");
                         }
-                    }
-                    // the following oid's is used to get network in and out bytes for Linux
+                    }// if ends
 
+                    // the following oid's is used to get network in and out bytes for Linux
                     else {
                         oidString = ".1.3.6.1.2.1.2.2.1";
                         rootOID = new OID(oidString);
@@ -337,9 +325,9 @@ public class ComputerMeter implements GQSNMPMeter {
                 }
 
                 // the following oid's is used to get the installed software list
-
                 if (element.equalsIgnoreCase(MeterConstants.FULL_DETAILS)
                         || element.equalsIgnoreCase(MeterConstants.INSTALLED_SOFTWARE)) {
+
                     oidString = ".1.3.6.1.2.1.25.6.3.1.4";
                     rootOID = new OID(oidString);
                     List<VariableBinding> appResult = MeterUtils.walk(rootOID, target);
@@ -360,9 +348,11 @@ public class ComputerMeter implements GQSNMPMeter {
                                 + "Unable to get list of installed software");
                     }
                 }
+
                 // the following oid's is used to get the ip and port no of devices that is connected.
                 if (element.equalsIgnoreCase(MeterConstants.FULL_DETAILS)
                         || element.equalsIgnoreCase(MeterConstants.CONNECTED_DEVICES)) {
+
                     if (result != null && !result.isEmpty()) {
                         oidString = ".1.3.6.1.2.1.6.13.1.1";
                         rootOID = new OID(oidString);
@@ -374,6 +364,7 @@ public class ComputerMeter implements GQSNMPMeter {
                                 + "Unable to get port number and ip address of connected devices");
                     }
                 }
+
                 // The following OID is used to get the System run name, cpu and memory share for a particular process .
                 if (element.equalsIgnoreCase(MeterConstants.FULL_DETAILS)
                         || element.equalsIgnoreCase(MeterConstants.PROCESS)) {
@@ -392,13 +383,12 @@ public class ComputerMeter implements GQSNMPMeter {
 
                         ProcessList = ProcessCalc(result, rootOID, sysRunNameResult, cpuShareResult, memShareResult);
                     }
-
                     else {
                         errorList.add("Root OID : .1.3.6.1.2.1.25" + " "
                                 + "Unable to get the system run name, cpu and memory share");
                     }
                 }
-            }
+            }// for loop ends
         }
         catch (Exception e) {
             errorList.add(ipAddress + " " + e.getMessage());
@@ -420,6 +410,11 @@ public class ComputerMeter implements GQSNMPMeter {
 
     }
 
+    /**
+     * @param result
+     * @param rootOid
+     * @return
+     */
     private long cpuLoadCalc(List<VariableBinding> result, OID rootOid) {
         long totalCpuValue = 0;
         long totalKeys = 0;
@@ -435,6 +430,13 @@ public class ComputerMeter implements GQSNMPMeter {
 
     }
 
+    /**
+     * @param result
+     * @param rootOid
+     * @param variable
+     * @param isUsed
+     * @return
+     */
     private long getMemorycalc(List<VariableBinding> result, OID rootOid, String variable, boolean isUsed) {
 
         String mulBytes = null;
@@ -490,6 +492,15 @@ public class ComputerMeter implements GQSNMPMeter {
         return memory;
     }
 
+    /**
+     * @param result
+     * @param rootOid
+     * @param ethernet
+     * @param networkMap
+     * @param assetId
+     * @param sysDescr
+     * @return
+     */
     private HashMap<String, String> networkBytesCalc(List<VariableBinding> result, OID rootOid, String[] ethernet,
             HashMap<String, List<Long>> networkMap, String assetId, String sysDescr) {
 
@@ -585,6 +596,12 @@ public class ComputerMeter implements GQSNMPMeter {
         return networkValues;
     } // network bytes calculation for Linux gets over
 
+    /**
+     * @param result
+     * @param rootOid
+     * @param winNetworkMap
+     * @return
+     */
     private HashMap<String, String> winNetworkBytesCalc(List<VariableBinding> result, OID rootOid,
             HashMap<String, String> winNetworkMap) {
 
@@ -630,12 +647,22 @@ public class ComputerMeter implements GQSNMPMeter {
 
     } // network bytes calculation for windows gets over.
 
+    /**
+     * @param result
+     * @param rootOid
+     * @param ethernet
+     * @param networkMap
+     * @param assetId
+     * @param sysDescr
+     * @return
+     */
     private HashMap<String, String> linuxAssetIdCalc(List<VariableBinding> result, OID rootOid, String[] ethernet,
             HashMap<String, List<Long>> networkMap, String assetId, String sysDescr) {
         String macOid = null;
         String rootId = rootOid.toString();
         HashMap<String, HashMap<String, String>> macOidMap = new HashMap<String, HashMap<String, String>>();
         HashMap<String, String> networkValues = new HashMap<String, String>();
+
         for (int i = 0; i < ethernet.length; i++) {
             for (VariableBinding vb : result) {
                 if (vb.getVariable().toString().trim().equalsIgnoreCase(ethernet[i])) {
@@ -659,7 +686,8 @@ public class ComputerMeter implements GQSNMPMeter {
                     }
                 }
             }
-        }
+        }// for loop ends
+
         Set<String> uniqueValues = new HashSet<String>(macOidMap.get("eth0").values());
         if (macOidMap.get("eth0") != null && macOidMap.get("eth0").size() != 0) {
             String eth0MacAddress = uniqueValues.toString().substring(1, uniqueValues.toString().length() - 1).trim()
@@ -671,11 +699,16 @@ public class ComputerMeter implements GQSNMPMeter {
 
     }
 
+    /**
+     * @param result
+     * @param rootOid
+     * @param winNetworkMap
+     * @return
+     */
     private HashMap<String, String> winAssetIdCalc(List<VariableBinding> result, OID rootOid,
             HashMap<String, String> winNetworkMap) {
 
         String macWinNetworkId = null;
-
         String rootId = rootOid.toString();
 
         for (VariableBinding vb : result) {
@@ -688,12 +721,18 @@ public class ComputerMeter implements GQSNMPMeter {
                     winNetworkMap.put("macWinNetworkValue", macWinNetworkValue);
                 }
             }// for loop ends
-
-        }
+        }// for loop ends
         return winNetworkMap;
-
     }
 
+    /**
+     * @param appResult
+     * @param softwareResult
+     * @param dateResult
+     * @param rootOid
+     * @param isWindows
+     * @return
+     */
     private List<InstalledSoftware> installedSwListCalc(List<VariableBinding> appResult,
             List<VariableBinding> softwareResult, List<VariableBinding> dateResult, OID rootOid, boolean isWindows) {
 
@@ -715,6 +754,11 @@ public class ComputerMeter implements GQSNMPMeter {
         return installedSwList;
     }
 
+    /**
+     * @param hexDate
+     * @param isWindows
+     * @return
+     */
     private static Date getDate(String hexDate, boolean isWindows) {
         Date newDate = null;
         if (!isWindows) {
@@ -755,6 +799,11 @@ public class ComputerMeter implements GQSNMPMeter {
         return newDate;
     }
 
+    /**
+     * @param result
+     * @param ipAddress
+     * @return
+     */
     private HashSet<String> ConnectedDevicesCalc(List<VariableBinding> result, String ipAddress) {
 
         HashSet<String> connectedDevices = new HashSet<String>();
@@ -782,6 +831,14 @@ public class ComputerMeter implements GQSNMPMeter {
         return connectedDevices;
     }
 
+    /**
+     * @param result
+     * @param rootOid
+     * @param sysRunNameResult
+     * @param cpuShareResult
+     * @param memShareResult
+     * @return
+     */
     private List<Process> ProcessCalc(List<VariableBinding> result, OID rootOid,
             List<VariableBinding> sysRunNameResult, List<VariableBinding> cpuShareResult,
             List<VariableBinding> memShareResult) {
@@ -799,7 +856,5 @@ public class ComputerMeter implements GQSNMPMeter {
             ProcessList.add(process);
         }
         return ProcessList;
-
     }
-
 }

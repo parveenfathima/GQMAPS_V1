@@ -6,9 +6,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
-import java.util.Map.Entry;
-
 import org.snmp4j.CommunityTarget;
 import org.snmp4j.Snmp;
 import org.snmp4j.smi.OID;
@@ -26,11 +23,6 @@ public class ISRMeter implements GQSNMPMeter {
     public GQMeterData implement(String communityString, String ipAddress, String snmpVersion,
             LinkedList<String> toggleSwitches) {
 
-        System.out.println("::::::::::::::::: " + toggleSwitches.size());
-        for (String s : toggleSwitches) {
-            System.out.println(" list contains : " + s);
-        }
-
         long computerstartTime = System.currentTimeMillis();
         Snmp snmp = null;
         // ASSET
@@ -38,7 +30,7 @@ public class ISRMeter implements GQSNMPMeter {
         String sysName = null;
         String sysDescr = null;
         String sysContact = null;
-        String sysLocation = null; // string
+        String sysLocation = null;
         String extras = null; // anything device specific but to be discussed v2
 
         // SNAPSHOT
@@ -63,6 +55,7 @@ public class ISRMeter implements GQSNMPMeter {
             e.printStackTrace();
             return null;
         }
+
         // The following oid's is used to get system parameters
         try {
             String oidString = "1.3.6.1.2.1.1";
@@ -105,9 +98,7 @@ public class ISRMeter implements GQSNMPMeter {
                 errorList.add("Root OID : 1.3.6.1.2.1.2.2.1.6" + " " + MeterConstants.ASSET_ID_ERROR);
             }
 
-            for (String element : toggleSwitches) // or sArray
-            {
-
+            for (String element : toggleSwitches) {
                 if (element.equalsIgnoreCase(MeterConstants.FULL_DETAILS)
                         || element.equalsIgnoreCase(MeterConstants.SNAPSHOT)) {
                     // The following oid's is used to get number of ports
@@ -176,9 +167,8 @@ public class ISRMeter implements GQSNMPMeter {
                     oidString = ".1.3.6.1.2.1.4.22.1.4";
                     rootOID = new OID(oidString);
                     result = MeterUtils.walk(rootOID, target);
-                    System.out.println("ISR WALK : " + result);
-                    if (result != null && !result.isEmpty()) {
 
+                    if (result != null && !result.isEmpty()) {
                         connectedDevices = ConnectedDevicesCalc(result, rootOID);
                     }
                     else {
@@ -186,11 +176,12 @@ public class ISRMeter implements GQSNMPMeter {
                                 + "Unable to provide list of connected devices");
                     }
                 }
-            }
+            }// for loop ends
         }
         catch (Exception e) {
             errorList.add(ipAddress + " " + e.getMessage());
         }
+
         IntegratedSwitchRouter switchObject = new IntegratedSwitchRouter(assetId, upTime, numberOfPorts,
                 numberOfPortsUp, networkBytesIn, networkBytesOut, sysName, sysIP, sysDescr, sysContact, sysLocation,
                 connectedDevices, extras);
@@ -291,8 +282,6 @@ public class ISRMeter implements GQSNMPMeter {
 
             }
         }
-
         return connectedDevices;
-
     }
 }
