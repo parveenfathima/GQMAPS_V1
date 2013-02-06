@@ -193,6 +193,7 @@ public class ISRMeter implements GQSNMPMeter {
         GQMeterData gqMeterObject = new GQMeterData(gqErrorInfo, switchObject);
 
         long computerendTime = System.currentTimeMillis();
+        MeterUtils.isrMeterTime = MeterUtils.isrMeterTime + (computerendTime - computerstartTime);
         System.out.println("Time taken bye the isr meter is : " + (computerendTime - computerstartTime));
         return gqMeterObject;
     }

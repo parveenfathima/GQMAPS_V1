@@ -36,13 +36,22 @@ import com.gq.meter.ISRMeter;
 
 public class MeterUtils {
 
+    public static long snmpKnownTime = 0;
+    public static long snmpUnknownTime = 0;
+    public static long compMeterTime = 0;
+    public static long printMeterTime = 0;
+    public static long isrMeterTime = 0;
+    public static LinkedList<String> snmpKnownIPList = new LinkedList<String>();;
+    public static LinkedList<String> snmpUnknownIPList = new LinkedList<String>();
+
     /**
      * @param communityString
      * @param currIp
      * @return
      */
     public static HashMap<String, String> isSnmpConfigured(String communityString, String currIp) {
-        long computerstartTime = System.currentTimeMillis();
+        long snmpStartTime = System.currentTimeMillis();
+
         String oidString = MeterConstants.SNMP_CHECK_OCTET;
         String snmpVersion = MeterConstants.SNMP_VERSION_2;
 
@@ -55,15 +64,19 @@ public class MeterUtils {
             // may be the device is serving snmp but not version 2 , so lets try version 1
             System.out.println("SNMP Version2 is failed for this device,trying for version1 now");
             snmpVersion = MeterConstants.SNMP_VERSION_1;
+
             target = makeTarget(currIp, communityString, snmpVersion); // needs to be done only once.
             result = walk(rootOID, target);
 
             if (result == null || result.isEmpty()) {
                 // may be the device is not serving snmp at all. so lets get out or throw io exception
                 System.out.println("SNMP Version2 && version1 are failed, The asset is not configure with SNMP ");
-                long computerendTime = System.currentTimeMillis();
-                System.out.println("### Time taken to find isSnmpConfigured or not : "
-                        + (computerendTime - computerstartTime));
+                long snmpEndTime = System.currentTimeMillis();
+
+                snmpUnknownTime = snmpUnknownTime + (snmpEndTime - snmpStartTime);// Time taken to find snmp is not configured
+                snmpUnknownIPList.add(currIp);
+
+                System.out.println("### SNMP is not configured in this device ### : " + (snmpEndTime - snmpStartTime));
                 return assetDetails; // if snmp is configured & the SNMP_CHECK_OCTET doesn't exist then return null;
             }// 2nd if ends
         }// 1st if ends
@@ -71,8 +84,12 @@ public class MeterUtils {
         assetDetails.put("snmpVersion", snmpVersion);
         assetDetails.put("assetDesc", result.get(0).getVariable().toString());
 
-        long computerendTime = System.currentTimeMillis();
-        System.out.println("*** Time taken to find isSnmpConfigured or not : " + (computerendTime - computerstartTime));
+        long snmpEndTime = System.currentTimeMillis();
+
+        snmpKnownTime = snmpKnownTime + (snmpEndTime - snmpStartTime); // Time taken to find snmp is configured
+        snmpKnownIPList.add(currIp);
+
+        System.out.println("*** Time taken to find isSnmpConfigured or not : " + (snmpEndTime - snmpStartTime));
         return assetDetails;
     }
 
@@ -103,6 +120,7 @@ public class MeterUtils {
                 rootOID = new OID(oidString);
                 result = walk(rootOID, target);
                 mProtocol = MeterProtocols.COMPUTER;
+
                 if (result == null || result.size() == 0 || result.isEmpty()) {
                     mProtocol = MeterProtocols.UNKNOWN;
                     return mProtocol;
@@ -411,13 +429,21 @@ public class MeterUtils {
     }
 
     /**
+     * This mmethod used to read the meterid and meter switches from the asset file
+     * 
      * @param line
      * @param assetSwitches
      * @return
      */
     public static HashMap<MeterProtocols, LinkedList<String>> manageSwitches(String line,
             HashMap<MeterProtocols, LinkedList<String>> assetSwitches) {
-        if (line.toLowerCase().startsWith(MeterConstants.COMPUTER_SWITCHS)) {
+        if (line.toLowerCase().startsWith(MeterConstants.METER_ID)) {
+            line = line.replace(MeterConstants.METER_ID, "").trim();
+            System.out.println("##############################################");
+            System.out.println("Meter id : " + line);
+            System.out.println("##############################################");
+        }
+        else if (line.toLowerCase().startsWith(MeterConstants.COMPUTER_SWITCHS)) {
             line = line.replace(MeterConstants.COMPUTER_SWITCHS, "").trim();
             LinkedList<String> compSwitchList = null;
 
@@ -475,6 +501,7 @@ public class MeterUtils {
 
     /**
      * This method used to convert the given ip address to a numeric value
+     * 
      * @param ip
      * @return
      */
@@ -492,7 +519,6 @@ public class MeterUtils {
         return numericIp;
     }
 
-    
     /**
      * Overrding the Comaprator class comapare method to comapre two ip's numeric values
      */

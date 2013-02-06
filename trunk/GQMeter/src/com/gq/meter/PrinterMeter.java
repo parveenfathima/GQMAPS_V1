@@ -63,7 +63,7 @@ public class PrinterMeter implements GQSNMPMeter {
     public GQMeterData implement(String communityString, String ipAddress, String snmpVersion,
             LinkedList<String> toggleSwitches) {
 
-        long computerstartTime = System.currentTimeMillis();
+        long printerStartTime = System.currentTimeMillis();
         Snmp snmp = null;
 
         // ASSET
@@ -272,8 +272,9 @@ public class PrinterMeter implements GQSNMPMeter {
         }
 
         GQMeterData gqMeterObject = new GQMeterData(gqErrorInfo, printerObject);
-        long computerendTime = System.currentTimeMillis();
-        System.out.println("Time taken bye the printer meter is : " + (computerendTime - computerstartTime));
+        long printerEndTime = System.currentTimeMillis();
+        MeterUtils.printMeterTime = MeterUtils.printMeterTime + (printerEndTime - printerStartTime);
+        System.out.println("Time taken bye the printer meter is : " + (printerEndTime - printerStartTime));
         return gqMeterObject;
     }
 

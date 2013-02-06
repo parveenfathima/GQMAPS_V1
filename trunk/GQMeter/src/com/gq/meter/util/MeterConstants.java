@@ -43,6 +43,8 @@ public class MeterConstants {
 
     public static final String ISR_SWITCHS = "@isr";
 
+    public static final String METER_ID = "@meterid";
+
     public static final String FULL_DETAILS = "full";
 
 } // class ends

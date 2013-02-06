@@ -30,10 +30,6 @@ public class ComputerMeter implements GQSNMPMeter {
     @Override
     public GQMeterData implement(String communityString, String ipAddress, String snmpVersion,
             LinkedList<String> toggleSwitches) {
-        System.out.println(" ::::::::::::::::: " + toggleSwitches.size());
-        for (String s : toggleSwitches) {
-            System.out.println(" list contains  : " + s);
-        }
 
         long computerstartTime = System.currentTimeMillis();
 
@@ -405,6 +401,7 @@ public class ComputerMeter implements GQSNMPMeter {
         }
         GQMeterData gqMeterObject = new GQMeterData(gqErrorInfo, compObject);
         long computerendTime = System.currentTimeMillis();
+        MeterUtils.compMeterTime = MeterUtils.compMeterTime + (computerendTime - computerstartTime);
         System.out.println("Time taken bye the computer meter is : " + (computerendTime - computerstartTime));
         return gqMeterObject;
 

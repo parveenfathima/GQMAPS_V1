@@ -25,33 +25,37 @@ import com.gq.meter.util.MeterUtils;
  */
 public class ITAssetDiscoverer {
 
-    // Gson gson = new GsonBuilder().create();
-    public Gson gson = new GsonBuilder().setPrettyPrinting().create();
-    private GQMeterResponse gqmResponse = new GQMeterResponse();
     List<String> errorList = null;
     GQErrorInformation gqErrInfo = null;
     List<GQErrorInformation> gqerrorInfoList = null;
+
+    // Gson gson = new GsonBuilder().create();
+    public Gson gson = new GsonBuilder().setPrettyPrinting().create();
+    private GQMeterResponse gqmResponse = new GQMeterResponse();
+    static HashMap<String, String> communityIPMap = new HashMap<String, String>();
     HashMap<MeterProtocols, LinkedList<String>> switches = new HashMap<MeterProtocols, LinkedList<String>>();
 
     /**
      * This method used to find the asset type
+     * 
      * @param communityIPMap
      * @return
      */
     private List<ProtocolData> findassets(HashMap<String, String> communityIPMap) {
 
-        GQMeterData assetObject = null;
-        HashMap<String, String> snmpDetails = null;
         String snmpVersion = null;
         String assetDesc = null;
-        MeterProtocols mProtocol = null;
         String communityString = null;
         String ipAddress = null;
+
+        MeterProtocols mProtocol = null;
+        GQMeterData assetObject = null;
+        HashMap<String, String> snmpDetails = null;
         gqerrorInfoList = new LinkedList<GQErrorInformation>();
-
         List<ProtocolData> pdList = new LinkedList<ProtocolData>();
-        try {
 
+        try {
+            // Iterating the communityipmap
             for (Entry<String, String> entry : communityIPMap.entrySet()) {
                 ipAddress = entry.getKey();
                 communityString = entry.getValue();
@@ -112,6 +116,7 @@ public class ITAssetDiscoverer {
      * @return
      */
     private GQMeterResponse readInput(String inputFilePath) {
+
         InputStream assetFileStream = null;
         String communityString = null;
         String ipUpperbound = null;
@@ -119,7 +124,7 @@ public class ITAssetDiscoverer {
         List<ProtocolData> assetsList = null;
         StringTokenizer sToken = null;
         File assetsInputFile = null;
-        HashMap<String, String> communityIPMap = new HashMap<String, String>();
+
         gqerrorInfoList = new LinkedList<GQErrorInformation>();
         gqmResponse.setGqmid("GQMeterResponse");
 
@@ -141,9 +146,11 @@ public class ITAssetDiscoverer {
 
                     for (String line : assetLines) {
                         line = line.trim();
+
                         if (line.length() == 0 || line.startsWith("#")) {
                             continue;
                         }
+
                         // line ! starts with @ for switches
                         if (line.startsWith("@")) {
                             MeterUtils.manageSwitches(line, switches);
@@ -158,9 +165,12 @@ public class ITAssetDiscoverer {
                                 if (sToken.hasMoreTokens()) {
                                     ipUpperbound = sToken.nextToken().trim();
 
+                                    // This condition used to check the lowerboundip is smaller than the upperboundip
                                     if (MeterUtils.ipComparator.compare(ipLowerbound, ipUpperbound) == -1) {
                                         communityIPMap.put(ipLowerbound, communityString);
 
+                                        // /Here we iterate the ip range and find & add those intermediate ips to the
+                                        // map
                                         while (!(ipLowerbound = MeterUtils.nextIpAddress(ipLowerbound))
                                                 .equals(ipUpperbound)) {
                                             communityIPMap.put(ipLowerbound, communityString);
@@ -237,20 +247,39 @@ public class ITAssetDiscoverer {
 
     public static void main(String[] args) throws IOException {
 
+        // The start time of the meter execution
         Long startTime = System.currentTimeMillis();
-        if (args.length != 2) {
-            System.out.println("Usage : ASSETDETAILS_FILE_PATH REST_URL");
+
+        if (args.length != 1) {
+            System.out.println("Usage : ASSETDETAILS_FILE_PATH");
             System.exit(1);
         }
         ITAssetDiscoverer itad = new ITAssetDiscoverer();
         String inputFilePath = args[0].trim();
-        String restUrl = args[1].trim();
+
         GQMeterResponse gqmResponse = itad.readInput(inputFilePath);
+
         System.out.println("::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::");
         System.out.println("json of GQMeterData = " + itad.gson.toJson(gqmResponse));
         System.out.println("::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::");
+
+        // The end time of the meter execution
         long endTime = System.currentTimeMillis();
-        System.out.println("Total duration taken : " + (endTime - startTime));
+        System.out.println("Total number of assets taken after processing the inputfile : " + communityIPMap.size());
+
+        System.out.println("Total time taken to know snmp is installed on the devices : " + MeterUtils.snmpKnownTime);
+        System.out.println("Total time taken to know snmp is not installed on the devices : "
+                + MeterUtils.snmpUnknownTime);
+
+        System.out.println("The list of snmp configured devices : " + MeterUtils.snmpKnownIPList.toString());
+        System.out.println("The list of no snmp configured devices : " + MeterUtils.snmpUnknownIPList.toString());
+        System.out.println("Total number of assets processed : " + MeterUtils.snmpKnownIPList.size());
+        System.out.println("Total number of assets not processed : " + MeterUtils.snmpUnknownIPList.size());
+
+        System.out.println("Total time taken for all COMPUTER meters : " + MeterUtils.compMeterTime);
+        System.out.println("Total time taken for all PRINTER meters : " + MeterUtils.printMeterTime);
+        System.out.println("Total time taken for all ISR meters : " + MeterUtils.isrMeterTime);
+        System.out.println("TOTAL duration taken for meter execution : " + (endTime - startTime));
 
         /*
          * Computer c = new Computer("sdfsad", 83, 100, 80, 30, 20, 500, 340, 89330, 7, 48, 10000, 22220, 2.34, "name",
