@@ -27,6 +27,8 @@ import com.gq.meter.util.MeterUtils;
 
 public class ComputerMeter implements GQSNMPMeter {
 
+    List<String> errorList = new LinkedList<String>();
+
     @Override
     public GQMeterData implement(String communityString, String ipAddress, String snmpVersion,
             LinkedList<String> toggleSwitches) {
@@ -63,7 +65,6 @@ public class ComputerMeter implements GQSNMPMeter {
         List<InstalledSoftware> installedSwList = null;
         HashSet<String> connectedDevices = null;
         List<Process> ProcessList = null;
-        List<String> errorList = new LinkedList<String>();
 
         try {
             snmp = new Snmp(new DefaultUdpTransportMapping());
@@ -484,6 +485,9 @@ public class ComputerMeter implements GQSNMPMeter {
                 else if (isUsed && mulBytes != null && usedMultiply != null) {
                     memory = memory + Long.parseLong(mulBytes.trim()) * Long.parseLong(usedMultiply.trim());
                 }
+                else {
+                    errorList.add(MeterConstants.NO_VALUE + " " + memory);
+                }
             } // if loop ends
         } // for loop ends
         return memory;
@@ -527,11 +531,17 @@ public class ComputerMeter implements GQSNMPMeter {
                                     || networkMap.get(ethernet[i] + "InBytes").isEmpty()
                                     || networkMap.get(ethernet[i] + "InBytes").size() == 0) {
                                 List<Long> networkList = new ArrayList<Long>();
-                                networkList.add(Long.parseLong(networkInStr));
-                                networkMap.put(ethernet[i] + "InBytes", networkList);
+
+                                if (!networkInStr.trim().isEmpty() && networkInStr != null) {
+                                    networkList.add(Long.parseLong(networkInStr));
+                                    networkMap.put(ethernet[i] + "InBytes", networkList);
+                                }
+                                else {
+                                    networkMap.get(ethernet[i] + "InBytes").add(Long.parseLong(networkInStr));
+                                }
                             }
                             else {
-                                networkMap.get(ethernet[i] + "InBytes").add(Long.parseLong(networkInStr));
+                                errorList.add(MeterConstants.NO_VALUE + networkInStr);
                             }
                         }
                         else if (networkOutOid != null && vbs.getOid().toString().trim().equals(networkOutOid)) {
@@ -540,11 +550,17 @@ public class ComputerMeter implements GQSNMPMeter {
                                     || networkMap.get(ethernet[i] + "OutBytes").isEmpty()
                                     || networkMap.get(ethernet[i] + "OutBytes").size() == 0) {
                                 List<Long> networkList = new ArrayList<Long>();
-                                networkList.add(Long.parseLong(networkOutStr));
-                                networkMap.put(ethernet[i] + "OutBytes", networkList);
+
+                                if (!networkOutStr.trim().isEmpty() && networkOutStr != null) {
+                                    networkList.add(Long.parseLong(networkOutStr));
+                                    networkMap.put(ethernet[i] + "OutBytes", networkList);
+                                }
+                                else {
+                                    networkMap.get(ethernet[i] + "OutBytes").add(Long.parseLong(networkOutStr));
+                                }
                             }
                             else {
-                                networkMap.get(ethernet[i] + "OutBytes").add(Long.parseLong(networkOutStr));
+                                errorList.add(MeterConstants.NO_VALUE + networkOutStr);
                             }
                         }
                         else if (vbs.getOid().toString().trim().equals(macOid)) {
@@ -639,6 +655,7 @@ public class ComputerMeter implements GQSNMPMeter {
                     winNetworkMap.put("OutBytes", winNetworkOutValue);
                 }
             }
+
         } // for loop ends
         return winNetworkMap;
 
