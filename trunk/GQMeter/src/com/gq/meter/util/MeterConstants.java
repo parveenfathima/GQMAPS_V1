@@ -42,9 +42,19 @@ public class MeterConstants {
     public static final String PRINTER_SWITCHS = "@printer";
 
     public static final String ISR_SWITCHS = "@isr";
-
+    
     public static final String METER_ID = "@meterid";
 
     public static final String FULL_DETAILS = "full";
+
+    public static final String NO_VALUE = "No value is found";
+
+    public static final String NO_OID = "No OID is found";
+
+    public static final String ISR = "GqMaps ISR Meter";
+
+    public static final String COMPUTER = "GqMaps Computer Meter";
+
+    public static final String PRINTER = "GqMaps Printer Meter";
 
 } // class ends

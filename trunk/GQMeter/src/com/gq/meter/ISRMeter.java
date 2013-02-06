@@ -19,6 +19,8 @@ import com.gq.meter.util.MeterUtils;
 
 public class ISRMeter implements GQSNMPMeter {
 
+    List<String> errorList = new LinkedList<String>();
+
     @Override
     public GQMeterData implement(String communityString, String ipAddress, String snmpVersion,
             LinkedList<String> toggleSwitches) {
@@ -44,7 +46,6 @@ public class ISRMeter implements GQSNMPMeter {
         CommunityTarget target = null;
         HashMap<String, Long> networkBytes = null;
         HashSet<String> connectedDevices = null;
-        List<String> errorList = new LinkedList<String>();
 
         try {
             snmp = new Snmp(new DefaultUdpTransportMapping());
@@ -241,19 +242,29 @@ public class ISRMeter implements GQSNMPMeter {
                 if (!switchNetworkInVal.equalsIgnoreCase("0")) {
 
                     String switchNetworkInStr = vb.getVariable().toString().trim();
-                    long switchNetworkInValue = Long.parseLong(switchNetworkInStr);
-                    switchNetworkIn = switchNetworkIn + switchNetworkInValue;
-                    switchNetworkMap.put("InBytes", switchNetworkIn);
+
+                    if (!switchNetworkInStr.trim().isEmpty() && switchNetworkInStr != null) {
+                        long switchNetworkInValue = Long.parseLong(switchNetworkInStr);
+                        switchNetworkIn = switchNetworkIn + switchNetworkInValue;
+                        switchNetworkMap.put("InBytes", switchNetworkIn);
+                    }
 
                 } // 2nd if loop ends
             } // if loop ends
             else if (networkOutOid != null && vb.getOid().toString().contains(networkOutOid)) {
                 String switchNetworkOutVal = vb.getVariable().toString().trim();
+
                 if (!switchNetworkOutVal.equalsIgnoreCase("0")) {
                     String switchNetworkOutStr = vb.getVariable().toString().trim();
-                    long switchNetworkOutValue = Long.parseLong(switchNetworkOutStr);
-                    switchNetworkOut = switchNetworkIn + switchNetworkOutValue;
-                    switchNetworkMap.put("OutBytes", switchNetworkOut);
+
+                    if (!switchNetworkOutStr.trim().isEmpty() && switchNetworkOutStr != null) {
+                        long switchNetworkOutValue = Long.parseLong(switchNetworkOutStr);
+                        switchNetworkOut = switchNetworkIn + switchNetworkOutValue;
+                        switchNetworkMap.put("OutBytes", switchNetworkOut);
+                    }
+                    else {
+                        errorList.add(MeterConstants.NO_VALUE + switchNetworkOut);
+                    }
                 }
             }
         } // for loop ends

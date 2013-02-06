@@ -24,6 +24,8 @@ public class PrinterMeter implements GQSNMPMeter {
     static HashMap<Integer, String> printerCurrentStateMap = new HashMap<Integer, String>();
     static HashMap<Integer, String> printerErrorConditionMap = new HashMap<Integer, String>();
 
+    List<String> errorList = new LinkedList<String>();
+
     static {
         // Predefined printer status map
 
@@ -297,6 +299,7 @@ public class PrinterMeter implements GQSNMPMeter {
 
         for (VariableBinding vb : result) {
             String temp = vb.getVariable().toString().trim();
+
             if (temp.trim().equals(OID)) {
                 String lastValue = String.valueOf(vb.getOid().last());
                 mulBytesOID = rootId + "." + "4" + "." + lastValue;
@@ -320,11 +323,16 @@ public class PrinterMeter implements GQSNMPMeter {
                     }
                 }// for loop ends
 
-                if (!isUsed && mulBytes != null && toMultiply != null) {
+                if (!isUsed && mulBytes != null && !mulBytes.trim().isEmpty() && toMultiply != null
+                        && !toMultiply.trim().isEmpty()) {
                     memHdd = memHdd + Long.parseLong(mulBytes.trim()) * Long.parseLong(toMultiply.trim());
                 }
-                else if (isUsed && mulBytes != null && usedMultiply != null) {
+                else if (isUsed && mulBytes != null && !mulBytes.trim().isEmpty() && usedMultiply != null
+                        && !usedMultiply.trim().isEmpty()) {
                     memHdd = memHdd + Long.parseLong(mulBytes.trim()) * Long.parseLong(usedMultiply.trim());
+                }
+                else {
+                    errorList.add(MeterConstants.NO_VALUE + memHdd);
                 }
             }
         }
@@ -353,12 +361,22 @@ public class PrinterMeter implements GQSNMPMeter {
             if (totalValue != null && vb.getOid().toString().equals(totalValue)) {
 
                 String totalValuestr = vb.getVariable().toString().trim();
-                totalValueFloat = Double.parseDouble(totalValuestr);
+                if (!totalValuestr.trim().isEmpty() && totalValuestr != null) {
+                    totalValueFloat = Double.parseDouble(totalValuestr);
+                }
+                else {
+                    errorList.add(MeterConstants.NO_VALUE + " " + totalValueFloat);
+                }
             }
             else if (remainingUsage != null && vb.getOid().toString().equals(remainingUsage)) {
 
                 String remainingUsageStr = vb.getVariable().toString().trim();
-                remainingUsagefloat = Double.parseDouble(remainingUsageStr);
+                if (!remainingUsageStr.trim().isEmpty() && remainingUsageStr != null) {
+                    remainingUsagefloat = Double.parseDouble(remainingUsageStr);
+                }
+                else {
+                    errorList.add(MeterConstants.NO_VALUE + " " + remainingUsagefloat);
+                }
             }
 
         } // for loop ends
@@ -389,41 +407,64 @@ public class PrinterMeter implements GQSNMPMeter {
         String N_A = "Not Avaiable";
 
         for (VariableBinding vb : result) {
-            if (currentStateOid != null && vb.getOid().toString().equals(currentStateOid)) {
+            if (currentStateOid != null && !currentStateOid.trim().isEmpty()
+                    && vb.getOid().trim().toString().equals(currentStateOid)) {
                 String currentStateValueStr = vb.getVariable().toString().trim();
-                int currentStateValue = Integer.parseInt(currentStateValueStr);
-                // check in the predefined map whether the map has the value
-                if (printerCurrentStateMap.containsKey(currentStateValue)) {
-                    currentStatus = currentStateValue + " " + "-" + " " + printerCurrentStateMap.get(currentStateValue);
+
+                if (!currentStateValueStr.trim().isEmpty() && currentStateValueStr != null) {
+                    int currentStateValue = Integer.parseInt(currentStateValueStr);
+                    // check in the predefined map whether the map has the value
+                    if (printerCurrentStateMap.containsKey(currentStateValue)) {
+                        currentStatus = currentStateValue + " " + "-" + " "
+                                + printerCurrentStateMap.get(currentStateValue);
+                    }
+                    else {
+                        currentStatus = currentStateValue + " " + "-" + " " + N_A;
+                    }
                 }
                 else {
-                    currentStatus = currentStateValue + " " + "-" + " " + N_A;
+                    errorList.add(MeterConstants.NO_VALUE + currentStatus);
                 }
-
             }
-            else if (operationalStateOid != null && vb.getOid().toString().equals(operationalStateOid)) {
+            else if (operationalStateOid != null && !operationalStateOid.trim().isEmpty()
+                    && vb.getOid().trim().toString().equals(operationalStateOid)) {
                 String operationalStateValueStr = vb.getVariable().toString().trim();
-                int operationalStateValue = Integer.parseInt(operationalStateValueStr);
-                // check in the predefined map whether the map has the value
-                if (printerOperationalStateMap.containsKey(operationalStateValue)) {
-                    operationalStatus = operationalStateValue + " " + "-" + " "
-                            + printerOperationalStateMap.get(operationalStateValue);
+
+                if (!operationalStateValueStr.trim().isEmpty() && operationalStateValueStr != null) {
+                    int operationalStateValue = Integer.parseInt(operationalStateValueStr);
+                    // check in the predefined map whether the map has the value
+                    if (printerOperationalStateMap.containsKey(operationalStateValue)) {
+                        operationalStatus = operationalStateValue + " " + "-" + " "
+                                + printerOperationalStateMap.get(operationalStateValue);
+                    }
+                    else {
+                        operationalStatus = operationalStateValue + " " + "-" + " " + N_A;
+                    }
                 }
                 else {
-                    operationalStatus = operationalStateValue + " " + "-" + " " + N_A;
+                    errorList.add(MeterConstants.NO_VALUE + operationalStatus);
                 }
+
             }
 
-            else if (errorConditionOid != null && vb.getOid().toString().equals(errorConditionOid)) {
+            else if (errorConditionOid != null && !errorConditionOid.trim().isEmpty()
+                    && vb.getOid().trim().toString().equals(errorConditionOid)) {
                 String errorConditionValueStr = vb.getVariable().toString().trim();
-                int errorConditionValue = Integer.parseInt(errorConditionValueStr);
-                // check in the predefined map whether the map has the value
-                if (printerErrorConditionMap.containsKey(errorConditionValue)) {
-                    errorConditionalStatus = errorConditionValue + " " + "-" + " "
-                            + printerErrorConditionMap.get(errorConditionValue);
+
+                if (!errorConditionValueStr.trim().isEmpty() && errorConditionValueStr != null) {
+                    int errorConditionValue = Integer.parseInt(errorConditionValueStr);
+                    // check in the predefined map whether the map has the value
+                    if (printerErrorConditionMap.containsKey(errorConditionValue)) {
+                        errorConditionalStatus = errorConditionValue + " " + "-" + " "
+                                + printerErrorConditionMap.get(errorConditionValue);
+                    }
+
+                    else {
+                        errorConditionalStatus = errorConditionValue + " " + "-" + " " + N_A;
+                    }
                 }
                 else {
-                    errorConditionalStatus = errorConditionValue + " " + "-" + " " + N_A;
+                    errorList.add(MeterConstants.NO_VALUE + errorConditionalStatus);
                 }
             }
         }
