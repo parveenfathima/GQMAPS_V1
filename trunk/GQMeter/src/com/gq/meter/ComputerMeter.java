@@ -722,19 +722,33 @@ public class ComputerMeter implements GQSNMPMeter {
     private HashMap<String, String> winAssetIdCalc(List<VariableBinding> result, OID rootOid,
             HashMap<String, String> winNetworkMap) {
 
+        String networkOid = null;
         String macWinNetworkId = null;
         String rootId = rootOid.toString();
 
         for (VariableBinding vb : result) {
             String lastchar = String.valueOf(vb.getOid().last());
 
-            macWinNetworkId = rootId + "." + "6" + "." + lastchar;
-            for (VariableBinding vbs : result) {
-                if (macWinNetworkId != null && vbs.getOid().toString().contains(macWinNetworkId)) {
-                    String macWinNetworkValue = vbs.getVariable().toString().trim().replaceAll(":", "");
-                    winNetworkMap.put("macWinNetworkValue", macWinNetworkValue);
-                }
-            }// for loop ends
+            networkOid = rootId + "." + "10" + "." + lastchar;
+
+            if (networkOid != null && vb.getOid().toString().contains(networkOid)) {
+                String winNetworkInVal = vb.getVariable().toString().trim();
+
+                if (!winNetworkInVal.equalsIgnoreCase("0")) {
+                    String winNetworkInValue = vb.getVariable().toString().trim();
+                    winNetworkMap.put("InBytes", winNetworkInValue);
+
+                    macWinNetworkId = rootId + "." + "6" + "." + lastchar;
+                    for (VariableBinding vbs : result) {
+                        if (macWinNetworkId != null && vbs.getOid().toString().contains(macWinNetworkId)) {
+                            String macWinNetworkValue = vbs.getVariable().toString().trim().replaceAll(":", "");
+                            winNetworkMap.put("macWinNetworkValue", macWinNetworkValue);
+                        }
+                    }// for loop ends
+                } // 2nd if loop ends
+
+            }
+
         }// for loop ends
         return winNetworkMap;
     }
