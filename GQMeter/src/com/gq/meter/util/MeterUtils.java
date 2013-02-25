@@ -32,7 +32,7 @@ import org.snmp4j.transport.DefaultUdpTransportMapping;
 import com.gq.meter.ComputerMeter;
 import com.gq.meter.GQMeterData;
 import com.gq.meter.PrinterMeter;
-import com.gq.meter.ISRMeter;
+import com.gq.meter.NSRGMeter;
 
 public class MeterUtils {
 
@@ -43,6 +43,7 @@ public class MeterUtils {
     public static long isrMeterTime = 0;
     public static LinkedList<String> snmpKnownIPList = new LinkedList<String>();;
     public static LinkedList<String> snmpUnknownIPList = new LinkedList<String>();
+    public static String restURL = "http://localhost:8080/GQGatekeeper/";
 
     /**
      * @param communityString
@@ -73,7 +74,8 @@ public class MeterUtils {
                 System.out.println("SNMP Version2 && version1 are failed, The asset is not configure with SNMP ");
                 long snmpEndTime = System.currentTimeMillis();
 
-                snmpUnknownTime = snmpUnknownTime + (snmpEndTime - snmpStartTime);// Time taken to find snmp is not configured
+                snmpUnknownTime = snmpUnknownTime + (snmpEndTime - snmpStartTime);// Time taken to find snmp is not
+                                                                                  // configured
                 snmpUnknownIPList.add(currIp);
 
                 System.out.println("### SNMP is not configured in this device ### : " + (snmpEndTime - snmpStartTime));
@@ -110,10 +112,10 @@ public class MeterUtils {
         mProtocol = MeterProtocols.PRINTER;
 
         if (result == null || result.size() == 0 || result.isEmpty()) {
-            oidString = MeterConstants.SNMP_CHECK_ISR_OCTET; // ISR
+            oidString = MeterConstants.SNMP_CHECK_NSRG_OCTET; // ISR
             rootOID = new OID(oidString);
             result = walk(rootOID, target);
-            mProtocol = MeterProtocols.ISR;
+            mProtocol = MeterProtocols.NSRG;
 
             if (result == null || result.size() == 0 || result.isEmpty()) {
                 oidString = MeterConstants.SNMP_CHECK_COMPUTER_OCTET; // Computer
@@ -147,8 +149,8 @@ public class MeterUtils {
         if (protocol.equals(MeterProtocols.PRINTER)) {
             assetObject = new PrinterMeter().implement(communityString, currIp, snmpVersion, switchList);
         }
-        else if (protocol.equals(MeterProtocols.ISR)) {
-            assetObject = new ISRMeter().implement(communityString, currIp, snmpVersion, switchList);
+        else if (protocol.equals(MeterProtocols.NSRG)) {
+            assetObject = new NSRGMeter().implement(communityString, currIp, snmpVersion, switchList);
         }
         else if (protocol.equals(MeterProtocols.COMPUTER)) {
             assetObject = new ComputerMeter().implement(communityString, currIp, snmpVersion, switchList);
@@ -157,7 +159,7 @@ public class MeterUtils {
          * switch (protocol) {
          * 
          * case PRINTER: assetObject = new PrinterMeter().implement(communityString, currIp, snmpVersion); break; case
-         * ISR: assetObject = new ISRMeter().implement(communityString, currIp, snmpVersion); break; case COMPUTER:
+         * ISR: assetObject = new NSRGMeter().implement(communityString, currIp, snmpVersion); break; case COMPUTER:
          * assetObject = new ComputerMeter().implement(communityString, currIp, snmpVersion); break; }
          */
 
@@ -479,21 +481,21 @@ public class MeterUtils {
             }
 
         }
-        else if (line.toLowerCase().startsWith(MeterConstants.ISR_SWITCHS)) {
-            line = line.replace(MeterConstants.ISR_SWITCHS, "").trim();
+        else if (line.toLowerCase().startsWith(MeterConstants.NSRG_SWITCHS)) {
+            line = line.replace(MeterConstants.NSRG_SWITCHS, "").trim();
             LinkedList<String> isrSwitchList = null;
 
             if (line.contains(MeterConstants.FULL_DETAILS)) {
                 isrSwitchList = new LinkedList<String>();
                 isrSwitchList.add(MeterConstants.FULL_DETAILS);
-                assetSwitches.put(MeterProtocols.ISR, isrSwitchList);
+                assetSwitches.put(MeterProtocols.NSRG, isrSwitchList);
             }
             else {
                 isrSwitchList = new LinkedList<String>();
                 for (String switches : line.split("\\|")) {
                     isrSwitchList.add(switches);
                 }
-                assetSwitches.put(MeterProtocols.ISR, isrSwitchList);
+                assetSwitches.put(MeterProtocols.NSRG, isrSwitchList);
             }
         }
         return assetSwitches;
@@ -506,14 +508,11 @@ public class MeterUtils {
      * @return
      */
     private static Long toNumeric(String ip) {
-        /*long numericIp = 0l;
-        try (Scanner sc = new Scanner(ip)) {
-            Scanner scIp = sc.useDelimiter("\\.");
-            numericIp = (scIp.nextLong() << 24) + (scIp.nextLong() << 16) + (scIp.nextLong() << 8) + (scIp.nextLong());
-        }
-        catch (Exception e) {
-            System.out.println("Exception occured while parsing the ip" + e);
-        }*/
+        /*
+         * long numericIp = 0l; try (Scanner sc = new Scanner(ip)) { Scanner scIp = sc.useDelimiter("\\."); numericIp =
+         * (scIp.nextLong() << 24) + (scIp.nextLong() << 16) + (scIp.nextLong() << 8) + (scIp.nextLong()); } catch
+         * (Exception e) { System.out.println("Exception occured while parsing the ip" + e); }
+         */
         Scanner sc = new Scanner(ip).useDelimiter("\\.");
         long numericIp = (sc.nextLong() << 24) + (sc.nextLong() << 16) + (sc.nextLong() << 8) + (sc.nextLong());
         return numericIp;
