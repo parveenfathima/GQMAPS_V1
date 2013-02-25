@@ -3,6 +3,7 @@ package com.gq.meter.util;
 public class MeterConstants {
 
     public static final String STATUS_PASS = "pass";
+
     public static final String STATUS_FAIL = "fail";
 
     public static final String SNMP_VERSION_1 = "v1";
@@ -19,11 +20,11 @@ public class MeterConstants {
 
     public static final String SNMP_CHECK_COMPUTER_OCTET = "1.3.6.1.2.1.25.3.3.1.2"; // Cpu load of computer
 
-    public static final String SNMP_CHECK_ISR_OCTET = "1.3.6.1.2.1.47.1.1.1.1.2"; // ISR octet
+    public static final String SNMP_CHECK_NSRG_OCTET = "1.3.6.1.2.1.47.1.1.1.1.2"; // NSRG octet
 
-    public static final String COLOR_PRINTER = "color";
+    public static final String COLOR_PRINTER = "Y"; // is_color_printer = Yes
 
-    public static final String BLACKWHITE_PRINTER = "black";
+    public static final String BLACKWHITE_PRINTER = "N";// is_color_printer = No
 
     public static final String STANDARD_SYSTEM_ATTRIBUTES_ERROR = "Unable to get standard system attributes";
 
@@ -35,14 +36,14 @@ public class MeterConstants {
 
     public static final String PROCESS = "process";
 
-    public static final String SNAPSHOT = "snapshot";
+    public static final String SNAPSHOT = "snap_shot";
 
     public static final String COMPUTER_SWITCHS = "@computer";
 
     public static final String PRINTER_SWITCHS = "@printer";
 
-    public static final String ISR_SWITCHS = "@isr";
-    
+    public static final String NSRG_SWITCHS = "@nsrg";
+
     public static final String METER_ID = "@meterid";
 
     public static final String FULL_DETAILS = "full";
@@ -51,7 +52,7 @@ public class MeterConstants {
 
     public static final String NO_OID = "No OID is found";
 
-    public static final String ISR = "GqMaps ISR Meter";
+    public static final String NSRG = "GqMaps NSRG Meter";
 
     public static final String COMPUTER = "GqMaps Computer Meter";
 
