@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated Feb 21, 2013 12:58:18 PM by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+    <class name="com.gq.meter.object.CompInstSoftware" table="comp_inst_sw" catalog="gqmaps">
+        <composite-id name="id" class="com.gq.meter.object.CompInstSoftwareId">
+            <key-property name="runId" type="int">
+                <column name="run_id" />
+            </key-property>
+            <key-property name="assetId" type="string">
+                <column name="asset_id" length="30" />
+            </key-property>
+            <key-property name="name" type="string">
+                <column name="name" length="100" />
+            </key-property>
+            <key-property name="instDttm" type="timestamp">
+                <column name="inst_dttm" length="19" />
+            </key-property>
+        </composite-id>
+    </class>
+</hibernate-mapping>
