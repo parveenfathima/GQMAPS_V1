@@ -18,9 +18,17 @@ import org.snmp4j.smi.OID;
 import org.snmp4j.smi.VariableBinding;
 import org.snmp4j.transport.DefaultUdpTransportMapping;
 
+import com.gq.meter.object.Asset;
+import com.gq.meter.object.CPNId;
+import com.gq.meter.object.CompConnDevice;
+import com.gq.meter.object.CompConnDeviceId;
+import com.gq.meter.object.CompInstSoftware;
+import com.gq.meter.object.CompInstSoftwareId;
+import com.gq.meter.object.CompProcess;
+import com.gq.meter.object.CompProcessId;
+import com.gq.meter.object.CompSnapshot;
 import com.gq.meter.object.Computer;
-import com.gq.meter.object.assist.InstalledSoftware;
-import com.gq.meter.object.assist.Process;
+import com.gq.meter.object.OsType;
 import com.gq.meter.util.MeterConstants;
 import com.gq.meter.util.MeterProtocols;
 import com.gq.meter.util.MeterUtils;
@@ -36,8 +44,12 @@ public class ComputerMeter implements GQSNMPMeter {
         long computerstartTime = System.currentTimeMillis();
 
         Snmp snmp = null;
-        // ASSET
+
+        int runId = 0;
         String assetId = null; // unique identifier about the asset
+        CPNId id = null;
+
+        // ASSET
         String sysName = null; // string
         String sysDescr = null; // string
         String sysContact = null; // string
@@ -46,7 +58,8 @@ public class ComputerMeter implements GQSNMPMeter {
 
         // SNAPSHOT
         String sysIP = null; // string
-        long cpuLoad = 0; // in percentage
+        String osId = null; // string
+        short cpuLoad = 0; // in percentage
         long totalMemory = 0; // bytes
         long usedMemory = 0; // bytes
         long totalVirtualMemory = 0; // bytes
@@ -54,17 +67,17 @@ public class ComputerMeter implements GQSNMPMeter {
         long totalDiskSpace = 0; // bytes
         long usedDiskSpace = 0; // bytes
         long upTime = 0; // seconds
-        long numLoggedInUsers = 0;
-        long numProcesses = 0;
+        short numLoggedInUsers = 0;
+        short numProcesses = 0;
         long networkBytesIn = 0; // bytes
         long networkBytesOut = 0; // bytes
         double clockSpeed = 0; // v2
 
         CommunityTarget target = null;
         HashMap<String, String> networkBytes = null;
-        List<InstalledSoftware> installedSwList = null;
-        HashSet<String> connectedDevices = null;
-        List<Process> ProcessList = null;
+        ArrayList<CompInstSoftware> installedSwList = null;
+        HashSet<CompConnDevice> connectedDevices = null;
+        ArrayList<CompProcess> processList = null;
 
         try {
             snmp = new Snmp(new DefaultUdpTransportMapping());
@@ -82,6 +95,7 @@ public class ComputerMeter implements GQSNMPMeter {
             String oidString = "1.3.6.1.2.1.1";
             String temp;
             String tempStr;
+            int sysLength;
             boolean isWindows = false;
 
             OID rootOID = new OID(oidString);
@@ -91,21 +105,44 @@ public class ComputerMeter implements GQSNMPMeter {
 
             if (result != null && !result.isEmpty()) {
                 temp = oidString + ".1.0";
-                sysDescr = MeterUtils.getSNMPValue(temp, result);
+                sysDescr = MeterUtils.getSNMPValue(temp, result).toLowerCase();
+                sysLength = sysDescr.length();
+                if (sysLength >= 200) {
+                    sysDescr = sysDescr.substring(0, 199);
+                }
 
                 if (null != sysDescr) {
-                    if (sysDescr.contains("Windows")) {
+                    if (sysDescr.contains("windows")) {
+                        osId = "windows";
                         isWindows = true;
+                    }
+                    else if (sysDescr.contains("linux")) {
+                        osId = "linux";
+                    }
+                    else if (sysDescr.contains("unix")) {
+                        osId = "unix";
                     }
                 }
                 temp = oidString + ".4.0";
                 sysContact = MeterUtils.getSNMPValue(temp, result);
+                sysLength = sysContact.length();
+                if (sysLength >= 45) {
+                    sysContact = sysContact.substring(0, 44);
+                }
 
                 temp = oidString + ".5.0";
                 sysName = MeterUtils.getSNMPValue(temp, result);
+                sysLength = sysName.length();
+                if (sysLength >= 45) {
+                    sysName = sysName.substring(0, 44);
+                }
 
                 temp = oidString + ".6.0";
                 sysLocation = MeterUtils.getSNMPValue(temp, result);
+                sysLength = sysLocation.length();
+                if (sysLength >= 45) {
+                    sysLocation = sysLocation.substring(0, 44);
+                }
             }
             else {
                 errorList.add("Root OID : 1.3.6.1.2.1.1" + " " + MeterConstants.STANDARD_SYSTEM_ATTRIBUTES_ERROR);
@@ -146,17 +183,21 @@ public class ComputerMeter implements GQSNMPMeter {
                 }
             }// else ends
 
+            // ASSET ID , RUN ID STARTS HERE.
+            runId = (int) (System.currentTimeMillis());
+            id = new CPNId(runId, assetId);
+
             for (String element : toggleSwitches) {
 
                 if (element.equalsIgnoreCase(MeterConstants.FULL_DETAILS)
                         || element.equalsIgnoreCase(MeterConstants.SNAPSHOT)) {
+
                     sysIP = ipAddress;
 
                     oidString = "1.3.6.1.2.1.1";
                     rootOID = new OID(oidString);
 
-                    result = MeterUtils.walk(rootOID, target); // walk done with the initial assumption that device is
-                                                               // v2
+                    result = MeterUtils.walk(rootOID, target);
                     if (result != null && !result.isEmpty()) {
                         temp = oidString + ".3.0";
                         tempStr = MeterUtils.getSNMPValue(temp, result);
@@ -172,13 +213,13 @@ public class ComputerMeter implements GQSNMPMeter {
                         temp = oidString + ".5.0";
                         tempStr = MeterUtils.getSNMPValue(temp, result);
                         if (tempStr != null) {
-                            numLoggedInUsers = Integer.parseInt(tempStr);
+                            numLoggedInUsers = (short) Integer.parseInt(tempStr);
                         }
 
                         temp = oidString + ".6.0";
                         tempStr = MeterUtils.getSNMPValue(temp, result);
                         if (tempStr != null) {
-                            numProcesses = Integer.parseInt(tempStr);
+                            numProcesses = (short) Integer.parseInt(tempStr);
                         }
                     }
                     else {
@@ -211,7 +252,7 @@ public class ComputerMeter implements GQSNMPMeter {
                             totalDiskSpace = windowsDriveSize + totalVirtualMemory;
                             usedDiskSpace = usedWindowsDriveSize + usedVirtualMemory;
 
-                        }// if ends
+                        }// if loop ends
                         else {
                             variable = "/dev/shm";
                             long linuxDriveSize = getMemorycalc(result, rootOID, variable, false);
@@ -261,7 +302,7 @@ public class ComputerMeter implements GQSNMPMeter {
                     result = MeterUtils.walk(rootOID, target);
 
                     if (result != null && !result.isEmpty()) {
-                        cpuLoad = cpuLoadCalc(result, rootOID);
+                        cpuLoad = (short) cpuLoadCalc(result, rootOID);
                     }
                     else {
                         errorList.add("Root OID : 1.3.6.1.2.1.25.3.3.1.2" + " " + "Unable to compute CPU load");
@@ -282,13 +323,12 @@ public class ComputerMeter implements GQSNMPMeter {
 
                             String networkBytesOutStr = networkBytes.get("OutBytes");
                             networkBytesOut = Long.parseLong(networkBytesOutStr);
-                            // assetId = MeterProtocols.COMPUTER + "-" + networkBytes.get("macWinNetworkValue");
                         }
                         else {
                             errorList.add("Root OID : 1.3.6.1.2.1.2.2.1" + " "
                                     + "Unable to get network bandwidth details and unable to collate asset ID");
                         }
-                    }// if ends
+                    }// 1st if loop ends
 
                     // the following oid's is used to get network in and out bytes for Linux
                     else {
@@ -312,7 +352,6 @@ public class ComputerMeter implements GQSNMPMeter {
                                             + Long.parseLong(networkBytes.get(ethernet[i] + "OutBytes"));
                                 }
                             } // for loop ends
-                              // assetId = MeterProtocols.COMPUTER + "-" + networkBytes.get("assetId");
                         }
                         else {
                             errorList.add("Root OID : 1.3.6.1.2.1.2.2.1" + " "
@@ -338,15 +377,16 @@ public class ComputerMeter implements GQSNMPMeter {
                         rootOID = new OID(oidString);
                         List<VariableBinding> dateResult = MeterUtils.walk(rootOID, target);
 
-                        installedSwList = installedSwListCalc(appResult, softwareResult, dateResult, rootOID, isWindows);
+                        installedSwList = installedSwListCalc(appResult, softwareResult, dateResult, rootOID,
+                                isWindows, id);
                     }
                     else {
                         errorList.add("Root OID : 1.3.6.1.2.1.25.6.3.1.4" + " "
                                 + "Unable to get list of installed software");
                     }
-                }
+                } // 1st if loop ends.
 
-                // the following oid's is used to get the ip and port no of devices that is connected.
+                // the following oid's is used to get the IP and port number for the devices that is connected.
                 if (element.equalsIgnoreCase(MeterConstants.FULL_DETAILS)
                         || element.equalsIgnoreCase(MeterConstants.CONNECTED_DEVICES)) {
 
@@ -354,7 +394,7 @@ public class ComputerMeter implements GQSNMPMeter {
                         oidString = ".1.3.6.1.2.1.6.13.1.1";
                         rootOID = new OID(oidString);
                         result = MeterUtils.walk(rootOID, target);
-                        connectedDevices = ConnectedDevicesCalc(result, ipAddress);
+                        connectedDevices = ConnectedDevicesCalc(result, ipAddress, id);
                     }
                     else {
                         errorList.add("Root OID : 1.3.6.1.2.1.6.13.1.1" + " "
@@ -362,7 +402,7 @@ public class ComputerMeter implements GQSNMPMeter {
                     }
                 }
 
-                // The following OID is used to get the System run name, cpu and memory share for a particular process .
+                // The following OID is used to get the System run name, CPU and memory share for a particular process .
                 if (element.equalsIgnoreCase(MeterConstants.FULL_DETAILS)
                         || element.equalsIgnoreCase(MeterConstants.PROCESS)) {
                     if (result != null && !result.isEmpty()) {
@@ -378,7 +418,7 @@ public class ComputerMeter implements GQSNMPMeter {
                         rootOID = new OID(oidString);
                         List<VariableBinding> memShareResult = MeterUtils.walk(rootOID, target);
 
-                        ProcessList = ProcessCalc(result, rootOID, sysRunNameResult, cpuShareResult, memShareResult);
+                        processList = ProcessCalc(result, rootOID, sysRunNameResult, cpuShareResult, memShareResult, id);
                     }
                     else {
                         errorList.add("Root OID : .1.3.6.1.2.1.25" + " "
@@ -391,10 +431,24 @@ public class ComputerMeter implements GQSNMPMeter {
             errorList.add(ipAddress + " " + e.getMessage());
         }
 
-        Computer compObject = new Computer(assetId, cpuLoad, totalMemory, usedMemory, totalVirtualMemory,
-                usedVirtualMemory, totalDiskSpace, usedDiskSpace, upTime, numLoggedInUsers, numProcesses,
-                networkBytesIn, networkBytesOut, clockSpeed, sysName, sysIP, sysDescr, sysContact, sysLocation, extras,
-                installedSwList, connectedDevices, ProcessList);
+        String protocolId = "protocolid";
+        String appId = "app_id";
+        String assetUsg = "assetUsg";
+        Byte assetStrength = 1;
+        String ctlgId = "ctlg_id";
+        String descr = "descr";
+
+        Asset assetObj = new Asset(assetId, protocolId, sysName, sysDescr, sysContact, sysLocation, appId, assetUsg,
+                assetStrength, ctlgId);
+
+        OsType osTypeObj = new OsType(osId, descr);
+
+        CompSnapshot snapShot = new CompSnapshot(id, sysIP, osId, totalMemory, usedMemory, totalVirtualMemory,
+                usedVirtualMemory, totalDiskSpace, usedDiskSpace, cpuLoad, upTime, numLoggedInUsers, numProcesses,
+                networkBytesIn, networkBytesOut, clockSpeed, extras);
+
+        Computer compObject = new Computer(id, assetObj, osTypeObj, snapShot, installedSwList, processList,
+                connectedDevices);
 
         GQErrorInformation gqErrorInfo = null;
         if (errorList != null && !errorList.isEmpty()) {
@@ -409,6 +463,8 @@ public class ComputerMeter implements GQSNMPMeter {
     }
 
     /**
+     * This method is used to calculate the CPU Load that is consumed by the asset.
+     * 
      * @param result
      * @param rootOid
      * @return
@@ -429,6 +485,8 @@ public class ComputerMeter implements GQSNMPMeter {
     }
 
     /**
+     * This method is used to get the disc space, physical memory and virtual memory of a asset
+     * 
      * @param result
      * @param rootOid
      * @param variable
@@ -494,6 +552,8 @@ public class ComputerMeter implements GQSNMPMeter {
     }
 
     /**
+     * This method is used to get the Linux , network in and out bytes of a asset.
+     * 
      * @param result
      * @param rootOid
      * @param ethernet
@@ -610,6 +670,8 @@ public class ComputerMeter implements GQSNMPMeter {
     } // network bytes calculation for Linux gets over
 
     /**
+     * This method is used to get the Windows , network in and out bytes of a asset.
+     * 
      * @param result
      * @param rootOid
      * @param winNetworkMap
@@ -662,6 +724,8 @@ public class ComputerMeter implements GQSNMPMeter {
     } // network bytes calculation for windows gets over.
 
     /**
+     * This method is used to get the Linux Asset ID
+     * 
      * @param result
      * @param rootOid
      * @param ethernet
@@ -714,6 +778,8 @@ public class ComputerMeter implements GQSNMPMeter {
     }
 
     /**
+     * This method is used to Windows Asset ID
+     * 
      * @param result
      * @param rootOid
      * @param winNetworkMap
@@ -754,6 +820,8 @@ public class ComputerMeter implements GQSNMPMeter {
     }
 
     /**
+     * This method is used to get the installed software list of a asset.
+     * 
      * @param appResult
      * @param softwareResult
      * @param dateResult
@@ -761,20 +829,30 @@ public class ComputerMeter implements GQSNMPMeter {
      * @param isWindows
      * @return
      */
-    private List<InstalledSoftware> installedSwListCalc(List<VariableBinding> appResult,
-            List<VariableBinding> softwareResult, List<VariableBinding> dateResult, OID rootOid, boolean isWindows) {
-
-        LinkedList<InstalledSoftware> installedSwList = new LinkedList<InstalledSoftware>();
-        InstalledSoftware ins = null;
+    private ArrayList<CompInstSoftware> installedSwListCalc(List<VariableBinding> appResult,
+            List<VariableBinding> softwareResult, List<VariableBinding> dateResult, OID rootOid, boolean isWindows,
+            CPNId id) {
+        int runId = id.getRunId();
+        String assetId = id.getAssetId();
+        int installedSoftwareSize = appResult.size();
+        if (!isWindows) {
+            installedSoftwareSize = (installedSoftwareSize / 2) + 100;
+        }
+        ArrayList<CompInstSoftware> installedSwList = new ArrayList<CompInstSoftware>(installedSoftwareSize);
+        CompInstSoftwareId ins = null;
         try {
             for (int i = 0; i < appResult.size(); i++) {
                 if (appResult.get(i).getVariable().toString().trim().equals("4")) {
                     String softwareName = softwareResult.get(i).getVariable().toString().trim();
                     Date installDate = getDate(dateResult.get(i).getVariable().toString().trim(), isWindows);
-                    ins = new InstalledSoftware(softwareName, installDate);
-                    installedSwList.add(ins);
+                    if (softwareName != null && softwareName.trim().length() != 0) {
+                        ins = new CompInstSoftwareId(runId, assetId, softwareName, installDate);
+                        CompInstSoftware cis = new CompInstSoftware(ins);
+                        installedSwList.add(cis);
+                    }
                 }
             }
+
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -783,6 +861,8 @@ public class ComputerMeter implements GQSNMPMeter {
     }
 
     /**
+     * This method is used to get the Date of a asset
+     * 
      * @param hexDate
      * @param isWindows
      * @return
@@ -828,13 +908,20 @@ public class ComputerMeter implements GQSNMPMeter {
     }
 
     /**
+     * This method is used to get the Connected Device of a asset
+     * 
      * @param result
      * @param ipAddress
      * @return
      */
-    private HashSet<String> ConnectedDevicesCalc(List<VariableBinding> result, String ipAddress) {
+    private HashSet<CompConnDevice> ConnectedDevicesCalc(List<VariableBinding> result, String ipAddress, CPNId id) {
 
-        HashSet<String> connectedDevices = new HashSet<String>();
+        HashSet<CompConnDevice> connectedDevices = new HashSet<CompConnDevice>();
+
+        CompConnDevice connDevice = null;
+        int runId = id.getRunId();
+        String assetId = id.getAssetId();
+        CompConnDeviceId compConnDeviceId = null;
 
         for (VariableBinding vb : result) {
             String expectedStr = vb.getVariable().toString();
@@ -847,11 +934,15 @@ public class ComputerMeter implements GQSNMPMeter {
                 String two = preFinalOID[16];
                 String three = preFinalOID[17];
                 String four = preFinalOID[18];
-                String Final = one + "." + two + "." + three + "." + four;
+                String FinalIP = one + "." + two + "." + three + "." + four;
 
-                if (!Final.trim().equals(ipAddress) && !Final.trim().equals("0.0.0.0")
-                        && !Final.trim().equals("127.0.0.1")) {
-                    connectedDevices.add(Final);
+                if (!FinalIP.trim().equals(ipAddress) && !FinalIP.trim().equals("0.0.0.0")
+                        && !FinalIP.trim().equals("127.0.0.1")) {
+                    if (FinalIP != null && FinalIP.trim().length() != 0) {
+                        compConnDeviceId = new CompConnDeviceId(runId, assetId, FinalIP);
+                        connDevice = new CompConnDevice(compConnDeviceId);
+                        connectedDevices.add(connDevice);
+                    }
                 }
 
             }
@@ -860,6 +951,8 @@ public class ComputerMeter implements GQSNMPMeter {
     }
 
     /**
+     * This method is used to get the running process of a asset
+     * 
      * @param result
      * @param rootOid
      * @param sysRunNameResult
@@ -867,22 +960,29 @@ public class ComputerMeter implements GQSNMPMeter {
      * @param memShareResult
      * @return
      */
-    private List<Process> ProcessCalc(List<VariableBinding> result, OID rootOid,
+    private ArrayList<CompProcess> ProcessCalc(List<VariableBinding> result, OID rootOid,
             List<VariableBinding> sysRunNameResult, List<VariableBinding> cpuShareResult,
-            List<VariableBinding> memShareResult) {
+            List<VariableBinding> memShareResult, CPNId id) {
 
-        LinkedList<Process> ProcessList = new LinkedList<Process>();
-        Process process = null;
+        int runId = id.getRunId();
+        String assetId = id.getAssetId();
+        int processSize = sysRunNameResult.size();
+        ArrayList<CompProcess> processList = new ArrayList<CompProcess>(processSize);
+        CompProcess process = null;
+        CompProcessId compProcessId = null;
         String runName = null;
         int cpuShare = 0;
         int memShare = 0;
-        for (int i = 0; i < sysRunNameResult.size(); i++) {
+        for (int i = 0; i < processSize; i++) {
             runName = sysRunNameResult.get(i).getVariable().toString().trim();
             cpuShare = Integer.parseInt(cpuShareResult.get(i).getVariable().toString().trim());
             memShare = Integer.parseInt(memShareResult.get(i).getVariable().toString().trim());
-            process = new Process(runName, cpuShare, memShare);
-            ProcessList.add(process);
+            if (runName != null && runName.trim().length() != 0) {
+                compProcessId = new CompProcessId(runId, assetId, runName, cpuShare, memShare);
+                process = new CompProcess(compProcessId);
+                processList.add(process);
+            }
         }
-        return ProcessList;
+        return processList;
     }
 }

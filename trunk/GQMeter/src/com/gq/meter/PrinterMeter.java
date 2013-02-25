@@ -13,7 +13,12 @@ import org.snmp4j.smi.OID;
 import org.snmp4j.smi.VariableBinding;
 import org.snmp4j.transport.DefaultUdpTransportMapping;
 
+import com.gq.meter.object.Asset;
+import com.gq.meter.object.CPNId;
 import com.gq.meter.object.Printer;
+import com.gq.meter.object.PrinterConnDevice;
+import com.gq.meter.object.PrinterConnDeviceId;
+import com.gq.meter.object.PrinterSnapshot;
 import com.gq.meter.util.MeterConstants;
 import com.gq.meter.util.MeterProtocols;
 import com.gq.meter.util.MeterUtils;
@@ -68,8 +73,11 @@ public class PrinterMeter implements GQSNMPMeter {
         long printerStartTime = System.currentTimeMillis();
         Snmp snmp = null;
 
-        // ASSET
+        int runId = 0;
         String assetId = null; // unique identifier about the asset
+        CPNId id = null;
+
+        // ASSET
         String sysName = null;
         String sysDescr = null;
         String sysContact = null;
@@ -85,8 +93,8 @@ public class PrinterMeter implements GQSNMPMeter {
         String extras = null; // anything device specific but to be discussed , v2
 
         long upTime = 0; // seconds
-        long outOfPaperIndicator = 0; // 0 means no paper , v2
-        long printsTakenCount = 0; // v2
+        Character outOfPaperIndicator = 0; // 0 means no paper , v2
+        Short printsTakenCount = 0; // v2
         double tonerPercentage = 0;
         long totalMemory = 0; // bytes
         long usedMemory = 0; // bytes
@@ -96,7 +104,7 @@ public class PrinterMeter implements GQSNMPMeter {
         CommunityTarget target = null;
         HashMap<String, String> printerStatus;
         List<String> errorList = new LinkedList<String>();
-        HashSet<String> connectedDevices = null;
+        HashSet<PrinterConnDevice> connectedDevices = null;
 
         try {
             snmp = new Snmp(new DefaultUdpTransportMapping());
@@ -112,6 +120,7 @@ public class PrinterMeter implements GQSNMPMeter {
             String oidString = "1.3.6.1.2.1.1";
             String temp;
             String tempStr;
+            int sysLength;
 
             OID rootOID = new OID(oidString);
             List<VariableBinding> result = null;
@@ -121,15 +130,31 @@ public class PrinterMeter implements GQSNMPMeter {
 
                 temp = oidString + ".1.0";
                 sysDescr = MeterUtils.getSNMPValue(temp, result);
+                sysLength = sysDescr.length();
+                if (sysLength >= 200) {
+                    sysDescr = sysDescr.substring(0, 199);
+                }
 
                 temp = oidString + ".4.0";
                 sysContact = MeterUtils.getSNMPValue(temp, result);
+                sysLength = sysContact.length();
+                if (sysLength >= 45) {
+                    sysContact = sysContact.substring(0, 44);
+                }
 
                 temp = oidString + ".5.0";
                 sysName = MeterUtils.getSNMPValue(temp, result);
+                sysLength = sysName.length();
+                if (sysLength >= 45) {
+                    sysName = sysName.substring(0, 44);
+                }
 
                 temp = oidString + ".6.0";
                 sysLocation = MeterUtils.getSNMPValue(temp, result);
+                sysLength = sysLocation.length();
+                if (sysLength >= 45) {
+                    sysLocation = sysLocation.substring(0, 44);
+                }
             }
             else {
                 errorList.add("Root OID : 1.3.6.1.2.1.1" + " " + MeterConstants.STANDARD_SYSTEM_ATTRIBUTES_ERROR);
@@ -148,6 +173,11 @@ public class PrinterMeter implements GQSNMPMeter {
                 errorList.add("Root OID : .1.3.6.1.2.1.2.2.1" + " " + MeterConstants.ASSET_ID_ERROR);
             }
 
+            // ASSET ID , RUN ID STARTS HERE.
+            runId = (int) (System.currentTimeMillis() / 1000);
+
+            id = new CPNId(runId, assetId);
+
             for (String element : toggleSwitches) {
                 if (element.equalsIgnoreCase(MeterConstants.FULL_DETAILS)
                         || element.equalsIgnoreCase(MeterConstants.SNAPSHOT)) {
@@ -156,8 +186,7 @@ public class PrinterMeter implements GQSNMPMeter {
                     oidString = "1.3.6.1.2.1.1";
                     rootOID = new OID(oidString);
 
-                    result = MeterUtils.walk(rootOID, target); // walk done with the initial assumption that device is
-                                                               // v2
+                    result = MeterUtils.walk(rootOID, target);
                     if (result != null && !result.isEmpty()) {
                         temp = oidString + ".3.0";
                         tempStr = MeterUtils.getSNMPValue(temp, result);
@@ -248,7 +277,7 @@ public class PrinterMeter implements GQSNMPMeter {
                         oidString = ".1.3.6.1.2.1.6.13.1.1";
                         rootOID = new OID(oidString);
                         result = MeterUtils.walk(rootOID, target);
-                        connectedDevices = ConnectedDevicesCalc(result, ipAddress);
+                        connectedDevices = ConnectedDevicesCalc(result, ipAddress, id);
                     }
                     else {
                         errorList.add("Root OID : 1.3.6.1.2.1.6.13.1.1" + " "
@@ -262,10 +291,20 @@ public class PrinterMeter implements GQSNMPMeter {
             errorList.add(ipAddress + " " + e.getMessage());
         }
 
-        Printer printerObject = new Printer(assetId, upTime, tonerPercentage, outOfPaperIndicator, printsTakenCount,
-                sysName, sysIP, sysDescr, sysContact, sysLocation, errorCondition, operationalState, currentState,
-                mfgModel, isColorPrinter, totalMemory, totalDiskSpace, usedMemory, usedDiskSpace, connectedDevices,
-                extras);
+        String protocolId = "protocolid";
+        String appId = "app_id";
+        String assetUsg = "assetUsg";
+        Byte assetStrength = 1;
+        String ctlgId = "ctlg_id";
+
+        Asset assetObj = new Asset(assetId, protocolId, sysName, sysDescr, sysContact, sysLocation, appId, assetUsg,
+                assetStrength, ctlgId);
+
+        PrinterSnapshot printerSnapShot = new PrinterSnapshot(id, sysIP, totalMemory, totalDiskSpace, usedMemory,
+                usedDiskSpace, upTime, tonerPercentage, outOfPaperIndicator, printsTakenCount, errorCondition,
+                operationalState, currentState, mfgModel, isColorPrinter, extras);
+
+        Printer printerObject = new Printer(id, assetObj, printerSnapShot, connectedDevices);
 
         GQErrorInformation gqErrorInfo = null;
 
@@ -281,6 +320,8 @@ public class PrinterMeter implements GQSNMPMeter {
     }
 
     /**
+     * This method is used to get the Memory and disc space of a Printer
+     * 
      * @param result
      * @param rootOid
      * @param OID
@@ -340,6 +381,8 @@ public class PrinterMeter implements GQSNMPMeter {
     }
 
     /**
+     * This method is used to get the toner percentage of a printer
+     * 
      * @param result
      * @param rootOid
      * @return
@@ -388,6 +431,8 @@ public class PrinterMeter implements GQSNMPMeter {
     }
 
     /**
+     * This method is used to status of a printer
+     * 
      * @param result
      * @param rootOid
      * @return
@@ -478,6 +523,8 @@ public class PrinterMeter implements GQSNMPMeter {
     }
 
     /**
+     * This method is used to get the asset of a printer
+     * 
      * @param result
      * @param rootOid
      * @return
@@ -503,13 +550,20 @@ public class PrinterMeter implements GQSNMPMeter {
     }
 
     /**
+     * This method is used to get the device that is connected to a printer.
+     * 
      * @param result
      * @param ipAddress
      * @return
      */
-    private HashSet<String> ConnectedDevicesCalc(List<VariableBinding> result, String ipAddress) {
+    private HashSet<PrinterConnDevice> ConnectedDevicesCalc(List<VariableBinding> result, String ipAddress, CPNId id) {
 
-        HashSet<String> connectedDevices = new HashSet<String>();
+        int runId = id.getRunId();
+        String assetId = id.getAssetId();
+        HashSet<PrinterConnDevice> connectedDevices = new HashSet<PrinterConnDevice>();
+
+        PrinterConnDevice connDevice = null;
+        PrinterConnDeviceId printerConnDeviceId = null;
 
         for (VariableBinding vb : result) {
             String expectedStr = vb.getVariable().toString();
@@ -522,11 +576,15 @@ public class PrinterMeter implements GQSNMPMeter {
                 String two = preFinalOID[16];
                 String three = preFinalOID[17];
                 String four = preFinalOID[18];
-                String Final = one + "." + two + "." + three + "." + four;
+                String FinalIP = one + "." + two + "." + three + "." + four;
 
-                if (!Final.trim().equals(ipAddress) && !Final.trim().equals("0.0.0.0")
-                        && !Final.trim().equals("127.0.0.1")) {
-                    connectedDevices.add(Final);
+                if (!FinalIP.trim().equals(ipAddress) && !FinalIP.trim().equals("0.0.0.0")
+                        && !FinalIP.trim().equals("127.0.0.1")) {
+                    if (FinalIP != null && FinalIP.trim().length() != 0) {
+                        printerConnDeviceId = new PrinterConnDeviceId(runId, assetId, FinalIP);
+                        connDevice = new PrinterConnDevice(printerConnDeviceId);
+                        connectedDevices.add(connDevice);
+                    }
                 }
 
             }
