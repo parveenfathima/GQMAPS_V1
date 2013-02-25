@@ -18,6 +18,7 @@ import org.snmp4j.smi.OID;
 import org.snmp4j.smi.VariableBinding;
 import org.snmp4j.transport.DefaultUdpTransportMapping;
 
+import com.gq.meter.bo.ITAssetDiscoverer;
 import com.gq.meter.object.Asset;
 import com.gq.meter.object.CPNId;
 import com.gq.meter.object.CompConnDevice;
@@ -45,7 +46,6 @@ public class ComputerMeter implements GQSNMPMeter {
 
         Snmp snmp = null;
 
-        int runId = 0;
         String assetId = null; // unique identifier about the asset
         CPNId id = null;
 
@@ -184,7 +184,7 @@ public class ComputerMeter implements GQSNMPMeter {
             }// else ends
 
             // ASSET ID , RUN ID STARTS HERE.
-            runId = (int) (System.currentTimeMillis());
+            int runId = ITAssetDiscoverer.runId;
             id = new CPNId(runId, assetId);
 
             for (String element : toggleSwitches) {
