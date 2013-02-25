@@ -1,6 +1,5 @@
 package com.gq.restsvcs;
 
-
 import java.io.IOException;
 
 import javax.ws.rs.GET;
@@ -30,36 +29,35 @@ import com.gq.meter.GQMeterResponse;
 @Path("/gatekeeper")
 public class GateKeeper {
 
-	// This method is called if TEXT_PLAIN is request
-	@GET
-	@Produces( {MediaType.TEXT_PLAIN , MediaType.TEXT_XML , MediaType.APPLICATION_XML} )
-	public String sayHello() {
-		return "Gate keeper is up and running.....";
-	}
+    // This method is called if TEXT_PLAIN is request
+    @GET
+    @Produces({ MediaType.TEXT_PLAIN, MediaType.TEXT_XML, MediaType.APPLICATION_XML })
+    public String sayHello() {
+        return "Gate keeper is up and running.....";
+    }
 
+    // This method is called if HTML is request
+    @GET
+    @Produces(MediaType.TEXT_HTML)
+    public String sayHtmlHello() {
+        return "<html> " + "<title>" + "Hello Jersey text html" + "</title>" + "<body><h1>" + "Hello Jersey text html "
+                + "</body></h1>" + "</html> ";
+    }
 
-	// This method is called if HTML is request
-	@GET
-	@Produces(MediaType.TEXT_HTML)
-	public String sayHtmlHello() {
-		return "<html> " + "<title>" + "Hello Jersey text html" + "</title>"
-				+ "<body><h1>" + "Hello Jersey text html " + "</body></h1>" + "</html> ";
-	}
-	
-	@POST
-	@Consumes(MediaType.APPLICATION_JSON)
-	public void keepGate(@FormParam("gqMeterResponse") String gqMeterResponseString) throws IOException {
-		
-		System.out.println("ss incoming json is => "+ gqMeterResponseString);
-		
-	    Gson gson = new GsonBuilder().setPrettyPrinting().create();
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    public void keepGate(@FormParam("gqMeterResponse") String gqMeterResponseString) throws IOException {
 
-		GQMeterResponse gqMeterResponse = gson.fromJson(gqMeterResponseString, GQMeterResponse.class);
-		// unmarshall the response from the gqmeter running in premise and start processing.....
-	
-		GateKeeperFilter gkf = new GateKeeperFilter();
-		
-		gkf.process(gqMeterResponse);
-	}
+        System.out.println("Incoming json is => " + gqMeterResponseString);
+
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+
+        GQMeterResponse gqMeterResponse = gson.fromJson(gqMeterResponseString, GQMeterResponse.class);
+        // unmarshall the response from the gqmeter running in premise and start processing.....
+
+        GateKeeperFilter gkf = new GateKeeperFilter();
+
+        gkf.process(gqMeterResponse);
+    }
 
 }
