@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -15,9 +16,14 @@ import com.google.gson.GsonBuilder;
 import com.gq.meter.GQErrorInformation;
 import com.gq.meter.GQMeterData;
 import com.gq.meter.GQMeterResponse;
-import com.gq.meter.object.assist.ProtocolData;
+import com.gq.meter.assist.ProtocolData;
 import com.gq.meter.util.MeterProtocols;
 import com.gq.meter.util.MeterUtils;
+import com.sun.jersey.api.client.Client;
+import com.sun.jersey.api.client.ClientResponse;
+import com.sun.jersey.api.client.WebResource;
+import com.sun.jersey.api.client.config.ClientConfig;
+import com.sun.jersey.api.client.config.DefaultClientConfig;
 
 /**
  * @author chandru.p
@@ -218,6 +224,7 @@ public class ITAssetDiscoverer {
                         assetFileStream.close();
                     }
                     gqmResponse.setErrorInformationList(gqerrorInfoList); // Added the errors to the GQMResponse
+
                     return gqmResponse; // returns not null map with all the asset objects value
                 }
                 catch (Exception e) {
@@ -258,13 +265,19 @@ public class ITAssetDiscoverer {
         String inputFilePath = args[0].trim();
 
         GQMeterResponse gqmResponse = itad.readInput(inputFilePath);
+        long endTime = System.currentTimeMillis();
+
+        gqmResponse.setAssetScanned((short) communityIPMap.size());
+        gqmResponse.setAssetDiscovered((short) MeterUtils.snmpKnownIPList.size());
+        gqmResponse.setRecDttm(new Date());
+        gqmResponse.setRunTimeMiliSeconds((endTime - startTime));
+        gqmResponse.setStatus("pass");
+        gqmResponse.setVersion("1");
 
         System.out.println("::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::");
         System.out.println("json of GQMeterData = " + itad.gson.toJson(gqmResponse));
         System.out.println("::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::");
 
-        // The end time of the meter execution
-        long endTime = System.currentTimeMillis();
         System.out.println("Total number of assets taken after processing the inputfile : " + communityIPMap.size());
 
         System.out.println("Total time taken to know snmp is installed on the devices : " + MeterUtils.snmpKnownTime);
@@ -281,28 +294,16 @@ public class ITAssetDiscoverer {
         System.out.println("Total time taken for all ISR meters : " + MeterUtils.isrMeterTime);
         System.out.println("TOTAL duration taken for meter execution : " + (endTime - startTime));
 
-        /*
-         * Computer c = new Computer("sdfsad", 83, 100, 80, 30, 20, 500, 340, 89330, 7, 48, 10000, 22220, 2.34, "name",
-         * "192.149.4.4", "desc", "contact", "location", "extras", new Date());
-         * 
-         * Gson gson = new GsonBuilder().create();
-         * 
-         * GQMeterData pd = new GQMeterData("ss", new Date() ,"power" , "v1", "sstatis", "no comment dude" ,
-         * gson.toJson(c));
-         * 
-         * ComputerMeter cm = new ComputerMeter();
-         * 
-         * cm.implement(pd);
-         * 
-         * String json1 = gson.toJson(pd);
-         * 
-         * GQMeterData pd1 = gson.fromJson(json1, GQMeterData.class);
-         * 
-         * System.out.println("===== unmarshalled pd comment is ===== " + pd1.getComment());
-         * 
-         * Computer c1 = gson.fromJson(pd1.getData(), Computer.class);
-         * 
-         * System.out.println("===== unmarshalled computer ip is ===== "+ c1.getSysIP());
-         */
+        // Sending the generated json output to the server
+        ClientConfig config = new DefaultClientConfig();
+        Client client = Client.create(config);
+        WebResource service = client.resource(MeterUtils.restURL);
+
+        com.sun.jersey.api.representation.Form form = new com.sun.jersey.api.representation.Form();
+        form.add("gqMeterResponse", itad.gson.toJson(gqmResponse));
+        form.add("summary", "Demonstration of the client lib for forms");
+        ClientResponse response = service.path("gqm-gk").path("gatekeeper")
+                .type(javax.ws.rs.core.MediaType.APPLICATION_JSON).post(ClientResponse.class, form);
+        // System.out.println("Form response " + response.getEntity(String.class));
     }
 }
