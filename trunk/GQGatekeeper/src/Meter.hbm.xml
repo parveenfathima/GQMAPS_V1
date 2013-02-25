@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated Feb 18, 2013 12:47:29 PM by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+    <class name="com.gq.meter.object.Meter" table="meter" catalog="gqmaps">
+        <id name="meterId" type="string">
+            <column name="meter_id" length="10" />
+            <generator class="assigned" />
+        </id>
+        <property name="protocolId" type="string">
+            <column name="protocol_id" length="10" not-null="true" />
+        </property>
+        <property name="descr" type="string">
+            <column name="descr" length="30" not-null="true" />
+        </property>
+        <property name="address" type="string">
+            <column name="address" length="45" />
+        </property>
+        <property name="phone" type="string">
+            <column name="phone" length="20" />
+        </property>
+        <property name="storeFwd" type="char">
+            <column name="store_fwd" length="1" not-null="true" />
+        </property>
+        <property name="fwdUrl" type="string">
+            <column name="fwd_url" length="200" />
+        </property>
+        <property name="creUsr" type="string">
+            <column name="cre_usr" length="12" not-null="true" />
+        </property>
+        <property name="creDttm" type="timestamp">
+            <column name="cre_dttm" length="19" />
+        </property>
+    </class>
+</hibernate-mapping>
