@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated Mar 1, 2013 12:56:28 PM by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+    <class name="com.gq.meter.xchange.object.ClientData" table="client_data" catalog="gqexchange">
+        <id name="runId" type="java.lang.Integer">
+            <column name="run_id" />
+            <generator class="identity" />
+        </id>
+        <property name="data" type="string">
+            <column name="data" length="65535" not-null="true" />
+        </property>
+        <property name="fwdDttm" type="timestamp">
+            <column name="fwd_dttm" length="19" not-null="true" />
+        </property>
+    </class>
+</hibernate-mapping>
