@@ -13,7 +13,6 @@ import org.snmp4j.smi.OID;
 import org.snmp4j.smi.VariableBinding;
 import org.snmp4j.transport.DefaultUdpTransportMapping;
 
-import com.gq.meter.bo.ITAssetDiscoverer;
 import com.gq.meter.object.Asset;
 import com.gq.meter.object.CPNId;
 import com.gq.meter.object.Printer;
@@ -74,6 +73,7 @@ public class PrinterMeter implements GQSNMPMeter {
         long printerStartTime = System.currentTimeMillis();
         Snmp snmp = null;
 
+        int runId = 0;
         String assetId = null; // unique identifier about the asset
         CPNId id = null;
 
@@ -174,8 +174,6 @@ public class PrinterMeter implements GQSNMPMeter {
             }
 
             // ASSET ID , RUN ID STARTS HERE.
-            int runId = ITAssetDiscoverer.runId;
-
             id = new CPNId(runId, assetId);
 
             for (String element : toggleSwitches) {

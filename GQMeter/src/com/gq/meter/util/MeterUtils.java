@@ -43,7 +43,7 @@ public class MeterUtils {
     public static long isrMeterTime = 0;
     public static LinkedList<String> snmpKnownIPList = new LinkedList<String>();;
     public static LinkedList<String> snmpUnknownIPList = new LinkedList<String>();
-    public static String restURL = "http://localhost:8080/GQGatekeeper/";
+    public static String restURL = "http://localhost:8080/GQ-EntrprseDataProcessor/";
 
     /**
      * @param communityString
