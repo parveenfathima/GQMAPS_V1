@@ -5,9 +5,9 @@
 <hibernate-configuration>
 	<session-factory>
 		<property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
-		<property name="hibernate.connection.url">jdbc:mysql://192.168.1.95:3306/gqmaps</property> <!-- todo -->
-		<property name="hibernate.connection.username">gqmaps</property>
-		<property name="hibernate.connection.password">gqmaps3010</property>
+		<property name="hibernate.connection.url">jdbc:mysql://192.168.1.95:3306/gqexchange</property> <!-- todo -->
+		<property name="hibernate.connection.username">gqexchange</property>
+		<property name="hibernate.connection.password">gqe3010</property>
 		<property name="hibernate.connection.pool_size">100</property>
 		<property name="current_session_context_class">thread</property>
 		<property name="cache.provider_class">org.hibernate.cache.NoCacheProvider</property>
@@ -16,18 +16,15 @@
 		<property name="hibernate.hbm2ddl.auto">update</property>
 
 		<!-- Mapping files -->
-		<mapping resource="Asset.hbm.xml" />
-		<mapping resource="CompAssets.hbm.xml" />
-		<mapping resource="CompConnDevice.hbm.xml" />
-		<mapping resource="CompInstSoftware.hbm.xml" />
-		<mapping resource="CompProcess.hbm.xml" />
-		<mapping resource="CompSnapshot.hbm.xml" />
-		<mapping resource="MeterRun.hbm.xml" />
-		<mapping resource="OsType.hbm.xml" />
-		<mapping resource="PrinterSnapshot.hbm.xml" />
-		<mapping resource="PrinterConnDevice.hbm.xml" />
-		<mapping resource="NSRGSnapshot.hbm.xml" />
-		<mapping resource="NSRGConnDevice.hbm.xml" />
+		<mapping resource="BusnLine.hbm.xml" />
+		<mapping resource="ClientData.hbm.xml" />
+		<mapping resource="Enterprise.hbm.xml" />
+		<mapping resource="EnterpriseMeter.hbm.xml" />
+		<mapping resource="Gatekpr.hbm.xml" />
+		<mapping resource="GatekprAudit.hbm.xml" />
+        <mapping resource="MeterRun.hbm.xml" />
+        <mapping resource="Protocol.hbm.xml" />
+        <mapping resource="SecQuestion.hbm.xml" />
 
 
 	</session-factory>

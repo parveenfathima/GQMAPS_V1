@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated Mar 1, 2013 12:56:53 PM by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+    <class name="com.gq.meter.xchange.object.EnterpriseMeter" table="enterprise_meter" catalog="gqexchange">
+        <id name="meterId" type="string">
+            <column name="meter_id" length="10" />
+            <generator class="assigned" />
+        </id>
+        <property name="protocolId" type="string">
+            <column name="protocol_id" length="10" not-null="true" />
+        </property>
+        <property name="enterpriseId" type="string">
+            <column name="enterprise_id" length="10" not-null="true" />
+        </property>
+        <property name="descr" type="string">
+            <column name="descr" length="30" not-null="true" />
+        </property>
+        <property name="address" type="string">
+            <column name="address" length="45" />
+        </property>
+        <property name="phone" type="string">
+            <column name="phone" length="20" />
+        </property>
+        <property name="storeFwd" type="char">
+            <column name="store_fwd" length="1" not-null="true" />
+        </property>
+        <property name="fwdUrl" type="string">
+            <column name="fwd_url" length="200" />
+        </property>
+        <property name="creDttm" type="timestamp">
+            <column name="cre_dttm" length="19" not-null="true" />
+        </property>
+    </class>
+</hibernate-mapping>
