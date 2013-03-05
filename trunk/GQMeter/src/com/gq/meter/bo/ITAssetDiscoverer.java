@@ -31,8 +31,6 @@ import com.sun.jersey.api.client.config.DefaultClientConfig;
  */
 public class ITAssetDiscoverer {
 
-    public static int runId = 0;
-
     List<String> errorList = null;
     GQErrorInformation gqErrInfo = null;
     List<GQErrorInformation> gqerrorInfoList = null;
@@ -257,7 +255,6 @@ public class ITAssetDiscoverer {
     public static void main(String[] args) throws IOException {
         // The start time of the meter execution
         long startTime = System.currentTimeMillis();
-        runId = (int) startTime;
 
         if (args.length != 1) {
             System.out.println("Usage : ASSETDETAILS_FILE_PATH");
@@ -279,6 +276,8 @@ public class ITAssetDiscoverer {
         System.out.println("::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::");
         System.out.println("json of GQMeterData = " + itad.gson.toJson(gqmResponse));
         System.out.println("::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::");
+
+        // The end time of the meter execution
 
         System.out.println("Total number of assets taken after processing the inputfile : " + communityIPMap.size());
 
