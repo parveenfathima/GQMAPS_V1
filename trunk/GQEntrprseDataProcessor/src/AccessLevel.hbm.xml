@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated Feb 18, 2013 3:21:37 PM by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+    <class name="com.gq.meter.object.AccessLevel" table="access_level" catalog="gqmaps">
+        <id name="accessLvlCd" type="string">
+            <column name="access_lvl_cd" length="20" />
+            <generator class="assigned" />
+        </id>
+        <property name="descr" type="string">
+            <column name="descr" length="30" not-null="true" />
+        </property>
+    </class>
+</hibernate-mapping>

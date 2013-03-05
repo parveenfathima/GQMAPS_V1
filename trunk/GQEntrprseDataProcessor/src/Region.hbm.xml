@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated Feb 18, 2013 3:33:32 PM by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+    <class name="com.gq.meter.object.Region" table="region" catalog="gqmaps">
+        <id name="regionId" type="short">
+            <column name="region_id" />
+            <generator class="assigned" />
+        </id>
+        <property name="descr" type="string">
+            <column name="descr" length="100" />
+        </property>
+        <property name="contactName" type="string">
+            <column name="contact_name" length="30" />
+        </property>
+        <property name="phone" type="string">
+            <column name="phone" length="20" />
+        </property>
+        <property name="email" type="string">
+            <column name="email" length="50" />
+        </property>
+        <property name="creDttm" type="timestamp">
+            <column name="cre_dttm" length="19" not-null="true" />
+        </property>
+        <property name="creUsr" type="string">
+            <column name="cre_usr" length="12" not-null="true" />
+        </property>
+    </class>
+</hibernate-mapping>

@@ -1,0 +1,64 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated Feb 18, 2013 12:24:17 PM by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+    <class name="com.gq.meter.object.CompSnapshot" table="comp_snpsht" catalog="gqmaps">
+        <composite-id name="id" class="com.gq.meter.object.CPNId">
+            <key-property name="runId" type="int">
+                <column name="run_id" />
+            </key-property>
+            <key-property name="assetId" type="string">
+                <column name="asset_id" length="30" />
+            </key-property>
+        </composite-id>
+        <property name="ipAddr" type="string">
+            <column name="ip_addr" length="15" />
+        </property>
+        <property name="osId" type="string">
+            <column name="os_id" length="20" />
+        </property>
+        <property name="totMem" type="java.lang.Long">
+            <column name="tot_mem" />
+        </property>
+        <property name="usedMem" type="java.lang.Long">
+            <column name="used_mem" />
+        </property>
+        <property name="totVMem" type="java.lang.Long">
+            <column name="tot_v_mem" />
+        </property>
+        <property name="usedVMem" type="java.lang.Long">
+            <column name="used_v_mem" />
+        </property>
+        <property name="totDiskSpace" type="java.lang.Long">
+            <column name="tot_disk_space" />
+        </property>
+        <property name="usedDiskSpace" type="java.lang.Long">
+            <column name="used_disk_space" />
+        </property>
+        <property name="cpuLoad" type="short">
+            <column name="cpu_load" not-null="true" />
+        </property>
+        <property name="upTime" type="java.lang.Long">
+            <column name="up_time" />
+        </property>
+        <property name="numLgdInUsrs" type="java.lang.Short">
+            <column name="num_lgd_in_usrs" />
+        </property>
+        <property name="numProcs" type="java.lang.Short">
+            <column name="num_procs" />
+        </property>
+        <property name="ntwrkBytesIn" type="java.lang.Long">
+            <column name="ntwrk_bytes_in" />
+        </property>
+        <property name="ntwrkBytesOut" type="java.lang.Long">
+            <column name="ntwrk_bytes_out" />
+        </property>
+        <property name="clockSpeed" type="java.lang.Double">
+            <column name="clock_speed" precision="22" scale="0" />
+        </property>
+        <property name="extras" type="string">
+            <column name="extras" length="200" />
+        </property>
+    </class>
+</hibernate-mapping>
