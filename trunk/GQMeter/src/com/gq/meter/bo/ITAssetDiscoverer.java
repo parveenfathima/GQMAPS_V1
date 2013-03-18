@@ -17,6 +17,7 @@ import com.gq.meter.GQErrorInformation;
 import com.gq.meter.GQMeterData;
 import com.gq.meter.GQMeterResponse;
 import com.gq.meter.assist.ProtocolData;
+import com.gq.meter.util.MeterConstants;
 import com.gq.meter.util.MeterProtocols;
 import com.gq.meter.util.MeterUtils;
 import com.sun.jersey.api.client.Client;
@@ -29,17 +30,18 @@ import com.sun.jersey.api.client.config.DefaultClientConfig;
  * @author chandru.p
  * 
  */
-public class ITAssetDiscoverer {
+public final class ITAssetDiscoverer {
 
-    List<String> errorList = null;
-    GQErrorInformation gqErrInfo = null;
-    List<GQErrorInformation> gqerrorInfoList = null;
+    private List<String> errorList = null;
+    private GQErrorInformation gqErrInfo = null;
+    private List<GQErrorInformation> gqerrorInfoList = null;
+    private static String gqmid = null;
 
-    // Gson gson = new GsonBuilder().create();
-    public Gson gson = new GsonBuilder().setPrettyPrinting().create();
+    private Gson gson = new GsonBuilder().create();
+    // public Gson gson = new GsonBuilder().setPrettyPrinting().create();
     private GQMeterResponse gqmResponse = new GQMeterResponse();
-    static HashMap<String, String> communityIPMap = new HashMap<String, String>();
-    HashMap<MeterProtocols, LinkedList<String>> switches = new HashMap<MeterProtocols, LinkedList<String>>();
+    private static HashMap<String, String> communityIPMap = new HashMap<String, String>();
+    private HashMap<MeterProtocols, LinkedList<String>> switches = new HashMap<MeterProtocols, LinkedList<String>>();
 
     /**
      * This method used to find the asset type
@@ -121,7 +123,7 @@ public class ITAssetDiscoverer {
      * @param inputFilePath
      * @return
      */
-    private GQMeterResponse readInput(String inputFilePath) {
+    public GQMeterResponse readInput(String inputFilePath) {
 
         InputStream assetFileStream = null;
         String communityString = null;
@@ -157,8 +159,17 @@ public class ITAssetDiscoverer {
                             continue;
                         }
 
+                        if (line.startsWith("$")) {
+
+                            if (line.toLowerCase().startsWith(MeterConstants.METER_ID)) {
+                                gqmid = line.replace(MeterConstants.METER_ID, "").trim();
+                                System.out.println("##############################################");
+                                System.out.println("Meter id : " + gqmid);
+                                System.out.println("##############################################");
+                            }
+                        }
                         // line ! starts with @ for switches
-                        if (line.startsWith("@")) {
+                        else if (line.startsWith("@")) {
                             MeterUtils.manageSwitches(line, switches);
                         }
                         else {
@@ -252,18 +263,12 @@ public class ITAssetDiscoverer {
 
     }
 
-    public static void main(String[] args) throws IOException {
+    public void discover(String inputFilePath) {
+
         // The start time of the meter execution
         long startTime = System.currentTimeMillis();
 
-        if (args.length != 1) {
-            System.out.println("Usage : ASSETDETAILS_FILE_PATH");
-            System.exit(1);
-        }
-        ITAssetDiscoverer itad = new ITAssetDiscoverer();
-        String inputFilePath = args[0].trim();
-
-        GQMeterResponse gqmResponse = itad.readInput(inputFilePath);
+        GQMeterResponse gqmResponse = this.readInput(inputFilePath);
         long endTime = System.currentTimeMillis();
 
         gqmResponse.setAssetScanned((short) communityIPMap.size());
@@ -272,9 +277,10 @@ public class ITAssetDiscoverer {
         gqmResponse.setRunTimeMiliSeconds((endTime - startTime));
         gqmResponse.setStatus("pass");
         gqmResponse.setVersion("1");
+        gqmResponse.setGqmid(gqmid);
 
         System.out.println("::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::");
-        System.out.println("json of GQMeterData = " + itad.gson.toJson(gqmResponse));
+        System.out.println("json of GQMeterData = " + gson.toJson(gqmResponse));
         System.out.println("::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::");
 
         // The end time of the meter execution
@@ -301,10 +307,22 @@ public class ITAssetDiscoverer {
         WebResource service = client.resource(MeterUtils.restURL);
 
         com.sun.jersey.api.representation.Form form = new com.sun.jersey.api.representation.Form();
-        form.add("gqMeterResponse", itad.gson.toJson(gqmResponse));
+        form.add("gqMeterResponse", gson.toJson(gqmResponse));
         form.add("summary", "Demonstration of the client lib for forms");
         ClientResponse response = service.path("gqm-gk").path("gatekeeper")
                 .type(javax.ws.rs.core.MediaType.APPLICATION_JSON).post(ClientResponse.class, form);
         // System.out.println("Form response " + response.getEntity(String.class));
+    }
+
+    public static void main(String[] args) throws IOException {
+
+        if (args.length != 1) {
+            System.out.println("Usage : ASSETDETAILS_FILE_PATH");
+            System.exit(1);
+        }
+        ITAssetDiscoverer itad = new ITAssetDiscoverer();
+        String inputFilePath = args[0].trim();
+
+        itad.discover(inputFilePath);
     }
 }
