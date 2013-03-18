@@ -43,7 +43,7 @@ public class MeterUtils {
     public static long isrMeterTime = 0;
     public static LinkedList<String> snmpKnownIPList = new LinkedList<String>();;
     public static LinkedList<String> snmpUnknownIPList = new LinkedList<String>();
-    public static String restURL = "http://localhost:8080/GQ-EntrprseDataProcessor/";
+    public static String restURL = "http://192.168.1.95:8080/GQGatekeeper/";
 
     /**
      * @param communityString
@@ -298,12 +298,11 @@ public class MeterUtils {
         requestPDU.setMaxRepetitions(5);
 
         try {
-            TransportMapping transport = new DefaultUdpTransportMapping();
+            TransportMapping<?> transport = new DefaultUdpTransportMapping();
             Snmp snmp = new Snmp(transport);
             transport.listen();
 
             boolean finished = false;
-            int iter = 0;
 
             while (!finished) {
 
@@ -313,7 +312,7 @@ public class MeterUtils {
                 PDU responsePDU = respEvt.getResponse();
 
                 if (responsePDU != null) {
-                    Vector vbs = responsePDU.getVariableBindings();
+                    Vector<?> vbs = responsePDU.getVariableBindings();
                     if (vbs != null && vbs.size() > 0) {
                         for (int i = 0; i < vbs.size(); i++) {
                             // vb sanity check
@@ -392,7 +391,6 @@ public class MeterUtils {
         long hourSec = 0L;
         long minSec = 0L;
         long seconds = 0L;
-        String secondsConc = null;
 
         if (time.contains(",")) {
             upTimeArray = time.split(",");
@@ -439,13 +437,8 @@ public class MeterUtils {
      */
     public static HashMap<MeterProtocols, LinkedList<String>> manageSwitches(String line,
             HashMap<MeterProtocols, LinkedList<String>> assetSwitches) {
-        if (line.toLowerCase().startsWith(MeterConstants.METER_ID)) {
-            line = line.replace(MeterConstants.METER_ID, "").trim();
-            System.out.println("##############################################");
-            System.out.println("Meter id : " + line);
-            System.out.println("##############################################");
-        }
-        else if (line.toLowerCase().startsWith(MeterConstants.COMPUTER_SWITCHS)) {
+
+        if (line.toLowerCase().startsWith(MeterConstants.COMPUTER_SWITCHS)) {
             line = line.replace(MeterConstants.COMPUTER_SWITCHS, "").trim();
             LinkedList<String> compSwitchList = null;
 
