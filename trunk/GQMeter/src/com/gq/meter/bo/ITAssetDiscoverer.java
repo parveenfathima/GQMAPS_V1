@@ -40,7 +40,9 @@ public final class ITAssetDiscoverer {
     private Gson gson = new GsonBuilder().create();
     // public Gson gson = new GsonBuilder().setPrettyPrinting().create();
     private GQMeterResponse gqmResponse = new GQMeterResponse();
-    private static HashMap<String, String> communityIPMap = new HashMap<String, String>();
+    private LinkedList<String> snmpKnownIPList = null;
+    private LinkedList<String> snmpUnknownIPList = null;
+
     private HashMap<MeterProtocols, LinkedList<String>> switches = new HashMap<MeterProtocols, LinkedList<String>>();
 
     /**
@@ -55,12 +57,15 @@ public final class ITAssetDiscoverer {
         String assetDesc = null;
         String communityString = null;
         String ipAddress = null;
+        String snmpKnownIp = null;
 
         MeterProtocols mProtocol = null;
         GQMeterData assetObject = null;
         HashMap<String, String> snmpDetails = null;
         gqerrorInfoList = new LinkedList<GQErrorInformation>();
         List<ProtocolData> pdList = new LinkedList<ProtocolData>();
+        snmpKnownIPList = new LinkedList<String>();
+        snmpUnknownIPList = new LinkedList<String>();
 
         try {
             // Iterating the communityipmap
@@ -76,37 +81,46 @@ public final class ITAssetDiscoverer {
                 if (snmpDetails != null && snmpDetails.size() != 0) {
                     snmpVersion = snmpDetails.get("snmpVersion");
                     assetDesc = snmpDetails.get("assetDesc");
-                    mProtocol = MeterUtils.getAssetType(communityString, ipAddress, snmpVersion);
+                    snmpKnownIp = snmpDetails.get("snmpKnownIp");
 
-                    if (!mProtocol.equals(MeterProtocols.UNKNOWN)) {
-                        assetObject = MeterUtils.getAssetObject(mProtocol, communityString, ipAddress, snmpVersion,
-                                switches.get(mProtocol));
+                    if (snmpKnownIp != null) {
+                        snmpKnownIPList.add(snmpKnownIp);
+                        this.setSnmpKnownIPList(snmpKnownIPList);
+                        mProtocol = MeterUtils.getAssetType(communityString, ipAddress, snmpVersion);
 
-                        if (assetObject == null) {
-                            errorList = new LinkedList<String>();
-                            errorList.add(ipAddress + " - " + mProtocol.name() + " : Cannot fetch the meter details");
-                            gqerrorInfoList.add(new GQErrorInformation(assetDesc, errorList));
-                        }
-                        else {
-                            pdList.add(new ProtocolData(mProtocol, gson.toJson(assetObject.getMeterData())));
-                            if (assetObject.getErrorInformation() != null) {
-                                gqerrorInfoList.add(assetObject.getErrorInformation());
+                        if (!mProtocol.equals(MeterProtocols.UNKNOWN)) {
+                            assetObject = MeterUtils.getAssetObject(mProtocol, communityString, ipAddress, snmpVersion,
+                                    switches.get(mProtocol));
+
+                            if (assetObject == null) {
+                                errorList = new LinkedList<String>();
+                                errorList.add(ipAddress + " - " + mProtocol.name()
+                                        + " : Cannot fetch the meter details");
+                                gqerrorInfoList.add(new GQErrorInformation(assetDesc, errorList));
                             }
-                        }
-                    }// if ends
+                            else {
+                                pdList.add(new ProtocolData(mProtocol, gson.toJson(assetObject.getMeterData())));
+                                if (assetObject.getErrorInformation() != null) {
+                                    gqerrorInfoList.add(assetObject.getErrorInformation());
+                                }
+                            }
+                        }// if ends
+                        else {
+                            errorList = new LinkedList<String>();
+                            errorList.add(ipAddress + " - " + mProtocol.name() + " : Cannot find the asset type");
+                            gqErrInfo = new GQErrorInformation(assetDesc, errorList);
+                            gqerrorInfoList.add(gqErrInfo);
+                        }// else ends
+                    }
                     else {
+                        snmpUnknownIPList.add(ipAddress);
+                        this.setSnmpUnknownIPList(snmpUnknownIPList);
                         errorList = new LinkedList<String>();
-                        errorList.add(ipAddress + " - " + mProtocol.name() + " : Cannot find the asset type");
-                        gqErrInfo = new GQErrorInformation(assetDesc, errorList);
+                        errorList.add(ipAddress + " -  : Cannot reach the asset");
+                        gqErrInfo = new GQErrorInformation(null, errorList);
                         gqerrorInfoList.add(gqErrInfo);
-                    }// else ends
+                    }
                 }// if ends
-                else {
-                    errorList = new LinkedList<String>();
-                    errorList.add(ipAddress + " -  : Cannot reach the asset");
-                    gqErrInfo = new GQErrorInformation(null, errorList);
-                    gqerrorInfoList.add(gqErrInfo);
-                }
             }// for loop ends
         }
         catch (Exception e) {
@@ -114,6 +128,7 @@ public final class ITAssetDiscoverer {
             e.printStackTrace();
         }
         finally {
+            gqmResponse.setAssetDiscovered((short) snmpKnownIPList.size());
             gqmResponse.setErrorInformationList(gqerrorInfoList); // Added the errors to the GQMResponse
         }
         return pdList;
@@ -123,7 +138,7 @@ public final class ITAssetDiscoverer {
      * @param inputFilePath
      * @return
      */
-    public GQMeterResponse readInput(String inputFilePath) {
+    private GQMeterResponse readInput(String inputFilePath) {
 
         InputStream assetFileStream = null;
         String communityString = null;
@@ -133,6 +148,7 @@ public final class ITAssetDiscoverer {
         StringTokenizer sToken = null;
         File assetsInputFile = null;
 
+        HashMap<String, String> communityIPMap = new HashMap<String, String>();
         gqerrorInfoList = new LinkedList<GQErrorInformation>();
         gqmResponse.setGqmid("GQMeterResponse");
 
@@ -163,9 +179,6 @@ public final class ITAssetDiscoverer {
 
                             if (line.toLowerCase().startsWith(MeterConstants.METER_ID)) {
                                 gqmid = line.replace(MeterConstants.METER_ID, "").trim();
-                                System.out.println("##############################################");
-                                System.out.println("Meter id : " + gqmid);
-                                System.out.println("##############################################");
                             }
                         }
                         // line ! starts with @ for switches
@@ -234,6 +247,7 @@ public final class ITAssetDiscoverer {
                     if (null != assetFileStream) {
                         assetFileStream.close();
                     }
+                    gqmResponse.setAssetScanned((short) communityIPMap.size());
                     gqmResponse.setErrorInformationList(gqerrorInfoList); // Added the errors to the GQMResponse
 
                     return gqmResponse; // returns not null map with all the asset objects value
@@ -271,8 +285,6 @@ public final class ITAssetDiscoverer {
         GQMeterResponse gqmResponse = this.readInput(inputFilePath);
         long endTime = System.currentTimeMillis();
 
-        gqmResponse.setAssetScanned((short) communityIPMap.size());
-        gqmResponse.setAssetDiscovered((short) MeterUtils.snmpKnownIPList.size());
         gqmResponse.setRecDttm(new Date());
         gqmResponse.setRunTimeMiliSeconds((endTime - startTime));
         gqmResponse.setStatus("pass");
@@ -285,16 +297,17 @@ public final class ITAssetDiscoverer {
 
         // The end time of the meter execution
 
-        System.out.println("Total number of assets taken after processing the inputfile : " + communityIPMap.size());
+        System.out.println("Total number of assets taken after processing the inputfile : "
+                + gqmResponse.getAssetScanned());
 
         System.out.println("Total time taken to know snmp is installed on the devices : " + MeterUtils.snmpKnownTime);
         System.out.println("Total time taken to know snmp is not installed on the devices : "
                 + MeterUtils.snmpUnknownTime);
 
-        System.out.println("The list of snmp configured devices : " + MeterUtils.snmpKnownIPList.toString());
-        System.out.println("The list of no snmp configured devices : " + MeterUtils.snmpUnknownIPList.toString());
-        System.out.println("Total number of assets processed : " + MeterUtils.snmpKnownIPList.size());
-        System.out.println("Total number of assets not processed : " + MeterUtils.snmpUnknownIPList.size());
+        System.out.println("The list of snmp configured devices : " + this.getSnmpKnownIPList().toString());
+        System.out.println("The list of no snmp configured devices : " + this.getSnmpUnknownIPList().toString());
+        System.out.println("Total number of assets processed : " + this.getSnmpKnownIPList().size());
+        System.out.println("Total number of assets not processed : " + this.getSnmpUnknownIPList().size());
 
         System.out.println("Total time taken for all COMPUTER meters : " + MeterUtils.compMeterTime);
         System.out.println("Total time taken for all PRINTER meters : " + MeterUtils.printMeterTime);
@@ -322,7 +335,34 @@ public final class ITAssetDiscoverer {
         }
         ITAssetDiscoverer itad = new ITAssetDiscoverer();
         String inputFilePath = args[0].trim();
-
         itad.discover(inputFilePath);
+    }
+
+    /**
+     * @return the snmpKnownIPList
+     */
+    public LinkedList<String> getSnmpKnownIPList() {
+        return snmpKnownIPList;
+    }
+
+    /**
+     * @param snmpKnownIPList the snmpKnownIPList to set
+     */
+    public void setSnmpKnownIPList(LinkedList<String> snmpKnownIPList) {
+        this.snmpKnownIPList = snmpKnownIPList;
+    }
+
+    /**
+     * @return the snmpUnknownIPList
+     */
+    public LinkedList<String> getSnmpUnknownIPList() {
+        return snmpUnknownIPList;
+    }
+
+    /**
+     * @param snmpUnknownIPList the snmpUnknownIPList to set
+     */
+    public void setSnmpUnknownIPList(LinkedList<String> snmpUnknownIPList) {
+        this.snmpUnknownIPList = snmpUnknownIPList;
     }
 }
