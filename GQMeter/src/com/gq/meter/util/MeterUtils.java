@@ -31,8 +31,8 @@ import org.snmp4j.transport.DefaultUdpTransportMapping;
 
 import com.gq.meter.ComputerMeter;
 import com.gq.meter.GQMeterData;
-import com.gq.meter.PrinterMeter;
 import com.gq.meter.NSRGMeter;
+import com.gq.meter.PrinterMeter;
 
 public class MeterUtils {
 
@@ -41,9 +41,7 @@ public class MeterUtils {
     public static long compMeterTime = 0;
     public static long printMeterTime = 0;
     public static long isrMeterTime = 0;
-    public static LinkedList<String> snmpKnownIPList = new LinkedList<String>();;
-    public static LinkedList<String> snmpUnknownIPList = new LinkedList<String>();
-    public static String restURL = "http://192.168.1.95:8080/GQGatekeeper/";
+    public static final String restURL = "http://192.168.1.95:8080/GQGatekeeper/";
 
     /**
      * @param communityString
@@ -76,7 +74,7 @@ public class MeterUtils {
 
                 snmpUnknownTime = snmpUnknownTime + (snmpEndTime - snmpStartTime);// Time taken to find snmp is not
                                                                                   // configured
-                snmpUnknownIPList.add(currIp);
+                assetDetails.put("snmpUnKnownIp", currIp);
 
                 System.out.println("### SNMP is not configured in this device ### : " + (snmpEndTime - snmpStartTime));
                 return assetDetails; // if snmp is configured & the SNMP_CHECK_OCTET doesn't exist then return null;
@@ -89,7 +87,7 @@ public class MeterUtils {
         long snmpEndTime = System.currentTimeMillis();
 
         snmpKnownTime = snmpKnownTime + (snmpEndTime - snmpStartTime); // Time taken to find snmp is configured
-        snmpKnownIPList.add(currIp);
+        assetDetails.put("snmpKnownIp", currIp);
 
         System.out.println("*** Time taken to find isSnmpConfigured or not : " + (snmpEndTime - snmpStartTime));
         return assetDetails;
