@@ -11,7 +11,7 @@ public class GateKeeperAudit implements java.io.Serializable {
 
     private String meterId;
     private String comment;
-    private Long scnAlwd;
+    private Integer scnAlwd;
     private Date expDttm;
     private Date creDttm;
 
@@ -24,7 +24,7 @@ public class GateKeeperAudit implements java.io.Serializable {
         this.creDttm = creDttm;
     }
 
-    public GateKeeperAudit(String meterId, String comment, Long scnAlwd, Date expDttm, Date creDttm) {
+    public GateKeeperAudit(String meterId, String comment, Integer scnAlwd, Date expDttm, Date creDttm) {
         this.meterId = meterId;
         this.comment = comment;
         this.scnAlwd = scnAlwd;
@@ -48,11 +48,11 @@ public class GateKeeperAudit implements java.io.Serializable {
         this.comment = comment;
     }
 
-    public Long getScnAlwd() {
+    public Integer getScnAlwd() {
         return this.scnAlwd;
     }
 
-    public void setScnAlwd(Long scnAlwd) {
+    public void setScnAlwd(Integer scnAlwd) {
         this.scnAlwd = scnAlwd;
     }
 

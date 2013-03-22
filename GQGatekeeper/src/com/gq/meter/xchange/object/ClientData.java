@@ -16,7 +16,8 @@ public class ClientData implements java.io.Serializable {
     public ClientData() {
     }
 
-    public ClientData(String data, Date fwdDttm) {
+    public ClientData(Integer runId, String data, Date fwdDttm) {
+        this.runId = runId;
         this.data = data;
         this.fwdDttm = fwdDttm;
     }

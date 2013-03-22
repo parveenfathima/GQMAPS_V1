@@ -11,7 +11,7 @@ public class GateKeeper implements java.io.Serializable {
 
     private String meterId;
     private Date expDttm;
-    private Long totScnAlwd;
+    private Integer scnAlwd;
     private Integer scnRmng;
     private char chkCndtn;
 
@@ -26,7 +26,7 @@ public class GateKeeper implements java.io.Serializable {
     public GateKeeper(String meterId, Date expDttm, Long totScnAlwd, Integer scnRmng, char chkCndtn) {
         this.meterId = meterId;
         this.expDttm = expDttm;
-        this.totScnAlwd = totScnAlwd;
+        this.scnAlwd = scnAlwd;
         this.scnRmng = scnRmng;
         this.chkCndtn = chkCndtn;
     }
@@ -47,12 +47,12 @@ public class GateKeeper implements java.io.Serializable {
         this.expDttm = expDttm;
     }
 
-    public Long getTotScnAlwd() {
-        return this.totScnAlwd;
+    public Integer getScnAlwd() {
+        return this.scnAlwd;
     }
 
-    public void setTotScnAlwd(Long totScnAlwd) {
-        this.totScnAlwd = totScnAlwd;
+    public void setScnAlwd(Integer scnAlwd) {
+        this.scnAlwd = scnAlwd;
     }
 
     public Integer getScnRmng() {
