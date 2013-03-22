@@ -11,8 +11,8 @@
         <property name="expDttm" type="timestamp">
             <column name="exp_dttm" length="19" />
         </property>
-        <property name="totScnAlwd" type="java.lang.Long">
-            <column name="tot_scn_alwd" />
+        <property name="scnAlwd" type="java.lang.Integer">
+            <column name="scn_alwd" />
         </property>
         <property name="scnRmng" type="java.lang.Integer">
             <column name="scn_rmng" />

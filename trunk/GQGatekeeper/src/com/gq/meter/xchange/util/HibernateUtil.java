@@ -1,4 +1,4 @@
-package com.gq.util;
+package com.gq.meter.xchange.util;
 
 import org.hibernate.SessionFactory;
 
