@@ -26,7 +26,7 @@ import com.gq.meter.GQMeterResponse;
 // The browser requests per default the HTML MIME type.
 
 //Sets the path to base URL + /hello
-@Path("/gatekeeper")
+@Path("/gqentdataprocessor")
 public class GateKeeper {
 
     // This method is called if TEXT_PLAIN is request

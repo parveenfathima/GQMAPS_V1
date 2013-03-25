@@ -9,7 +9,6 @@ import org.hibernate.Session;
 import com.gq.meter.GQMeterResponse;
 import com.gq.meter.object.Asset;
 import com.gq.meter.object.CPNId;
-import com.gq.meter.object.MeterRun;
 import com.gq.meter.object.Printer;
 import com.gq.meter.object.PrinterConnDevice;
 import com.gq.meter.object.PrinterSnapshot;
@@ -17,7 +16,7 @@ import com.gq.util.HibernateUtil;
 
 public class GqMeterPrinter {
 
-    public static void insertData(Printer printer, GQMeterResponse gqmResponse, MeterRun meterRun) {
+    public static void insertData(Printer printer, GQMeterResponse gqmResponse, int runId) {
         Session session = null;
 
         try {
@@ -28,7 +27,6 @@ public class GqMeterPrinter {
             CPNId cid = printer.getId();
             String assetId = cid.getAssetId();
 
-            int runId = meterRun.getRunId();
             cid.setRunId(runId);
 
             // System.out.println("PRINTER : runnid set into the cpn id : " + cid.getRunId());

@@ -2,6 +2,8 @@ package com.gq.bo;
 
 import java.util.Date;
 import java.util.List;
+
+import org.hibernate.Query;
 import org.hibernate.Session;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -9,6 +11,7 @@ import com.gq.meter.GQErrorInformation;
 import com.gq.meter.GQMeterResponse;
 import com.gq.meter.assist.ProtocolData;
 import com.gq.meter.object.Computer;
+import com.gq.meter.object.Meter;
 import com.gq.meter.object.MeterRun;
 import com.gq.meter.object.NSRG;
 import com.gq.meter.object.Printer;
@@ -24,6 +27,7 @@ public class GateKeeperFilter {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
         String meterId = gqmResponse.getGqmid();
+        int runId = gqmResponse.getRunid();
         Date recordDT = gqmResponse.getRecDttm();
         short scanned = gqmResponse.getAssetScanned();
         short discovered = gqmResponse.getAssetDiscovered();
@@ -38,15 +42,38 @@ public class GateKeeperFilter {
 
         Session session = null;
         MeterRun meterRun = null;
+        Meter meter = null;
+        String protocolId = "protocolid";
+        String descr = "descr";
+        String address = "address";
+        String phone = "phone";
+        char storeFwd = 'Y';
+        String fwdUrl = "fwdUrl";
+        Date creDttm = new Date();
         try {
             // This step will read hibernate.cfg.xml and prepare hibernate for use
             session = HibernateUtil.getSessionFactory().getCurrentSession();
             session.beginTransaction();
 
+            String hql = "FROM Meter WHERE meterId = :METER_ID";
+            Query query = session.createQuery(hql);
+            query.setParameter("METER_ID", meterId);
+            List<?> result = query.list();
+
+            if (result.size() == 0) {
+                try {
+                    meter = new Meter(meterId, protocolId, descr, address, phone, storeFwd, fwdUrl, creDttm);
+                    session.save(meter);
+
+                }
+                catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
             // inserting runid
             // TODO : create a squence table which includes runid and assetid and generates a unique key to replace the
             // redendunt use of runid and assetid on all the tables
-            meterRun = new MeterRun(null, "meter_id", recordDT, scanned, discovered, runTimeMs);
+            meterRun = new MeterRun(runId, meterId, recordDT, scanned, discovered, runTimeMs);
             session.save(meterRun);
 
             session.getTransaction().commit();
@@ -67,7 +94,7 @@ public class GateKeeperFilter {
             }
         }// finally ends
 
-        GqMeterErrorInfo.insertErrorInfo(gqerrList, meterRun);
+        GqMeterErrorInfo.insertErrorInfo(gqerrList, meterRun.getRunId());
 
         for (ProtocolData pdData : pdList) {
 
@@ -75,17 +102,17 @@ public class GateKeeperFilter {
 
             case COMPUTER:
                 Computer computerObj = gson.fromJson(pdData.getData(), Computer.class);
-                GqMeterComputer.insertData(computerObj, gqmResponse, meterRun);
+                GqMeterComputer.insertData(computerObj, gqmResponse, meterRun.getRunId());
                 break;
 
             case PRINTER:
                 Printer printerData = gson.fromJson(pdData.getData(), Printer.class);
-                GqMeterPrinter.insertData(printerData, gqmResponse, meterRun);
+                GqMeterPrinter.insertData(printerData, gqmResponse, meterRun.getRunId());
                 break;
 
             case NSRG:
                 NSRG isrData = gson.fromJson(pdData.getData(), NSRG.class);
-                GqMeterNSRG.insertData(isrData, gqmResponse, meterRun);
+                GqMeterNSRG.insertData(isrData, gqmResponse, meterRun.getRunId());
                 break;
 
             case AIR:

@@ -9,7 +9,6 @@ import org.hibernate.Session;
 import com.gq.meter.GQMeterResponse;
 import com.gq.meter.object.Asset;
 import com.gq.meter.object.CPNId;
-import com.gq.meter.object.MeterRun;
 import com.gq.meter.object.NSRG;
 import com.gq.meter.object.NSRGConnDevice;
 import com.gq.meter.object.NSRGSnapshot;
@@ -17,7 +16,7 @@ import com.gq.util.HibernateUtil;
 
 public class GqMeterNSRG {
 
-    public static void insertData(NSRG nsrg, GQMeterResponse gqmResponse, MeterRun meterRun) {
+    public static void insertData(NSRG nsrg, GQMeterResponse gqmResponse, int runId) {
         Session session = null;
 
         try {
@@ -28,7 +27,6 @@ public class GqMeterNSRG {
             CPNId cid = nsrg.getId();
             String assetId = cid.getAssetId();
 
-            int runId = meterRun.getRunId();
             cid.setRunId(runId);
 
             // System.out.println("NSRG : runnid set into the cpn id : " + cid.getRunId());

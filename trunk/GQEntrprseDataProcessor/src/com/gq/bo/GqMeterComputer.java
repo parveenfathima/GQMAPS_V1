@@ -15,13 +15,12 @@ import com.gq.meter.object.CompInstSoftware;
 import com.gq.meter.object.CompProcess;
 import com.gq.meter.object.CompSnapshot;
 import com.gq.meter.object.Computer;
-import com.gq.meter.object.MeterRun;
 import com.gq.meter.object.OsType;
 import com.gq.util.HibernateUtil;
 
 public class GqMeterComputer {
 
-    public static void insertData(Computer computer, GQMeterResponse gqmResponse, MeterRun meterRun) {
+    public static void insertData(Computer computer, GQMeterResponse gqmResponse, int runId) {
         Session session = null;
 
         try {
@@ -31,8 +30,6 @@ public class GqMeterComputer {
 
             CPNId cid = computer.getId();
             String assetId = cid.getAssetId();
-
-            int runId = meterRun.getRunId();
 
             cid.setRunId(runId);
             computer.setId(cid);
