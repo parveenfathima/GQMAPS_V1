@@ -39,7 +39,7 @@ public final class ITAssetDiscoverer {
 
     private Gson gson = new GsonBuilder().create();
     // public Gson gson = new GsonBuilder().setPrettyPrinting().create();
-    private GQMeterResponse gqmResponse = new GQMeterResponse();
+    private GQMeterResponse gqmResponse = null;
     private LinkedList<String> snmpKnownIPList = null;
     private LinkedList<String> snmpUnknownIPList = null;
 
@@ -62,6 +62,7 @@ public final class ITAssetDiscoverer {
         MeterProtocols mProtocol = null;
         GQMeterData assetObject = null;
         HashMap<String, String> snmpDetails = null;
+
         gqerrorInfoList = new LinkedList<GQErrorInformation>();
         List<ProtocolData> pdList = new LinkedList<ProtocolData>();
         snmpKnownIPList = new LinkedList<String>();
@@ -135,16 +136,17 @@ public final class ITAssetDiscoverer {
     }
 
     /**
+     * This method used to return the community and ip addresses read from the asset input file
+     * 
      * @param inputFilePath
      * @return
      */
-    private GQMeterResponse readInput(String inputFilePath) {
+    private HashMap<String, String> readInput(String inputFilePath) {
 
         InputStream assetFileStream = null;
         String communityString = null;
         String ipUpperbound = null;
         String ipLowerbound = null;
-        List<ProtocolData> assetsList = null;
         StringTokenizer sToken = null;
         File assetsInputFile = null;
 
@@ -152,7 +154,7 @@ public final class ITAssetDiscoverer {
         gqerrorInfoList = new LinkedList<GQErrorInformation>();
         gqmResponse.setGqmid("GQMeterResponse");
 
-        if (null != inputFilePath && inputFilePath.trim() != "") {
+        if (null != inputFilePath && inputFilePath.trim().length() != 0) {
             try {
                 assetsInputFile = new File(inputFilePath);
 
@@ -174,14 +176,13 @@ public final class ITAssetDiscoverer {
                         if (line.length() == 0 || line.startsWith("#")) {
                             continue;
                         }
-
+                        // line starts with $ for meterid
                         if (line.startsWith("$")) {
-
                             if (line.toLowerCase().startsWith(MeterConstants.METER_ID)) {
                                 gqmid = line.replace(MeterConstants.METER_ID, "").trim();
                             }
                         }
-                        // line ! starts with @ for switches
+                        // line starts with @ for switches
                         else if (line.startsWith("@")) {
                             MeterUtils.manageSwitches(line, switches);
                         }
@@ -199,8 +200,7 @@ public final class ITAssetDiscoverer {
                                     if (MeterUtils.ipComparator.compare(ipLowerbound, ipUpperbound) == -1) {
                                         communityIPMap.put(ipLowerbound, communityString);
 
-                                        // /Here we iterate the ip range and find & add those intermediate ips to the
-                                        // map
+                                        // Here we iterate the ip range and find & add those intermediate ips to the map
                                         while (!(ipLowerbound = MeterUtils.nextIpAddress(ipLowerbound))
                                                 .equals(ipUpperbound)) {
                                             communityIPMap.put(ipLowerbound, communityString);
@@ -227,11 +227,6 @@ public final class ITAssetDiscoverer {
                             }
                         }// else ends
                     }// for loop ends
-
-                    if (communityIPMap.size() > 0) {
-                        assetsList = findassets(communityIPMap);
-                        gqmResponse.addToAssetInformationList(assetsList);
-                    }
                 }// if ends
                 else {
                     System.out.println("Exception occured : Unable to locate the input file");
@@ -250,39 +245,31 @@ public final class ITAssetDiscoverer {
                     gqmResponse.setAssetScanned((short) communityIPMap.size());
                     gqmResponse.setErrorInformationList(gqerrorInfoList); // Added the errors to the GQMResponse
 
-                    return gqmResponse; // returns not null map with all the asset objects value
+                    return communityIPMap; // returns not null map with all the asset objects value
                 }
                 catch (Exception e) {
                     System.out.println("Exception occured while closing the buffer after reading : " + e);
                 }
             }
         }
-        return gqmResponse;
-    }
-
-    // implement a power meter , this involves 3 distinct steps
-    // 1.gather data to make the power protocol object
-    // 2.make the json
-    // 3.make a https connection to the gate keeper url to send it to the server
-    public void implement(Object o) {
-        // use the following for pretty print.. atleast for testing
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        // use the following for normal print.
-        // Gson gson = new Gson();
-        // convert java object to JSON format,
-        // and returned as JSON formatted string
-        String json = gson.toJson(o);
-        System.out.println("===== json is ======");
-        System.out.println(json);
-
+        return communityIPMap;
     }
 
     public void discover(String inputFilePath) {
-
         // The start time of the meter execution
         long startTime = System.currentTimeMillis();
+        MeterUtils.compMeterTime = 0;
+        MeterUtils.printMeterTime = 0;
+        MeterUtils.isrMeterTime = 0;
 
-        GQMeterResponse gqmResponse = this.readInput(inputFilePath);
+        gqmResponse = new GQMeterResponse();
+        List<ProtocolData> assetsList = null;
+
+        HashMap<String, String> communityIPMap = this.readInput(inputFilePath);
+        if (communityIPMap.size() > 0) {
+            assetsList = findassets(communityIPMap);
+            gqmResponse.addToAssetInformationList(assetsList);
+        }
         long endTime = System.currentTimeMillis();
 
         gqmResponse.setRecDttm(new Date());
