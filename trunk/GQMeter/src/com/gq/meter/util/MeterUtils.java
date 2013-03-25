@@ -41,7 +41,7 @@ public class MeterUtils {
     public static long compMeterTime = 0;
     public static long printMeterTime = 0;
     public static long isrMeterTime = 0;
-    public static final String restURL = "http://192.168.1.95:8080/GQGatekeeper/";
+    public static final String restURL = "http://localhost:8080/GQGatekeeper/";
 
     /**
      * @param communityString
