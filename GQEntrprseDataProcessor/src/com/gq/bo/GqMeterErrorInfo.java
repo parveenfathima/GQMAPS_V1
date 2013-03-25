@@ -6,12 +6,11 @@ import org.hibernate.Session;
 
 import com.gq.meter.GQErrorInformation;
 import com.gq.meter.object.AssetErr;
-import com.gq.meter.object.MeterRun;
 import com.gq.util.HibernateUtil;
 
 public class GqMeterErrorInfo {
 
-    public static void insertErrorInfo(List<GQErrorInformation> gqerrList, MeterRun meterRun) {
+    public static void insertErrorInfo(List<GQErrorInformation> gqerrList, int runId) {
         Session session = null;
 
         try {
@@ -20,7 +19,6 @@ public class GqMeterErrorInfo {
             session = HibernateUtil.getSessionFactory().getCurrentSession();
             session.beginTransaction();
 
-            int runId = meterRun.getRunId();
             long sid = 0L;
 
             for (GQErrorInformation errInfo : gqerrList) {
