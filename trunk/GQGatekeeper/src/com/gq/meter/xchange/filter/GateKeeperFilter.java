@@ -8,12 +8,16 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 
 import com.gq.meter.GQMeterResponse;
-import com.gq.meter.xchange.object.MeterRun;
 import com.gq.meter.xchange.controller.GQDataXchangeController;
+import com.gq.meter.xchange.object.MeterRun;
 import com.gq.meter.xchange.object.EnterpriseMeter;
 import com.gq.meter.xchange.object.GateKeeper;
 import com.gq.meter.xchange.util.HibernateUtil;
 
+/**
+ * @author Chandru
+ * 
+ */
 // this class is takes care of validating and distributing incoming requests
 public class GateKeeperFilter {
 
@@ -25,7 +29,7 @@ public class GateKeeperFilter {
         // parse the object and get the protocols and save them for now..... ss , feb 19 , 2013
         System.out.println("ready to parse and save....");
 
-        String meterId = "meterid111111111111111";// gqmResponse.getGqmid();
+        String meterId = gqmResponse.getGqmid();
         gqmResponse.setGqmid(meterId);
         String fwdUrl = null;
         String protocolId = null;
@@ -54,9 +58,13 @@ public class GateKeeperFilter {
             if (entMeterResult.size() == 0) {
                 System.out.println("The meterid from the JSON != with the database value, Data insertion restricted");
                 session.close();
-                session.clear();
                 return;
             }
+
+            String enterpriseId = entMeterResult.get(0).getEnterpriseId();
+            String gqmId = gqmResponse.getGqmid();
+            gqmId = enterpriseId + "_" + gqmId;
+            gqmResponse.setGqmid(gqmId);
 
             // Check whether to store or forward the data to GQEDP
             char storeOrForward = entMeterResult.get(0).getStoreFwd();
@@ -78,7 +86,6 @@ public class GateKeeperFilter {
                 System.out
                         .println("The meterid from the JSON != with the database GateKeeper value, Data insertion restricted");
                 session.close();
-                session.clear();
                 return;
             }
 
@@ -95,7 +102,6 @@ public class GateKeeperFilter {
                 System.out.println("Expired");
                 System.out.println("The date is expired please renewal the license, Data insertion restricted");
                 session.close();
-                session.clear();
                 return;
             }
             else if (dateValue == 0) {
@@ -109,14 +115,14 @@ public class GateKeeperFilter {
             char checkCondition = auditResult.get(0).getChkCndtn();
             if (checkCondition == 'y') {
                 int scanRemaining = auditResult.get(0).getScnRmng();
+                scanRemaining = 0;
                 // Check total asset scanned allowed
-                if (scanRemaining == 0) {
+                if (scanRemaining <= 0) {
                     System.out.println("Scanning is not allowed, exceeds the license limit");
                     session.close();
-                    session.clear();
                     return;
                 }
-                scanRemaining = scanRemaining - 1;
+                scanRemaining = scanRemaining - discovered;
                 System.out.println("Scan remain : " + scanRemaining);
                 // update gatekeeper table once decremented the count
 
@@ -127,13 +133,11 @@ public class GateKeeperFilter {
 
             // ---------------------------------------------------------------------------------------------------------//
             // inserting runid - auto incremented
-            // TODO : meterid will come along with JSON, r8 now am hard coding it.
             meterRun = new MeterRun(meterId, recordDT, scanned, discovered, runTimeMs);
             Integer runid = (Integer) session.save(meterRun);
             session.flush();
 
-            // ClientData cData = new ClientData(meterRun.getRunId(), "saving data from pgm", new Date());
-            // session.merge(cData);
+            gqmResponse.setRunid(runid);
 
             session.getTransaction().commit();
         }
@@ -147,13 +151,13 @@ public class GateKeeperFilter {
                     session.close();
                     session.clear();
                 }
-                gqmResponse.setRunid(meterRun.getRunId());
-                GQDataXchangeController.sendToEntDataProcessor(fwdUrl, protocolId, gqmResponse);
             }
             catch (Exception e) {
                 e.printStackTrace();
             }
         }// finally ends
-        System.out.println(" ###########" + meterRun.getRunId());
+        if (protocolId != null) {
+            GQDataXchangeController.sendToEntDataProcessor(fwdUrl, protocolId, gqmResponse);
+        }
     }
 }
