@@ -53,7 +53,7 @@ public class GateKeeperFilter {
             // TODO :meterid will come along with JSON, r8 now am hard coding it.
             query.setParameter("METER_ID", meterId);
             List<EnterpriseMeter> entMeterResult = query.list();// result size cannot be more than 1
-            System.out.println("###############33 : " + entMeterResult.size());
+            System.out.println("###############ENTRMeterResult : " + entMeterResult.size());
             // TODO: what is the result size is more than 1
             if (entMeterResult.size() == 0) {
                 System.out.println("The meterid from the JSON != with the database value, Data insertion restricted");
@@ -97,7 +97,7 @@ public class GateKeeperFilter {
             System.out.println("Curr date : " + currDate + " expirydate : " + expirydDate);
             int dateValue = expirydDate.compareTo(currDate);
 
-            System.out.println("============== L " + dateValue);
+            System.out.println("==============  " + dateValue);
             if (dateValue == -1) {
                 System.out.println("Expired");
                 System.out.println("The date is expired please renewal the license, Data insertion restricted");
@@ -115,7 +115,6 @@ public class GateKeeperFilter {
             char checkCondition = auditResult.get(0).getChkCndtn();
             if (checkCondition == 'y') {
                 int scanRemaining = auditResult.get(0).getScnRmng();
-                scanRemaining = 0;
                 // Check total asset scanned allowed
                 if (scanRemaining <= 0) {
                     System.out.println("Scanning is not allowed, exceeds the license limit");
