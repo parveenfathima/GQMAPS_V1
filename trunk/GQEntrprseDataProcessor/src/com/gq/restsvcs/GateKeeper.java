@@ -13,7 +13,7 @@ import javax.ws.rs.core.MediaType;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.gq.bo.GateKeeperFilter;
+import com.gq.bo.GqEDPFilter;
 import com.gq.meter.GQMeterResponse;
 
 //import com.sun.jerse
@@ -55,7 +55,7 @@ public class GateKeeper {
         GQMeterResponse gqMeterResponse = gson.fromJson(gqMeterResponseString, GQMeterResponse.class);
         // unmarshall the response from the gqmeter running in premise and start processing.....
 
-        GateKeeperFilter gkf = new GateKeeperFilter();
+        GqEDPFilter gkf = new GqEDPFilter();
 
         gkf.process(gqMeterResponse);
     }
