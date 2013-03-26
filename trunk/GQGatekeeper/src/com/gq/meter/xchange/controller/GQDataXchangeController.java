@@ -27,13 +27,15 @@ public class GQDataXchangeController {
 
     public static void sendToEntDataProcessor(String fwdUrl, String protocolId, GQMeterResponse gqmResponse) {
 
-        System.out.println("*************** After validation Sending data form the GQGatekeeper ******************");
+        System.out.println("*************** After validation Sending data from the GQGatekeeper ******************");
 
-        if (protocolId.toLowerCase() != PROTOCOL_IT) {
+        protocolId = protocolId.toLowerCase();
+        if (protocolId != PROTOCOL_IT) {
             List<ProtocolData> pdList = gqmResponse.getAssetInformationList();
 
             for (ProtocolData pdData : pdList) {
-                if (!pdData.getProtocol().toString().equals(protocolId)) {
+                System.out.println("protocolId : " + protocolId + " from JSON" + pdData.getProtocol().toString());
+                if (!pdData.getProtocol().toString().toLowerCase().trim().equals(protocolId)) {
                     pdList.remove(pdData);
                     System.out.println("invalid meter data");
                 }
@@ -57,7 +59,7 @@ public class GQDataXchangeController {
             form.add("summary", "Demonstration of the client lib for forms");
             ClientResponse response = service.path("gqm-gqedp").path("gqentdataprocessor")
                     .type(javax.ws.rs.core.MediaType.APPLICATION_JSON).post(ClientResponse.class, form);
-            System.out.println("*************** sent successfully ******************");
+            System.out.println("*************** sent successfully to " + fwdUrl + " ******************");
         }
         catch (Exception e) {
             System.out.println("Exception occured while sending data from XChange Controller");

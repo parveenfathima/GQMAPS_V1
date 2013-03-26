@@ -53,7 +53,6 @@ public class GateKeeperFilter {
             // TODO :meterid will come along with JSON, r8 now am hard coding it.
             query.setParameter("METER_ID", meterId);
             List<EnterpriseMeter> entMeterResult = query.list();// result size cannot be more than 1
-            System.out.println("###############ENTRMeterResult : " + entMeterResult.size());
             // TODO: what is the result size is more than 1
             if (entMeterResult.size() == 0) {
                 System.out.println("The meterid from the JSON != with the database value, Data insertion restricted");
