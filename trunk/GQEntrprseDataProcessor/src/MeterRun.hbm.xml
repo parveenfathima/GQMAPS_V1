@@ -6,7 +6,7 @@
     <class name="com.gq.meter.object.MeterRun" table="meter_run" catalog="gqmaps">
         <id name="runId" type="java.lang.Integer">
             <column name="run_id" />
-            <generator class="increment" />
+            <generator class="assigned" />
         </id>
         <property name="meterId" type="string">
             <column name="meter_id" length="10" not-null="true" />

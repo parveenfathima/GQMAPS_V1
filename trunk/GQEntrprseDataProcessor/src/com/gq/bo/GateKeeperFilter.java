@@ -27,6 +27,7 @@ public class GateKeeperFilter {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
         String meterId = gqmResponse.getGqmid();
+        meterId = meterId.split("_")[1];
         int runId = gqmResponse.getRunid();
         Date recordDT = gqmResponse.getRecDttm();
         short scanned = gqmResponse.getAssetScanned();
