@@ -3,11 +3,11 @@ package com.gq.bo;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.gq.meter.GQErrorInformation;
 import com.gq.meter.GQMeterResponse;
 import com.gq.meter.assist.ProtocolData;
 import com.gq.meter.object.Computer;
@@ -15,19 +15,26 @@ import com.gq.meter.object.Meter;
 import com.gq.meter.object.MeterRun;
 import com.gq.meter.object.NSRG;
 import com.gq.meter.object.Printer;
+import com.gq.meter.object.Storage;
+import com.gq.util.GQEDPConstants;
 import com.gq.util.HibernateUtil;
 
-// this class is takes care of validating and distributing incoming requests
+// this class takes care of validating and distributing incoming requests
 public class GqEDPFilter {
+
+    public static String enterpriseId = "gquotient";
+
+    public static String meterId = String.valueOf((System.currentTimeMillis()) / 1000);
 
     public void process(GQMeterResponse gqmResponse) {
 
         // parse the object and get the protocols and save them for now..... ss , feb 19 , 2013
-        System.out.println("ready to parse and save....");
+        // System.out.println("ready to parse and save....");
+        GQEDPConstants.logger.info("Enterprise data processor is ready to parse and save....");
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
-        String meterId = gqmResponse.getGqmid();
-        meterId = meterId.split("_")[1];
+        // String meterId = gqmResponse.getGqmid();
+        // meterId = meterId.split("_")[1];
         int runId = gqmResponse.getRunid();
         Date recordDT = gqmResponse.getRecDttm();
         short scanned = gqmResponse.getAssetScanned();
@@ -38,8 +45,6 @@ public class GqEDPFilter {
         System.out.println(" Total Asset Scanned : " + scanned);
 
         List<ProtocolData> pdList = gqmResponse.getAssetInformationList();
-
-        List<GQErrorInformation> gqerrList = gqmResponse.getErrorInformationList();
 
         Session session = null;
         MeterRun meterRun = null;
@@ -56,6 +61,7 @@ public class GqEDPFilter {
             session = HibernateUtil.getSessionFactory().getCurrentSession();
             session.beginTransaction();
 
+            GQEDPConstants.logger.debug(enterpriseId + "-" + meterId + " Transaction successfully started ");
             String hql = "FROM Meter WHERE meterId = :METER_ID";
             Query query = session.createQuery(hql);
             query.setParameter("METER_ID", meterId);
@@ -65,10 +71,12 @@ public class GqEDPFilter {
                 try {
                     meter = new Meter(meterId, protocolId, descr, address, phone, storeFwd, fwdUrl, creDttm);
                     session.save(meter);
-
+                    GQEDPConstants.logger.info(enterpriseId + "-" + meterId
+                            + " Data successfully saved in the meter table ");
                 }
                 catch (Exception e) {
-                    e.printStackTrace();
+                    GQEDPConstants.logger.error(enterpriseId + "-" + meterId
+                            + " Data failed to save in the meter table " + e.getMessage());
                 }
             }
             // inserting runid
@@ -76,11 +84,14 @@ public class GqEDPFilter {
             // redendunt use of runid and assetid on all the tables
             meterRun = new MeterRun(runId, meterId, recordDT, scanned, discovered, runTimeMs);
             session.save(meterRun);
+            GQEDPConstants.logger
+                    .info(enterpriseId + "-" + meterId + " Data successfully saved in the meterRun table ");
 
             session.getTransaction().commit();
         }
         catch (Exception e) {
             e.printStackTrace();
+            GQEDPConstants.logger.error(enterpriseId + "-" + meterId + " Transaction failed to start");
         }
         finally {
             try {
@@ -94,8 +105,6 @@ public class GqEDPFilter {
                 e.printStackTrace();
             }
         }// finally ends
-
-        GqMeterErrorInfo.insertErrorInfo(gqerrList, meterRun.getRunId());
 
         for (ProtocolData pdData : pdList) {
 
@@ -112,8 +121,13 @@ public class GqEDPFilter {
                 break;
 
             case NSRG:
-                NSRG isrData = gson.fromJson(pdData.getData(), NSRG.class);
-                GqMeterNSRG.insertData(isrData, gqmResponse, meterRun.getRunId());
+                NSRG nsrgData = gson.fromJson(pdData.getData(), NSRG.class);
+                GqMeterNSRG.insertData(nsrgData, gqmResponse, meterRun.getRunId());
+                break;
+
+            case STORAGE:
+                Storage storageData = gson.fromJson(pdData.getData(), Storage.class);
+                GqMeterStorage.insertData(storageData, gqmResponse, meterRun.getRunId());
                 break;
 
             case AIR:

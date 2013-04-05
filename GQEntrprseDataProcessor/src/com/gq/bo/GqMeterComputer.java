@@ -16,11 +16,16 @@ import com.gq.meter.object.CompProcess;
 import com.gq.meter.object.CompSnapshot;
 import com.gq.meter.object.Computer;
 import com.gq.meter.object.OsType;
+import com.gq.util.GQEDPConstants;
 import com.gq.util.HibernateUtil;
 
 public class GqMeterComputer {
 
     public static void insertData(Computer computer, GQMeterResponse gqmResponse, int runId) {
+
+        GQEDPConstants.logger.info(GqEDPFilter.enterpriseId + "-" + GqEDPFilter.meterId
+                + " Data is ready to save in the computer asset ");
+
         Session session = null;
 
         try {
@@ -34,7 +39,7 @@ public class GqMeterComputer {
             cid.setRunId(runId);
             computer.setId(cid);
 
-            // inserting assert
+            // inserting asset
             String hql = "FROM Asset WHERE assetId = :ASSET_ID";
             Query query = session.createQuery(hql);
             query.setParameter("ASSET_ID", assetId);
@@ -44,9 +49,12 @@ public class GqMeterComputer {
                 try {
                     Asset assetObj = computer.getAssetObj();
                     session.save(assetObj);
+                    GQEDPConstants.logger.info(GqEDPFilter.enterpriseId + "-" + GqEDPFilter.meterId
+                            + " Computer Data successfully saved in the Asset table ");
                 }
                 catch (Exception e) {
-                    e.printStackTrace();
+                    GQEDPConstants.logger.error(GqEDPFilter.enterpriseId + "-" + GqEDPFilter.meterId
+                            + " Computer Data failed to save in the Asset table " + e.getMessage());
                 }
             }
 
@@ -62,11 +70,14 @@ public class GqMeterComputer {
                 if (osresult.size() == 0) {
                     OsType os = computer.getOsTypeObj();
                     session.save(os);
+                    GQEDPConstants.logger.info(GqEDPFilter.enterpriseId + "-" + GqEDPFilter.meterId
+                            + " Computer Data successfully saved in the OS table ");
                 }
 
             }
             catch (Exception e) {
-                e.printStackTrace();
+                GQEDPConstants.logger.error(GqEDPFilter.enterpriseId + "-" + GqEDPFilter.meterId
+                        + " Computer Data failed to save in the OS table " + e.getMessage());
             }
 
             // snapshot
@@ -74,41 +85,51 @@ public class GqMeterComputer {
             compSnapshot.setId(cid);
             try {
                 session.save(compSnapshot);
+                GQEDPConstants.logger.info(GqEDPFilter.enterpriseId + "-" + GqEDPFilter.meterId
+                        + " Data successfully saved in the Computer Snapshot table ");
             }
             catch (Exception e) {
-                e.printStackTrace();
+                GQEDPConstants.logger.error(GqEDPFilter.enterpriseId + "-" + GqEDPFilter.meterId
+                        + " Data failed to save in the Computer Snapshot table " + e.getMessage());
             }
 
             // computer installed software
             if (computer.getCompInstSwList() != null) {
                 ArrayList<CompInstSoftware> compInstSoftwareList = computer.getCompInstSwList();
 
-                for (CompInstSoftware compInsSoftware : compInstSoftwareList) {
+                try {
 
-                    try {
+                    for (CompInstSoftware compInsSoftware : compInstSoftwareList) {
                         compInsSoftware.getId().setRunId(runId);
                         session.merge(compInsSoftware);
                     }
-                    catch (Exception e) {
-                        e.printStackTrace();
-                    }
-
+                    GQEDPConstants.logger.info(GqEDPFilter.enterpriseId + "-" + GqEDPFilter.meterId
+                            + " Data successfully saved in the Computer Installed software table ");
                 }
+                catch (Exception e) {
+                    GQEDPConstants.logger.error(GqEDPFilter.enterpriseId + "-" + GqEDPFilter.meterId
+                            + " Data failed to save in the Computer Installed software table " + e.getMessage());
+                }
+
             }
 
             // computer process list
             if (computer.getCompProcList() != null) {
                 ArrayList<CompProcess> compProcessList = computer.getCompProcList();
-                for (CompProcess compProcess : compProcessList) {
 
-                    try {
+                try {
+
+                    for (CompProcess compProcess : compProcessList) {
                         compProcess.getId().setRunId(runId);
                         session.merge(compProcess);
                     }
-                    catch (Exception e) {
-                        e.printStackTrace();
-                    }
 
+                    GQEDPConstants.logger.info(GqEDPFilter.enterpriseId + "-" + GqEDPFilter.meterId
+                            + " Data successfully saved in the Computer process table ");
+                }
+                catch (Exception e) {
+                    GQEDPConstants.logger.error(GqEDPFilter.enterpriseId + "-" + GqEDPFilter.meterId
+                            + " Data failed to save in the Computer process table " + e.getMessage());
                 }
 
             }
@@ -116,20 +137,25 @@ public class GqMeterComputer {
             // connected device
             if (computer.getCompConnDeviceSet() != null) {
                 HashSet<CompConnDevice> compConnnectedDevice = computer.getCompConnDeviceSet();
-                for (CompConnDevice compConnDevice : compConnnectedDevice) {
 
-                    compConnDevice.getId().setRunId(runId);
-                    try {
+                try {
+                    for (CompConnDevice compConnDevice : compConnnectedDevice) {
+                        compConnDevice.getId().setRunId(runId);
                         session.merge(compConnDevice);
-                    }
-                    catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }// for ends
+                    }// for ends
+
+                    GQEDPConstants.logger.info(GqEDPFilter.enterpriseId + "-" + GqEDPFilter.meterId
+                            + " Data successfully saved in the Computer Connected devices table ");
+                }
+                catch (Exception e) {
+                    GQEDPConstants.logger.error(GqEDPFilter.enterpriseId + "-" + GqEDPFilter.meterId
+                            + " Data failed to save in the Computer Connected devices table " + e.getMessage());
+                }
 
             }
             // Actual insertion will happen at this step
             session.getTransaction().commit();
+
         }
         catch (Exception e) {
             e.printStackTrace();

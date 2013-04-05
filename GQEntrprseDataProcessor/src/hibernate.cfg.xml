@@ -28,8 +28,8 @@
 		<mapping resource="PrinterConnDevice.hbm.xml" />
 		<mapping resource="NSRGSnapshot.hbm.xml" />
 		<mapping resource="NSRGConnDevice.hbm.xml" />
-		<mapping resource="AssetErr.hbm.xml" />
 		<mapping resource="Meter.hbm.xml" />
+		<mapping resource="StorageSnpsht.hbm.xml" />
 
 
 	</session-factory>

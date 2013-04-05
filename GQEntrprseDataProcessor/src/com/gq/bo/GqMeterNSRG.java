@@ -12,6 +12,7 @@ import com.gq.meter.object.CPNId;
 import com.gq.meter.object.NSRG;
 import com.gq.meter.object.NSRGConnDevice;
 import com.gq.meter.object.NSRGSnapshot;
+import com.gq.util.GQEDPConstants;
 import com.gq.util.HibernateUtil;
 
 public class GqMeterNSRG {
@@ -41,9 +42,12 @@ public class GqMeterNSRG {
                 try {
                     Asset assetObj = nsrg.getAssetObj();
                     session.save(assetObj);
+                    GQEDPConstants.logger.info(GqEDPFilter.enterpriseId + "-" + GqEDPFilter.meterId
+                            + " NSRG Data successfully saved in the Asset table ");
                 }
                 catch (Exception e) {
-                    e.printStackTrace();
+                    GQEDPConstants.logger.error(GqEDPFilter.enterpriseId + "-" + GqEDPFilter.meterId
+                            + " NSRG Data failed to save in the Asset table " + e.getMessage());
                 }
             }
 
@@ -52,25 +56,32 @@ public class GqMeterNSRG {
             try {
                 nsrgSnapshot.setId(cid);
                 session.save(nsrgSnapshot);
+                GQEDPConstants.logger.info(GqEDPFilter.enterpriseId + "-" + GqEDPFilter.meterId
+                        + " Data  successfully saved in the NSRG Snapshot table ");
             }
             catch (Exception e) {
-                e.printStackTrace();
+                GQEDPConstants.logger.error(GqEDPFilter.enterpriseId + "-" + GqEDPFilter.meterId
+                        + " Data failed to save in the NSRG Snapshot table " + e.getMessage());
             }
 
             // connected device
             if (nsrg.getNsrgConnectedDevices() != null) {
                 HashSet<NSRGConnDevice> nsrgConnectedDevices = nsrg.getNsrgConnectedDevices();
-                for (NSRGConnDevice nsrgConnDevice : nsrgConnectedDevices) {
 
-                    try {
+                try {
+                    for (NSRGConnDevice nsrgConnDevice : nsrgConnectedDevices) {
                         nsrgConnDevice.getId().setRunId(runId);
                         session.merge(nsrgConnDevice);
-                    }
-                    catch (Exception e) {
-                        e.printStackTrace();
-                    }
+                    }// for ends
 
-                }// for ends
+                    GQEDPConstants.logger.info(GqEDPFilter.enterpriseId + "-" + GqEDPFilter.meterId
+                            + " Data successfully saved in the NSRG Connected devices table ");
+                }
+                catch (Exception e) {
+                    GQEDPConstants.logger.error(GqEDPFilter.enterpriseId + "-" + GqEDPFilter.meterId
+                            + " Data failed to save in the NSRG Connected devices table " + e.getMessage());
+                }
+
             }
             // Actual insertion will happen at this step
             session.getTransaction().commit();
