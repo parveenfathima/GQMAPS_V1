@@ -1,6 +1,5 @@
 package com.gq.bo;
 
-import java.util.HashSet;
 import java.util.List;
 
 import org.hibernate.Query;
@@ -9,15 +8,14 @@ import org.hibernate.Session;
 import com.gq.meter.GQMeterResponse;
 import com.gq.meter.object.Asset;
 import com.gq.meter.object.CPNId;
-import com.gq.meter.object.Printer;
-import com.gq.meter.object.PrinterConnDevice;
-import com.gq.meter.object.PrinterSnapshot;
+import com.gq.meter.object.Storage;
+import com.gq.meter.object.StorageSnpsht;
 import com.gq.util.GQEDPConstants;
 import com.gq.util.HibernateUtil;
 
-public class GqMeterPrinter {
+public class GqMeterStorage {
 
-    public static void insertData(Printer printer, GQMeterResponse gqmResponse, int runId) {
+    public static void insertData(Storage storage, GQMeterResponse gqmResponse, int runId) {
         Session session = null;
 
         try {
@@ -25,7 +23,7 @@ public class GqMeterPrinter {
             session = HibernateUtil.getSessionFactory().getCurrentSession();
             session.beginTransaction();
 
-            CPNId cid = printer.getId();
+            CPNId cid = storage.getId();
             String assetId = cid.getAssetId();
 
             cid.setRunId(runId);
@@ -40,49 +38,29 @@ public class GqMeterPrinter {
 
             if (result.size() == 0) {
                 try {
-                    Asset assetObj = printer.getAssetObj();
+                    Asset assetObj = storage.getAssetObj();
                     session.save(assetObj);
                     GQEDPConstants.logger.info(GqEDPFilter.enterpriseId + "-" + GqEDPFilter.meterId
-                            + " Printer Data successfully saved in the Asset table ");
+                            + " Storage Data successfully saved in the Asset table ");
                 }
                 catch (Exception e) {
                     GQEDPConstants.logger.error(GqEDPFilter.enterpriseId + "-" + GqEDPFilter.meterId
-                            + " Printer Data failed to save in the Asset table " + e.getMessage());
+                            + " Storage Data failed to save in the Asset table " + e.getMessage());
                 }
             }
 
             // snapshot
-            PrinterSnapshot printerSnapshot = printer.getPrinterSnapShot();
+            StorageSnpsht storageSnpsht = storage.getStorageSnpsht();
             try {
                 // System.out.println("PRINTER : snap shot cpn id has been set");
-                printerSnapshot.setId(cid);
-                session.save(printerSnapshot);
+                storageSnpsht.setId(cid);
+                session.save(storageSnpsht);
                 GQEDPConstants.logger.info(GqEDPFilter.enterpriseId + "-" + GqEDPFilter.meterId
-                        + " Data successfully saved in the Printer Snapshot table ");
+                        + " Data successfully saved in the Storage Snapshot table ");
             }
             catch (Exception e) {
                 GQEDPConstants.logger.error(GqEDPFilter.enterpriseId + "-" + GqEDPFilter.meterId
-                        + " Data failed to save in the Printer Snapshot table " + e.getMessage());
-            }
-
-            // connected device
-            if (printer.getPrinterConnectedDevice() != null) {
-                HashSet<PrinterConnDevice> printerConnectedDevice = printer.getPrinterConnectedDevice();
-
-                try {
-                    for (PrinterConnDevice printerConnDevice : printerConnectedDevice) {
-                        printerConnDevice.getId().setRunId(runId);
-                        session.merge(printerConnDevice);
-                    }
-
-                    GQEDPConstants.logger.info(GqEDPFilter.enterpriseId + "-" + GqEDPFilter.meterId
-                            + " Data successfully saved in the Printer Connected devices table ");
-                }
-                catch (Exception e) {
-                    GQEDPConstants.logger.error(GqEDPFilter.enterpriseId + "-" + GqEDPFilter.meterId
-                            + " Data failed to save in the Printer Connected devices table  " + e.getMessage());
-                }
-
+                        + " Data failed to save in the Storage Snapshot table " + e.getMessage());
             }
             session.getTransaction().commit();
         }
@@ -103,5 +81,5 @@ public class GqMeterPrinter {
             }
 
         }// finally ends
-    }// method ends
-}// class ends
+    }
+}
