@@ -8,10 +8,12 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 
 import com.gq.meter.GQMeterResponse;
+import com.gq.meter.assist.ProtocolData;
 import com.gq.meter.xchange.controller.GQDataXchangeController;
-import com.gq.meter.xchange.object.MeterRun;
 import com.gq.meter.xchange.object.EnterpriseMeter;
 import com.gq.meter.xchange.object.GateKeeper;
+import com.gq.meter.xchange.object.MeterRun;
+import com.gq.meter.xchange.util.GQGateKeeperConstants;
 import com.gq.meter.xchange.util.HibernateUtil;
 
 /**
@@ -21,25 +23,35 @@ import com.gq.meter.xchange.util.HibernateUtil;
 // this class is takes care of validating and distributing incoming requests
 public class GateKeeperFilter {
 
+    /**
+     * This method used to validate the un marshalled GQMeterResponse data
+     * 
+     * @param gqmResponse
+     */
     public void process(GQMeterResponse gqmResponse) {
-
         Session session = null;
         MeterRun meterRun = null;
 
-        // parse the object and get the protocols and save them for now..... ss , feb 19 , 2013
-        System.out.println("ready to parse and save....");
+        // parse the object and get the protocols and save them for now.....
+        GQGateKeeperConstants.logger.info("Validating the unmarshlled GQMeterResponse data");
 
-        String meterId = gqmResponse.getGqmid();
-        gqmResponse.setGqmid(meterId);
         String fwdUrl = null;
         String protocolId = null;
+        String meterId = gqmResponse.getGqmid();
+
         Date recordDT = gqmResponse.getRecDttm();
-        short scanned = gqmResponse.getAssetScanned();
-        short discovered = gqmResponse.getAssetDiscovered();
+
+        short scanned = gqmResponse.getAssetScanned();// total asset scanned from the input file
+        short discovered = gqmResponse.getAssetDiscovered();// total asset actually discovered using GQMeter
+
         long runTimeMs = gqmResponse.getRunTimeMiliSeconds();
 
-        System.out.println(" MeterID : " + meterId);
-        System.out.println(" Total Asset Scanned : " + scanned);
+        GQGateKeeperConstants.logger.info(" GQMeter ID : " + meterId);
+        GQGateKeeperConstants.logger.info(" Total asset scanned from the input file : " + scanned);
+        GQGateKeeperConstants.logger.info(" Total asset actually discovered using GQMeter : " + discovered);
+
+        // TODO : Analyze the scenario in which the assets discovered value may become 0.
+        // TODO : Sort out the scenarios and decide whether to consider it as a run or not.
 
         try {
             // This step will read hibernate.cfg.xml and prepare hibernate for use
@@ -50,83 +62,116 @@ public class GateKeeperFilter {
             // checking meterid from the enterprisemeter table
             String hql = "FROM EnterpriseMeter WHERE meter_id = :METER_ID";
             Query query = session.createQuery(hql);
-            // TODO :meterid will come along with JSON, r8 now am hard coding it.
             query.setParameter("METER_ID", meterId);
-            List<EnterpriseMeter> entMeterResult = query.list();// result size cannot be more than 1
-            // TODO: what is the result size is more than 1
+            List<EnterpriseMeter> entMeterResult = query.list();
+
+            // what if the entMeterResult size is more than 1
+            // entMeterResult size cannot be more than 1, meter_id is always unique
             if (entMeterResult.size() == 0) {
-                System.out.println("The meterid from the JSON != with the database value, Data insertion restricted");
+                GQGateKeeperConstants.logger
+                        .info("The meterid from the JSON != with the database value, Data insertion restricted");
                 session.close();
                 return;
             }
 
             String enterpriseId = entMeterResult.get(0).getEnterpriseId();
             String gqmId = gqmResponse.getGqmid();
+            // Concatenating the enterpriseId with the meterId
+            // The purpose of doing this is to invoke enterprise specific DB
+            // instance on the GQEDProcessor application - tenant_identifier
             gqmId = enterpriseId + "_" + gqmId;
             gqmResponse.setGqmid(gqmId);
-
-            // Check whether to store or forward the data to GQEDP
-            char storeOrForward = entMeterResult.get(0).getStoreFwd();
-
+            // ---------------------------------------------------------------------------------------------------------//
+            // protocol should be entered into DB in lower case only - Type safety
             protocolId = entMeterResult.get(0).getProtocolId();
 
-            if (storeOrForward == 'f') {
-                fwdUrl = entMeterResult.get(0).getFwdUrl();// If fwd then get the fwd URL and pass the json to this
+            if (protocolId != GQGateKeeperConstants.PROTOCOL_IT) {
+                List<ProtocolData> pdList = gqmResponse.getAssetInformationList();
+
+                for (ProtocolData pdData : pdList) {
+                    GQGateKeeperConstants.logger.info("protocolId : " + protocolId + " from JSON"
+                            + pdData.getProtocol().toString());
+                    if (!pdData.getProtocol().toString().toLowerCase().trim().equals(protocolId)) {
+                        pdList.remove(pdData);
+                        GQGateKeeperConstants.logger.info("invalid meter data");
+                    }
+                }// for loop ends
+                 // Actual number of assets that are matches with the type of meter
+                 // for which the enterprise is registered for.
+                discovered = (short) pdList.size();
+                GQGateKeeperConstants.logger.info(" Total number of assets after meter validation  : " + discovered);
             }
+
             // ---------------------------------------------------------------------------------------------------------//
             // checking meterid from the GateKeeper table
             hql = "FROM GateKeeper WHERE meter_id = :METER_ID";
             query = session.createQuery(hql);
-            // TODO :meterid will come along with JSON, r8 now am hard coding it.
             query.setParameter("METER_ID", meterId);
-            List<GateKeeper> auditResult = query.list();// result size cannot be more than 1
-            // TODO: what if the result size is more than 1
-            if (auditResult == null) {
+            List<GateKeeper> gatekeeperResult = query.list();
+            // what if the gatekeeperResult size is more than 1
+            // gatekeeperResult size cannot be more than 1, meter_id is always unique
+            if (gatekeeperResult == null) {
                 System.out
                         .println("The meterid from the JSON != with the database GateKeeper value, Data insertion restricted");
                 session.close();
                 return;
             }
 
-            // ---------------------------------------------------------------------------------------------------------//
-            // Compare today date and expired date
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-            String expirydDate = sdf.format(auditResult.get(0).getExpDttm());
-            String currDate = sdf.format(new Date());
-            System.out.println("Curr date : " + currDate + " expirydate : " + expirydDate);
-            int dateValue = expirydDate.compareTo(currDate);
-
-            System.out.println("==============  " + dateValue);
-            if (dateValue == -1) {
-                System.out.println("Expired");
-                System.out.println("The date is expired please renewal the license, Data insertion restricted");
-                session.close();
-                return;
-            }
-            else if (dateValue == 0) {
-                System.out.println("Today license is going to expire : " + expirydDate);
-            }
-            else if (dateValue == 1) {
-                System.out.println("The license wil expiry on : " + expirydDate);
-            }
-
-            // ---------------------------------------------------------------------------------------------------------//
-            char checkCondition = auditResult.get(0).getChkCndtn();
-            if (checkCondition == 'y') {
-                int scanRemaining = auditResult.get(0).getScnRmng();
+            char checkCondition = gatekeeperResult.get(0).getChkCndtn();
+            int scanRemaining = gatekeeperResult.get(0).getScnRmng();
+            if (checkCondition == 'c') {
                 // Check total asset scanned allowed
-                if (scanRemaining <= 0) {
-                    System.out.println("Scanning is not allowed, exceeds the license limit");
+                if (scanRemaining < discovered || scanRemaining <= 0) {
+                    GQGateKeeperConstants.logger.info("Scanning is not allowed, exceeds the license limit");
                     session.close();
                     return;
                 }
-                scanRemaining = scanRemaining - discovered;
-                System.out.println("Scan remain : " + scanRemaining);
-                // update gatekeeper table once decremented the count
+            }
+            else if (checkCondition == 'e') {
+                // Compare today date and expired date
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                String expirydDate = sdf.format(gatekeeperResult.get(0).getExpDttm());
+                String currDate = sdf.format(new Date());
+                GQGateKeeperConstants.logger.info("Curr date : " + currDate + " expirydate : " + expirydDate);
+                int dateValue = expirydDate.compareTo(currDate);
 
-                GateKeeper gkAudit = (GateKeeper) session.load(GateKeeper.class, auditResult.get(0).getMeterId());
+                GQGateKeeperConstants.logger.info("==============  " + dateValue);
+                if (dateValue == -1) {
+                    GQGateKeeperConstants.logger.info("License is expired");
+                    GQGateKeeperConstants.logger
+                            .info("The date is expired please renewal the license, Data insertion restricted");
+                    session.close();
+                    return;
+                }
+                else if (dateValue == 0) {
+                    GQGateKeeperConstants.logger.info("Today license is going to expire : " + expirydDate);
+                }
+                else if (dateValue == 1) {
+                    GQGateKeeperConstants.logger.info("The license wil expiry on : " + expirydDate);
+                }
+            }
 
-                gkAudit.setScnRmng(scanRemaining);
+            scanRemaining = scanRemaining - discovered;
+            GQGateKeeperConstants.logger.info("Scan remain : " + scanRemaining);
+            // update gatekeeper table once decremented the count
+
+            GateKeeper gkAudit = (GateKeeper) session.load(GateKeeper.class, gatekeeperResult.get(0).getMeterId());
+            gkAudit.setScnRmng(scanRemaining);
+
+            // Check whether to store or forward the data to GQEDP
+            char storeOrForward = entMeterResult.get(0).getStoreFwd();
+            // If fwd then get the fwd URL and pass the json to this
+            if (storeOrForward == 'f') {
+                fwdUrl = entMeterResult.get(0).getFwdUrl();
+                if (fwdUrl == null || fwdUrl == "") {
+                    GQGateKeeperConstants.logger.info("Forward URL is null/empty in the DB");
+                    session.close();
+                    return;
+                }
+            }
+            else {
+                // Local GQEDP application URL
+                fwdUrl = GQGateKeeperConstants.GQEDP_URL;
             }
 
             // ---------------------------------------------------------------------------------------------------------//

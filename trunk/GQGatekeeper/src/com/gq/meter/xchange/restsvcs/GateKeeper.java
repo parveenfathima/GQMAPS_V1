@@ -13,50 +13,57 @@ import javax.ws.rs.core.MediaType;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonSyntaxException;
 import com.gq.meter.GQMeterResponse;
 import com.gq.meter.xchange.filter.GateKeeperFilter;
+import com.gq.meter.xchange.util.GQGateKeeperConstants;
 
-//import com.sun.jerse
-// POJO, no interface no extends
-
-// The class registers its methods for the HTTP GET request using the @GET annotation. 
-// Using the @Produces annotation, it defines that it can deliver several MIME types,
-// text, XML and HTML. 
-
-// The browser requests per default the HTML MIME type.
-
-//Sets the path to base URL + /hello
+/**
+ * @author Chandru
+ * 
+ */
 @Path("/gatekeeper")
 public class GateKeeper {
 
-    // This method is called if TEXT_PLAIN is request
+    /**
+     * This is a test method which returns text response
+     * 
+     * @return
+     */
     @GET
     @Produces({ MediaType.TEXT_PLAIN, MediaType.TEXT_XML, MediaType.APPLICATION_XML })
     public String sayHello() {
+        GQGateKeeperConstants.logger.info("Gate keeper is up and running.....");
         return "Gate keeper is up and running.....";
     }
 
-    // This method is called if HTML is request
-    @GET
-    @Produces(MediaType.TEXT_HTML)
-    public String sayHtmlHello() {
-        return "<html> " + "<title>" + "Hello Jersey text html" + "</title>" + "<body><h1>" + "Hello Jersey text html "
-                + "</body></h1>" + "</html> ";
-    }
-
+    /**
+     * This method accepts json type string as input and processes the data
+     * 
+     * @param gqMeterResponseString
+     * @throws IOException
+     */
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    public void keepGate(@FormParam("gqMeterResponse") String gqMeterResponseString) throws IOException {
+    public void keepGate(@FormParam("gqMeterResponse") String gqMeterResponseString) {
+        GQGateKeeperConstants.logger.debug("Incoming json is : " + gqMeterResponseString);
+        GQGateKeeperConstants.logger.info("Data is received by GQGatekeeper");
+        Gson gson = new GsonBuilder().create();
 
-        System.out.println("Incoming json is => " + gqMeterResponseString);
+        GQMeterResponse gqMeterResponse = null;
+        try {
+            GQGateKeeperConstants.logger.info("Unmarshalling the received data");
+            // unmarshall the response from the gqmeter running in premise and start processing.....
+            gqMeterResponse = gson.fromJson(gqMeterResponseString, GQMeterResponse.class);
+        }
+        catch (JsonSyntaxException e) {
+            GQGateKeeperConstants.logger.fatal("Unmarshall exception is occured : ", e);
+        }
 
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-
-        GQMeterResponse gqMeterResponse = gson.fromJson(gqMeterResponseString, GQMeterResponse.class);
-        // unmarshall the response from the gqmeter running in premise and start processing.....
-
+        GQGateKeeperConstants.logger.info("Unmarshalll is finished successfully");
         GateKeeperFilter gkf = new GateKeeperFilter();
 
+        GQGateKeeperConstants.logger.info("Sending unmarshalled data for validation");
         gkf.process(gqMeterResponse);
     }
 
