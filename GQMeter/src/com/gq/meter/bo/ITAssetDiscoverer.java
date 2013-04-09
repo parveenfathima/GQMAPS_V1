@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.StringTokenizer;
 
+import javax.ws.rs.core.MediaType;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.gq.meter.GQErrorInformation;
@@ -23,8 +25,10 @@ import com.gq.meter.util.MeterUtils;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
+import com.sun.jersey.api.client.WebResource.Builder;
 import com.sun.jersey.api.client.config.ClientConfig;
 import com.sun.jersey.api.client.config.DefaultClientConfig;
+import com.sun.jersey.api.representation.Form;
 
 /**
  * @author chandru.p
@@ -260,7 +264,7 @@ public final class ITAssetDiscoverer {
         long startTime = System.currentTimeMillis();
         MeterUtils.compMeterTime = 0;
         MeterUtils.printMeterTime = 0;
-        MeterUtils.isrMeterTime = 0;
+        MeterUtils.nsrgMeterTime = 0;
 
         gqmResponse = new GQMeterResponse();
         List<ProtocolData> assetsList = null;
@@ -298,19 +302,22 @@ public final class ITAssetDiscoverer {
 
         System.out.println("Total time taken for all COMPUTER meters : " + MeterUtils.compMeterTime);
         System.out.println("Total time taken for all PRINTER meters : " + MeterUtils.printMeterTime);
-        System.out.println("Total time taken for all ISR meters : " + MeterUtils.isrMeterTime);
+        System.out.println("Total time taken for all ISR meters : " + MeterUtils.nsrgMeterTime);
         System.out.println("TOTAL duration taken for meter execution : " + (endTime - startTime));
 
         // Sending the generated json output to the server
         ClientConfig config = new DefaultClientConfig();
         Client client = Client.create(config);
-        WebResource service = client.resource(MeterUtils.restURL);
 
-        com.sun.jersey.api.representation.Form form = new com.sun.jersey.api.representation.Form();
+        WebResource service = client.resource(MeterUtils.restURL);
+        service = service.path("gqm-gqedp").path("gqentdataprocessor");
+
+        Form form = new Form();
         form.add("gqMeterResponse", gson.toJson(gqmResponse));
-        form.add("summary", "Demonstration of the client lib for forms");
-        ClientResponse response = service.path("gqm-gk").path("gatekeeper")
-                .type(javax.ws.rs.core.MediaType.APPLICATION_JSON).post(ClientResponse.class, form);
+        form.add("summary", "Sending the data from GQMeter to GQGatekeeper");
+
+        Builder builder = service.type(MediaType.APPLICATION_JSON);
+        ClientResponse response = builder.post(ClientResponse.class, form);
         // System.out.println("Form response " + response.getEntity(String.class));
     }
 

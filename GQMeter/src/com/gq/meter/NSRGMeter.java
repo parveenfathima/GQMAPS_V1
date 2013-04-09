@@ -22,6 +22,10 @@ import com.gq.meter.util.MeterConstants;
 import com.gq.meter.util.MeterProtocols;
 import com.gq.meter.util.MeterUtils;
 
+/**
+ * @author yogalakshmi.s
+ * 
+ */
 public class NSRGMeter implements GQSNMPMeter {
 
     List<String> errorList = new LinkedList<String>();
@@ -30,31 +34,26 @@ public class NSRGMeter implements GQSNMPMeter {
     public GQMeterData implement(String communityString, String ipAddress, String snmpVersion,
             LinkedList<String> toggleSwitches) {
 
-        long computerstartTime = System.currentTimeMillis();
+        long NSRGstartTime = System.currentTimeMillis();
         Snmp snmp = null;
 
         int runId = 0;
         String assetId = null; // unique identifier about the asset
         CPNId id = null;
 
-        // ASSET
-        String sysName = null;
-        String sysDescr = null;
-        String sysContact = null;
-        String sysLocation = null;
-        String extras = null; // anything device specific but to be discussed v2
-
-        // SNAPSHOT
+        // variables that are used to get the NSRG snapshot
         String sysIP = null; // string
         long upTime = 0; // seconds
         Short numberOfPorts = 0;
         Short numberOfPortsUp = 0;
         long networkBytesIn = 0; // bytes , v2
         long networkBytesOut = 0; // bytes , v2
+        String extras = null; // anything device specific but to be discussed v2
 
         CommunityTarget target = null;
         HashMap<String, Long> networkBytes = null;
         HashSet<NSRGConnDevice> connectedDevices = null;
+        Asset assetObj = null;
 
         try {
             snmp = new Snmp(new DefaultUdpTransportMapping());
@@ -66,50 +65,16 @@ public class NSRGMeter implements GQSNMPMeter {
             return null;
         }
 
-        // The following oid's is used to get system parameters
         try {
-            String oidString = "1.3.6.1.2.1.1";
+            // the below line is used to get the system basic info.
+            assetObj = MeterUtils.sysBasicInfo(communityString, ipAddress, snmpVersion, toggleSwitches);
+
+            String oidString = null;
             String temp;
             String tempStr;
-            int sysLength;
 
-            OID rootOID = new OID(oidString);
+            OID rootOID = null;
             List<VariableBinding> result = null;
-
-            result = MeterUtils.walk(rootOID, target); // walk done with the initial assumption that device is v2
-            if (result != null && !result.isEmpty()) {
-
-                temp = oidString + ".1.0";
-                sysDescr = MeterUtils.getSNMPValue(temp, result);
-                sysLength = sysDescr.length();
-                if (sysLength >= 200) {
-                    sysDescr = sysDescr.substring(0, 199);
-                }
-
-                temp = oidString + ".4.0";
-                sysContact = MeterUtils.getSNMPValue(temp, result);
-                sysLength = sysContact.length();
-                if (sysLength >= 45) {
-                    sysContact = sysContact.substring(0, 44);
-                }
-
-                temp = oidString + ".5.0";
-                sysName = MeterUtils.getSNMPValue(temp, result);
-                sysLength = sysName.length();
-                if (sysLength >= 45) {
-                    sysName = sysName.substring(0, 44);
-                }
-
-                temp = oidString + ".6.0";
-                sysLocation = MeterUtils.getSNMPValue(temp, result);
-                sysLength = sysLocation.length();
-                if (sysLength >= 45) {
-                    sysLocation = sysLocation.substring(0, 44);
-                }
-            }
-            else {
-                errorList.add("Root OID : 1.3.6.1.2.1.1" + " " + MeterConstants.STANDARD_SYSTEM_ATTRIBUTES_ERROR);
-            }
 
             // The following oid's is used to get the asset ID.
             oidString = "1.3.6.1.2.1.2.2.1.6";
@@ -128,13 +93,13 @@ public class NSRGMeter implements GQSNMPMeter {
             // ASSET ID , RUN ID STARTS HERE.
             id = new CPNId(runId, assetId);
 
-            for (String element : toggleSwitches) {
+            for (String element : toggleSwitches) { // main for loop starts
                 if (element.equalsIgnoreCase(MeterConstants.FULL_DETAILS)
-                        || element.equalsIgnoreCase(MeterConstants.SNAPSHOT)) {
-                    // The following oid's is used to get number of ports
+                        || element.equalsIgnoreCase(MeterConstants.SNAPSHOT)) { // main if loop starts
 
                     sysIP = ipAddress;
 
+                    // The following oid's is used to get number of ports
                     oidString = "1.3.6.1.2.1.1";
                     rootOID = new OID(oidString);
 
@@ -188,11 +153,11 @@ public class NSRGMeter implements GQSNMPMeter {
                     else {
                         errorList.add("Root OID : 1.3.6.1.2.1.2.2.1" + " " + "Unable to get network bandwidth details");
                     }
-                }
-                // The following oid's is used to get the devices that are connected to NSRG.
+                } // main if loop ends
+                  // The following oid's is used to get the devices that are connected to NSRG.
 
                 if (element.equalsIgnoreCase(MeterConstants.FULL_DETAILS)
-                        || element.equalsIgnoreCase(MeterConstants.CONNECTED_DEVICES)) {
+                        || element.equalsIgnoreCase(MeterConstants.CONNECTED_DEVICES)) {// 1st if loop starts
                     oidString = ".1.3.6.1.2.1.4.22.1.4";
                     rootOID = new OID(oidString);
                     result = MeterUtils.walk(rootOID, target);
@@ -204,21 +169,12 @@ public class NSRGMeter implements GQSNMPMeter {
                         errorList.add("Root OID : 1.3.6.1.2.1.4.22.1.4" + " "
                                 + "Unable to provide list of connected devices");
                     }
-                }
-            }// for loop ends
+                } // 1st if loop ends
+            }// main for loop ends
         }
         catch (Exception e) {
             errorList.add(ipAddress + " " + e.getMessage());
         }
-
-        String protocolId = "protocolid";
-        String appId = "app_id";
-        String assetUsg = "assetUsg";
-        Byte assetStrength = 1;
-        String ctlgId = "ctlg_id";
-
-        Asset assetObj = new Asset(assetId, protocolId, sysName, sysDescr, sysContact, sysLocation, appId, assetUsg,
-                assetStrength, ctlgId);
 
         NSRGSnapshot nsrgSnapShot = new NSRGSnapshot(id, sysIP, upTime, numberOfPorts, numberOfPortsUp, networkBytesIn,
                 networkBytesOut, extras);
@@ -227,13 +183,13 @@ public class NSRGMeter implements GQSNMPMeter {
 
         GQErrorInformation gqErrorInfo = null;
         if (errorList != null && !errorList.isEmpty()) {
-            gqErrorInfo = new GQErrorInformation(sysDescr, errorList);
+            gqErrorInfo = new GQErrorInformation(assetObj.getDescr(), errorList);
         }
         GQMeterData gqMeterObject = new GQMeterData(gqErrorInfo, nsrg);
 
-        long computerendTime = System.currentTimeMillis();
-        MeterUtils.isrMeterTime = MeterUtils.isrMeterTime + (computerendTime - computerstartTime);
-        System.out.println("Time taken bye the isr meter is : " + (computerendTime - computerstartTime));
+        long NSRGendTime = System.currentTimeMillis();
+        MeterUtils.nsrgMeterTime = MeterUtils.nsrgMeterTime + (NSRGendTime - NSRGstartTime);
+        System.out.println("Time taken bye the nsrg meter is : " + (NSRGendTime - NSRGstartTime));
         return gqMeterObject;
     }
 
@@ -249,19 +205,18 @@ public class NSRGMeter implements GQSNMPMeter {
         String rootId = rootOid.toString();
         String totalPorts = null;
         long totalActivePorts = 0;
-        for (VariableBinding vb : result) {
+        for (VariableBinding vb : result) { // for loop starts
 
             String lastchar = String.valueOf(vb.getOid().last());
             totalPorts = rootId + "." + lastchar;
 
-            if (totalPorts != null && vb.getOid().toString().equals(totalPorts)) {
-
+            if (totalPorts != null && vb.getOid().toString().equals(totalPorts)) { // 1st if loop starts
                 String activeAndInactivePorts = vb.getVariable().toString().trim();
                 if (!activeAndInactivePorts.equalsIgnoreCase("2")) {
                     totalActivePorts++;
                 }
-            }
-        }
+            } // 1st if loop ends
+        } // for loop ends
         return totalActivePorts;
     }
 
@@ -282,17 +237,17 @@ public class NSRGMeter implements GQSNMPMeter {
         long switchNetworkOut = 0;
         String rootId = rootOid.toString();
 
-        for (VariableBinding vb : result) {
+        for (VariableBinding vb : result) { // for loop starts
             String lastchar = String.valueOf(vb.getOid().last());
 
             networkInOid = rootId + "." + "10" + "." + lastchar;
 
             networkOutOid = rootId + "." + "16" + "." + lastchar;
 
-            if (networkInOid != null && vb.getOid().toString().contains(networkInOid)) {
+            if (networkInOid != null && vb.getOid().toString().contains(networkInOid)) { // 1st if loop ends
 
                 String switchNetworkInVal = vb.getVariable().toString().trim();
-                if (!switchNetworkInVal.equalsIgnoreCase("0")) {
+                if (!switchNetworkInVal.equalsIgnoreCase("0")) { // 2nd if loop starts
 
                     String switchNetworkInStr = vb.getVariable().toString().trim();
 
@@ -303,8 +258,8 @@ public class NSRGMeter implements GQSNMPMeter {
                     }
 
                 } // 2nd if loop ends
-            } // if loop ends
-            else if (networkOutOid != null && vb.getOid().toString().contains(networkOutOid)) {
+            } // 1st if loop ends
+            else if (networkOutOid != null && vb.getOid().toString().contains(networkOutOid)) { // else if loop starts
                 String switchNetworkOutVal = vb.getVariable().toString().trim();
 
                 if (!switchNetworkOutVal.equalsIgnoreCase("0")) {
@@ -319,7 +274,7 @@ public class NSRGMeter implements GQSNMPMeter {
                         errorList.add(MeterConstants.NO_VALUE + switchNetworkOut);
                     }
                 }
-            }
+            } // else if loop ends
         } // for loop ends
         return switchNetworkMap;
 
@@ -343,9 +298,9 @@ public class NSRGMeter implements GQSNMPMeter {
         NSRGConnDevice nsrgConnDevice = null;
         NSRGConnDeviceId nsrgConnDeviceId = null;
 
-        for (VariableBinding vb : result) {
+        for (VariableBinding vb : result) { // for loop starts
             String dynamic = vb.getVariable().toString().trim();
-            if (dynamic.trim().equalsIgnoreCase("3")) {
+            if (dynamic.trim().equalsIgnoreCase("3")) { // if loop starts
                 String dynamicOID = vb.getOid().toString();
                 finalIP = dynamicOID.substring(23);
                 if (finalIP != null && finalIP.trim().length() != 0) {
@@ -354,8 +309,8 @@ public class NSRGMeter implements GQSNMPMeter {
                     connectedDevices.add(nsrgConnDevice);
                 }
 
-            }
-        }
+            } // if loop ends
+        } // for loop ends
         return connectedDevices;
     }
 }
