@@ -44,6 +44,8 @@ public class MeterConstants {
 
     public static final String NSRG_SWITCHS = "@nsrg";
 
+    public static final String STORAGE_SWITCHS = "@storage";
+
     public static final String METER_ID = "$meterid";
 
     public static final String FULL_DETAILS = "full";

@@ -33,6 +33,10 @@ import com.gq.meter.util.MeterConstants;
 import com.gq.meter.util.MeterProtocols;
 import com.gq.meter.util.MeterUtils;
 
+/**
+ * @author yogalakshmi.s
+ * 
+ */
 public class ComputerMeter implements GQSNMPMeter {
 
     List<String> errorList = new LinkedList<String>();
@@ -42,21 +46,13 @@ public class ComputerMeter implements GQSNMPMeter {
             LinkedList<String> toggleSwitches) {
 
         long computerstartTime = System.currentTimeMillis();
-
         Snmp snmp = null;
-
         int runId = 0;
         String assetId = null; // unique identifier about the asset
+        String sysDescription = null;
         CPNId id = null;
 
-        // ASSET
-        String sysName = null; // string
-        String sysDescr = null; // string
-        String sysContact = null; // string
-        String sysLocation = null; // string
-        String extras = null; // anything device specific but to be discussed v2
-
-        // SNAPSHOT
+        // Variables that are used to get the computer snapshot
         String sysIP = null; // string
         String osId = null; // string
         short cpuLoad = 0; // in percentage
@@ -72,14 +68,17 @@ public class ComputerMeter implements GQSNMPMeter {
         long networkBytesIn = 0; // bytes
         long networkBytesOut = 0; // bytes
         double clockSpeed = 0; // v2
+        String extras = null; // anything device specific but to be discussed v2
 
         CommunityTarget target = null;
         HashMap<String, String> networkBytes = null;
         ArrayList<CompInstSoftware> installedSwList = null;
         HashSet<CompConnDevice> connectedDevices = null;
         ArrayList<CompProcess> processList = null;
+        Asset assetObj = null;
 
         try {
+
             snmp = new Snmp(new DefaultUdpTransportMapping());
             snmp.listen();
             target = MeterUtils.makeTarget(ipAddress, communityString, snmpVersion);
@@ -89,64 +88,30 @@ public class ComputerMeter implements GQSNMPMeter {
             return null;
         }
 
-        // The following oid's is used to get system basic info
         try {
+            // the below line is used to get the system basic info.
+            assetObj = MeterUtils.sysBasicInfo(communityString, ipAddress, snmpVersion, toggleSwitches);
 
-            String oidString = "1.3.6.1.2.1.1";
+            String oidString = null;
             String temp;
             String tempStr;
-            int sysLength;
             boolean isWindows = false;
-
-            OID rootOID = new OID(oidString);
+            OID rootOID = null;
             List<VariableBinding> result = null;
 
-            result = MeterUtils.walk(rootOID, target); // walk done with the initial assumption that device is v2
-
-            if (result != null && !result.isEmpty()) {
-                temp = oidString + ".1.0";
-                sysDescr = MeterUtils.getSNMPValue(temp, result).toLowerCase();
-                sysLength = sysDescr.length();
-                if (sysLength >= 200) {
-                    sysDescr = sysDescr.substring(0, 199);
+            sysDescription = assetObj.getDescr();
+            if (null != sysDescription) { // 1st if starts
+                if (sysDescription.contains("windows")) {
+                    osId = "windows";
+                    isWindows = true;
                 }
-
-                if (null != sysDescr) {
-                    if (sysDescr.contains("windows")) {
-                        osId = "windows";
-                        isWindows = true;
-                    }
-                    else if (sysDescr.contains("linux")) {
-                        osId = "linux";
-                    }
-                    else if (sysDescr.contains("unix")) {
-                        osId = "unix";
-                    }
+                else if (sysDescription.contains("linux")) {
+                    osId = "linux";
                 }
-                temp = oidString + ".4.0";
-                sysContact = MeterUtils.getSNMPValue(temp, result);
-                sysLength = sysContact.length();
-                if (sysLength >= 45) {
-                    sysContact = sysContact.substring(0, 44);
+                else if (sysDescription.contains("unix")) {
+                    osId = "unix";
                 }
-
-                temp = oidString + ".5.0";
-                sysName = MeterUtils.getSNMPValue(temp, result);
-                sysLength = sysName.length();
-                if (sysLength >= 45) {
-                    sysName = sysName.substring(0, 44);
-                }
-
-                temp = oidString + ".6.0";
-                sysLocation = MeterUtils.getSNMPValue(temp, result);
-                sysLength = sysLocation.length();
-                if (sysLength >= 45) {
-                    sysLocation = sysLocation.substring(0, 44);
-                }
-            }
-            else {
-                errorList.add("Root OID : 1.3.6.1.2.1.1" + " " + MeterConstants.STANDARD_SYSTEM_ATTRIBUTES_ERROR);
-            }
+            }// 1st if ends
 
             // the following oid's is used to get the asset id for windows.
             if (isWindows) {
@@ -159,11 +124,12 @@ public class ComputerMeter implements GQSNMPMeter {
                     networkBytes = winAssetIdCalc(result, rootOID, winNetworkMap);
 
                     assetId = MeterProtocols.COMPUTER + "-" + networkBytes.get("macWinNetworkValue");
+                    assetObj.setAssetId(assetId);
 
-                }
-            }// if ends
+                }// 2nd if ends
+            }// 1st if ends
 
-            // the following oid's is used to get the asset id for linux.
+            // the following oid's is used to get the asset id for Linux.
             else {
                 oidString = ".1.3.6.1.2.1.2.2.1";
                 rootOID = new OID(oidString);
@@ -174,29 +140,30 @@ public class ComputerMeter implements GQSNMPMeter {
                             "em3", "wlan" };
 
                     HashMap<String, List<Long>> networkMap = new HashMap<String, List<Long>>();
-                    networkBytes = linuxAssetIdCalc(result, rootOID, ethernet, networkMap, assetId, sysDescr);
+                    networkBytes = linuxAssetIdCalc(result, rootOID, ethernet, networkMap, assetId, sysDescription);
                     assetId = MeterProtocols.COMPUTER + "-" + networkBytes.get("assetId");
+                    assetObj.setAssetId(assetId);
                 }
                 else {
                     errorList.add("Root OID : 1.3.6.1.2.1.2.2.1" + " "
                             + "Unable to get network bandwidth details and unable to collate asset ID");
-                }
-            }// else ends
+                }// 2nd else ends
+            }// 1st else ends
 
             // ASSET ID , RUN ID STARTS HERE.
             id = new CPNId(runId, assetId);
 
-            for (String element : toggleSwitches) {
+            for (String element : toggleSwitches) { // main for loop starts here
 
                 if (element.equalsIgnoreCase(MeterConstants.FULL_DETAILS)
-                        || element.equalsIgnoreCase(MeterConstants.SNAPSHOT)) {
+                        || element.equalsIgnoreCase(MeterConstants.SNAPSHOT)) { // main if loop starts here
 
                     sysIP = ipAddress;
 
                     oidString = "1.3.6.1.2.1.1";
                     rootOID = new OID(oidString);
-
                     result = MeterUtils.walk(rootOID, target);
+
                     if (result != null && !result.isEmpty()) {
                         temp = oidString + ".3.0";
                         tempStr = MeterUtils.getSNMPValue(temp, result);
@@ -208,7 +175,7 @@ public class ComputerMeter implements GQSNMPMeter {
                     rootOID = new OID(oidString);
                     result = MeterUtils.walk(rootOID, target);
 
-                    if (result != null && !result.isEmpty()) {
+                    if (result != null && !result.isEmpty()) { // 1st if loop starts
                         temp = oidString + ".5.0";
                         tempStr = MeterUtils.getSNMPValue(temp, result);
                         if (tempStr != null) {
@@ -217,10 +184,10 @@ public class ComputerMeter implements GQSNMPMeter {
 
                         temp = oidString + ".6.0";
                         tempStr = MeterUtils.getSNMPValue(temp, result);
-                        if (tempStr != null) {
+                        if (tempStr != null) { // 2nd if loop starts
                             numProcesses = (short) Integer.parseInt(tempStr);
-                        }
-                    }
+                        } // 2nd if loop ends
+                    } // 1st if loop ends
                     else {
                         errorList.add("Root OID : 1.3.6.1.2.1.25.1" + " "
                                 + "Unable to get number of users and processes");
@@ -232,10 +199,10 @@ public class ComputerMeter implements GQSNMPMeter {
                     rootOID = new OID(oidString);
                     result = MeterUtils.walk(rootOID, target);
 
-                    if (result != null && !result.isEmpty()) {
+                    if (result != null && !result.isEmpty()) { // 1st if loop starts
                         String variable = null;
 
-                        if (isWindows) {
+                        if (isWindows) { // 2nd if loop starts
                             variable = ":\\";
                             long windowsDriveSize = getMemorycalc(result, rootOID, variable, false);
                             long usedWindowsDriveSize = getMemorycalc(result, rootOID, variable, true);
@@ -251,8 +218,8 @@ public class ComputerMeter implements GQSNMPMeter {
                             totalDiskSpace = windowsDriveSize + totalVirtualMemory;
                             usedDiskSpace = usedWindowsDriveSize + usedVirtualMemory;
 
-                        }// if loop ends
-                        else {
+                        }// 2nd if loop ends
+                        else { // 1st else loop starts
                             variable = "/dev/shm";
                             long linuxDriveSize = getMemorycalc(result, rootOID, variable, false);
                             long usedLinuxDriveSize = getMemorycalc(result, rootOID, variable, true);
@@ -285,11 +252,11 @@ public class ComputerMeter implements GQSNMPMeter {
                                 totalMemory = getMemorycalc(result, rootOID, variable, false);
                                 usedMemory = getMemorycalc(result, rootOID, variable, true);
                             }
-                            else {
+                            else { // 2nd else loop starts
                                 usedMemory = getMemorycalc(result, rootOID, variable, true);
-                            }
-                        } // else loop ends
-                    }
+                            } // 2nd else loop ends
+                        } // 1st else loop ends
+                    } // 1st if loop ends
                     else {
                         errorList
                                 .add("Root OID : 1.3.6.1.2.1.25.2.3.1" + " " + "Unable to get disk and memory details");
@@ -308,12 +275,12 @@ public class ComputerMeter implements GQSNMPMeter {
                     }
 
                     // the following oid's is used to get network in and out bytes for windows
-                    if (isWindows) {
+                    if (isWindows) { // 1st if loop starts
                         oidString = ".1.3.6.1.2.1.2.2.1";
                         rootOID = new OID(oidString);
                         result = MeterUtils.walk(rootOID, target);
 
-                        if (result != null && !result.isEmpty()) {
+                        if (result != null && !result.isEmpty()) { // 2nd if loop starts
                             HashMap<String, String> winNetworkMap = new HashMap<String, String>();
                             networkBytes = winNetworkBytesCalc(result, rootOID, winNetworkMap);
 
@@ -322,7 +289,7 @@ public class ComputerMeter implements GQSNMPMeter {
 
                             String networkBytesOutStr = networkBytes.get("OutBytes");
                             networkBytesOut = Long.parseLong(networkBytesOutStr);
-                        }
+                        } // 2nd if loop ends
                         else {
                             errorList.add("Root OID : 1.3.6.1.2.1.2.2.1" + " "
                                     + "Unable to get network bandwidth details and unable to collate asset ID");
@@ -330,17 +297,18 @@ public class ComputerMeter implements GQSNMPMeter {
                     }// 1st if loop ends
 
                     // the following oid's is used to get network in and out bytes for Linux
-                    else {
+                    else { // 1st else loop starts
                         oidString = ".1.3.6.1.2.1.2.2.1";
                         rootOID = new OID(oidString);
                         result = MeterUtils.walk(rootOID, target);
 
-                        if (result != null && !result.isEmpty()) {
+                        if (result != null && !result.isEmpty()) { // 1st if loop starts
                             String[] ethernet = new String[] { "eth0", "eth1", "eth2", "en1", "en2", "en3", "em1",
                                     "em2", "em3", "wlan" };
 
                             HashMap<String, List<Long>> networkMap = new HashMap<String, List<Long>>();
-                            networkBytes = networkBytesCalc(result, rootOID, ethernet, networkMap, assetId, sysDescr);
+                            networkBytes = networkBytesCalc(result, rootOID, ethernet, networkMap, assetId,
+                                    sysDescription);
                             for (int i = 0; i < ethernet.length; i++) {
                                 if (networkBytes.get(ethernet[i] + "InBytes") != null) {
                                     networkBytesIn = networkBytesIn
@@ -351,23 +319,23 @@ public class ComputerMeter implements GQSNMPMeter {
                                             + Long.parseLong(networkBytes.get(ethernet[i] + "OutBytes"));
                                 }
                             } // for loop ends
-                        }
+                        }// 1st if loop ends
                         else {
                             errorList.add("Root OID : 1.3.6.1.2.1.2.2.1" + " "
                                     + "Unable to get network bandwidth details  and unable to collate asset ID");
                         }
-                    }
-                }
+                    } // 1st else loop ends
+                } // main if loop ends here
 
                 // the following oid's is used to get the installed software list
                 if (element.equalsIgnoreCase(MeterConstants.FULL_DETAILS)
-                        || element.equalsIgnoreCase(MeterConstants.INSTALLED_SOFTWARE)) {
+                        || element.equalsIgnoreCase(MeterConstants.INSTALLED_SOFTWARE)) { // 1st if loop starts
 
                     oidString = ".1.3.6.1.2.1.25.6.3.1.4";
                     rootOID = new OID(oidString);
                     List<VariableBinding> appResult = MeterUtils.walk(rootOID, target);
 
-                    if (appResult != null && !appResult.isEmpty()) {
+                    if (appResult != null && !appResult.isEmpty()) { // 2nd if loop starts
                         oidString = ".1.3.6.1.2.1.25.6.3.1.2";
                         rootOID = new OID(oidString);
                         List<VariableBinding> softwareResult = MeterUtils.walk(rootOID, target);
@@ -378,7 +346,7 @@ public class ComputerMeter implements GQSNMPMeter {
 
                         installedSwList = installedSwListCalc(appResult, softwareResult, dateResult, rootOID,
                                 isWindows, id);
-                    }
+                    } // 2nd if loop ends
                     else {
                         errorList.add("Root OID : 1.3.6.1.2.1.25.6.3.1.4" + " "
                                 + "Unable to get list of installed software");
@@ -387,7 +355,7 @@ public class ComputerMeter implements GQSNMPMeter {
 
                 // the following oid's is used to get the IP and port number for the devices that is connected.
                 if (element.equalsIgnoreCase(MeterConstants.FULL_DETAILS)
-                        || element.equalsIgnoreCase(MeterConstants.CONNECTED_DEVICES)) {
+                        || element.equalsIgnoreCase(MeterConstants.CONNECTED_DEVICES)) { // 1st if loop starts
 
                     if (result != null && !result.isEmpty()) {
                         oidString = ".1.3.6.1.2.1.6.13.1.1";
@@ -399,12 +367,12 @@ public class ComputerMeter implements GQSNMPMeter {
                         errorList.add("Root OID : 1.3.6.1.2.1.6.13.1.1" + " "
                                 + "Unable to get port number and ip address of connected devices");
                     }
-                }
+                } // 1st if loop ends
 
                 // The following OID is used to get the System run name, CPU and memory share for a particular process .
                 if (element.equalsIgnoreCase(MeterConstants.FULL_DETAILS)
-                        || element.equalsIgnoreCase(MeterConstants.PROCESS)) {
-                    if (result != null && !result.isEmpty()) {
+                        || element.equalsIgnoreCase(MeterConstants.PROCESS)) { // 1st if loop starts
+                    if (result != null && !result.isEmpty()) { // 2nd if loop starts
                         oidString = ".1.3.6.1.2.1.25.4.2.1.2";
                         rootOID = new OID(oidString);
                         List<VariableBinding> sysRunNameResult = MeterUtils.walk(rootOID, target);
@@ -418,27 +386,19 @@ public class ComputerMeter implements GQSNMPMeter {
                         List<VariableBinding> memShareResult = MeterUtils.walk(rootOID, target);
 
                         processList = ProcessCalc(result, rootOID, sysRunNameResult, cpuShareResult, memShareResult, id);
-                    }
+                    } // 2nd if loop ends
                     else {
                         errorList.add("Root OID : .1.3.6.1.2.1.25" + " "
                                 + "Unable to get the system run name, cpu and memory share");
                     }
-                }
-            }// for loop ends
+                } // 1st if loop ends
+            }// main for loop ends here
         }
         catch (Exception e) {
             errorList.add(ipAddress + " " + e.getMessage());
         }
 
-        String protocolId = "protocolid";
-        String appId = "app_id";
-        String assetUsg = "assetUsg";
-        Byte assetStrength = 1;
-        String ctlgId = "ctlg_id";
         String descr = "descr";
-
-        Asset assetObj = new Asset(assetId, protocolId, sysName, sysDescr, sysContact, sysLocation, appId, assetUsg,
-                assetStrength, ctlgId);
 
         OsType osTypeObj = new OsType(osId, descr);
 
@@ -451,7 +411,7 @@ public class ComputerMeter implements GQSNMPMeter {
 
         GQErrorInformation gqErrorInfo = null;
         if (errorList != null && !errorList.isEmpty()) {
-            gqErrorInfo = new GQErrorInformation(sysDescr, errorList);
+            gqErrorInfo = new GQErrorInformation(sysDescription, errorList);
         }
         GQMeterData gqMeterObject = new GQMeterData(gqErrorInfo, compObject);
         long computerendTime = System.currentTimeMillis();
@@ -459,7 +419,7 @@ public class ComputerMeter implements GQSNMPMeter {
         System.out.println("Time taken bye the computer meter is : " + (computerendTime - computerstartTime));
         return gqMeterObject;
 
-    }
+    } // GQMeterData method ends
 
     /**
      * This method is used to calculate the CPU Load that is consumed by the asset.
@@ -503,7 +463,7 @@ public class ComputerMeter implements GQSNMPMeter {
         String rootId = rootOid.toString();
         Long memory = 0L;
 
-        for (VariableBinding vb : result) {
+        for (VariableBinding vb : result) { // 1st for loop starts
             String temp = vb.getVariable().toString().trim();
             boolean isValid = false;
             if (temp.contains("/") && temp.trim().equals(variable)) {
@@ -516,7 +476,7 @@ public class ComputerMeter implements GQSNMPMeter {
                 isValid = true;
             }
 
-            if (isValid) {
+            if (isValid) { // 2nd if loop starts
                 String lastValue = String.valueOf(vb.getOid().last());
                 mulBytesOID = rootId + "." + "4" + "." + lastValue;
                 if (!isUsed) {
@@ -525,7 +485,7 @@ public class ComputerMeter implements GQSNMPMeter {
                 else {
                     usedMultiplyOID = rootId + "." + "6" + "." + lastValue;
                 }
-                for (VariableBinding vbs : result) {
+                for (VariableBinding vbs : result) { // 2nd for loop starts
                     if (vbs.getOid().toString().trim().equals(mulBytesOID)) {
                         mulBytes = vbs.getVariable().toString().trim();
                     }
@@ -535,7 +495,7 @@ public class ComputerMeter implements GQSNMPMeter {
                     else if (isUsed && vbs.getOid().toString().trim().equals(usedMultiplyOID)) {
                         usedMultiply = vbs.getVariable().toString().trim();
                     }
-                }
+                } // 2nd for loop ends
                 if (!isUsed && mulBytes != null && toMultiply != null) {
                     memory = memory + Long.parseLong(mulBytes.trim()) * Long.parseLong(toMultiply.trim());
                 }
@@ -545,8 +505,8 @@ public class ComputerMeter implements GQSNMPMeter {
                 else {
                     errorList.add(MeterConstants.NO_VALUE + " " + memory);
                 }
-            } // if loop ends
-        } // for loop ends
+            } // 2nd if loop ends
+        } // 1st for loop ends
         return memory;
     }
 
@@ -562,7 +522,7 @@ public class ComputerMeter implements GQSNMPMeter {
      * @return
      */
     private HashMap<String, String> networkBytesCalc(List<VariableBinding> result, OID rootOid, String[] ethernet,
-            HashMap<String, List<Long>> networkMap, String assetId, String sysDescr) {
+            HashMap<String, List<Long>> networkMap, String assetId, String sysDescription) {
 
         String networkInOid = null;
         String networkInStr = null;
@@ -572,9 +532,9 @@ public class ComputerMeter implements GQSNMPMeter {
         String rootId = rootOid.toString();
         HashMap<String, HashMap<String, String>> macOidMap = new HashMap<String, HashMap<String, String>>();
         HashMap<String, String> networkValues = new HashMap<String, String>();
-        for (int i = 0; i < ethernet.length; i++) {
-            for (VariableBinding vb : result) {
-                if (vb.getVariable().toString().trim().equalsIgnoreCase(ethernet[i])) {
+        for (int i = 0; i < ethernet.length; i++) { // 1st for loop starts
+            for (VariableBinding vb : result) { // 2nd for loo starts
+                if (vb.getVariable().toString().trim().equalsIgnoreCase(ethernet[i])) { // 1st if loop starts
                     String lastchar = String.valueOf(vb.getOid().last());
 
                     macOid = rootId + "." + "6" + "." + lastchar;
@@ -583,7 +543,7 @@ public class ComputerMeter implements GQSNMPMeter {
 
                     networkOutOid = rootId + "." + "16" + "." + lastchar;
 
-                    for (VariableBinding vbs : result) {
+                    for (VariableBinding vbs : result) { // 3rd for loop starts
                         if (networkInOid != null && vbs.getOid().toString().trim().equals(networkInOid)) {
                             networkInStr = vbs.getVariable().toString();
                             if (networkMap.get(ethernet[i] + "InBytes") == null
@@ -633,7 +593,7 @@ public class ComputerMeter implements GQSNMPMeter {
                                 macOidMap.get(ethernet[i]).put(vbs.getOid().toString(), vbs.getVariable().toString());
                             }
                         }
-                    }
+                    } // 3rd for loop ends
 
                     // Check MAC address and return the max value of {"eth0", "eth1", "eth2", "en1" , "en2","en3",
                     // "em1", "em2" ,"em3", "wlan"} in the return values
@@ -685,14 +645,14 @@ public class ComputerMeter implements GQSNMPMeter {
 
         String rootId = rootOid.toString();
 
-        for (VariableBinding vb : result) {
+        for (VariableBinding vb : result) { // 1st for loop starts
             String lastchar = String.valueOf(vb.getOid().last());
 
             networkInOid = rootId + "." + "10" + "." + lastchar;
 
             networkOutOid = rootId + "." + "16" + "." + lastchar;
 
-            if (networkInOid != null && vb.getOid().toString().contains(networkInOid)) {
+            if (networkInOid != null && vb.getOid().toString().contains(networkInOid)) { // 1st if loop starts
                 String winNetworkInVal = vb.getVariable().toString().trim();
 
                 if (!winNetworkInVal.equalsIgnoreCase("0")) {
@@ -700,24 +660,24 @@ public class ComputerMeter implements GQSNMPMeter {
                     winNetworkMap.put("InBytes", winNetworkInValue);
 
                     macWinNetworkId = rootId + "." + "6" + "." + lastchar;
-                    for (VariableBinding vbs : result) {
+                    for (VariableBinding vbs : result) { // 2nd for loop starts
                         if (macWinNetworkId != null && vbs.getOid().toString().contains(macWinNetworkId)) {
                             String macWinNetworkValue = vbs.getVariable().toString().trim().replaceAll(":", "");
                             winNetworkMap.put("macWinNetworkValue", macWinNetworkValue);
                         }
-                    }// for loop ends
+                    }// 2nd for loop ends
                 } // 2nd if loop ends
 
-            }
+            } // 1st if loop ends
             else if (networkOutOid != null && vb.getOid().toString().contains(networkOutOid)) {
                 String winNetworkOutVal = vb.getVariable().toString().trim();
                 if (!winNetworkOutVal.equalsIgnoreCase("0")) {
                     String winNetworkOutValue = vb.getVariable().toString().trim();
                     winNetworkMap.put("OutBytes", winNetworkOutValue);
                 }
-            }
+            } // else if loop ends
 
-        } // for loop ends
+        } // 1st for loop ends
         return winNetworkMap;
 
     } // network bytes calculation for windows gets over.
@@ -734,21 +694,21 @@ public class ComputerMeter implements GQSNMPMeter {
      * @return
      */
     private HashMap<String, String> linuxAssetIdCalc(List<VariableBinding> result, OID rootOid, String[] ethernet,
-            HashMap<String, List<Long>> networkMap, String assetId, String sysDescr) {
+            HashMap<String, List<Long>> networkMap, String assetId, String sysDescription) {
         String macOid = null;
         String rootId = rootOid.toString();
         HashMap<String, HashMap<String, String>> macOidMap = new HashMap<String, HashMap<String, String>>();
         HashMap<String, String> networkValues = new HashMap<String, String>();
 
-        for (int i = 0; i < ethernet.length; i++) {
-            for (VariableBinding vb : result) {
-                if (vb.getVariable().toString().trim().equalsIgnoreCase(ethernet[i])) {
+        for (int i = 0; i < ethernet.length; i++) { // 1st for loop starts
+            for (VariableBinding vb : result) { // 2nd for loop starts
+                if (vb.getVariable().toString().trim().equalsIgnoreCase(ethernet[i])) { // 1st if loop starts
                     String lastchar = String.valueOf(vb.getOid().last());
 
                     macOid = rootId + "." + "6" + "." + lastchar;
-                    for (VariableBinding vbs : result) {
+                    for (VariableBinding vbs : result) { // 3rd for loop starts
 
-                        if (vbs.getOid().toString().trim().equals(macOid)) {
+                        if (vbs.getOid().toString().trim().equals(macOid)) { // 2nd if loop starts
                             if (macOidMap.get(ethernet[i]) == null || macOidMap.get(ethernet[i]).size() == 0
                                     || macOidMap.get(ethernet[i]).isEmpty()) {
                                 HashMap<String, String> macMap = new HashMap<String, String>();
@@ -758,12 +718,12 @@ public class ComputerMeter implements GQSNMPMeter {
                             else {
                                 macOidMap.get(ethernet[i]).put(vbs.getOid().toString(), vbs.getVariable().toString());
                             }
-                        }
+                        } // 2nd if loop ends
 
-                    }
-                }
-            }
-        }// for loop ends
+                    } // 3rd for loop ends
+                } // 1st if loop ends
+            } // 2nd for loop ends
+        } // 1st for loop ends
 
         Set<String> uniqueValues = new HashSet<String>(macOidMap.get("eth0").values());
         if (macOidMap.get("eth0") != null && macOidMap.get("eth0").size() != 0) {
@@ -791,30 +751,30 @@ public class ComputerMeter implements GQSNMPMeter {
         String macWinNetworkId = null;
         String rootId = rootOid.toString();
 
-        for (VariableBinding vb : result) {
+        for (VariableBinding vb : result) { // 1st for loop starts
             String lastchar = String.valueOf(vb.getOid().last());
 
             networkOid = rootId + "." + "10" + "." + lastchar;
 
-            if (networkOid != null && vb.getOid().toString().contains(networkOid)) {
+            if (networkOid != null && vb.getOid().toString().contains(networkOid)) { // 1st if loop starts
                 String winNetworkInVal = vb.getVariable().toString().trim();
 
-                if (!winNetworkInVal.equalsIgnoreCase("0")) {
+                if (!winNetworkInVal.equalsIgnoreCase("0")) { // 2nd if loop starts
                     String winNetworkInValue = vb.getVariable().toString().trim();
                     winNetworkMap.put("InBytes", winNetworkInValue);
 
                     macWinNetworkId = rootId + "." + "6" + "." + lastchar;
-                    for (VariableBinding vbs : result) {
+                    for (VariableBinding vbs : result) { // 2nd for loop starts
                         if (macWinNetworkId != null && vbs.getOid().toString().contains(macWinNetworkId)) {
                             String macWinNetworkValue = vbs.getVariable().toString().trim().replaceAll(":", "");
                             winNetworkMap.put("macWinNetworkValue", macWinNetworkValue);
                         }
-                    }// for loop ends
+                    }// 2nd for loop ends
                 } // 2nd if loop ends
 
-            }
+            } // 1st if loop ends
 
-        }// for loop ends
+        }// 1st for loop ends
         return winNetworkMap;
     }
 
@@ -840,11 +800,11 @@ public class ComputerMeter implements GQSNMPMeter {
         ArrayList<CompInstSoftware> installedSwList = new ArrayList<CompInstSoftware>(installedSoftwareSize);
         CompInstSoftwareId ins = null;
         try {
-            for (int i = 0; i < appResult.size(); i++) {
-                if (appResult.get(i).getVariable().toString().trim().equals("4")) {
+            for (int i = 0; i < appResult.size(); i++) { // for loop starts
+                if (appResult.get(i).getVariable().toString().trim().equals("4")) { // 1st if loop starts
                     String softwareName = softwareResult.get(i).getVariable().toString().trim();
                     Date installDate = getDate(dateResult.get(i).getVariable().toString().trim(), isWindows);
-                    if (softwareName != null && softwareName.trim().length() != 0) {
+                    if (softwareName != null && softwareName.trim().length() != 0) { // 2nd if loop starts
                         int SoftwareLength = softwareName.length();
                         if (SoftwareLength >= 100) {
                             softwareName = softwareName.substring(0, 99);
@@ -852,9 +812,9 @@ public class ComputerMeter implements GQSNMPMeter {
                         ins = new CompInstSoftwareId(runId, assetId, softwareName, installDate);
                         CompInstSoftware cis = new CompInstSoftware(ins);
                         installedSwList.add(cis);
-                    }
-                }
-            }
+                    } // 2nd if loop ends
+                } // 1st if loop ends
+            } // for loop ends
 
         }
         catch (Exception e) {
@@ -926,10 +886,10 @@ public class ComputerMeter implements GQSNMPMeter {
         String assetId = id.getAssetId();
         CompConnDeviceId compConnDeviceId = null;
 
-        for (VariableBinding vb : result) {
+        for (VariableBinding vb : result) { // for loop starts
             String expectedStr = vb.getVariable().toString();
             if (expectedStr != null && vb.getOid().toString().contains(expectedStr)
-                    && expectedStr.equalsIgnoreCase("5")) {
+                    && expectedStr.equalsIgnoreCase("5")) { // 1st if loop starts
 
                 String targetOID = vb.getOid().toString();
                 String[] preFinalOID = targetOID.toString().split("\\.");
@@ -940,16 +900,16 @@ public class ComputerMeter implements GQSNMPMeter {
                 String FinalIP = one + "." + two + "." + three + "." + four;
 
                 if (!FinalIP.trim().equals(ipAddress) && !FinalIP.trim().equals("0.0.0.0")
-                        && !FinalIP.trim().equals("127.0.0.1")) {
+                        && !FinalIP.trim().equals("127.0.0.1")) { // 2nd if loop starts
                     if (FinalIP != null && FinalIP.trim().length() != 0) {
                         compConnDeviceId = new CompConnDeviceId(runId, assetId, FinalIP);
                         connDevice = new CompConnDevice(compConnDeviceId);
                         connectedDevices.add(connDevice);
                     }
-                }
+                } // 2nd if loop ends
 
-            }
-        }
+            } // 1st if loop ends
+        } // for loop ends
         return connectedDevices;
     }
 
@@ -976,11 +936,11 @@ public class ComputerMeter implements GQSNMPMeter {
         String runName = null;
         int cpuShare = 0;
         int memShare = 0;
-        for (int i = 0; i < processSize; i++) {
+        for (int i = 0; i < processSize; i++) { // for loop starts
             runName = sysRunNameResult.get(i).getVariable().toString().trim();
             cpuShare = Integer.parseInt(cpuShareResult.get(i).getVariable().toString().trim());
             memShare = Integer.parseInt(memShareResult.get(i).getVariable().toString().trim());
-            if (runName != null && runName.trim().length() != 0) {
+            if (runName != null && runName.trim().length() != 0) { // if loop starts
                 int runNameLength = runName.length();
                 if (runNameLength >= 45) {
                     runName = runName.substring(0, 44);
@@ -988,8 +948,8 @@ public class ComputerMeter implements GQSNMPMeter {
                 compProcessId = new CompProcessId(runId, assetId, runName, cpuShare, memShare);
                 process = new CompProcess(compProcessId);
                 processList.add(process);
-            }
-        }
+            } // if loop ends
+        }// for loop ends
         return processList;
     }
 }

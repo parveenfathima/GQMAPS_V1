@@ -33,6 +33,8 @@ import com.gq.meter.ComputerMeter;
 import com.gq.meter.GQMeterData;
 import com.gq.meter.NSRGMeter;
 import com.gq.meter.PrinterMeter;
+import com.gq.meter.StorageMeter;
+import com.gq.meter.object.Asset;
 
 public class MeterUtils {
 
@@ -40,8 +42,81 @@ public class MeterUtils {
     public static long snmpUnknownTime = 0;
     public static long compMeterTime = 0;
     public static long printMeterTime = 0;
-    public static long isrMeterTime = 0;
-    public static final String restURL = "http://localhost:8080/GQGatekeeper/";
+    public static long nsrgMeterTime = 0;
+    public static long storageMeterTime = 0;
+    public static final String restURL = "http://localhost:8080/GQEntrprseDataProcessor/";
+
+    public static Asset sysBasicInfo(String communityString, String ipAddress, String snmpVersion,
+            List<String> errorList) {
+        Asset assetObj = null;
+        try {
+
+            String protocolId = "protocolid";
+            String appId = "app_id";
+            String assetUsg = "assetUsg";
+            Byte assetStrength = 1;
+            String ctlgId = "ctlg_id";
+
+            // ASSET
+            String sysName = null; // string
+            String sysDescr = null; // string
+            String sysContact = null; // string
+            String sysLocation = null; // string
+            String assetId = null; // unique identifier about the asset
+
+            String oidString = "1.3.6.1.2.1.1";
+            String temp;
+            int sysLength;
+
+            OID rootOID = new OID(oidString);
+            List<VariableBinding> result = null;
+
+            CommunityTarget target = null;
+            target = MeterUtils.makeTarget(ipAddress, communityString, snmpVersion);
+
+            result = MeterUtils.walk(rootOID, target); // walk done with the initial assumption that device is v2
+
+            if (result != null && !result.isEmpty()) {
+                temp = oidString + ".1.0";
+                sysDescr = MeterUtils.getSNMPValue(temp, result).toLowerCase();
+                sysLength = sysDescr.length();
+                if (sysLength >= 200) {
+                    sysDescr = sysDescr.substring(0, 199);
+                }
+                temp = oidString + ".4.0";
+                sysContact = MeterUtils.getSNMPValue(temp, result);
+                sysLength = sysContact.length();
+                if (sysLength >= 45) {
+                    sysContact = sysContact.substring(0, 44);
+                }
+
+                temp = oidString + ".5.0";
+                sysName = MeterUtils.getSNMPValue(temp, result);
+                sysLength = sysName.length();
+                if (sysLength >= 45) {
+                    sysName = sysName.substring(0, 44);
+                }
+
+                temp = oidString + ".6.0";
+                sysLocation = MeterUtils.getSNMPValue(temp, result);
+                sysLength = sysLocation.length();
+                if (sysLength >= 45) {
+                    sysLocation = sysLocation.substring(0, 44);
+                }
+            }
+            else {
+                errorList.add("Root OID : 1.3.6.1.2.1.1" + " " + MeterConstants.STANDARD_SYSTEM_ATTRIBUTES_ERROR);
+            }
+
+            assetObj = new Asset(assetId, protocolId, sysName, sysDescr, sysContact, sysLocation, appId, assetUsg,
+                    assetStrength, ctlgId);
+            System.out.println("ASST OBJ SUCCESFULY SAVED");
+        }
+        catch (Exception e) {
+            errorList.add(ipAddress + " " + e.getMessage());
+        }
+        return assetObj;
+    }
 
     /**
      * @param communityString
@@ -122,9 +197,13 @@ public class MeterUtils {
                 mProtocol = MeterProtocols.COMPUTER;
 
                 if (result == null || result.size() == 0 || result.isEmpty()) {
-                    mProtocol = MeterProtocols.UNKNOWN;
-                    return mProtocol;
+                    mProtocol = MeterProtocols.STORAGE;
                 }
+
+                // if (result == null || result.size() == 0 || result.isEmpty()) {
+                // mProtocol = MeterProtocols.UNKNOWN;
+                // return mProtocol;
+                // }
             }
         }
         return mProtocol;
@@ -152,6 +231,9 @@ public class MeterUtils {
         }
         else if (protocol.equals(MeterProtocols.COMPUTER)) {
             assetObject = new ComputerMeter().implement(communityString, currIp, snmpVersion, switchList);
+        }
+        else if (protocol.equals(MeterProtocols.STORAGE)) {
+            assetObject = new StorageMeter().implement(communityString, currIp, snmpVersion, switchList);
         }
         /*
          * switch (protocol) {
@@ -487,6 +569,23 @@ public class MeterUtils {
                     isrSwitchList.add(switches);
                 }
                 assetSwitches.put(MeterProtocols.NSRG, isrSwitchList);
+            }
+        }
+        else if (line.toLowerCase().startsWith(MeterConstants.STORAGE_SWITCHS)) {
+            line = line.replace(MeterConstants.STORAGE_SWITCHS, "").trim();
+            LinkedList<String> isrSwitchList = null;
+
+            if (line.contains(MeterConstants.FULL_DETAILS)) {
+                isrSwitchList = new LinkedList<String>();
+                isrSwitchList.add(MeterConstants.FULL_DETAILS);
+                assetSwitches.put(MeterProtocols.STORAGE, isrSwitchList);
+            }
+            else {
+                isrSwitchList = new LinkedList<String>();
+                for (String switches : line.split("\\|")) {
+                    isrSwitchList.add(switches);
+                }
+                assetSwitches.put(MeterProtocols.STORAGE, isrSwitchList);
             }
         }
         return assetSwitches;

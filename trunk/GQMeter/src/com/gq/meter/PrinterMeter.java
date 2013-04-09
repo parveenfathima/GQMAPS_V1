@@ -23,6 +23,10 @@ import com.gq.meter.util.MeterConstants;
 import com.gq.meter.util.MeterProtocols;
 import com.gq.meter.util.MeterUtils;
 
+/**
+ * @author yogalakshmi.s
+ * 
+ */
 public class PrinterMeter implements GQSNMPMeter {
 
     static HashMap<Integer, String> printerOperationalStateMap = new HashMap<Integer, String>();
@@ -77,13 +81,7 @@ public class PrinterMeter implements GQSNMPMeter {
         String assetId = null; // unique identifier about the asset
         CPNId id = null;
 
-        // ASSET
-        String sysName = null;
-        String sysDescr = null;
-        String sysContact = null;
-        String sysLocation = null;
-
-        // SNAPSHOT
+        // variables that are used to get the NSRG snapshot
         String sysIP = null;
         String errorCondition = null;
         String operationalState = null;
@@ -105,6 +103,7 @@ public class PrinterMeter implements GQSNMPMeter {
         HashMap<String, String> printerStatus;
         List<String> errorList = new LinkedList<String>();
         HashSet<PrinterConnDevice> connectedDevices = null;
+        Asset assetObj = null;
 
         try {
             snmp = new Snmp(new DefaultUdpTransportMapping());
@@ -115,50 +114,16 @@ public class PrinterMeter implements GQSNMPMeter {
             e.printStackTrace();
             return null;
         }
-        // The following oid's is used to get system basic info
         try {
-            String oidString = "1.3.6.1.2.1.1";
+            // the below line is used to get the system basic info.
+            assetObj = MeterUtils.sysBasicInfo(communityString, ipAddress, snmpVersion, toggleSwitches);
+
+            String oidString = null;
             String temp;
             String tempStr;
-            int sysLength;
 
-            OID rootOID = new OID(oidString);
+            OID rootOID = null;
             List<VariableBinding> result = null;
-
-            result = MeterUtils.walk(rootOID, target); // walk done with the initial assumption that device is v2
-            if (result != null && !result.isEmpty()) {
-
-                temp = oidString + ".1.0";
-                sysDescr = MeterUtils.getSNMPValue(temp, result);
-                sysLength = sysDescr.length();
-                if (sysLength >= 200) {
-                    sysDescr = sysDescr.substring(0, 199);
-                }
-
-                temp = oidString + ".4.0";
-                sysContact = MeterUtils.getSNMPValue(temp, result);
-                sysLength = sysContact.length();
-                if (sysLength >= 45) {
-                    sysContact = sysContact.substring(0, 44);
-                }
-
-                temp = oidString + ".5.0";
-                sysName = MeterUtils.getSNMPValue(temp, result);
-                sysLength = sysName.length();
-                if (sysLength >= 45) {
-                    sysName = sysName.substring(0, 44);
-                }
-
-                temp = oidString + ".6.0";
-                sysLocation = MeterUtils.getSNMPValue(temp, result);
-                sysLength = sysLocation.length();
-                if (sysLength >= 45) {
-                    sysLocation = sysLocation.substring(0, 44);
-                }
-            }
-            else {
-                errorList.add("Root OID : 1.3.6.1.2.1.1" + " " + MeterConstants.STANDARD_SYSTEM_ATTRIBUTES_ERROR);
-            }
 
             // The below oid's is used to get the asset id
             oidString = ".1.3.6.1.2.1.2.2.1";
@@ -176,9 +141,9 @@ public class PrinterMeter implements GQSNMPMeter {
             // ASSET ID , RUN ID STARTS HERE.
             id = new CPNId(runId, assetId);
 
-            for (String element : toggleSwitches) {
+            for (String element : toggleSwitches) { // main for loop starts
                 if (element.equalsIgnoreCase(MeterConstants.FULL_DETAILS)
-                        || element.equalsIgnoreCase(MeterConstants.SNAPSHOT)) {
+                        || element.equalsIgnoreCase(MeterConstants.SNAPSHOT)) { // if loop starts
                     sysIP = ipAddress;
 
                     oidString = "1.3.6.1.2.1.1";
@@ -203,7 +168,7 @@ public class PrinterMeter implements GQSNMPMeter {
                         else {
                             isColorPrinter = MeterConstants.COLOR_PRINTER;
                         }
-                    }
+                    } // if loop ends
                     else {
                         errorList.add("Root OID : 1.3.6.1.2.1.43.11.1.1.6" + " "
                                 + "Unable to determine if printer is a color printer");
@@ -244,7 +209,7 @@ public class PrinterMeter implements GQSNMPMeter {
                     rootOID = new OID(oidString);
                     result = MeterUtils.walk(rootOID, target);
 
-                    if (result != null && !result.isEmpty()) {
+                    if (result != null && !result.isEmpty()) { // if loop starts
                         String OID = null;
 
                         OID = "1.3.6.1.2.1.25.2.1.2";
@@ -261,15 +226,15 @@ public class PrinterMeter implements GQSNMPMeter {
 
                         totalDiskSpace = mainTotalDiskSpace + subTotalDiskSpace;
                         usedDiskSpace = mainUsedDiskSpace + subusedDiskSpace;
-                    }
+                    } // if loop ends
                     else {
                         errorList.add("Root OID : 1.3.6.1.2.1.25.2.3.1 - Unable to get disk and memory details");
                     }
-                }
+                } // if loop ends
 
                 // the following oid's is used to get the ip and port no of devices that is connected.
                 if (element.equalsIgnoreCase(MeterConstants.FULL_DETAILS)
-                        || element.equalsIgnoreCase(MeterConstants.CONNECTED_DEVICES)) {
+                        || element.equalsIgnoreCase(MeterConstants.CONNECTED_DEVICES)) { // 1st if loop starts
 
                     if (result != null && !result.isEmpty()) {
                         oidString = ".1.3.6.1.2.1.6.13.1.1";
@@ -282,21 +247,12 @@ public class PrinterMeter implements GQSNMPMeter {
                                 + "Unable to get port number and ip address of connected devices");
                     }
 
-                }
-            }// for loop ends
+                } // 1st if loop ends
+            }// main for loop ends
         }
         catch (Exception e) {
             errorList.add(ipAddress + " " + e.getMessage());
         }
-
-        String protocolId = "protocolid";
-        String appId = "app_id";
-        String assetUsg = "assetUsg";
-        Byte assetStrength = 1;
-        String ctlgId = "ctlg_id";
-
-        Asset assetObj = new Asset(assetId, protocolId, sysName, sysDescr, sysContact, sysLocation, appId, assetUsg,
-                assetStrength, ctlgId);
 
         PrinterSnapshot printerSnapShot = new PrinterSnapshot(id, sysIP, totalMemory, totalDiskSpace, usedMemory,
                 usedDiskSpace, upTime, tonerPercentage, outOfPaperIndicator, printsTakenCount, errorCondition,
@@ -307,7 +263,7 @@ public class PrinterMeter implements GQSNMPMeter {
         GQErrorInformation gqErrorInfo = null;
 
         if (errorList != null && !errorList.isEmpty()) {
-            gqErrorInfo = new GQErrorInformation(sysDescr, errorList);
+            gqErrorInfo = new GQErrorInformation(assetObj.getDescr(), errorList);
         }
 
         GQMeterData gqMeterObject = new GQMeterData(gqErrorInfo, printerObject);
@@ -336,10 +292,10 @@ public class PrinterMeter implements GQSNMPMeter {
         String rootId = rootOid.toString();
         Long memHdd = 0L;
 
-        for (VariableBinding vb : result) {
+        for (VariableBinding vb : result) { // 1st for loop starts
             String temp = vb.getVariable().toString().trim();
 
-            if (temp.trim().equals(OID)) {
+            if (temp.trim().equals(OID)) { // 1st if loop starts
                 String lastValue = String.valueOf(vb.getOid().last());
                 mulBytesOID = rootId + "." + "4" + "." + lastValue;
 
@@ -350,7 +306,7 @@ public class PrinterMeter implements GQSNMPMeter {
                     usedMultiplyOID = rootId + "." + "6" + "." + lastValue;
                 }
 
-                for (VariableBinding vbs : result) {
+                for (VariableBinding vbs : result) { // 2nd for loop starts
                     if (vbs.getOid().toString().trim().equals(mulBytesOID)) {
                         mulBytes = vbs.getVariable().toString().trim();
                     }
@@ -360,7 +316,7 @@ public class PrinterMeter implements GQSNMPMeter {
                     else if (isUsed && vbs.getOid().toString().trim().equals(usedMultiplyOID)) {
                         usedMultiply = vbs.getVariable().toString().trim();
                     }
-                }// for loop ends
+                }// 2nd for loop ends
 
                 if (!isUsed && mulBytes != null && !mulBytes.trim().isEmpty() && toMultiply != null
                         && !toMultiply.trim().isEmpty()) {
@@ -373,8 +329,8 @@ public class PrinterMeter implements GQSNMPMeter {
                 else {
                     errorList.add(MeterConstants.NO_VALUE + memHdd);
                 }
-            }
-        }
+            } // 1st if loop ends
+        } // 1st for loop ends
         return memHdd;
     }
 
@@ -418,7 +374,7 @@ public class PrinterMeter implements GQSNMPMeter {
                 else {
                     errorList.add(MeterConstants.NO_VALUE + " " + remainingUsagefloat);
                 }
-            }
+            } // else if loop ends
 
         } // for loop ends
         double finalTonerPercentageCalc = (remainingUsagefloat / totalValueFloat) * 100;
@@ -449,9 +405,9 @@ public class PrinterMeter implements GQSNMPMeter {
         String errorConditionOid = rootId + ".5.1.2.1";
         String N_A = "Not Avaiable";
 
-        for (VariableBinding vb : result) {
+        for (VariableBinding vb : result) { // for loop starts
             if (currentStateOid != null && !currentStateOid.trim().isEmpty()
-                    && vb.getOid().trim().toString().equals(currentStateOid)) {
+                    && vb.getOid().trim().toString().equals(currentStateOid)) { // if loop starts
                 String currentStateValueStr = vb.getVariable().toString().trim();
 
                 if (!currentStateValueStr.trim().isEmpty() && currentStateValueStr != null) {
@@ -468,9 +424,9 @@ public class PrinterMeter implements GQSNMPMeter {
                 else {
                     errorList.add(MeterConstants.NO_VALUE + currentStatus);
                 }
-            }
+            } // if loop ends
             else if (operationalStateOid != null && !operationalStateOid.trim().isEmpty()
-                    && vb.getOid().trim().toString().equals(operationalStateOid)) {
+                    && vb.getOid().trim().toString().equals(operationalStateOid)) { // else if loop starts
                 String operationalStateValueStr = vb.getVariable().toString().trim();
 
                 if (!operationalStateValueStr.trim().isEmpty() && operationalStateValueStr != null) {
@@ -488,13 +444,13 @@ public class PrinterMeter implements GQSNMPMeter {
                     errorList.add(MeterConstants.NO_VALUE + operationalStatus);
                 }
 
-            }
+            } // else if loop ends
 
             else if (errorConditionOid != null && !errorConditionOid.trim().isEmpty()
-                    && vb.getOid().trim().toString().equals(errorConditionOid)) {
+                    && vb.getOid().trim().toString().equals(errorConditionOid)) { // else if loop starts
                 String errorConditionValueStr = vb.getVariable().toString().trim();
 
-                if (!errorConditionValueStr.trim().isEmpty() && errorConditionValueStr != null) {
+                if (!errorConditionValueStr.trim().isEmpty() && errorConditionValueStr != null) { // if loop starts
                     int errorConditionValue = Integer.parseInt(errorConditionValueStr);
                     // check in the predefined map whether the map has the value
                     if (printerErrorConditionMap.containsKey(errorConditionValue)) {
@@ -505,13 +461,13 @@ public class PrinterMeter implements GQSNMPMeter {
                     else {
                         errorConditionalStatus = errorConditionValue + " " + "-" + " " + N_A;
                     }
-                }
+                } // if loop ends
                 else {
                     errorList.add(MeterConstants.NO_VALUE + errorConditionalStatus);
                 }
-            }
-        }
-        // return the status of the printer with currentState and operationalState
+            } // else if loop ends
+        } // for loop ends
+          // return the status of the printer with currentState and operationalState
         HashMap<String, String> printerStatus = new HashMap<String, String>();
 
         printerStatus.put(currentStateKey, currentStatus); // current
@@ -533,7 +489,7 @@ public class PrinterMeter implements GQSNMPMeter {
         String assetOid = null;
         String assetStr = null;
 
-        for (VariableBinding vb : result) {
+        for (VariableBinding vb : result) { // for loop starts
             if (vb.getVariable().toString().trim().equals("6")) {
                 lastchar = String.valueOf(vb.getOid().last());
                 assetOid = rootId + ".6" + "." + lastchar;
@@ -543,7 +499,7 @@ public class PrinterMeter implements GQSNMPMeter {
                 assetStr = vb.getVariable().toString().trim().replaceAll(":", "");
 
             }
-        }
+        } // for loop ends
         return assetStr;
     }
 
@@ -563,10 +519,10 @@ public class PrinterMeter implements GQSNMPMeter {
         PrinterConnDevice connDevice = null;
         PrinterConnDeviceId printerConnDeviceId = null;
 
-        for (VariableBinding vb : result) {
+        for (VariableBinding vb : result) { // for loop starts
             String expectedStr = vb.getVariable().toString();
             if (expectedStr != null && vb.getOid().toString().contains(expectedStr)
-                    && expectedStr.equalsIgnoreCase("5")) {
+                    && expectedStr.equalsIgnoreCase("5")) { // 1st if loop starts
 
                 String targetOID = vb.getOid().toString();
                 String[] preFinalOID = targetOID.toString().split("\\.");
@@ -577,16 +533,16 @@ public class PrinterMeter implements GQSNMPMeter {
                 String FinalIP = one + "." + two + "." + three + "." + four;
 
                 if (!FinalIP.trim().equals(ipAddress) && !FinalIP.trim().equals("0.0.0.0")
-                        && !FinalIP.trim().equals("127.0.0.1")) {
+                        && !FinalIP.trim().equals("127.0.0.1")) { // 2nd if loop starts
                     if (FinalIP != null && FinalIP.trim().length() != 0) {
                         printerConnDeviceId = new PrinterConnDeviceId(runId, assetId, FinalIP);
                         connDevice = new PrinterConnDevice(printerConnDeviceId);
                         connectedDevices.add(connDevice);
                     }
-                }
+                } // 2nd if loop ends
 
-            }
-        }
+            } // 1st if loop ends
+        } // for loop ends
         return connectedDevices;
     }
 }
