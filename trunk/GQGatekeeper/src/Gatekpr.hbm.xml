@@ -4,15 +4,12 @@
 <!-- Generated Mar 1, 2013 12:57:04 PM by Hibernate Tools 3.4.0.CR1 -->
 <hibernate-mapping>
     <class name="com.gq.meter.xchange.object.GateKeeper" table="gatekpr" catalog="gqexchange">
-        <id name="meterId" type="string">
-            <column name="meter_id" length="10" />
+        <id name="enterpriseId" type="string">
+            <column name="enterprise_id" length="10" />
             <generator class="assigned" />
         </id>
         <property name="expDttm" type="timestamp">
             <column name="exp_dttm" length="19" />
-        </property>
-        <property name="scnAlwd" type="java.lang.Integer">
-            <column name="scn_alwd" />
         </property>
         <property name="scnRmng" type="java.lang.Integer">
             <column name="scn_rmng" />

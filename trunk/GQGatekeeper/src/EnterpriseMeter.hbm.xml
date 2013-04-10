@@ -23,14 +23,14 @@
         <property name="phone" type="string">
             <column name="phone" length="20" />
         </property>
-        <property name="storeFwd" type="char">
-            <column name="store_fwd" length="1" not-null="true" />
-        </property>
-        <property name="fwdUrl" type="string">
-            <column name="fwd_url" length="200" />
-        </property>
         <property name="creDttm" type="timestamp">
             <column name="cre_dttm" length="19" not-null="true" />
+        </property>
+        <property name="latitude" type="java.lang.Double">
+            <column name="latitude" precision="22" scale="0" />
+        </property>
+        <property name="longitude" type="java.lang.Double">
+            <column name="longitude" precision="22" scale="0" />
         </property>
     </class>
 </hibernate-mapping>
