@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated Mar 1, 2013 12:57:04 PM by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+    <class name="com.gq.meter.object.GateKeeper" table="gatekpr" catalog="gqexchange">
+        <id name="enterpriseId" type="string">
+            <column name="enterprise_id" length="10" />
+            <generator class="assigned" />
+        </id>
+        <property name="expDttm" type="timestamp">
+            <column name="exp_dttm" length="19" />
+        </property>
+        <property name="scnRmng" type="java.lang.Integer">
+            <column name="scn_rmng" />
+        </property>
+        <property name="chkCndtn" type="char">
+            <column name="chk_cndtn" length="1" not-null="true" />
+        </property>
+    </class>
+</hibernate-mapping>
