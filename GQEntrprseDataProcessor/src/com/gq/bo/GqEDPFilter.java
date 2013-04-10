@@ -22,19 +22,13 @@ import com.gq.util.HibernateUtil;
 // this class takes care of validating and distributing incoming requests
 public class GqEDPFilter {
 
-    public static String enterpriseId = "gquotient";
-
-    public static String meterId = String.valueOf((System.currentTimeMillis()) / 1000);
-
     public void process(GQMeterResponse gqmResponse) {
 
-        // parse the object and get the protocols and save them for now..... ss , feb 19 , 2013
-        // System.out.println("ready to parse and save....");
         GQEDPConstants.logger.info("Enterprise data processor is ready to parse and save....");
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
-        // String meterId = gqmResponse.getGqmid();
-        // meterId = meterId.split("_")[1];
+        String meterId = gqmResponse.getGqmid();
+        meterId = meterId.split("_")[1];
         int runId = gqmResponse.getRunid();
         Date recordDT = gqmResponse.getRecDttm();
         short scanned = gqmResponse.getAssetScanned();
@@ -61,7 +55,7 @@ public class GqEDPFilter {
             session = HibernateUtil.getSessionFactory().getCurrentSession();
             session.beginTransaction();
 
-            GQEDPConstants.logger.debug(enterpriseId + "-" + meterId + " Transaction successfully started ");
+            GQEDPConstants.logger.debug(meterId + " Transaction successfully started ");
             String hql = "FROM Meter WHERE meterId = :METER_ID";
             Query query = session.createQuery(hql);
             query.setParameter("METER_ID", meterId);
@@ -71,12 +65,10 @@ public class GqEDPFilter {
                 try {
                     meter = new Meter(meterId, protocolId, descr, address, phone, storeFwd, fwdUrl, creDttm);
                     session.save(meter);
-                    GQEDPConstants.logger.info(enterpriseId + "-" + meterId
-                            + " Data successfully saved in the meter table ");
+                    GQEDPConstants.logger.info(meterId + " Data successfully saved in the meter table ");
                 }
                 catch (Exception e) {
-                    GQEDPConstants.logger.error(enterpriseId + "-" + meterId
-                            + " Data failed to save in the meter table " + e.getMessage());
+                    GQEDPConstants.logger.error(meterId + " Data failed to save in the meter table " + e.getMessage());
                 }
             }
             // inserting runid
@@ -84,14 +76,13 @@ public class GqEDPFilter {
             // redendunt use of runid and assetid on all the tables
             meterRun = new MeterRun(runId, meterId, recordDT, scanned, discovered, runTimeMs);
             session.save(meterRun);
-            GQEDPConstants.logger
-                    .info(enterpriseId + "-" + meterId + " Data successfully saved in the meterRun table ");
+            GQEDPConstants.logger.info(meterId + " Data successfully saved in the meterRun table ");
 
             session.getTransaction().commit();
         }
         catch (Exception e) {
             e.printStackTrace();
-            GQEDPConstants.logger.error(enterpriseId + "-" + meterId + " Transaction failed to start");
+            GQEDPConstants.logger.error(meterId + " Transaction failed to start");
         }
         finally {
             try {

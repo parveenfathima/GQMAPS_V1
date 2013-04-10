@@ -20,6 +20,8 @@ public class GqMeterNSRG {
     public static void insertData(NSRG nsrg, GQMeterResponse gqmResponse, int runId) {
         Session session = null;
 
+        String meterId = gqmResponse.getGqmid();
+        meterId = meterId.split("_")[1];
         try {
             // This step will read hibernate.cfg.xml and prepare hibernate for use
             session = HibernateUtil.getSessionFactory().getCurrentSession();
@@ -42,12 +44,11 @@ public class GqMeterNSRG {
                 try {
                     Asset assetObj = nsrg.getAssetObj();
                     session.save(assetObj);
-                    GQEDPConstants.logger.info(GqEDPFilter.enterpriseId + "-" + GqEDPFilter.meterId
-                            + " NSRG Data successfully saved in the Asset table ");
+                    GQEDPConstants.logger.info(meterId + " NSRG Data successfully saved in the Asset table ");
                 }
                 catch (Exception e) {
-                    GQEDPConstants.logger.error(GqEDPFilter.enterpriseId + "-" + GqEDPFilter.meterId
-                            + " NSRG Data failed to save in the Asset table " + e.getMessage());
+                    GQEDPConstants.logger.error(meterId + " NSRG Data failed to save in the Asset table "
+                            + e.getMessage());
                 }
             }
 
@@ -56,12 +57,11 @@ public class GqMeterNSRG {
             try {
                 nsrgSnapshot.setId(cid);
                 session.save(nsrgSnapshot);
-                GQEDPConstants.logger.info(GqEDPFilter.enterpriseId + "-" + GqEDPFilter.meterId
-                        + " Data  successfully saved in the NSRG Snapshot table ");
+                GQEDPConstants.logger.info(meterId + " Data  successfully saved in the NSRG Snapshot table ");
             }
             catch (Exception e) {
-                GQEDPConstants.logger.error(GqEDPFilter.enterpriseId + "-" + GqEDPFilter.meterId
-                        + " Data failed to save in the NSRG Snapshot table " + e.getMessage());
+                GQEDPConstants.logger.error(meterId + " Data failed to save in the NSRG Snapshot table "
+                        + e.getMessage());
             }
 
             // connected device
@@ -74,12 +74,12 @@ public class GqMeterNSRG {
                         session.merge(nsrgConnDevice);
                     }// for ends
 
-                    GQEDPConstants.logger.info(GqEDPFilter.enterpriseId + "-" + GqEDPFilter.meterId
+                    GQEDPConstants.logger.info(meterId
                             + " Data successfully saved in the NSRG Connected devices table ");
                 }
                 catch (Exception e) {
-                    GQEDPConstants.logger.error(GqEDPFilter.enterpriseId + "-" + GqEDPFilter.meterId
-                            + " Data failed to save in the NSRG Connected devices table " + e.getMessage());
+                    GQEDPConstants.logger.error(meterId + " Data failed to save in the NSRG Connected devices table "
+                            + e.getMessage());
                 }
 
             }
