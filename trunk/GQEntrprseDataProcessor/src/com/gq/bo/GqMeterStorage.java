@@ -16,6 +16,9 @@ import com.gq.util.HibernateUtil;
 public class GqMeterStorage {
 
     public static void insertData(Storage storage, GQMeterResponse gqmResponse, int runId) {
+
+        String meterId = gqmResponse.getGqmid();
+
         Session session = null;
 
         try {
@@ -40,12 +43,11 @@ public class GqMeterStorage {
                 try {
                     Asset assetObj = storage.getAssetObj();
                     session.save(assetObj);
-                    GQEDPConstants.logger.info(GqEDPFilter.enterpriseId + "-" + GqEDPFilter.meterId
-                            + " Storage Data successfully saved in the Asset table ");
+                    GQEDPConstants.logger.info(meterId + " Storage Data successfully saved in the Asset table ");
                 }
                 catch (Exception e) {
-                    GQEDPConstants.logger.error(GqEDPFilter.enterpriseId + "-" + GqEDPFilter.meterId
-                            + " Storage Data failed to save in the Asset table " + e.getMessage());
+                    GQEDPConstants.logger.error(meterId + " Storage Data failed to save in the Asset table "
+                            + e.getMessage());
                 }
             }
 
@@ -55,12 +57,11 @@ public class GqMeterStorage {
                 // System.out.println("PRINTER : snap shot cpn id has been set");
                 storageSnpsht.setId(cid);
                 session.save(storageSnpsht);
-                GQEDPConstants.logger.info(GqEDPFilter.enterpriseId + "-" + GqEDPFilter.meterId
-                        + " Data successfully saved in the Storage Snapshot table ");
+                GQEDPConstants.logger.info(meterId + " Data successfully saved in the Storage Snapshot table ");
             }
             catch (Exception e) {
-                GQEDPConstants.logger.error(GqEDPFilter.enterpriseId + "-" + GqEDPFilter.meterId
-                        + " Data failed to save in the Storage Snapshot table " + e.getMessage());
+                GQEDPConstants.logger.error(meterId + " Data failed to save in the Storage Snapshot table "
+                        + e.getMessage());
             }
             session.getTransaction().commit();
         }
