@@ -47,8 +47,7 @@ public class GqMeterNSRG {
                     GQEDPConstants.logger.info(meterId + " NSRG Data successfully saved in the Asset table ");
                 }
                 catch (Exception e) {
-                    GQEDPConstants.logger.error(meterId + " NSRG Data failed to save in the Asset table "
-                            + e.getMessage());
+                    GQEDPConstants.logger.error(meterId + " NSRG Data failed to save in the Asset table ", e);
                 }
             }
 
@@ -60,8 +59,7 @@ public class GqMeterNSRG {
                 GQEDPConstants.logger.info(meterId + " Data  successfully saved in the NSRG Snapshot table ");
             }
             catch (Exception e) {
-                GQEDPConstants.logger.error(meterId + " Data failed to save in the NSRG Snapshot table "
-                        + e.getMessage());
+                GQEDPConstants.logger.error(meterId + " Data failed to save in the NSRG Snapshot table ", e);
             }
 
             // connected device
@@ -78,8 +76,8 @@ public class GqMeterNSRG {
                             + " Data successfully saved in the NSRG Connected devices table ");
                 }
                 catch (Exception e) {
-                    GQEDPConstants.logger.error(meterId + " Data failed to save in the NSRG Connected devices table "
-                            + e.getMessage());
+                    GQEDPConstants.logger.error(meterId + " Data failed to save in the NSRG Connected devices table ",
+                            e);
                 }
 
             }

@@ -53,8 +53,7 @@ public class GqMeterComputer {
                     GQEDPConstants.logger.info(meterId + " Computer Data successfully saved in the Asset table ");
                 }
                 catch (Exception e) {
-                    GQEDPConstants.logger.error(meterId + " Computer Data failed to save in the Asset table "
-                            + e.getMessage());
+                    GQEDPConstants.logger.error(meterId + " Computer Data failed to save in the Asset table ", e);
                 }
             }
 
@@ -75,8 +74,7 @@ public class GqMeterComputer {
 
             }
             catch (Exception e) {
-                GQEDPConstants.logger
-                        .error(meterId + " Computer Data failed to save in the OS table " + e.getMessage());
+                GQEDPConstants.logger.error(meterId + " Computer Data failed to save in the OS table ", e);
             }
 
             // snapshot
@@ -87,8 +85,7 @@ public class GqMeterComputer {
                 GQEDPConstants.logger.info(meterId + " Data successfully saved in the Computer Snapshot table ");
             }
             catch (Exception e) {
-                GQEDPConstants.logger.error(meterId + " Data failed to save in the Computer Snapshot table "
-                        + e.getMessage());
+                GQEDPConstants.logger.error(meterId + " Data failed to save in the Computer Snapshot table ", e);
             }
 
             // computer installed software
@@ -106,7 +103,7 @@ public class GqMeterComputer {
                 }
                 catch (Exception e) {
                     GQEDPConstants.logger.error(meterId
-                            + " Data failed to save in the Computer Installed software table " + e.getMessage());
+                            + " Data failed to save in the Computer Installed software table ", e);
                 }
 
             }
@@ -125,8 +122,7 @@ public class GqMeterComputer {
                     GQEDPConstants.logger.info(meterId + " Data successfully saved in the Computer process table ");
                 }
                 catch (Exception e) {
-                    GQEDPConstants.logger.error(meterId + " Data failed to save in the Computer process table "
-                            + e.getMessage());
+                    GQEDPConstants.logger.error(meterId + " Data failed to save in the Computer process table ", e);
                 }
 
             }
@@ -146,7 +142,7 @@ public class GqMeterComputer {
                 }
                 catch (Exception e) {
                     GQEDPConstants.logger.error(meterId
-                            + " Data failed to save in the Computer Connected devices table " + e.getMessage());
+                            + " Data failed to save in the Computer Connected devices table ", e);
                 }
 
             }
