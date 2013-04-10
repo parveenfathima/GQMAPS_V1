@@ -4,7 +4,7 @@
 <!-- Generated Mar 1, 2013 12:56:41 PM by Hibernate Tools 3.4.0.CR1 -->
 <hibernate-mapping>
     <class name="com.gq.meter.xchange.object.Enterprise" table="enterprise" catalog="gqexchange">
-        <id name="enterpriseId" type="string">
+        <id name="enterpriseId" type="character">
             <column name="enterprise_id" length="10" />
             <generator class="assigned" />
         </id>
@@ -55,6 +55,18 @@
         </property>
         <property name="dcSqft" type="java.lang.Integer">
             <column name="dc_sqft" />
+        </property>
+         <property name="comments" type="string">
+            <column name="comments" />
+        </property>
+        <property name="storeFwd" type="char">
+            <column name="store_fwd" length="1" not-null="true" />
+        </property>
+        <property name="fwdUrl" type="string">
+            <column name="fwd_url" length="200" />
+        </property>
+        <property name="regCmplt" type="java.lang.Character">
+            <column name="reg_cmplt" length="1" />
         </property>
     </class>
 </hibernate-mapping>

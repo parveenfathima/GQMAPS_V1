@@ -2,6 +2,7 @@ package com.gq.meter.xchange.filter;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.hibernate.Query;
@@ -10,6 +11,7 @@ import org.hibernate.Session;
 import com.gq.meter.GQMeterResponse;
 import com.gq.meter.assist.ProtocolData;
 import com.gq.meter.xchange.controller.GQDataXchangeController;
+import com.gq.meter.xchange.object.Enterprise;
 import com.gq.meter.xchange.object.EnterpriseMeter;
 import com.gq.meter.xchange.object.GateKeeper;
 import com.gq.meter.xchange.object.MeterRun;
@@ -59,6 +61,7 @@ public class GateKeeperFilter {
             session.beginTransaction();
 
             // ---------------------------------------------------------------------------------------------------------//
+            GQGateKeeperConstants.logger.info("ENTERPRISEMETER");
             // checking meterid from the enterprisemeter table
             String hql = "FROM EnterpriseMeter WHERE meter_id = :METER_ID";
             Query query = session.createQuery(hql);
@@ -85,29 +88,39 @@ public class GateKeeperFilter {
             // protocol should be entered into DB in lower case only - Type safety
             protocolId = entMeterResult.get(0).getProtocolId();
 
+            List<ProtocolData> pdList = gqmResponse.getAssetInformationList();
+            List<ProtocolData> pdValidList = new LinkedList<ProtocolData>();
+
             if (protocolId != GQGateKeeperConstants.PROTOCOL_IT) {
-                List<ProtocolData> pdList = gqmResponse.getAssetInformationList();
 
                 for (ProtocolData pdData : pdList) {
-                    GQGateKeeperConstants.logger.info("protocolId : " + protocolId + " from JSON"
+                    GQGateKeeperConstants.logger.info("protocolId : " + protocolId + " from JSON : "
                             + pdData.getProtocol().toString());
-                    if (!pdData.getProtocol().toString().toLowerCase().trim().equals(protocolId)) {
-                        pdList.remove(pdData);
-                        GQGateKeeperConstants.logger.info("invalid meter data");
+                    if (pdData.getProtocol().toString().toLowerCase().trim().equals(protocolId)) {
+                        pdValidList.add(pdData);
+                        GQGateKeeperConstants.logger.info("valid meter data has been added into pdValidList");
                     }
                 }// for loop ends
-                 // Actual number of assets that are matches with the type of meter
-                 // for which the enterprise is registered for.
-                discovered = (short) pdList.size();
-                GQGateKeeperConstants.logger.info(" Total number of assets after meter validation  : " + discovered);
+
+                // Actual number of assets that are matches with the type of meter
+                // for which the enterprise is registered for.
             }
+            else {
+                pdValidList.addAll(pdList);
+            }
+            discovered = (short) pdValidList.size();
+            GQGateKeeperConstants.logger.info(" Total number of assets after meter validation***  : " + discovered
+                    + " : " + pdList.size());
 
             // ---------------------------------------------------------------------------------------------------------//
+            GQGateKeeperConstants.logger.info("GATEKEEPER");
             // checking meterid from the GateKeeper table
-            hql = "FROM GateKeeper WHERE meter_id = :METER_ID";
+            hql = "FROM GateKeeper WHERE enterprise_id = :ENTERPRISE_ID";
+            GQGateKeeperConstants.logger.info("GATEKEEPER ::: " + hql);
             query = session.createQuery(hql);
-            query.setParameter("METER_ID", meterId);
+            query.setParameter("ENTERPRISE_ID", enterpriseId);
             List<GateKeeper> gatekeeperResult = query.list();
+            GQGateKeeperConstants.logger.info("gatekeeperResult : : : " + gatekeeperResult.toString());
             // what if the gatekeeperResult size is more than 1
             // gatekeeperResult size cannot be more than 1, meter_id is always unique
             if (gatekeeperResult == null) {
@@ -120,6 +133,7 @@ public class GateKeeperFilter {
             char checkCondition = gatekeeperResult.get(0).getChkCndtn();
             int scanRemaining = gatekeeperResult.get(0).getScnRmng();
             if (checkCondition == 'c') {
+                GQGateKeeperConstants.logger.info("Validating the license based on scan reamining");
                 // Check total asset scanned allowed
                 if (scanRemaining < discovered || scanRemaining <= 0) {
                     GQGateKeeperConstants.logger.info("Scanning is not allowed, exceeds the license limit");
@@ -128,6 +142,7 @@ public class GateKeeperFilter {
                 }
             }
             else if (checkCondition == 'e') {
+                GQGateKeeperConstants.logger.info("Validating the license based expiry date");
                 // Compare today date and expired date
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
                 String expirydDate = sdf.format(gatekeeperResult.get(0).getExpDttm());
@@ -155,14 +170,33 @@ public class GateKeeperFilter {
             GQGateKeeperConstants.logger.info("Scan remain : " + scanRemaining);
             // update gatekeeper table once decremented the count
 
-            GateKeeper gkAudit = (GateKeeper) session.load(GateKeeper.class, gatekeeperResult.get(0).getMeterId());
-            gkAudit.setScnRmng(scanRemaining);
+            GateKeeper gateKeeper = (GateKeeper) session.load(GateKeeper.class, gatekeeperResult.get(0)
+                    .getEnterpriseId());
+            gateKeeper.setScnRmng(scanRemaining);
+
+            // ---------------------------------------------------------------------------------------------------------//
+            GQGateKeeperConstants.logger.info("ENTERPRISE" + enterpriseId.trim());
+            String enthql = "FROM Enterprise WHERE enterprise_id = :ENTERPRISE_ID";
+
+            GQGateKeeperConstants.logger.info("ENTERPRISE ::: " + enthql);
+            Query entQuery = session.createQuery(enthql);
+            entQuery.setParameter("ENTERPRISE_ID", enterpriseId.trim());
+            List<Enterprise> entResult = entQuery.list();
+            GQGateKeeperConstants.logger.info("GATEKEEPER*****************************" + entResult.get(0).getAns1());
+            // what if the entMeterResult size is more than 1
+            // entMeterResult size cannot be more than 1, meter_id is always unique
+            if (entResult.size() == 0) {
+                GQGateKeeperConstants.logger
+                        .info("The meterid from the JSON != with the database value, Data insertion restricted");
+                session.close();
+                return;
+            }
 
             // Check whether to store or forward the data to GQEDP
-            char storeOrForward = entMeterResult.get(0).getStoreFwd();
+            char storeOrForward = entResult.get(0).getStoreFwd();
             // If fwd then get the fwd URL and pass the json to this
             if (storeOrForward == 'f') {
-                fwdUrl = entMeterResult.get(0).getFwdUrl();
+                fwdUrl = entResult.get(0).getFwdUrl();
                 if (fwdUrl == null || fwdUrl == "") {
                     GQGateKeeperConstants.logger.info("Forward URL is null/empty in the DB");
                     session.close();
@@ -200,7 +234,8 @@ public class GateKeeperFilter {
             }
         }// finally ends
         if (protocolId != null) {
-            GQDataXchangeController.sendToEntDataProcessor(fwdUrl, protocolId, gqmResponse);
+            GQDataXchangeController xChange = new GQDataXchangeController();
+            xChange.sendToEntDataProcessor(fwdUrl, protocolId, gqmResponse);
         }
     }
 }

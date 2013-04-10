@@ -4,15 +4,18 @@
 <!-- Generated Mar 1, 2013 12:57:31 PM by Hibernate Tools 3.4.0.CR1 -->
 <hibernate-mapping>
     <class name="com.gq.meter.xchange.object.GateKeeperAudit" table="gatekpr_audit" catalog="gqexchange">
-        <id name="meterId" type="string">
-            <column name="meter_id" length="10" />
-            <generator class="assigned" />
+       <id name="sId" type="java.lang.Integer">
+            <column name="sid" />
+            <generator class="increment" />
         </id>
+        <property name="enterpriseId" type="string">
+            <column name="enterprise_id" length="10" not-null="true"/>
+        </property>
         <property name="comment" type="string">
             <column name="comment" length="200" not-null="true" />
         </property>
-        <property name="scnAlwd" type="java.lang.Integer">
-            <column name="scn_alwd" />
+        <property name="scanPurchased" type="java.lang.Integer">
+            <column name="scn_prchsd" />
         </property>
         <property name="expDttm" type="timestamp">
             <column name="exp_dttm" length="19" />

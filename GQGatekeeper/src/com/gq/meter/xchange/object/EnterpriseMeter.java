@@ -15,33 +15,23 @@ public class EnterpriseMeter implements java.io.Serializable {
     private String descr;
     private String address;
     private String phone;
-    private char storeFwd;
-    private String fwdUrl;
     private Date creDttm;
+    private double latitude;
+    private double longitude;
 
     public EnterpriseMeter() {
     }
 
-    public EnterpriseMeter(String meterId, String protocolId, String enterpriseId, String descr, char storeFwd,
-            Date creDttm) {
-        this.meterId = meterId;
-        this.protocolId = protocolId;
-        this.enterpriseId = enterpriseId;
-        this.descr = descr;
-        this.storeFwd = storeFwd;
-        this.creDttm = creDttm;
-    }
-
     public EnterpriseMeter(String meterId, String protocolId, String enterpriseId, String descr, String address,
-            String phone, char storeFwd, String fwdUrl, Date creDttm) {
+            String phone, double latitude, double longitude, Date creDttm) {
         this.meterId = meterId;
         this.protocolId = protocolId;
         this.enterpriseId = enterpriseId;
         this.descr = descr;
         this.address = address;
         this.phone = phone;
-        this.storeFwd = storeFwd;
-        this.fwdUrl = fwdUrl;
+        this.latitude = latitude;
+        this.longitude = longitude;
         this.creDttm = creDttm;
     }
 
@@ -93,28 +83,28 @@ public class EnterpriseMeter implements java.io.Serializable {
         this.phone = phone;
     }
 
-    public char getStoreFwd() {
-        return this.storeFwd;
-    }
-
-    public void setStoreFwd(char storeFwd) {
-        this.storeFwd = storeFwd;
-    }
-
-    public String getFwdUrl() {
-        return this.fwdUrl;
-    }
-
-    public void setFwdUrl(String fwdUrl) {
-        this.fwdUrl = fwdUrl;
-    }
-
     public Date getCreDttm() {
         return this.creDttm;
     }
 
     public void setCreDttm(Date creDttm) {
         this.creDttm = creDttm;
+    }
+
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
+    }
+
+    public double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
     }
 
 }

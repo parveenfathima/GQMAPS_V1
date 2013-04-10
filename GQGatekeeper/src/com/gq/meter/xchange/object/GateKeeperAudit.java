@@ -9,35 +9,44 @@ import java.util.Date;
  */
 public class GateKeeperAudit implements java.io.Serializable {
 
-    private String meterId;
+    private int sId;
+    private String enterpriseId;
     private String comment;
-    private Integer scnAlwd;
+    private Integer scanPurchased;
     private Date expDttm;
     private Date creDttm;
 
     public GateKeeperAudit() {
     }
 
-    public GateKeeperAudit(String meterId, String comment, Date creDttm) {
-        this.meterId = meterId;
+    public GateKeeperAudit(String enterpriseId, String comment, Date creDttm) {
+        this.enterpriseId = enterpriseId;
         this.comment = comment;
         this.creDttm = creDttm;
     }
 
-    public GateKeeperAudit(String meterId, String comment, Integer scnAlwd, Date expDttm, Date creDttm) {
-        this.meterId = meterId;
+    public GateKeeperAudit(String enterpriseId, String comment, Integer scanPurchased, Date expDttm, Date creDttm) {
+        this.enterpriseId = enterpriseId;
         this.comment = comment;
-        this.scnAlwd = scnAlwd;
+        this.scanPurchased = scanPurchased;
         this.expDttm = expDttm;
         this.creDttm = creDttm;
     }
 
-    public String getMeterId() {
-        return this.meterId;
+    public int getsId() {
+        return sId;
     }
 
-    public void setMeterId(String meterId) {
-        this.meterId = meterId;
+    public void setsId(int sId) {
+        this.sId = sId;
+    }
+
+    public String getEnterpriseId() {
+        return enterpriseId;
+    }
+
+    public void setEnterpriseId(String enterpriseId) {
+        this.enterpriseId = enterpriseId;
     }
 
     public String getComment() {
@@ -46,14 +55,6 @@ public class GateKeeperAudit implements java.io.Serializable {
 
     public void setComment(String comment) {
         this.comment = comment;
-    }
-
-    public Integer getScnAlwd() {
-        return this.scnAlwd;
-    }
-
-    public void setScnAlwd(Integer scnAlwd) {
-        this.scnAlwd = scnAlwd;
     }
 
     public Date getExpDttm() {
@@ -70,6 +71,14 @@ public class GateKeeperAudit implements java.io.Serializable {
 
     public void setCreDttm(Date creDttm) {
         this.creDttm = creDttm;
+    }
+
+    public Integer getScanPurchased() {
+        return scanPurchased;
+    }
+
+    public void setScanPurchased(Integer scanPurchased) {
+        this.scanPurchased = scanPurchased;
     }
 
 }
