@@ -68,7 +68,7 @@ public class GqEDPFilter {
                     GQEDPConstants.logger.info(meterId + " Data successfully saved in the meter table ");
                 }
                 catch (Exception e) {
-                    GQEDPConstants.logger.error(meterId + " Data failed to save in the meter table " + e.getMessage());
+                    GQEDPConstants.logger.error(meterId + " Data failed to save in the meter table ", e);
                 }
             }
             // inserting runid

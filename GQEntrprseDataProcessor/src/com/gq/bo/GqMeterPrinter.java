@@ -47,8 +47,7 @@ public class GqMeterPrinter {
                     GQEDPConstants.logger.info(meterId + " Printer Data successfully saved in the Asset table ");
                 }
                 catch (Exception e) {
-                    GQEDPConstants.logger.error(meterId + " Printer Data failed to save in the Asset table "
-                            + e.getMessage());
+                    GQEDPConstants.logger.error(meterId + " Printer Data failed to save in the Asset table ", e);
                 }
             }
 
@@ -61,8 +60,7 @@ public class GqMeterPrinter {
                 GQEDPConstants.logger.info(meterId + " Data successfully saved in the Printer Snapshot table ");
             }
             catch (Exception e) {
-                GQEDPConstants.logger.error(meterId + " Data failed to save in the Printer Snapshot table "
-                        + e.getMessage());
+                GQEDPConstants.logger.error(meterId + " Data failed to save in the Printer Snapshot table ", e);
             }
 
             // connected device
@@ -80,7 +78,7 @@ public class GqMeterPrinter {
                 }
                 catch (Exception e) {
                     GQEDPConstants.logger.error(meterId
-                            + " Data failed to save in the Printer Connected devices table  " + e.getMessage());
+                            + " Data failed to save in the Printer Connected devices table  ", e);
                 }
 
             }

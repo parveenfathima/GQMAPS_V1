@@ -46,8 +46,7 @@ public class GqMeterStorage {
                     GQEDPConstants.logger.info(meterId + " Storage Data successfully saved in the Asset table ");
                 }
                 catch (Exception e) {
-                    GQEDPConstants.logger.error(meterId + " Storage Data failed to save in the Asset table "
-                            + e.getMessage());
+                    GQEDPConstants.logger.error(meterId + " Storage Data failed to save in the Asset table ", e);
                 }
             }
 
@@ -60,8 +59,7 @@ public class GqMeterStorage {
                 GQEDPConstants.logger.info(meterId + " Data successfully saved in the Storage Snapshot table ");
             }
             catch (Exception e) {
-                GQEDPConstants.logger.error(meterId + " Data failed to save in the Storage Snapshot table "
-                        + e.getMessage());
+                GQEDPConstants.logger.error(meterId + " Data failed to save in the Storage Snapshot table ", e);
             }
             session.getTransaction().commit();
         }
