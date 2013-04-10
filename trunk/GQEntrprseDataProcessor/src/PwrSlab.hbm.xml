@@ -1,13 +1,16 @@
 <?xml version="1.0"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<!-- Generated Feb 18, 2013 3:31:40 PM by Hibernate Tools 3.4.0.CR1 -->
+<!-- Generated Apr 10, 2013 12:45:59 PM by Hibernate Tools 3.4.0.CR1 -->
 <hibernate-mapping>
-    <class name="com.gq.meter.object.PowerSlab" table="pwr_slab" catalog="gqmaps">
-        <id name="locId" type="string">
-            <column name="loc_id" length="3" />
+    <class name="com.gq.meter.object.PwrSlab" table="pwr_slab" catalog="gqmaps">
+        <id name="sid" type="int">
+            <column name="sid" />
             <generator class="assigned" />
         </id>
+        <property name="locId" type="string">
+            <column name="loc_id" length="3" not-null="true" />
+        </property>
         <property name="ULwrBnd" type="short">
             <column name="u_lwr_bnd" not-null="true" />
         </property>

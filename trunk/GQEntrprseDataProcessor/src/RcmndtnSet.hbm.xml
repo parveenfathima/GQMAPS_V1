@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated Apr 10, 2013 12:25:53 PM by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+    <class name="com.gq.meter.object.RcmndtnSet" table="rcmndtn_set" catalog="gqmaps">
+        <id name="snpshtId" type="byte">
+            <column name="snpsht_id" />
+            <generator class="assigned" />
+        </id>
+        <property name="rcmndtnId" type="byte">
+            <column name="rcmndtn_id" not-null="true" />
+        </property>
+        <property name="applyDate" type="timestamp">
+            <column name="apply_date" length="19" />
+        </property>
+        <property name="usrNotes" type="string">
+            <column name="usr_notes" length="60" />
+        </property>
+    </class>
+</hibernate-mapping>
