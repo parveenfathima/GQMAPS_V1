@@ -310,7 +310,7 @@ public final class ITAssetDiscoverer {
         Client client = Client.create(config);
 
         WebResource service = client.resource(MeterUtils.restURL);
-        service = service.path("gqm-gqedp").path("gqentdataprocessor");
+        service = service.path("gqm-gk").path("gatekeeper");
 
         Form form = new Form();
         form.add("gqMeterResponse", gson.toJson(gqmResponse));
