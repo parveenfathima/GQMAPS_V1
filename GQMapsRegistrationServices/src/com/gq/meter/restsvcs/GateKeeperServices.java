@@ -20,7 +20,7 @@ public class GateKeeperServices {
      * 
      * @return
      */
-    @Path("/getentmeters")
+    @Path("/getregistration")
     @GET
     public List<Enterprise> getAllEnterprises() {
         GQGateKeeperConstants.logger.info("Generating all the enterprises list from GQGatekeeper");
