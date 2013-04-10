@@ -75,13 +75,11 @@ public class StorageMeter implements GQSNMPMeter {
             oidString = "1.3.6.1.2.1.1";
             rootOID = new OID(oidString);
             result = MeterUtils.walk(rootOID, target);
-            System.out.println("Storage Result" + result);
 
             if (result != null && !result.isEmpty()) {
                 temp = oidString + ".5.0";
                 String assetIdVal = MeterUtils.getSNMPValue(temp, result);
                 assetId = assetIdVal;
-                System.out.println("Asset Id " + assetId);
                 assetObj.setAssetId(assetId);
 
             }
@@ -100,21 +98,15 @@ public class StorageMeter implements GQSNMPMeter {
                 temp = oidString + ".3.0";
                 tempStr = MeterUtils.getSNMPValue(temp, result);
                 upTime = MeterUtils.upTimeCalc(tempStr);
-                System.out.println("Uptime : " + upTime);
             }
 
             oidString = "1.3.6.1.4.1.";
             rootOID = new OID(oidString);
             result = MeterUtils.walk(rootOID, target);
-            System.out.println("^^^^^^^^ : " + result);
             totalDiskSpace = totalHardDiskCalc(result, rootOID);
-            System.out.println("TOTAL DISK SPACE : " + totalDiskSpace);
             usedDiskSpace = usedHardDiskCalc(result, rootOID);
-            System.out.println("USED DISK SPACE : " + usedDiskSpace);
             numberOfController = controllerCalc(result, rootOID);
-            System.out.println("NUM OF CONTROLLER : " + numberOfController);
             numberOfDisks = individualHardDiskCalc(result, rootOID);
-            System.out.println("NUM OF DISKS : " + numberOfDisks);
 
         }
         catch (Exception e) {
