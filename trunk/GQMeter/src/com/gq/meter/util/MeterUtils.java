@@ -110,7 +110,6 @@ public class MeterUtils {
 
             assetObj = new Asset(assetId, protocolId, sysName, sysDescr, sysContact, sysLocation, appId, assetUsg,
                     assetStrength, ctlgId);
-            System.out.println("ASST OBJ SUCCESFULY SAVED");
         }
         catch (Exception e) {
             errorList.add(ipAddress + " " + e.getMessage());
