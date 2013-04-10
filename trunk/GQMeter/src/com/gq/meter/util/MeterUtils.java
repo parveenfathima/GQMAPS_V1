@@ -44,7 +44,7 @@ public class MeterUtils {
     public static long printMeterTime = 0;
     public static long nsrgMeterTime = 0;
     public static long storageMeterTime = 0;
-    public static final String restURL = "http://localhost:8080/GQEntrprseDataProcessor/";
+    public static final String restURL = "http://localhost:8080/GQGatekeeper/";
 
     public static Asset sysBasicInfo(String communityString, String ipAddress, String snmpVersion,
             List<String> errorList) {
