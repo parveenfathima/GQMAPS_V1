@@ -17,8 +17,8 @@ public class GQGateKeeperConstants {
     public static final Logger logger = Logger.getLogger("GQGateKeeperConstants.class");
 
     private static FileAppender fileappender;
-    private static String logFilePrefix = "C:\\Users\\GQ\\opt\\gq\\maps\\logs";
-    private static String logFileName = "enterpriseDataProcessor.log";
+    private static String logFilePrefix = "C:\\Users\\yogalakshmi.s\\opt\\gq\\maps\\logs";
+    private static String logFileName = "gatekeeper.log";
     private static final String LOG_FILE_NAME_DATE_PATTERN = "yyyy-MM-dd";
 
     public static final String GQEDP_URL = "http://127.0.0.1:8080/GQEntrprseDataProcessor/";
@@ -27,7 +27,7 @@ public class GQGateKeeperConstants {
     static {
         logger.info("Inside create logger method");
 
-        GQGateKeeperConstants.logger.info("initializing gqmaps EntrprseDataProcessor logger...");
+        GQGateKeeperConstants.logger.info("initializing gqmaps Gatekeeper logger...");
         String logFile = logFilePrefix + "\\" + logFileName;
         try {
             fileappender = new org.apache.log4j.DailyRollingFileAppender(new PatternLayout(
