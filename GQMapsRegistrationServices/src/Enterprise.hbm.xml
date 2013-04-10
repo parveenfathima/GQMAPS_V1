@@ -1,0 +1,72 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated Mar 1, 2013 12:56:41 PM by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+    <class name="com.gq.meter.object.Enterprise" table="enterprise" catalog="gqexchange">
+        <id name="enterpriseId" type="character">
+            <column name="enterprise_id" length="10" />
+            <generator class="assigned" />
+        </id>
+        <property name="blCd" type="char">
+            <column name="bl_cd" length="1" not-null="true" />
+        </property>
+        <property name="EName" type="string">
+            <column name="e_name" length="40" not-null="true" />
+        </property>
+        <property name="phone" type="string">
+            <column name="phone" length="15" not-null="true" />
+        </property>
+        <property name="email" type="string">
+            <column name="email" length="20" not-null="true" />
+        </property>
+        <property name="port" type="java.lang.Short">
+            <column name="port" />
+        </property>
+        <property name="userId" type="string">
+            <column name="user_id" length="12" not-null="true" />
+        </property>
+        <property name="UName" type="string">
+            <column name="u_name" length="35" not-null="true" />
+        </property>
+        <property name="passwd" type="string">
+            <column name="passwd" length="45" not-null="true" />
+        </property>
+        <property name="secQtn1" type="java.lang.Short">
+            <column name="sec_qtn_1" />
+        </property>
+        <property name="ans1" type="string">
+            <column name="ans1" length="20" />
+        </property>
+        <property name="secQtn2" type="java.lang.Short">
+            <column name="sec_qtn_2" />
+        </property>
+        <property name="ans2" type="string">
+            <column name="ans2" length="20" />
+        </property>
+        <property name="creDttm" type="timestamp">
+            <column name="cre_dttm" length="19" not-null="true" />
+        </property>
+        <property name="noOfEmpl" type="java.lang.Integer">
+            <column name="no_of_empl" />
+        </property>
+        <property name="noOfAssets" type="java.lang.Integer">
+            <column name="no_of_assets" />
+        </property>
+        <property name="dcSqft" type="java.lang.Integer">
+            <column name="dc_sqft" />
+        </property>
+         <property name="comments" type="string">
+            <column name="comments" />
+        </property>
+        <property name="storeFwd" type="char">
+            <column name="store_fwd" length="1" not-null="true" />
+        </property>
+        <property name="fwdUrl" type="string">
+            <column name="fwd_url" length="200" />
+        </property>
+        <property name="regCmplt" type="java.lang.Character">
+            <column name="reg_cmplt" length="1" />
+        </property>
+    </class>
+</hibernate-mapping>
