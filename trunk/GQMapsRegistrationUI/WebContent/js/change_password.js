@@ -49,28 +49,76 @@ function validateForm()
 		}
 		else if(validatePwd(vNewPwd, vConfPwd))
 		{
-			  // Check for Change Security Questions option
-			  var isChecked = $('#chkChageQA').is(':checked');
+			//user id validation
 			  
-			  if(isChecked)
-			  {
-				  if(validateChangeQA())   //validating the fields in Change Security Questions for proper values to submi the form if the checkbox is checked
-				  {
-					  alert("Form is ready to submit");
-					  //TODO prepare a query string with Change Security Questions' fields
-				  }
-			  }
-			  else
-			  {
-				  alert("Form is ready to submit");
-				  // TODO prepare a query string without the Change Security Questions' fields
-			  }
-			  
-			  // TODO form submission code goes here
-			  return true;
+			var vUrl = 'http://localhost:8080/GQMapsRegistrationServices/gqm-gk/gatekeeper/getregistration';
+
+			$.ajax({
+				type : "GET",
+				url : vUrl,
+				dataType : "json",
+				success : function(json) 
+				{			
+					var vRecLen = json.length;
+					
+					if(vRecLen != 0 && vUserID != "admin") // validating the user who should not be an admin user to change their pwd and sec. questions
+					{									
+							$.each(json, function(i,n)
+							{											
+								if( vUserID === $.trim(n["userId"]))
+								{
+									isValid = 1;
+									$.jStorage.set("jsUserId", vUserID);											
+								}							  
+							});
+							
+							if(isValid === 0)
+							{
+								alert("Invalid User");	
+								$.jStorage.set("jsUserId", "");	
+								return false;						
+							}
+							else
+							{
+								//alert("Valid user");	
+								$.jStorage.set("jsUserId", vUserID);	
+								
+								// Check for Change Security Questions option
+								var isChecked = $('#chkChageQA').is(':checked');
+								
+								if(isChecked)
+								{
+								  if(validateChangeQA())   //validating the fields in Change Security Questions for proper values to submi the form if the checkbox is checked
+								  {
+									  alert("Form is ready to submit - includes change sec question");
+									  //TODO prepare a query string with Change Security Questions' fields
+								  }
+								}
+								else
+								{
+								  alert("Form is ready to submit - only new pwd");
+								  // TODO prepare a query string without the Change Security Questions' fields
+								}
+								
+								// TODO form submission code goes here
+								return true;	
+							}											
+					} // end of if(vRecLen != 0 && vUserID != "admin")
+					else
+					{
+							alert("Invalid User");	
+							$.jStorage.set("jsUserId", "");	
+							window.location.href = "login.html";	
+					} // end of if(vRecLen != 0)
+					
+				}, //end of success
+				error : function(json) 
+				{
+					alert("Error: " + json.status + " " + json.responseText);
+				}
+			});			  		
 		}	
 }
-
 
 // validating the password to contain max of 6-12 chars with at least 1 special, number, uppercase and lowercase characters...
 function validatePwd(password, confPwd)
@@ -83,8 +131,7 @@ function validatePwd(password, confPwd)
 		else if(!checkSpecialChar(password))   //check whether the password contains at least one special character
 		{
 			alert('Password should contain at least one special character');
-			setFocusNewPwd();
-			
+			setFocusNewPwd();		
 		}
 		else if(!checkForNoInString(password))   //check whether the password contains at least one number
 		{

@@ -15,16 +15,7 @@ $(document).ready(function()
 		 }
 	   }); 
 
-	      $('#dialog').dialog({ autoOpen: false });
-	   $("#btnOpenMe").bind("click", openDialog);
-   
 });
-
-function openDialog()
-{
-		$("#dialog").dialog('open');
-		return false;
-}
 
 function validateForm()
 {
@@ -122,34 +113,77 @@ function validateForm()
 		else 
 		{
 			//TODO the form submission code goes here
-			alert("Registered successfully. Your login credentials will be e-mailed to you to avail the services. Thank you!");
 			
 			var vEId = generateEntpID("eid");
-			var vUId = generateEntpID("uid")
-			alert(generateEntpID("eid"));
-			alert(generateEntpID("uid"));
-			//$('#frmAddRegn').get(0).reset();
-			window.location.href = "login.html";
+			var vUId = generateEntpID("uid");
+			var dt = new Date();
+			var vDateTime = dt.getFullYear() + "/" + convertToTwoDigit(dt.getMonth()) + "/" + convertToTwoDigit(dt.getDate()) + " " + convertToTwoDigit(dt.getHours()) + ":" 
+											 + convertToTwoDigit(dt.getMinutes()) + ":" + convertToTwoDigit(dt.getSeconds());
+			var vPassword = "Gq@123";											 
+		
+			var vType = "POST";
+			var vUrl = "";			
+			var vQuery = JSON.stringify({
+											"enterpriseId": vEId, 
+											"blCd": vBusCat,
+											"EName": vEName,
+											"phone": vPhone,
+											"email": vEmail,
+											"port": "8080",
+											"userId": vUId,
+											"UName": vUsername,
+											"passwd": vPassword ,
+											"secQtn1": vQues1,
+											"ans1": vAns1,
+											"secQtn2": vQues2 ,
+											"ans2": vAns2 ,
+											"creDttm": vDateTime,
+											"noOfEmpl": vEmp,
+											"noOfAssets": vAsset,
+											"dcSqft": vSqft,
+											"comments": vComments,
+											"storeFwd": vSaveFwd ,
+											"fwdUrl": vUrl,
+											"regCmplt": "n"
+		
+										});
+			//alert(vQuery);
+			
+			$.ajax
+			({
+				type:vType,
+				url:vUrl,
+				async:false,
+				data:vQuery,
+				dataType: "json",
+				success:function(json) 
+				{
+					alert("Registered successfully!");
+				},
+				error:function(json)
+				{
+					alert("Error: " + json.status + " " + json.responseText);
+				}
+			});				
 		}
 }
 
 //Generating the enterprise id in "NEddhhmmss" format from the current date format of - Thu Apr 04 2013 16:26:45 GMT+0530 (India Standard Time)
 //  											                             index is - 012345678901234567890123
 
-
 function generateEntpID(type)
 {
-	var dt = new Date(date);
+	var dt = new Date();
 	var dtString = "";
 	if(type == 'eid')
 	{
 		//TODO use getMonth, getHours, etc. methods to form the enterprise id
-		dtString = "NE" +  dt.toString().substr(8,2)+ dt.toString().substr(16,2) + dt.toString().substr(19,2) + dt.toString().substr(22,2);
+		dtString = "NE" + convertToTwoDigit(dt.getDate()) + convertToTwoDigit(dt.getHours()) + convertToTwoDigit(dt.getMinutes()) + convertToTwoDigit(dt.getSeconds());
 		return dtString;
 	}
 	else
 	{
-		dtString = "USER" +  dt.toString().substr(8,2)+ dt.toString().substr(16,2) + dt.toString().substr(19,2) + dt.toString().substr(22,2);
+		dtString = "USER" + convertToTwoDigit(dt.getDate()) + convertToTwoDigit(dt.getHours()) + convertToTwoDigit(dt.getMinutes()) + convertToTwoDigit(dt.getSeconds());
 		return dtString;
 	}
 }
@@ -167,4 +201,9 @@ function validateEMail(email)
 		{
 				return false;
 		}
+}
+
+function convertToTwoDigit(no)
+{
+		return (no >=0 && no <10 ? ("0"+ no) : no)
 }
