@@ -21,7 +21,7 @@ import com.gq.meter.util.GQGateKeeperConstants;
  * 
  */
 @Path("/enterprise")
-public class GateKeeperServices {
+public class EnterpriseServices {
     private Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm:ss").create();
 
     /**
