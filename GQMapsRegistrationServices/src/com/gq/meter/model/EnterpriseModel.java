@@ -18,6 +18,11 @@ import com.gq.meter.util.HibernateUtil;
  */
 public class EnterpriseModel {
 
+    /**
+     * This method used to fetch all the enterprise registered for GQMaps
+     * 
+     * @return
+     */
     public List<Enterprise> getAllEnterprises() {
         Session session = null;
         try {
@@ -32,6 +37,35 @@ public class EnterpriseModel {
         catch (Exception e) {
             GQGateKeeperConstants.logger.error("Exception occured while fetching the enterprises ", e);
             return null;
+        }
+        finally {
+            try {
+                if (session.isOpen()) {
+                    session.flush();
+                    session.close();
+                }
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    /**
+     * This method used to create the new enterprise
+     * 
+     * @param entObject
+     */
+    public void createEnterprise(Enterprise entObject) {
+        Session session = null;
+        try {
+            session = HibernateUtil.getSessionFactory().getCurrentSession();
+            session.beginTransaction();
+            session.save(entObject);
+            session.getTransaction().commit();
+        }
+        catch (Exception e) {
+            GQGateKeeperConstants.logger.error("Exception occured while creating the enterprise ", e);
         }
         finally {
             try {
