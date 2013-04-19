@@ -6,8 +6,9 @@
         
         <link rel="stylesheet" href="SlickGrid-master/slick.grid.css" type="text/css"/>
         <link rel="stylesheet" href="SlickGrid-master/css/smoothness/jquery-ui-1.8.16.custom.css" type="text/css"/>
-        <link rel="stylesheet" href="SlickGrid-master/examples/examples.css" type="text/css"/>
-        <link rel="stylesheet" href="/resources/demos/style.css" />
+        <link rel="stylesheet" href="SlickGrid-master/examples/examples.css" type="text/css"/> 
+        
+        <!--<link rel="stylesheet" href="/resources/demos/style.css" /> -->
         
         <link type="text/css" href = "css/gqmaps.css" rel="stylesheet" />  
           
@@ -22,7 +23,7 @@
         <script src="jquery-ui-1.10.2.custom/js/jquery-ui-1.10.0.custom.js"></script>        
         
 		<script src = "js/jstorage.js"> </script>         
-        <script src = "js/edit_registration - new.js"> </script>            		 
+        <script src = "js/edit_registration.js"> </script>            		 
         <script src = "js/general.js"> </script>  
         
         <style>
@@ -40,7 +41,7 @@
 			 
     </head>
     
-    <body class="body">
+    <body class="body" onLoad="listEnterprise()" >
                              
     	<div class="main-div"> <!--main div-->
                 <div class="header"><!--header -->
@@ -50,7 +51,7 @@
                 </div><!--/header -->
                 
                 <div id="dlgGeneral">
-                		<center><h1> Edit Enterprise Basic Details </h1></center>
+                		<center><h1 id="hBasic"> </h1></center>
                         <font color="#FF0000"> * </font> indicates required fields
                         <form>
                             <fieldset>                            
@@ -59,7 +60,7 @@
                                     <input type="text" name="txtEID" id="txtEID"  class="text ui-widget-content ui-corner-all"/>
                                     
                                     <label for="txtEName" >Enterprise Name <font color="#FF0000"> * </font> </label>                                    
-                                    <input type="text" name="txtEName" id="txtEName"  class="text ui-widget-content ui-corner-all"/>
+                                    <input type="text" name="txtEName" id="txtEName"  disabled="disabled" class="text ui-widget-content ui-corner-all"/>
                                     
                                     <label for="txtUID" >User ID <font color="#FF0000"> * </font> </label>                                    
                                     <input type="text" name="txtUID" id="txtUID" class="text ui-widget-content ui-corner-all"/>
@@ -69,21 +70,22 @@
                                     
                                     <label for="cmbSaveFwd" >Consume / Forward</label>                                    
                                     <select name="cmbSaveFwd" id="cmbSaveFwd" style="width:100px">
-                                        <option>Consume</option>
-                                        <option>Forward</option>
+                                        <option value = "C">Consume</option>
+                                        <option value = "F">Forward</option>
                                     </select>
                                     <br><br>
                                     <label for="txtUrl">Forward URL</label>
                                     <input type="text" name="txtUrl" id="txtUrl"  class="text ui-widget-content ui-corner-all"/>  
 									
-                                    <input type="submit" id = "sbtnGenerl" value="Submit" style="float:left; margin-left:90px;"/><input type="reset" value="Reset" />
+                                    <input type="button" id = "sbtnGeneral" value="Submit" style="float:left; margin-left:90px;" onClick="saveGeneral();"/>
+                                    <input type="reset" value="Reset" />
                                
                             </fieldset>
                         </form>
                 </div>
                 
                 <div id="dlgMeter">
-                		<center><h1> Add Enterprise Meter Details </h1></center>
+                		<center><h1> Add Meter Details </h1></center>
                         <font color="#FF0000"> * </font> indicates required fields
                         <form >
                             <fieldset>   
@@ -108,14 +110,14 @@
                                 
                             	<label>Meter List</label>                              
                                 
-                                <table id = "tblMeterList" border  = "1" bordercolordark="#FF0000" style="border-radius: 5px 5px 5px 5px;">
-                                    <tr bgcolor="#99FF99">
-                                        <th> Meter ID </th>
-                                        <th> Protocol </th>                                                                                     
+                                <table id = "tblMeterList" style="margin-left:50px;" border = "1" bordercolor="#009900">
+                                    <tr bgcolor="#009900">
+                                        <th width="70px"> Meter ID </th>
+                                        <th width="110px"> Protocol </th>                                                                                     
                                     </tr>
-                                    <tr>                                        
-                                        <td>1</td>
-                                        <td>Computer</td>
+                                    <tr >                                        
+                                        <td style = "padding-left:10px">1</td>
+                                        <td style = "padding-left:20px">Computer</td>
                                     </tr>                                                                                                                 
                             	</table>
 								<br><br>
@@ -154,73 +156,31 @@
                             
                         <br><br> 
                         <font class = "sectioncaption-font">Enterprise List</font>
-                        <br><br>
-                        <div id="grdNewEList" style = "width:800px;height:200px; margin-left:100px; overflow:scroll;" class = "div-height"  >
-                            <table id = "tblNewEList" bgcolor="#FFFFFF"="" bordercolordark="#FF0000" style="border-radius: 15px 15px 15px 15px;">
-                                <tr>
-                                    <th colspan="3" class = "th th-font th-radius-l" > Action </th>
-                                    <th class = "th th-font"> Enterprise ID </th>
-                                    <th class = "th-width-b th-font"> Enterprise Name </th>
-                                    <th class = "th-width-b th-font "> User ID </th>
-                                    <th class = "th-width-b th-font th-radius-r"> Password </th>                                                                                        
-                                </tr>
-                                <tr id = "trNewEList">
-                                    <td> <input type = "button" class = "button-font-a" id = "btnGeneral" /></td>
-                                    <td> <input type = "button" class = "button-font-a" id = "btnMeter" /></td>
-                                    <td> <input type = "button" class = "button-font-a" id = "btnValidity" /></td>                                            
-                                    <td class = "td-font-b">NE01105656</td>
-                                    <td class = "td-font-b">New Enterprise</td>
-                                    <td class = "td-font-b">USER01105659</td>
-                                    <td class = "td-font">newuser</td>
-                                </tr>
-                                <tr>
-                                    <td> <input type = "button" class = "button-font-a"/></td>
-                                    <td> <input type = "button" class = "button-font-a"/></td>
-                                    <td> <input type = "button" class = "button-font-a"/></td> 
-                                    <td class = "td-font-b">NE002115656</td>
-                                    <td class = "td-font-b">New Enterprise</td>
-                                    <td class = "td-font-b">USER01105701</td>
-                                    <td class = "td-font">newuser</td>                                            
-                                </tr>   
-                                <tr>
-                                    <td> <input type = "button" class = "button-font-a"/></td>
-                                    <td> <input type = "button" class = "button-font-a"/></td>
-                                    <td> <input type = "button" class = "button-font-a"/></td> 
-                                    <td class = "td-font-b">NE002115656</td>
-                                    <td class = "td-font-b">New Enterprise</td>
-                                    <td class = "td-font-b">USER01105701</td>
-                                    <td class = "td-font">newuser</td>                                            
-                                </tr>  
-                                <tr>
-                                    <td> <input type = "button" class = "button-font-a"/></td>
-                                    <td> <input type = "button" class = "button-font-a"/></td>
-                                    <td> <input type = "button" class = "button-font-a"/></td> 
-                                    <td class = "td-font-b">NE002115656</td>
-                                    <td class = "td-font-b">New Enterprise</td>
-                                    <td class = "td-font-b">USER01105701</td>
-                                    <td class = "td-font">newuser</td>                                            
-                                </tr> 
-                                <tr>
-                                    <td> <input type = "button" class = "button-font-a"/></td>
-                                    <td> <input type = "button" class = "button-font-a"/></td>
-                                    <td> <input type = "button" class = "button-font-a"/></td> 
-                                    <td class = "td-font-b">NE002115656</td>
-                                    <td class = "td-font-b">New Enterprise</td>
-                                    <td class = "td-font-b">USER01105701</td>
-                                    <td class = "td-font">newuser</td>                                            
-                                </tr>  
-                                <tr>
-                                    <td> <input type = "button" class = "button-font-a"/></td>
-                                    <td> <input type = "button" class = "button-font-a"/></td>
-                                    <td> <input type = "button" class = "button-font-a"/></td> 
-                                    <td class = "td-font">NE002115656</td>
-                                    <td class = "td-font-b">New Enterprise</td>
-                                    <td class = "td-font">USER01105701</td>
-                                    <td class = "td-font">newuser</td>                                            
-                                </tr>                                                                                                                                                                
-                            </table>
                         
-                        </div>                                      
+                        <div id="grdMain" style = "width:800px;height:115px; margin-left:50px;" class = "div-height"  >
+	                        <div id="grdEListHead" style = "width:780px;height:30px; margin-left:50px; padding-bottom:0px;" class = "div-height"  >
+                                <table id = "tblEListHead" bordercolordark="#FF0000" style="border-radius: 1px 1px 1px 1px;">
+                                    <tr style="height:30px;">
+                                        <th colspan="3" class = "th th-font " > Action </th>
+                                        <th class = "th-width-b th-font"> Enterprise ID </th>
+                                        <th class = "th-width-b th-font"> Enterprise Name </th>
+                                        <th class = "th-width-b th-font "> User ID </th>
+                                        <th class = "th-width-b th-font "> Password </th>
+                                        <th class = "th-width-b th-font "> Regn. Status </th>                                             
+                                    </tr>
+                                </table>
+                             
+                            </div>
+                            <div id="grdEListRows" style = "width:780px;height:85px; margin-left:50px; padding-top:0px; overflow-y:scroll; " class = "div-height"  >
+                            
+                                <table id = "tblEList" bgcolor="#FFFFFF"="" bordercolordark="#FF0000" style="border-radius: 1px 1px 1px 1px;">
+
+                                 </table>
+                            </div>
+                        </div>     
+
+                        <p style = "margin-left:100px";><font color="#FF0000"> Red rows indicate incomplete registration </font></p>
+                                                         
 
 				<!--/content div -->
                 
