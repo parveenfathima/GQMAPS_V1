@@ -51,7 +51,7 @@ function validateForm()
 		{
 			//user id validation
 			  
-			var vUrl = 'http://localhost:8080/GQMapsRegistrationServices/gqm-gk/gatekeeper/getregistration';
+			var vUrl = 'http://localhost:8080/GQMapsRegistrationServices/gqm-gk/enterprise/getregistration';
 
 			$.ajax({
 				type : "GET",

@@ -30,10 +30,14 @@ function userLogin()
 		$.jStorage.set("jsUserID", user);
 	} else {
 
-		var vUrl = 'http://localhost:8080/GQMapsRegistrationServices/gqm-gk/gatekeeper/getregistration';
+		var vUrl = 'http://localhost:8080/GQMapsRegistrationServices/gqm-gk/enterprise/getregistration';
 
 		$.ajax({
 			type : "GET",
+			beforeSend: function(xhr) 
+			{ 
+			  xhr.setRequestHeader("Content-Type", "application/json");
+			},
 			url : vUrl,
 			dataType : "json",
 			success : function(json) 
