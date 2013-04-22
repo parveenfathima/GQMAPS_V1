@@ -10,11 +10,10 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.gq.meter.model.EnterpriseModel;
 import com.gq.meter.object.Enterprise;
 import com.gq.meter.util.GQGateKeeperConstants;
+import com.gq.meter.util.GQRegistrationConstants;
 
 /**
  * @author Chandru
@@ -22,8 +21,6 @@ import com.gq.meter.util.GQGateKeeperConstants;
  */
 @Path("/enterprise")
 public class EnterpriseServices {
-    private Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm:ss").create();
-
     /**
      * This method used to fetch all the enterprises
      * 
@@ -37,16 +34,22 @@ public class EnterpriseServices {
         EnterpriseModel entmodel = new EnterpriseModel();
         List<Enterprise> entMeterResult = entmodel.getAllEnterprises();
         // Returning all the enterprises in JSON format
-        return gson.toJson(entMeterResult);
+        return GQRegistrationConstants.gson.toJson(entMeterResult);
     }
 
+    /**
+     * This method used to create new enterprise
+     * 
+     * @param entObjectString
+     * @return
+     */
     @Path("/addregistration")
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     public Response addEnterprise(String entObjectString) {
         Enterprise entObject = null;
         try {
-            entObject = gson.fromJson(entObjectString, Enterprise.class);
+            entObject = GQRegistrationConstants.gson.fromJson(entObjectString, Enterprise.class);
             GQGateKeeperConstants.logger.info("Saving the new enterprise : " + entObject.getEnterpriseId());
             EnterpriseModel entmodel = new EnterpriseModel();
             entmodel.createEnterprise(entObject);
@@ -55,6 +58,24 @@ public class EnterpriseServices {
             GQGateKeeperConstants.logger.error("Exception occured while creating the new enterprise", e);
             return Response.status(400).build();
         }
-        return Response.ok(gson.toJson(entObjectString)).build();
+        return Response.ok("success").build();
+    }
+
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response updateEnterprise(String entObjectString) {
+        Enterprise entObject = null;
+        try {
+            entObject = GQRegistrationConstants.gson.fromJson(entObjectString, Enterprise.class);
+            GQGateKeeperConstants.logger.info("Saving the new enterprise : " + entObject.getEnterpriseId());
+
+            EnterpriseModel entmodel = new EnterpriseModel();
+            entmodel.updateEnterprise(entObject);
+        }
+        catch (Exception e) {
+            GQGateKeeperConstants.logger.error("Exception occured while creating the new enterprise", e);
+            return Response.status(400).build();
+        }
+        return Response.ok("success").build();
     }
 }

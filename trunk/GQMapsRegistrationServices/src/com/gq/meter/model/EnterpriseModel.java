@@ -80,4 +80,29 @@ public class EnterpriseModel {
         }
     }
 
+    public void updateEnterprise(Enterprise entObject) {
+        Session session = null;
+        try {
+            session = HibernateUtil.getSessionFactory().getCurrentSession();
+            session.beginTransaction();
+            Enterprise oldEntObject = (Enterprise) session.load(Enterprise.class, entObject.getEnterpriseId());
+
+            session.getTransaction().commit();
+        }
+        catch (Exception e) {
+            GQGateKeeperConstants.logger.error("Exception occured while creating the enterprise ", e);
+        }
+        finally {
+            try {
+                if (session.isOpen()) {
+                    session.flush();
+                    session.close();
+                }
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
 }
