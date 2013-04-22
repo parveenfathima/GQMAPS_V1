@@ -3,7 +3,7 @@
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <!-- Generated Mar 1, 2013 12:56:41 PM by Hibernate Tools 3.4.0.CR1 -->
 <hibernate-mapping>
-    <class name="com.gq.meter.object.Enterprise" table="enterprise" catalog="gqexchange">
+    <class name="com.gq.meter.object.Enterprise" table="enterprise" dynamic-update="true" catalog="gqexchange">
         <id name="enterpriseId" type="string">
             <column name="enterprise_id" length="10" />
             <generator class="assigned" />
