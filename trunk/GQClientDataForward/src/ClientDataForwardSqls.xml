@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+    <comment>This query returns all unit data sqls</comment>
+ 
+    <entry key="clientDataForward.sql">
+                
+                 select e.enterprise_id as enterpriseid,
+                 e.e_name as enterprisename,
+                 e.fwd_url as forwardurl,
+                 cd.data as json
+                 from enterprise e 
+                 join 
+                 enterprise_meter em
+                 on
+                 e.enterprise_id = em.enterprise_id and e.store_fwd='f' 
+                 join 
+                 client_data cd
+                 on
+                 em.meter_id = cd.meter_id
+                 join 
+                 gatekpr g
+                 on
+                 g.enterprise_id = e.enterprise_id and date(g.exp_dttm) >= current_date ;
+                
+    </entry>
+    
+</properties>
+
