@@ -27,7 +27,7 @@ function validateForm()
 		var vEmail = $.trim($('#txtEmail').val()); //mandatory field
 		var vUsername = $.trim($('#txtUsername').val()); //mandatory field
 		var vSaveFwd = $('#cmbSaveFwd').val(); //mandatory field
-		var vUrl = $.trim($('#txtUrl').val());
+		var vStoreFwd = $.trim($('#txtUrl').val());
 		var vQues1 = $('#cmbQues1').val(); //mandatory field
 		var vAns1 = $.trim($('#txtAns1').val()); //mandatory field
 		var vQues2 = $('#cmbQues2').val(); //mandatory field
@@ -51,9 +51,9 @@ function validateForm()
 			$('#txtPhone').select();	
 			return false;			
 		}
-		else if($.trim($('#txtPhone').val()).length < 8 || $.trim($('#txtPhone').val()).length > 10)
+		else if($.trim($('#txtPhone').val()).length != 10)
 		{
-			alert("Enter a valid phone number");
+			alert("Enter a valid cell phone number");
 			$('#txtPhone').select();
 			return false;			
 		}
@@ -117,41 +117,25 @@ function validateForm()
 			var vEId = generateEntpID("eid");
 			var vUId = generateEntpID("uid");
 			var dt = new Date();
-			var vDateTime = dt.getFullYear() + "/" + convertToTwoDigit(dt.getMonth()) + "/" + convertToTwoDigit(dt.getDate()) + " " + convertToTwoDigit(dt.getHours()) + ":" 
+			var vDateTime = dt.getFullYear() + "-" + convertToTwoDigit(dt.getMonth()) + "-" + convertToTwoDigit(dt.getDate()) + " " + convertToTwoDigit(dt.getHours()) + ":" 
 											 + convertToTwoDigit(dt.getMinutes()) + ":" + convertToTwoDigit(dt.getSeconds());
-			var vPassword = "Gq@123";											 
+			var vPassword = "Gq@123";	
+
+			if(vStoreFwd === "") vStoreFwd = null;
+			if(vComments === "") vComments = null;
+			if(vEmp === "") vEmp = null;
+			if(vAsset  === "") vAsset = null;
+			if(vSqft  === "") vSqft = null;										 
 		
 			var vType = "POST";
-			var vUrl = "";			
-			var vQuery = JSON.stringify({
-											"enterpriseId": vEId, 
-											"blCd": vBusCat,
-											"EName": vEName,
-											"phone": vPhone,
-											"email": vEmail,
-											"port": "8080",
-											"userId": vUId,
-											"UName": vUsername,
-											"passwd": vPassword ,
-											"secQtn1": vQues1,
-											"ans1": vAns1,
-											"secQtn2": vQues2 ,
-											"ans2": vAns2 ,
-											"creDttm": vDateTime,
-											"noOfEmpl": vEmp,
-											"noOfAssets": vAsset,
-											"dcSqft": vSqft,
-											"comments": vComments,
-											"storeFwd": vSaveFwd ,
-											"fwdUrl": vUrl,
-											"regCmplt": "n"
-		
-										});
-			//alert(vQuery);
+			var vUrl = "http://localhost:8080/GQMapsRegistrationServices/gqm-gk/enterprise/addregistration";						
+			
+			var vQuery = '{"enterpriseId":"' + vEId + '", "blCd":"' + vBusCat + '", "EName":"' + vEName + '", "phone":"' + vPhone + '", "email":"' + vEmail + '", "port": "8080", "userId":"' + vUId + '", "UName":"' + vUsername + '", "passwd":"' + vPassword + '", "secQtn1":"' + vQues1 + '", "ans1":"' + vAns1 + '", "secQtn2":"' + vQues2 + '", "ans2":"' + vAns2 + '", "creDttm":"' + vDateTime + '", "noOfEmpl":' + vEmp + ', "noOfAssets":' + vAsset + ', "dcSqft":' + vSqft + ', "comments":' + vComments + ', "storeFwd":' + vSaveFwd + ', "fwdUrl":' + vStoreFwd + ', "regCmplt": "n"}';
 			
 			$.ajax
 			({
 				type:vType,
+				contentType: "application/json",
 				url:vUrl,
 				async:false,
 				data:vQuery,
@@ -159,6 +143,7 @@ function validateForm()
 				success:function(json) 
 				{
 					alert("Registered successfully!");
+					$("#frmAddRegn")[0].reset();
 				},
 				error:function(json)
 				{
