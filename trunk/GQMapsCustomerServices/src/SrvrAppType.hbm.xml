@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated Apr 10, 2013 12:26:11 PM by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+    <class name="com.gq.meter.object.SrvrAppType" table="srvr_app_type" catalog="gqmaps">
+        <id name="srvrAppId" type="string">
+            <column name="srvr_app_id" length="20" />
+            <generator class="assigned" />
+        </id>
+        <property name="descr" type="string">
+            <column name="descr" length="60" not-null="true" />
+        </property>
+    </class>
+</hibernate-mapping>
