@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated Apr 10, 2013 12:25:12 PM by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+    <class name="com.gq.meter.object.Rcmndtn" table="rcmndtn" catalog="gqmaps">
+        <id name="rcmndtnId" type="byte">
+            <column name="rcmndtn_id" />
+            <generator class="assigned" />
+        </id>
+        <property name="rcmndtn" type="string">
+            <column name="rcmndtn" length="45" not-null="true" />
+        </property>
+        <property name="extrnlInflnce" type="string">
+            <column name="extrnl_inflnce" length="25" />
+        </property>
+        <property name="hrdshp" type="java.lang.Byte">
+            <column name="hrdshp" />
+        </property>
+        <property name="timeRealztn" type="string">
+            <column name="time_realztn" length="45" />
+        </property>
+        <property name="notes" type="string">
+            <column name="notes" length="200" />
+        </property>
+    </class>
+</hibernate-mapping>
