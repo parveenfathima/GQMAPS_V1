@@ -26,15 +26,22 @@ public class EnterpriseServices {
      * 
      * @return
      */
-    @Path("/getregistration")
+    @Path("/getRegistration")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public String getAllEnterprises() {
+    public Response getAllEnterprises() {
         GQGateKeeperConstants.logger.info("Generating all the enterprises list from GQGatekeeper");
         EnterpriseModel entmodel = new EnterpriseModel();
-        List<Enterprise> entMeterResult = entmodel.getAllEnterprises();
+        List<Enterprise> entMeterResult = null;
+        try {
+            entMeterResult = entmodel.getAllEnterprises();
+        }
+        catch (Exception e) {
+            GQGateKeeperConstants.logger.error("Exception occured while fetching the enterprises list ", e);
+            return Response.status(400).build();
+        }
         // Returning all the enterprises in JSON format
-        return GQRegistrationConstants.gson.toJson(entMeterResult);
+        return Response.ok(GQRegistrationConstants.gson.toJson(entMeterResult)).build();
     }
 
     /**
@@ -43,7 +50,7 @@ public class EnterpriseServices {
      * @param entObjectString
      * @return
      */
-    @Path("/addregistration")
+    @Path("/addRegistration")
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     public Response addEnterprise(String entObjectString) {
@@ -52,7 +59,7 @@ public class EnterpriseServices {
             entObject = GQRegistrationConstants.gson.fromJson(entObjectString, Enterprise.class);
             GQGateKeeperConstants.logger.info("Saving the new enterprise : " + entObject.getEnterpriseId());
             EnterpriseModel entmodel = new EnterpriseModel();
-            entmodel.createEnterprise(entObject);
+            entmodel.addEnterprise(entObject);
         }
         catch (Exception e) {
             GQGateKeeperConstants.logger.error("Exception occured while creating the new enterprise", e);
@@ -61,6 +68,7 @@ public class EnterpriseServices {
         return Response.ok("success").build();
     }
 
+    @Path("/updateRegistration")
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     public Response updateEnterprise(String entObjectString) {
