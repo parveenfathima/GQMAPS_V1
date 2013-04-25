@@ -21,6 +21,36 @@ import com.gq.meter.util.GQRegistrationConstants;
  */
 @Path("/enterprise")
 public class EnterpriseServices {
+
+    /**
+     * This method used to authenticate the user
+     * 
+     * @param authString
+     * @return
+     */
+    @Path("/authenticate")
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response authenticate(String authString) {
+        Enterprise authObject = null;
+        try {
+            GQGateKeeperConstants.logger.info("authString : " + authString);
+            authObject = GQRegistrationConstants.gson.fromJson(authString, Enterprise.class);
+            EnterpriseModel entModel = new EnterpriseModel();
+            boolean authValue = entModel.authenticate(authObject);
+            if (authValue) {
+                return Response.ok("success").build();
+            }
+            else {
+                return Response.status(401).build();
+            }
+        }
+        catch (Exception e) {
+            GQGateKeeperConstants.logger.error("Exception occured while creating the new enterprise", e);
+            return Response.status(401).build();
+        }
+    }
+
     /**
      * This method used to fetch all the enterprises
      * 
