@@ -22,7 +22,7 @@ import com.gq.meter.util.GQRegistrationConstants;
 @Path("/gatekeeper")
 public class GateKeeperServices {
 
-    @Path("/addGateKeeper")
+    @Path("/addEntGateKeeper")
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     public Response addGateKeeper(String gkGatekeeper) {
@@ -39,7 +39,7 @@ public class GateKeeperServices {
         return Response.ok("success").build();
     }
 
-    @Path("/addAudit")
+    @Path("/addEntAudit")
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     public Response addGateKeeperAudit(String gkAuditString) {
