@@ -98,6 +98,13 @@ public class EnterpriseServices {
         return Response.ok("success").build();
     }
 
+    /**
+     * TODO: have to check hibernate saveorupdate method, if it works can use one method for both save and update
+     * operation
+     * 
+     * @param entObjectString
+     * @return
+     */
     @Path("/updateRegistration")
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
