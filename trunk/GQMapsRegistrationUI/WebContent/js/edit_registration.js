@@ -14,7 +14,7 @@ function saveGeneral()
 	updateEntp(arrEntp[gEId]);   
 }
 
-// updating only the changed object
+// updating only the changed enterprise
 function updateEntp(dbEntp)
 {
 		var formEntp = new enterprise($.trim($("#txtEID").val()), $.trim($("#txtEName").val()), $.trim($("#txtUID").val()), $.trim($("#txtPwd").val()), $.trim($("#cmbSaveFwd").val()), $.trim($("#txtUrl").val()), dbEntp.getRegStatus());
@@ -29,7 +29,7 @@ function updateEntp(dbEntp)
 			
 			//TODO call to ajax
 			
-			// gEId = ""
+			gEId = ""
 		}
 }
 
@@ -58,10 +58,82 @@ function compareObject(obj1, obj2)
 // binding the datepicker with the field
 function showDate()
 {
-	$("#txtNewExpiry").datepicker({
-		minDate: 0
-	});
+	$("#txtNewExpiry").datepicker({ dateFormat: 'yy-mm-dd' });
 }
+
+function saveMeter()
+{
+	
+}
+
+function saveValidity()
+{
+	updateGateKpr(arrEntp[gEId]);
+}
+
+function updateGateKpr(dbEntp)
+{
+	var dateObject = $("#datepicker").datepicker("getDate");
+	
+	var vExpDate = $.trim($("#txtNewExpiry").val());
+	var vCount = $.trim($("#txtNewScanCount").val());
+	var vComments = $.trim($("#taComments").val());
+	
+	if(vComments === "" || vComments.length === 0)
+	{
+		vComments = null; 	
+	}
+	
+	var vCondition = $("#cmbCondition").val();		
+	
+	if(vExpDate === "" || vExpDate.length === 0 || vCount === "" || vCount.length === 0)
+	{
+		alert("Enter the mandatory values to save/update the validity details");
+		return false;
+	}
+	else
+	{
+		var vType = "POST";
+		var vUrl = "http://localhost:8080/GQMapsRegistrationServices/gqm-gk/gatekeeper/addEntAudit";						
+
+		
+		var vEDt = new Date(vExpDate);
+		vExpDate= vEDt.getFullYear() + "-" + convertToTwoDigit(vEDt.getMonth()) + "-" + convertToTwoDigit(vEDt.getDate() + " " + convertToTwoDigit(vEDt.getHours()) + ":" 
+										 + convertToTwoDigit(vEDt.getMinutes()) + ":" + convertToTwoDigit(vEDt.getSeconds()));
+
+		var dt = new Date();
+		var vCDtTime = dt.getFullYear() + "-" + convertToTwoDigit(dt.getMonth()) + "-" + convertToTwoDigit(dt.getDate()) + " " + convertToTwoDigit(dt.getHours()) + ":" 
+										 + convertToTwoDigit(dt.getMinutes()) + ":" + convertToTwoDigit(dt.getSeconds());
+
+		var vQuery = '{"enterpriseId" : "' + dbEntp.getEId() + '", "comment" : "' + vComments + '","scanPurchased" : "' + vCount + '", "expDttm" : "' + vExpDate +'","creDttm" : "' + vCDtTime + '"}';											 
+										 
+				
+		$.ajax
+		({
+			type:vType,
+			contentType: "application/json",
+			url:vUrl,
+			async:false,
+			data:vQuery,
+			dataType: "json",
+			success:function(json) 
+			{
+				alert("Validity details saved successfully!");
+				//$("#validity")[0].reset();
+				//TODO ajax call for gatekpr to be done as the service is not giving proper result which has got some issues in saving the data. need to be checked.
+				
+			},
+			error:function(json)
+			{
+				alert("Error: " + json.status + " " + json.responseText);
+			}
+		});	
+
+	}
+		
+}
+
+
 
 // opening the general dialog with the selected enterprise's basic information to edit by the admin user. 
 function openGeneralDialog(i)
@@ -90,8 +162,10 @@ function openMeterDialog(eId)
 // opening the meter dialog for the selected enterprise to add the validity details. 
 function openValidityDialog(eId)
 {
+	gEId = eId;
 	$( "#dlgValidity" ).dialog( "open" );
 	$('#txtNewExpiry').blur(); 
+	
 }
 
 //General form dialog configuration
@@ -130,7 +204,7 @@ $(function() {
 // dynamic grid listing all the enterprises
 function listEnterprise()
 {			
-		var vUrl = 'http://localhost:8080/GQMapsRegistrationServices/gqm-gk/enterprise/getregistration';
+		var vUrl = 'http://localhost:8080/GQMapsRegistrationServices/gqm-gk/enterprise/getRegistration';
 		
 		$.ajax({
 			type : "GET",
@@ -276,3 +350,11 @@ enterprise.prototype.toString = function()
 {
 	return(this.eid + " " + this.ename + " " + this.uid + " " + this.pwd + " " + this.output + " " + this.url + " " + this.regStatus);
 } // end of subject object	
+
+
+
+
+function convertToTwoDigit(no)
+{
+	return (no >=0 && no <10 ? ("0"+ no) : no)
+}
