@@ -121,7 +121,7 @@
                                     </tr>                                                                                                                 
                             	</table>
 								<br><br>
-                                <input type="submit" id = "sbtnMeter" value="Submit" style="float:left; margin-left:90px;" /><input type="reset" value="Reset" /> 
+                                <input type="button" id = "sbtnMeter" value="Submit" style="float:left; margin-left:90px;" onClick="saveMeter();"/><input type="reset" value="Reset" /> 
                             </fieldset>
                         </form>
                 </div>  
@@ -129,7 +129,7 @@
                 <div id="dlgValidity">
                 		<center><h1> Add Enterprise Validity Details </h1></center>
                         <font color="#FF0000"> * </font> indicates required fields
-                        <form >
+                        <form id ="validity">
                             <fieldset>   
                                 <label for="txtNewExpiry" >New Scan Expiry Date</label> 
                                 <input type="text" name="txtNewExpiry" id="txtNewExpiry" class="text ui-widget-content ui-corner-all"/>
@@ -139,15 +139,15 @@
                                 
                                 <label for="cmbCondition" >Check Condition</label> 
                                 <select name="cmbCondition" id="cmbCondition"/>
-                                <option>Yes</option>
-                                <option> No</option>
+                                <option value = "y">Yes</option>
+                                <option value = "n"> No</option>
                                 </select>
                                 <br><br>
                                 
                                 <label for="taComments" >Purchase Comments</label>  
                                 <textarea name="taComments" id="taComments" rows = "2" style="width:200px"> </textarea>
 								<br><br>
-                                <input type="submit" id = "sbtnValidity" value="Submit" style="float:left; margin-left:90px;"/><input type="reset" value="Reset" /> 
+                                <input type="button" id = "sbtnValidity" value="Submit" style="float:left; margin-left:90px;" onClick="saveValidity();"/><input type="reset" value="Reset" /> 
                             </fieldset>
                         </form>
                 </div>                                
@@ -161,7 +161,7 @@
 	                        <div id="grdEListHead" style = "width:780px;height:30px; margin-left:50px; padding-bottom:0px;" class = "div-height"  >
                                 <table id = "tblEListHead" bordercolordark="#FF0000" style="border-radius: 1px 1px 1px 1px;">
                                     <tr style="height:30px;">
-                                        <th colspan="3" class = "th th-font " > Action </th>
+                                        <th colspan="3" class = "th-font" width="420" > &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Action&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </th>
                                         <th class = "th-width-b th-font"> Enterprise ID </th>
                                         <th class = "th-width-b th-font"> Enterprise Name </th>
                                         <th class = "th-width-b th-font "> User ID </th>
@@ -184,7 +184,7 @@
 
 				<!--/content div -->
                 
-                <div class = "footer" position = "fixed" >
+                <div class = "footer" position = "fixed">
                     <font class="Copyrights-font">© Copyright 2012 Gquotient</font>
                 </div> <!--/footer -->
         
