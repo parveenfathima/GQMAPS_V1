@@ -17,7 +17,7 @@ import com.gq.meter.util.GQGateKeeperConstants;
 import com.gq.meter.util.GQRegistrationConstants;
 
 /**
- * @author GQ
+ * @author Chandru
  * 
  */
 @Path("/protocol")
