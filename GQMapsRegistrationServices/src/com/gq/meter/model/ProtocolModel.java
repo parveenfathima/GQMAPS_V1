@@ -30,7 +30,7 @@ public class ProtocolModel {
             return protoResult;
         }
         catch (Exception e) {
-            GQGateKeeperConstants.logger.error("Exception occured while fetching the enterprises ", e);
+            GQGateKeeperConstants.logger.error("Exception occured while fetching the protocols list  ", e);
             throw new Exception(e);
         }
         finally {
@@ -41,6 +41,7 @@ public class ProtocolModel {
                 }
             }
             catch (Exception e) {
+                GQGateKeeperConstants.logger.error("Exception occured while closing the session ", e);
                 throw new Exception(e);
             }
         }
