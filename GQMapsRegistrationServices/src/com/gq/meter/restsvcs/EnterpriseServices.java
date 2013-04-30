@@ -39,7 +39,7 @@ public class EnterpriseServices {
             EnterpriseModel entModel = new EnterpriseModel();
             boolean authValue = entModel.authenticate(authObject);
             if (authValue) {
-                return Response.ok("success").build();
+                return Response.status(200).build();
             }
             else {
                 return Response.status(401).build();
@@ -95,7 +95,7 @@ public class EnterpriseServices {
             GQGateKeeperConstants.logger.error("Exception occured while creating the new enterprise", e);
             return Response.status(400).build();
         }
-        return Response.ok("success").build();
+        return Response.status(200).build();
     }
 
     /**
@@ -121,6 +121,6 @@ public class EnterpriseServices {
             GQGateKeeperConstants.logger.error("Exception occured while creating the new enterprise", e);
             return Response.status(400).build();
         }
-        return Response.ok("success").build();
+        return Response.status(200).build();
     }
 }

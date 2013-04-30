@@ -14,8 +14,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import com.gq.meter.model.EnterpriseMeterModel;
-import com.gq.meter.model.EnterpriseModel;
-import com.gq.meter.object.Enterprise;
 import com.gq.meter.object.EnterpriseMeter;
 import com.gq.meter.util.GQGateKeeperConstants;
 import com.gq.meter.util.GQRegistrationConstants;
@@ -65,7 +63,7 @@ public class EnterpriseMeterServices {
             GQGateKeeperConstants.logger.error("Exception occured while creating the new enterprise", e);
             return Response.status(400).build();
         }
-        return Response.ok("success").build();
+        return Response.status(200).build();
     }
 
 }
