@@ -46,6 +46,7 @@ public class EnterpriseMeterModel {
                 }
             }
             catch (Exception e) {
+                GQGateKeeperConstants.logger.error("Exception occured while closing the session ", e);
                 throw new Exception(e);
             }
         }
@@ -77,6 +78,7 @@ public class EnterpriseMeterModel {
                 }
             }
             catch (Exception e) {
+                GQGateKeeperConstants.logger.error("Exception occured while closing the session ", e);
                 throw new Exception(e);
             }
         }
