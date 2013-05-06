@@ -2,11 +2,48 @@
 var arrEntp = new Array(enterprise()); // global array to store all the enterprises from the rest service
 var gEId = ""; // global enterprise id.
 var gRegStatus = "";
+var gLongitude = null;
+var gLatitude = null;
+var gMeterId = 0;
 
 $(document).ready(function() 
 {
+	listEnterprise();
 	$( "#txtNewExpiry").bind("focusin", showDate);
+	
+	$("#txtPhone").keypress(function (e) 
+	{
+	// if the letter is not digit then display error and don't type anything
+	 if (e.which != 8 && e.which != 0 && (e.which < 48 || e.which > 57)) 
+	 {
+		//display error message
+		alert("Enter numbers only");
+		$("#txtPhone").focus();
+		return false;
+	 }
+   }); 
+   
+
+	
 });
+
+
+// opening the general dialog with the selected enterprise's basic information to edit by the admin user. 
+function openGeneralDialog(i)
+{
+	gEId = i;
+	$( "#dlgGeneral" ).dialog( "open" );
+	$("#hBasic").text(arrEntp[i].getEId() + " - " + arrEntp[i].getEName());
+	$("#txtEID").val(arrEntp[i].getEId());
+	$("#txtEName").val(arrEntp[i].getEName());
+	$("#txtUID").val(arrEntp[i].getUId());
+	$("#txtPwd").val(arrEntp[i].getPwd());
+	$("#cmbSaveFwd").val(arrEntp[i].getOutput());
+	$("#txtUrl").val(arrEntp[i].getUrl());
+	
+	$("#txtEID").focus();
+	
+}
 
 // saving the enterprise general information dialog
 function saveGeneral()
@@ -28,6 +65,38 @@ function updateEntp(dbEntp)
 			alert("Changes found");
 			
 			//TODO call to ajax
+			
+			var vType = "PUT";
+			var vUrl = "http://localhost:8080/GQMapsRegistrationServices/gqm-gk/enterpriseMeters/" +  dbEntp.getSId();						
+	
+			var vQuery = "";
+			
+			vQuery = vQuery + '{"meterId":"' + vMId + '","protocolId":"' + vProtocol + '", "enterpriseId":"' + vEId + '", "descr":"' + vDesc + '", "address":"' + vAddress;
+			vQuery = vQuery + '","phone":"' + vPhone + '", "creDttm":"' + vDtTime + '", "latitude":' + gLongitude + ', "longitude":' + gLatitude + '}';																		
+					
+			$.ajax
+			({
+				type:vType,
+				contentType: "application/json",
+				url:vUrl,
+				async:false,
+				data:vQuery,
+				dataType: "json",
+				success:function(json) 
+				{
+					gLongitude = null;
+					gLatitude = null;	
+					gMeterId = 0;				
+					alert("Meter details saved successfully!");
+					$('#frmMeter').get(0).reset();
+					loadMeters();
+				},
+				error:function(json)
+				{
+					resetVariables();	
+					alert("Error: " + json.status + " " + json.responseText);
+				}
+			});	
 			
 			gEId = ""
 		}
@@ -61,9 +130,110 @@ function showDate()
 	$("#txtNewExpiry").datepicker({ dateFormat: 'yy-mm-dd' });
 }
 
+
+// opening the meter dialog for the selected enterprise to add the meter details. 
+function openMeterDialog(eId)
+{
+	gEId = eId;
+	$( "#dlgMeter" ).dialog( "open" );
+
+	//loading the protocols from db in the dropdown in general.js
+	loadProtocol();
+	loadMeters();
+}
+
 function saveMeter()
 {
+	addEntpMeter(arrEntp[gEId]);
+}
+
+function addEntpMeter(dbEntp)
+{
+	var vMId = $("#txtMeterID").val();
+	var vProtocol = $("#cmbProtocol").val();
+	var vEId = dbEntp.getEId();
+	var vPhone = $("#txtPhone").val();
+	var vAddress = $.trim($("#taAddress").val());
+	var vDesc = $.trim($("#txtDesc").val());
 	
+	if(vDesc.length === 0 || vDesc === "")
+	{
+		vDesc = null;
+	}
+	
+	var vDtTime = getDtTime();
+	
+	if(vMId.length === 0 || vMId == "" || vPhone.length === 0 || vPhone === "" || vAddress.length === 0 || vAddress === "")
+	{
+		alert("Enter mandatory values to submit the details");
+		return false;
+	}
+	else if($("#cmbProtocol").val() === "" )
+	{
+		alert("Select protocol");
+		$("#cmbProtocol").focus();
+	}
+	else if(vPhone.length != 10)
+	{
+		alert("Enter a valid phone number");
+		$("#txtPhone").select();	
+		return false;	
+	}	
+	else 
+	{
+		getLocation();
+		//alert("latitude and longitude are: " + gLongitude + "  " + gLatitude);
+		
+		validateMeterId(vMId);
+		
+		if(gMeterId === 1)
+		{
+			alert("Enter a unique meter ID!");
+			$("#txtMeterID").select();
+			gMeterId = 0;
+			return false;
+		}
+	
+		var vType = "POST";
+		var vUrl = "http://localhost:8080/GQMapsRegistrationServices/gqm-gk/enterpriseMeters/addEntMeters";						
+
+		var vQuery = "";
+		
+		vQuery = vQuery + '{"meterId":"' + vMId + '","protocolId":"' + vProtocol + '", "enterpriseId":"' + vEId + '", "descr":"' + vDesc + '", "address":"' + vAddress;
+		vQuery = vQuery + '","phone":"' + vPhone + '", "creDttm":"' + vDtTime + '", "latitude":' + gLongitude + ', "longitude":' + gLatitude + '}';																		
+				
+		$.ajax
+		({
+			type:vType,
+			contentType: "application/json",
+			url:vUrl,
+			async:false,
+			data:vQuery,
+			dataType: "json",
+			success:function(json) 
+			{
+				gLongitude = null;
+				gLatitude = null;	
+				gMeterId = 0;				
+				alert("Meter details saved successfully!");
+				$('#frmMeter').get(0).reset();
+				loadMeters();
+			},
+			error:function(json)
+			{
+				resetVariables();	
+				alert("Error: " + json.status + " " + json.responseText);
+			}
+		});	
+	}
+}
+
+// opening the meter dialog for the selected enterprise to add the validity details. 
+function openValidityDialog(eId)
+{
+	gEId = eId;
+	$( "#dlgValidity" ).dialog( "open" );
+	$('#txtNewExpiry').blur(); 	
 }
 
 function saveValidity()
@@ -121,6 +291,7 @@ function updateGateKpr(dbEntp)
 				alert("Validity details saved successfully!");
 				//$("#validity")[0].reset();
 				//TODO ajax call for gatekpr to be done as the service is not giving proper result which has got some issues in saving the data. need to be checked.
+				gEId = ""
 				
 			},
 			error:function(json)
@@ -131,41 +302,6 @@ function updateGateKpr(dbEntp)
 
 	}
 		
-}
-
-
-
-// opening the general dialog with the selected enterprise's basic information to edit by the admin user. 
-function openGeneralDialog(i)
-{
-	gEId = i;
-	$( "#dlgGeneral" ).dialog( "open" );
-	$("#hBasic").text(arrEntp[i].getEId() + " - " + arrEntp[i].getEName());
-	$("#txtEID").val(arrEntp[i].getEId());
-	$("#txtEName").val(arrEntp[i].getEName());
-	$("#txtUID").val(arrEntp[i].getUId());
-	$("#txtPwd").val(arrEntp[i].getPwd());
-	$("#cmbSaveFwd").val(arrEntp[i].getOutput());
-	$("#txtUrl").val(arrEntp[i].getUrl());
-	
-	$("#txtEID").focus();
-	
-}
-
-// opening the meter dialog for the selected enterprise to add the meter details. 
-function openMeterDialog(eId)
-{
-	$( "#dlgMeter" ).dialog( "open" );
-	$("#txtMeterID").text(eId);
-}
-
-// opening the meter dialog for the selected enterprise to add the validity details. 
-function openValidityDialog(eId)
-{
-	gEId = eId;
-	$( "#dlgValidity" ).dialog( "open" );
-	$('#txtNewExpiry').blur(); 
-	
 }
 
 //General form dialog configuration
@@ -357,4 +493,100 @@ enterprise.prototype.toString = function()
 function convertToTwoDigit(no)
 {
 	return (no >=0 && no <10 ? ("0"+ no) : no)
+}
+
+
+
+// funtion that returns the longitue and latitude of an address passed.
+function getLocation() 
+{
+	var geocoder = new google.maps.Geocoder();
+	var address = document.getElementById("taAddress").value;
+
+		geocoder.geocode({ 'address': address }, function (results, status) 
+		{
+			if (status == google.maps.GeocoderStatus.OK) 
+			{				
+				gLatitude = results[0].geometry.location.lat();
+				gLongitude = results[0].geometry.location.lng();
+			} 
+			else 
+			{
+				gLatitude = null;
+				gLongitude = null;
+			}
+		});
+}
+
+//check for unique meter id 
+function validateMeterId(meterId)
+{
+	  var vType = "GET";
+	  var vUrl = "http://localhost:8080/GQMapsRegistrationServices/gqm-gk/enterpriseMeters/getEntMeters";		
+	  
+	  $.ajax
+	  ({
+		  type:vType,
+		  contentType: "application/json",
+		  url:vUrl,
+		  async:false,
+		  dataType: "json",
+		  success:function(json)
+		  {				
+				$.each(json, function(i,n)
+				{
+					if(n["meterId"] === meterId)
+					{
+						gMeterId = 1;
+					}
+				});	
+		  },
+		  error:function(json)
+		  {
+			  alert("Error: " + json.status + " " + json.responseText);
+		  } 
+	  });	
+			
+}
+
+function resetVariables()
+{
+	  gEId = "";
+	  gLongitude = null;
+	  gLatitude = null;	
+	  gRegStatus = "";
+	  gMeterId = 0;
+}
+
+//loads meter details from the db
+function loadMeters()
+{
+	var vType = "GET";	
+	var vUrl = "http://localhost:8080/GQMapsRegistrationServices/gqm-gk/enterpriseMeters/getEntMeters";		
+	
+	$.ajax
+	({
+		type:vType,
+		contentType: "application/json",
+		url:vUrl,
+		async:false,
+		dataType: "json",
+		success:function(json)
+		{				
+			var vValues = "";
+			$.each(json, function(i,n)
+			{
+				vValues = vValues + '<tr>';                                        
+				vValues = vValues + '<td width="80px" style = "padding-left:10px">' + n["meterId"] + '</td>';
+				vValues = vValues + '<td width="120px" style = "padding-left:20px">' + n["protocolId"] + '</td>';
+				vValues = vValues + '</tr>';
+			});
+			$("#tblMeterList").append(vValues);  
+		},
+		error:function(json)
+		{
+			alert("Error: " + json.status + " " + json.responseText);
+		} 
+	});	
+			
 }
