@@ -1,6 +1,6 @@
 package com.gq.meter.object;
 
-// Generated Mar 1, 2013 12:56:41 PM by Hibernate Tools 3.4.0.CR1
+//Generated May 2, 2013 12:10:05 PM by Hibernate Tools 3.4.0.CR1
 
 import java.util.Date;
 
@@ -9,12 +9,13 @@ import java.util.Date;
  */
 public class Enterprise implements java.io.Serializable {
 
-    private String enterpriseId;
+    private Short sid;
+    private Character enterpriseId;
     private char blCd;
     private String EName;
     private String phone;
     private String email;
-    private Short port;
+    private char active;
     private String userId;
     private String UName;
     private String passwd;
@@ -23,27 +24,44 @@ public class Enterprise implements java.io.Serializable {
     private Short secQtn2;
     private String ans2;
     private Date creDttm;
+    private char storeFwd;
+    private String fwdUrl;
     private Integer noOfEmpl;
     private Integer noOfAssets;
     private Integer dcSqft;
+    private Character regCmplt;
+    private Double dcUsePctg;
+    private Double assetRentPctg;
+    private Integer dcTemp;
     private String comments;
-    private char storeFwd;
-    private String fwdUrl;
-    private char regCmplt;
 
     public Enterprise() {
     }
 
-    public Enterprise(String enterpriseId, char blCd, String EName, String phone, String email, Short port,
-            String userId, String UName, String passwd, Short secQtn1, String ans1, Short secQtn2, String ans2,
-            Date creDttm, Integer noOfEmpl, Integer noOfAssets, Integer dcSqft, String comments, char storeFwd,
-            String fwdUrl, char regCmplt) {
+    public Enterprise(Character enterpriseId, char blCd, String EName, String phone, String email, String userId,
+            String UName, String passwd, Date creDttm, char storeFwd) {
         this.enterpriseId = enterpriseId;
         this.blCd = blCd;
         this.EName = EName;
         this.phone = phone;
         this.email = email;
-        this.port = port;
+        this.userId = userId;
+        this.UName = UName;
+        this.passwd = passwd;
+        this.creDttm = creDttm;
+        this.storeFwd = storeFwd;
+    }
+
+    public Enterprise(Character enterpriseId, char blCd, String EName, String phone, String email, char active,
+            String userId, String UName, String passwd, Short secQtn1, String ans1, Short secQtn2, String ans2,
+            Date creDttm, char storeFwd, String fwdUrl, Integer noOfEmpl, Integer noOfAssets, Integer dcSqft,
+            Character regCmplt, Double dcUsePctg, Double assetRentPctg, Integer dcTemp, String comments) {
+        this.enterpriseId = enterpriseId;
+        this.blCd = blCd;
+        this.EName = EName;
+        this.phone = phone;
+        this.email = email;
+        this.active = active;
         this.userId = userId;
         this.UName = UName;
         this.passwd = passwd;
@@ -52,20 +70,31 @@ public class Enterprise implements java.io.Serializable {
         this.secQtn2 = secQtn2;
         this.ans2 = ans2;
         this.creDttm = creDttm;
+        this.storeFwd = storeFwd;
+        this.fwdUrl = fwdUrl;
         this.noOfEmpl = noOfEmpl;
         this.noOfAssets = noOfAssets;
         this.dcSqft = dcSqft;
-        this.comments = comments;
-        this.storeFwd = storeFwd;
-        this.fwdUrl = fwdUrl;
         this.regCmplt = regCmplt;
+        this.dcUsePctg = dcUsePctg;
+        this.assetRentPctg = assetRentPctg;
+        this.dcTemp = dcTemp;
+        this.comments = comments;
     }
 
-    public String getEnterpriseId() {
+    public Short getSid() {
+        return this.sid;
+    }
+
+    public void setSid(Short sid) {
+        this.sid = sid;
+    }
+
+    public Character getEnterpriseId() {
         return this.enterpriseId;
     }
 
-    public void setEnterpriseId(String enterpriseId) {
+    public void setEnterpriseId(Character enterpriseId) {
         this.enterpriseId = enterpriseId;
     }
 
@@ -99,14 +128,6 @@ public class Enterprise implements java.io.Serializable {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public Short getPort() {
-        return this.port;
-    }
-
-    public void setPort(Short port) {
-        this.port = port;
     }
 
     public String getUserId() {
@@ -173,6 +194,30 @@ public class Enterprise implements java.io.Serializable {
         this.creDttm = creDttm;
     }
 
+    public char getActive() {
+        return active;
+    }
+
+    public void setActive(char active) {
+        this.active = active;
+    }
+
+    public char getStoreFwd() {
+        return this.storeFwd;
+    }
+
+    public void setStoreFwd(char storeFwd) {
+        this.storeFwd = storeFwd;
+    }
+
+    public String getFwdUrl() {
+        return this.fwdUrl;
+    }
+
+    public void setFwdUrl(String fwdUrl) {
+        this.fwdUrl = fwdUrl;
+    }
+
     public Integer getNoOfEmpl() {
         return this.noOfEmpl;
     }
@@ -197,35 +242,44 @@ public class Enterprise implements java.io.Serializable {
         this.dcSqft = dcSqft;
     }
 
+    public Character getRegCmplt() {
+        return this.regCmplt;
+    }
+
+    public void setRegCmplt(Character regCmplt) {
+        this.regCmplt = regCmplt;
+    }
+
+    public Double getDcUsePctg() {
+        return this.dcUsePctg;
+    }
+
+    public void setDcUsePctg(Double dcUsePctg) {
+        this.dcUsePctg = dcUsePctg;
+    }
+
+    public Double getAssetRentPctg() {
+        return this.assetRentPctg;
+    }
+
+    public void setAssetRentPctg(Double assetRentPctg) {
+        this.assetRentPctg = assetRentPctg;
+    }
+
+    public Integer getDcTemp() {
+        return this.dcTemp;
+    }
+
+    public void setDcTemp(Integer dcTemp) {
+        this.dcTemp = dcTemp;
+    }
+
     public String getComments() {
-        return comments;
+        return this.comments;
     }
 
     public void setComments(String comments) {
         this.comments = comments;
     }
 
-    public char getStoreFwd() {
-        return this.storeFwd;
-    }
-
-    public void setStoreFwd(char storeFwd) {
-        this.storeFwd = storeFwd;
-    }
-
-    public String getFwdUrl() {
-        return this.fwdUrl;
-    }
-
-    public void setFwdUrl(String fwdUrl) {
-        this.fwdUrl = fwdUrl;
-    }
-
-    public char getRegCmplt() {
-        return regCmplt;
-    }
-
-    public void setRegCmplt(char regCmplt) {
-        this.regCmplt = regCmplt;
-    }
 }
