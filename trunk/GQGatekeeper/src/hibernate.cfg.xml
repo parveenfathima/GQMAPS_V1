@@ -16,6 +16,7 @@
 		<property name="hibernate.hbm2ddl.auto">update</property>
 
 		<!-- Mapping files -->
+		<mapping resource="AssetErr.hbm.xml" />
 		<mapping resource="BusnLine.hbm.xml" />
 		<mapping resource="ClientData.hbm.xml" />
 		<mapping resource="Enterprise.hbm.xml" />
