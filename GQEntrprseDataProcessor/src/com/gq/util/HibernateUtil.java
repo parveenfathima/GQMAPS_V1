@@ -14,7 +14,7 @@ public class HibernateUtil {
             return new AnnotationConfiguration().configure().buildSessionFactory();
         }
         catch (Throwable ex) {
-            System.err.println("GQGatekeeper : Initial SessionFactory creation failed." + ex);
+            System.err.println("GQEntrprseDataProcessor : Initial SessionFactory creation failed." + ex);
             throw new ExceptionInInitializerError(ex);
         }
     }

@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<!-- Generated Apr 10, 2013 12:25:53 PM by Hibernate Tools 3.4.0.CR1 -->
+<!-- Generated May 2, 2013 5:46:23 PM by Hibernate Tools 3.4.0.CR1 -->
 <hibernate-mapping>
     <class name="com.gq.meter.object.RcmndtnSet" table="rcmndtn_set" catalog="gqmaps">
         <id name="snpshtId" type="byte">
@@ -16,6 +16,20 @@
         </property>
         <property name="usrNotes" type="string">
             <column name="usr_notes" length="60" />
+        </property>
+        <property name="estRednKwh" type="java.lang.Integer">
+            <column name="est_redn_kwh" />
+        </property>
+        <property name="estRednCost" type="java.lang.Integer">
+            <column name="est_redn_cost">
+                <comment>we will calculate and display in recommendation apply page</comment>
+            </column>
+        </property>
+        <property name="itPwrConsumptn" type="java.lang.Double">
+            <column name="it_pwr_consumptn" precision="22" scale="0" />
+        </property>
+        <property name="totPwrConsumptn" type="java.lang.Double">
+            <column name="tot_pwr_consumptn" precision="22" scale="0" />
         </property>
     </class>
 </hibernate-mapping>

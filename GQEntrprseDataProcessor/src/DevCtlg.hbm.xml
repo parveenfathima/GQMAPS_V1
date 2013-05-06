@@ -1,0 +1,56 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated May 2, 2013 5:33:59 PM by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+    <class name="com.gq.meter.object.DevCtlg" table="dev_ctlg" catalog="gqmaps">
+        <id name="ctlgId" type="string">
+            <column name="ctlg_id" length="20" />
+            <generator class="assigned" />
+        </id>
+        <property name="protocolId" type="string">
+            <column name="protocol_id" length="10" not-null="true" />
+        </property>
+        <property name="descr" type="string">
+            <column name="descr" length="40" not-null="true" />
+        </property>
+        <property name="idlePctg" type="short">
+            <column name="idle_pctg" not-null="true" />
+        </property>
+        <property name="loadPctg" type="short">
+            <column name="load_pctg" not-null="true" />
+        </property>
+        <property name="idleWatt" type="double">
+            <column name="idle_watt" precision="22" scale="0" not-null="true" />
+        </property>
+        <property name="loadWatt" type="double">
+            <column name="load_watt" precision="22" scale="0" not-null="true" />
+        </property>
+        <property name="fullPctg" type="java.lang.Short">
+            <column name="full_pctg" />
+        </property>
+        <property name="fullWatt" type="java.lang.Double">
+            <column name="full_watt" precision="22" scale="0" />
+        </property>
+        <property name="servrCost" type="java.lang.Double">
+            <column name="servr_cost" precision="22" scale="0">
+                <comment>linked to recommendation( using this server may have high cost like that)</comment>
+            </column>
+        </property>
+        <property name="noOfCore" type="java.lang.Integer">
+            <column name="no_of_core" />
+        </property>
+        <property name="cpu" type="java.lang.Double">
+            <column name="cpu" precision="22" scale="0" />
+        </property>
+        <property name="ram" type="java.lang.Integer">
+            <column name="ram" />
+        </property>
+        <property name="diskGb" type="java.lang.Integer">
+            <column name="disk_gb" />
+        </property>
+        <property name="monthlyRent" type="java.lang.Integer">
+            <column name="monthly_rent" />
+        </property>
+    </class>
+</hibernate-mapping>
