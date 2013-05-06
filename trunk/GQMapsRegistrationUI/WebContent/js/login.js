@@ -28,9 +28,11 @@ function userLogin()
 	{
 		window.location.href = "edit_registration.html";
 		$.jStorage.set("jsUserID", user);
-	} else {
-
-		var vUrl = 'http://localhost:8080/GQMapsRegistrationServices/gqm-gk/enterprise/getregistration';
+	} 
+	else 
+	{
+		var vUrl = 'http://localhost:8080/GQMapsRegistrationServices/gqm-gk/enterprise/getRegistration';
+		//var vUrl = 'http://localhost:8080/GQMapsRegistrationServices/gqm-gk/enterprise/authenticate';
 
 		$.ajax({
 			type : "GET",
@@ -43,8 +45,7 @@ function userLogin()
 			success : function(json) 
 			{
 				var vRecLen = json.length;
-				//alert("Record length is :" + vRecLen);
-				//alert(JSON.stringify(json));
+				
 				$('#productInfo').append(json);
 				
 				if(vRecLen != 0)
@@ -92,7 +93,7 @@ function userLogin()
 			}, //end of success
 			error : function(json) 
 			{
-				alert("Error: " + json.status + " " + json.responseText);
+				alert("Invalid User: " + json.status + " " + json.responseText);
 			}
 		});
 	}

@@ -1,3 +1,5 @@
+var isValid = "";
+
 //displaying the userid captured in login screen
 $(window).load(function () 
 {
@@ -11,8 +13,24 @@ $(document).ready(function()
 {
 		$("#submit").bind("click", validateForm);
 		$('#chkChageQA').bind("click", changeQA);
-});
+		
+		//loading the security questions
+		loadSecQuestions();
+		
+		var items = document.getElementById("cmbChangeQues1").options.length;
+		
+		//loading the security questions stored in the jStorage variable which was updated in general.js:loadSecQuestions() 	
 
+		if(items === 1)	
+		{
+			$("#cmbChangeQues1").append($.jStorage.get("jsQuestions"));   
+			$("#cmbChangeQues2").append($.jStorage.get("jsQuestions"));
+			$("#cmbChangeQues1").val("");  
+			$("#cmbChangeQues2").val("");
+		}
+		
+		isValid = 0; // 0 and 1 indicates invalid and valid user flags.
+});
 
 // function to validate the change_password form
 function validateForm()
@@ -51,7 +69,7 @@ function validateForm()
 		{
 			//user id validation
 			  
-			var vUrl = 'http://localhost:8080/GQMapsRegistrationServices/gqm-gk/enterprise/getregistration';
+			var vUrl = 'http://localhost:8080/GQMapsRegistrationServices/gqm-gk/enterprise/getRegistration';
 
 			$.ajax({
 				type : "GET",
@@ -67,12 +85,12 @@ function validateForm()
 							{											
 								if( vUserID === $.trim(n["userId"]))
 								{
-									isValid = 1;
+									isValid = 1; //valid user
 									$.jStorage.set("jsUserId", vUserID);											
 								}							  
 							});
 							
-							if(isValid === 0)
+							if(isValid === 0) //invalid user
 							{
 								alert("Invalid User");	
 								$.jStorage.set("jsUserId", "");	
@@ -87,12 +105,13 @@ function validateForm()
 								var isChecked = $('#chkChageQA').is(':checked');
 								
 								if(isChecked)
-								{
-								  if(validateChangeQA())   //validating the fields in Change Security Questions for proper values to submi the form if the checkbox is checked
-								  {
-									  alert("Form is ready to submit - includes change sec question");
-									  //TODO prepare a query string with Change Security Questions' fields
-								  }
+								{			
+										if(validateChangeQA())   //validating the fields in Change Security Questions for proper values to submi the form if the checkbox is checked
+										{
+										  
+										  alert("Form is ready to submit - includes change sec question");
+										  //TODO prepare a query string with Change Security Questions' fields
+										}
 								}
 								else
 								{
@@ -247,7 +266,8 @@ function changeQA()
 			$('#cmbChangeQues1').attr("disabled", true);
 			$("#txtChangeAns1").attr("disabled", true);		
 			$('#cmbChangeQues2').attr("disabled", true);
-			$("#txtChangeAns2").attr("disabled", true);		
+			$("#txtChangeAns2").attr("disabled", true);	
+										
 		}
 }
 
@@ -255,9 +275,9 @@ function changeQA()
 //function to reset the fields when Change Security Questions checkbox is unchecked
 function clearChangeQA()
 {
-		$('#cmbChangeQues1').val("--Select your first Question--");
+		$('#cmbChangeQues1').val("");
 		$('#txtChangeAns1').val("");
-		$('#cmbChangeQues2').val("--Select your second Question--");
+		$('#cmbChangeQues2').val("");
 		$('#txtChangeAns2').val("");
 }
 

@@ -14,8 +14,12 @@ $(document).ready(function()
 			return false;
 		 }
 	   }); 
+	   
+	   loadSecQuestions();
+	   loadBusLine();
 
 });
+
 
 function validateForm()
 {
@@ -28,9 +32,9 @@ function validateForm()
 		var vUsername = $.trim($('#txtUsername').val()); //mandatory field
 		var vSaveFwd = $('#cmbSaveFwd').val(); //mandatory field
 		var vStoreFwd = $.trim($('#txtUrl').val());
-		var vQues1 = $('#cmbQues1').val(); //mandatory field
+		var vQues1 = $('#cmbQues1 option:selected').val(); //mandatory field
 		var vAns1 = $.trim($('#txtAns1').val()); //mandatory field
-		var vQues2 = $('#cmbQues2').val(); //mandatory field
+		var vQues2 = $('#cmbQues2 option:selected').val(); //mandatory field
 		var vAns2 = $.trim($('#txtAns2').val()); //mandatory field
 		var vComments = $.trim($('#taComments').val()); 
 		var vEmp = $.trim($('#txtEmp').val());
@@ -43,6 +47,12 @@ function validateForm()
 		{
 			alert("Enter Enterprise Name");	
 			$('#txtEName').select();
+			return false;
+		}
+		else if(vBusCat === "")
+		{
+			alert("Select your business line");
+			$('#cmbBusCategory').focus();
 			return false;
 		}
 		else if(vPhone.length == 0 )
@@ -98,6 +108,12 @@ function validateForm()
 			$('#cmbQues2').focus();
 			return false;
 		}
+		else if(vQues2 === vQues1)
+		{
+			alert("Select unique security questions");
+			$('#cmbQues2').focus();
+			return false;			
+		}
 		else if(vAns2 == "" || vAns2.length == 0 || vAns2.length > 9)
 		{
 			alert("Enter a valid Answer 2 with less than 10 characters");
@@ -109,16 +125,17 @@ function validateForm()
 		{
 			return false;
 		}
-		
 		else 
 		{
 			//TODO the form submission code goes here
 			
 			var vEId = generateEntpID("eid");
 			var vUId = generateEntpID("uid");
-			var dt = new Date();
-			var vDateTime = dt.getFullYear() + "-" + convertToTwoDigit(dt.getMonth()) + "-" + convertToTwoDigit(dt.getDate()) + " " + convertToTwoDigit(dt.getHours()) + ":" 
-											 + convertToTwoDigit(dt.getMinutes()) + ":" + convertToTwoDigit(dt.getSeconds());
+			//var dt = new Date();
+			//var vDateTime = dt.getFullYear() + "-" + convertToTwoDigit(dt.getMonth()) + "-" + convertToTwoDigit(dt.getDate()) + " " + convertToTwoDigit(dt.getHours()) + ":" 
+			//								 + convertToTwoDigit(dt.getMinutes()) + ":" + convertToTwoDigit(dt.getSeconds());
+			
+			var vDateTime = getDtTime();
 			var vPassword = "Gq@123";	
 
 			if(vStoreFwd === "") vStoreFwd = null;
@@ -128,9 +145,9 @@ function validateForm()
 			if(vSqft  === "") vSqft = null;										 
 		
 			var vType = "POST";
-			var vUrl = "http://localhost:8080/GQMapsRegistrationServices/gqm-gk/enterprise/addregistration";						
+			var vUrl = "http://localhost:8080/GQMapsRegistrationServices/gqm-gk/enterprise/addRegistration";						
 			
-			var vQuery = '{"enterpriseId":"' + vEId + '", "blCd":"' + vBusCat + '", "EName":"' + vEName + '", "phone":"' + vPhone + '", "email":"' + vEmail + '", "port": "8080", "userId":"' + vUId + '", "UName":"' + vUsername + '", "passwd":"' + vPassword + '", "secQtn1":"' + vQues1 + '", "ans1":"' + vAns1 + '", "secQtn2":"' + vQues2 + '", "ans2":"' + vAns2 + '", "creDttm":"' + vDateTime + '", "noOfEmpl":' + vEmp + ', "noOfAssets":' + vAsset + ', "dcSqft":' + vSqft + ', "comments":' + vComments + ', "storeFwd":' + vSaveFwd + ', "fwdUrl":' + vStoreFwd + ', "regCmplt": "n"}';
+			var vQuery = '{"enterpriseId":"' + vEId + '", "blCd":"' + vBusCat + '", "EName":"' + vEName + '", "phone":"' + vPhone + '", "email":"' + vEmail + '", "port": "8080", "userId":"' + vUId + '", "UName":"' + vUsername + '", "passwd":"' + vPassword + '", "secQtn1":"' + vQues1 + '", "ans1":"' + vAns1 + '", "secQtn2":"' + vQues2 + '", "ans2":"' + vAns2 + '", "creDttm":"' + vDateTime + '", "noOfEmpl":' + vEmp + ', "noOfAssets":' + vAsset + ', "dcSqft":' + vSqft + ', "comments":' + vComments + ', "storeFwd":"' + vSaveFwd + '", "fwdUrl":' + vStoreFwd + ', "regCmplt": "n"}';
 			
 			$.ajax
 			({
@@ -140,15 +157,15 @@ function validateForm()
 				async:false,
 				data:vQuery,
 				dataType: "json",
-				success:function(json) 
+				success:function(json)
 				{
 					alert("Registered successfully!");
-					$("#frmAddRegn")[0].reset();
+					//$("#frmAddRegn")[0].reset();
 				},
-				error:function(json)
+				failure:function(json)
 				{
 					alert("Error: " + json.status + " " + json.responseText);
-				}
+				} 
 			});				
 		}
 }
@@ -158,19 +175,19 @@ function validateForm()
 
 function generateEntpID(type)
 {
-	var dt = new Date();
-	var dtString = "";
-	if(type == 'eid')
-	{
-		//TODO use getMonth, getHours, etc. methods to form the enterprise id
-		dtString = "NE" + convertToTwoDigit(dt.getDate()) + convertToTwoDigit(dt.getHours()) + convertToTwoDigit(dt.getMinutes()) + convertToTwoDigit(dt.getSeconds());
-		return dtString;
-	}
-	else
-	{
-		dtString = "USER" + convertToTwoDigit(dt.getDate()) + convertToTwoDigit(dt.getHours()) + convertToTwoDigit(dt.getMinutes()) + convertToTwoDigit(dt.getSeconds());
-		return dtString;
-	}
+		var dt = new Date();
+		var dtString = "";
+		if(type == 'eid')
+		{
+			//TODO use getMonth, getHours, etc. methods to form the enterprise id
+			dtString = "NE" + convertToTwoDigit(dt.getDate()) + convertToTwoDigit(dt.getHours()) + convertToTwoDigit(dt.getMinutes()) + convertToTwoDigit(dt.getSeconds());
+			return dtString;
+		}
+		else
+		{
+			dtString = "USER" + convertToTwoDigit(dt.getDate()) + convertToTwoDigit(dt.getHours()) + convertToTwoDigit(dt.getMinutes()) + convertToTwoDigit(dt.getSeconds());
+			return dtString;
+		}
 }
 
 // function to validate email  
@@ -192,3 +209,4 @@ function convertToTwoDigit(no)
 {
 		return (no >=0 && no <10 ? ("0"+ no) : no)
 }
+

@@ -1,7 +1,7 @@
 // validating the answer to be in one word and less than 10 characters
 function validateAns(answer, quesNo, section)
 {
-		if(answer == "" || answer.length == 0 || answer.length > 9)
+		if(answer === "" || answer.length === 0 || answer.length > 9)
 		{
 			setAnsAlert(quesNo, section);
 			return false;
@@ -27,25 +27,25 @@ function validateAns(answer, quesNo, section)
 //function to set the appropriate alert messages if the answer contains space 
 function setFocus(quesNo, section)
 {
-	if(quesNo == "1" && section == "oldQA")
+	if(quesNo == "1" && section === "oldQA")
 	{
 		alert("Answer 1 should be in one word and less than 10 characters");
 		$('#txtAns1').focus();
 		$('#txtAns1').select();		
 	}
-	else if(quesNo == "2" && section == "oldQA")
+	else if(quesNo == "2" && section === "oldQA")
 	{
 		alert("Answer 2 should be in one word and less than 10 characters");
 		$('#txtAns2').focus();
 		$('#txtAns2').select();		
 	}
-	else if(quesNo == "1" && section == "newQA")
+	else if(quesNo == "1" && section === "newQA")
 	{
 		alert("New Answer 1 should be in one word and less than 10 characters");
 		$('#txtChangeAns1').focus();
 		$('#txtChangeAns1').select();		
 	}
-	else if(quesNo == "2" && section == "newQA")
+	else if(quesNo == "2" && section === "newQA")
 	{
 		alert("New Answer 2 should be in one word and less than 10 characters");
 		$('#txtChangeAns2').focus();
