@@ -85,6 +85,7 @@ public class NSRGMeter implements GQSNMPMeter {
                 temp = oidString + ".1";
                 String assetIdVal = MeterUtils.getSNMPValue(temp, result);
                 assetId = MeterProtocols.NSRG + "-" + assetIdVal.replaceAll(":", "");
+                assetObj.setAssetId(assetId);
             }
             else {
                 errorList.add("Root OID : 1.3.6.1.2.1.2.2.1.6" + " " + MeterConstants.ASSET_ID_ERROR);
