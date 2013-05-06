@@ -133,6 +133,7 @@ public class PrinterMeter implements GQSNMPMeter {
             if (result != null && !result.isEmpty()) {
                 String assetVal = assetCalc(result, rootOID);
                 assetId = MeterProtocols.PRINTER + "-" + assetVal;
+                assetObj.setAssetId(assetId);
             }
             else {
                 errorList.add("Root OID : .1.3.6.1.2.1.2.2.1" + " " + MeterConstants.ASSET_ID_ERROR);
