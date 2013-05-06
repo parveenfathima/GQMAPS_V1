@@ -260,13 +260,15 @@ public final class ITAssetDiscoverer {
     }
 
     public void discover(String inputFilePath) {
+        gqmResponse = new GQMeterResponse();
+        gqmResponse.setRecDttm(new Date());// -------------------------->test this
+
         // The start time of the meter execution
         long startTime = System.currentTimeMillis();
         MeterUtils.compMeterTime = 0;
         MeterUtils.printMeterTime = 0;
         MeterUtils.nsrgMeterTime = 0;
 
-        gqmResponse = new GQMeterResponse();
         List<ProtocolData> assetsList = null;
 
         HashMap<String, String> communityIPMap = this.readInput(inputFilePath);
@@ -276,7 +278,6 @@ public final class ITAssetDiscoverer {
         }
         long endTime = System.currentTimeMillis();
 
-        gqmResponse.setRecDttm(new Date());
         gqmResponse.setRunTimeMiliSeconds((endTime - startTime));
         gqmResponse.setStatus("pass");
         gqmResponse.setVersion("1");
