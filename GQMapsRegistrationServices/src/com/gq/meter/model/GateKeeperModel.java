@@ -21,7 +21,25 @@ public class GateKeeperModel {
         try {
             session = HibernateUtil.getSessionFactory().getCurrentSession();
             session.beginTransaction();
-            session.save(gkAudit);
+
+            // Check gatekeeper instance exists or not
+            GateKeeper gkeeper = (GateKeeper) session.get(gkAudit.getEnterpriseId(), GateKeeper.class);
+            GQGateKeeperConstants.logger.info("Is gkeeper instance exists ? :" + gkeeper);
+            if (gkeeper == null) {
+                // if no gatekeeper instanace exists then create one and save it.
+                gkeeper = new GateKeeper();
+                gkeeper.setEnterpriseId(gkAudit.getEnterpriseId());
+                gkeeper.setExpDttm(gkAudit.getExpDttm());
+            }
+            else {
+                // if gatekeeper instance exists then only update the expiry date and scan remaining
+                gkeeper.setExpDttm(gkAudit.getExpDttm());
+                // int scanRemaining = gkeeper.getScnRmng();
+            }
+
+            session.save(gkeeper);// saving gatekeeper
+
+            session.save(gkAudit);// saving gatekeeperaudit
             session.getTransaction().commit();
         }
         catch (Exception e) {
@@ -65,7 +83,6 @@ public class GateKeeperModel {
                 throw new Exception(e);
             }
         }
-
     }
 
 }

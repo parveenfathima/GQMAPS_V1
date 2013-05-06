@@ -10,7 +10,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import com.gq.meter.model.GateKeeperModel;
-import com.gq.meter.object.GateKeeper;
 import com.gq.meter.object.GateKeeperAudit;
 import com.gq.meter.util.GQGateKeeperConstants;
 import com.gq.meter.util.GQRegistrationConstants;
@@ -21,23 +20,6 @@ import com.gq.meter.util.GQRegistrationConstants;
  */
 @Path("/gatekeeper")
 public class GateKeeperServices {
-
-    @Path("/addEntGateKeeper")
-    @POST
-    @Consumes(MediaType.APPLICATION_JSON)
-    public Response addGateKeeper(String gkGatekeeper) {
-        GateKeeper gKeeper = null;
-        try {
-            gKeeper = GQRegistrationConstants.gson.fromJson(gkGatekeeper, GateKeeper.class);
-            GateKeeperModel gkModel = new GateKeeperModel();
-            gkModel.addGateKeeper(gKeeper);
-        }
-        catch (Exception e) {
-            GQGateKeeperConstants.logger.error("Exception occured while fetching the enterprises list ", e);
-            return Response.status(400).build();
-        }
-        return Response.ok("success").build();
-    }
 
     @Path("/addEntAudit")
     @POST
@@ -53,7 +35,7 @@ public class GateKeeperServices {
             GQGateKeeperConstants.logger.error("Exception occured while fetching the enterprises list ", e);
             return Response.status(400).build();
         }
-        return Response.ok("success").build();
+        return Response.status(200).build();
     }
 
 }
