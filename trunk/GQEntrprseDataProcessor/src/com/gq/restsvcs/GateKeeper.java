@@ -13,6 +13,7 @@ import javax.ws.rs.core.MediaType;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonSyntaxException;
 import com.gq.bo.GqEDPFilter;
 import com.gq.meter.GQMeterResponse;
 
@@ -46,18 +47,24 @@ public class GateKeeper {
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    public void keepGate(@FormParam("gqMeterResponse") String gqMeterResponseString) throws IOException {
+    public void keepGate(@FormParam("gqMeterResponse") String gqMeterResponseString) {
 
-        System.out.println("Incoming json is => " + gqMeterResponseString);
+        try {
+            System.out.println("Incoming json is => " + gqMeterResponseString);
 
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+            Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
-        GQMeterResponse gqMeterResponse = gson.fromJson(gqMeterResponseString, GQMeterResponse.class);
-        // unmarshall the response from the gqmeter running in premise and start processing.....
+            GQMeterResponse gqMeterResponse = gson.fromJson(gqMeterResponseString, GQMeterResponse.class);
+            // unmarshall the response from the gqmeter running in premise and start processing.....
 
-        GqEDPFilter gkf = new GqEDPFilter();
+            GqEDPFilter gkf = new GqEDPFilter();
 
-        gkf.process(gqMeterResponse);
+            gkf.process(gqMeterResponse);
+        }
+        catch (JsonSyntaxException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }
 
 }

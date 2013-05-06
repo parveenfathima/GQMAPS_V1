@@ -1,0 +1,54 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated May 2, 2013 5:14:33 PM by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+    <class name="com.gq.meter.object.Enterprise" table="enterprise" catalog="gqmaps">
+        <id name="enterpriseId" type="string">
+            <column name="enterprise_id" length="10" />
+            <generator class="assigned" />
+        </id>
+        <property name="EName" type="string">
+            <column name="e_name" length="40" not-null="true" />
+        </property>
+        <property name="phone" type="string">
+            <column name="phone" length="15" not-null="true" />
+        </property>
+        <property name="email" type="string">
+            <column name="email" length="45" not-null="true" />
+        </property>
+        <property name="userId" type="string">
+            <column name="user_id" length="12" not-null="true" />
+        </property>
+        <property name="creDttm" type="timestamp">
+            <column name="cre_dttm" length="19" not-null="true" />
+        </property>
+        <property name="noOfEmpl" type="java.lang.Integer">
+            <column name="no_of_empl" />
+        </property>
+        <property name="noOfAssets" type="java.lang.Integer">
+            <column name="no_of_assets" />
+        </property>
+        <property name="dcSqft" type="java.lang.Integer">
+            <column name="dc_sqft" />
+        </property>
+        <property name="dcUsePctg" type="java.lang.Double">
+            <column name="dc_use_pctg" precision="22" scale="0">
+                <comment>how much percentage of datacenter are effectively used linked to recommendation</comment>
+            </column>
+        </property>
+        <property name="assetRentPctg" type="java.lang.Double">
+            <column name="asset_rent_pctg" precision="22" scale="0">
+                <comment>how much percentage of assets are rented linked to recommendation</comment>
+            </column>
+        </property>
+        <property name="dcTemp" type="java.lang.Integer">
+            <column name="dc_temp">
+                <comment>Linked to recommendation Ambient DC temperature</comment>
+            </column>
+        </property>
+        <property name="comments" type="string">
+            <column name="comments" length="200" />
+        </property>
+    </class>
+</hibernate-mapping>

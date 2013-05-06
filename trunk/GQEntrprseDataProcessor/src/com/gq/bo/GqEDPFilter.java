@@ -29,6 +29,7 @@ public class GqEDPFilter {
 
         String meterId = gqmResponse.getGqmid();
         meterId = meterId.split("_")[1];
+
         int runId = gqmResponse.getRunid();
         Date recordDT = gqmResponse.getRecDttm();
         short scanned = gqmResponse.getAssetScanned();
@@ -138,5 +139,6 @@ public class GqEDPFilter {
             }
 
         }
+        System.out.println("************* DATA SUCCESSFULLY SAVED ***********");
     }
 }
