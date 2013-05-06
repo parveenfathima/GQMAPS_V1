@@ -95,7 +95,7 @@ public class EnterpriseServices {
             GQGateKeeperConstants.logger.error("Exception occured while creating the new enterprise", e);
             return Response.status(400).build();
         }
-        return Response.status(200).build();
+        return Response.ok(GQRegistrationConstants.gson.toJson("success")).build();
     }
 
     /**
