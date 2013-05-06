@@ -16,13 +16,13 @@ import com.gq.meter.xchange.util.HibernateUtil;
  */
 public class ClientDataModel {
 
-    public void saveClientData(int runId, String data, Date failedDate) {
+    public void saveClientData(int runId, String meterId, String data, Date failedDate, String comments) {
         Session session = null;
         try {
             session = HibernateUtil.getSessionFactory().getCurrentSession();
             session.beginTransaction();
 
-            ClientData cData = new ClientData(runId, data, failedDate);
+            ClientData cData = new ClientData(runId, meterId, data, failedDate, comments);
             session.save(cData);
 
         }

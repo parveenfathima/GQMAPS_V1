@@ -1,13 +1,16 @@
 <?xml version="1.0"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<!-- Generated Mar 1, 2013 12:56:41 PM by Hibernate Tools 3.4.0.CR1 -->
+<!-- Generated May 2, 2013 12:10:05 PM by Hibernate Tools 3.4.0.CR1 -->
 <hibernate-mapping>
     <class name="com.gq.meter.xchange.object.Enterprise" table="enterprise" catalog="gqexchange">
-        <id name="enterpriseId" type="character">
-            <column name="enterprise_id" length="10" />
-            <generator class="assigned" />
+        <id name="sid" type="java.lang.Short">
+            <column name="sid" />
+            <generator class="increment" />
         </id>
+        <property name="enterpriseId" type="character">
+            <column name="enterprise_id" length="10" not-null="true" unique="true" />
+        </property>
         <property name="blCd" type="char">
             <column name="bl_cd" length="1" not-null="true" />
         </property>
@@ -18,10 +21,7 @@
             <column name="phone" length="15" not-null="true" />
         </property>
         <property name="email" type="string">
-            <column name="email" length="20" not-null="true" />
-        </property>
-        <property name="port" type="java.lang.Short">
-            <column name="port" />
+            <column name="email" length="45" not-null="true" />
         </property>
         <property name="userId" type="string">
             <column name="user_id" length="12" not-null="true" />
@@ -47,6 +47,15 @@
         <property name="creDttm" type="timestamp">
             <column name="cre_dttm" length="19" not-null="true" />
         </property>
+        <property name="storeFwd" type="char">
+            <column name="store_fwd" length="1" not-null="true" />
+        </property>
+        <property name="active" type="char">
+            <column name="active" length="1" not-null="true" />
+        </property>
+        <property name="fwdUrl" type="string">
+            <column name="fwd_url" length="200" />
+        </property>
         <property name="noOfEmpl" type="java.lang.Integer">
             <column name="no_of_empl" />
         </property>
@@ -56,17 +65,28 @@
         <property name="dcSqft" type="java.lang.Integer">
             <column name="dc_sqft" />
         </property>
-         <property name="comments" type="string">
-            <column name="comments" />
-        </property>
-        <property name="storeFwd" type="char">
-            <column name="store_fwd" length="1" not-null="true" />
-        </property>
-        <property name="fwdUrl" type="string">
-            <column name="fwd_url" length="200" />
-        </property>
         <property name="regCmplt" type="java.lang.Character">
-            <column name="reg_cmplt" length="1" />
+            <column name="reg_cmplt" length="1">
+                <comment>registration completed</comment>
+            </column>
+        </property>
+        <property name="dcUsePctg" type="java.lang.Double">
+            <column name="dc_use_pctg" precision="22" scale="0">
+                <comment>how much percentage of datacenter are effectively used linked to recommendation</comment>
+            </column>
+        </property>
+        <property name="assetRentPctg" type="java.lang.Double">
+            <column name="asset_rent_pctg" precision="22" scale="0">
+                <comment>how much percentage of assets are rented linked to recommendation</comment>
+            </column>
+        </property>
+        <property name="dcTemp" type="java.lang.Integer">
+            <column name="dc_temp">
+                <comment>Linked to recommendation Ambient DC temperature</comment>
+            </column>
+        </property>
+        <property name="comments" type="string">
+            <column name="comments" length="200" />
         </property>
     </class>
 </hibernate-mapping>

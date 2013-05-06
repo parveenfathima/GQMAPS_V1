@@ -14,20 +14,16 @@ public class GqMeterErrorInfo {
         Session session = null;
 
         try {
-
             // This step will read hibernate.cfg.xml and prepare hibernate for use
             session = HibernateUtil.getSessionFactory().getCurrentSession();
             session.beginTransaction();
 
-            long sid = 0L;
-
             for (GQErrorInformation errInfo : gqerrList) {
                 for (String error : errInfo.getErrorList()) {
-                    AssetErr assetErr = new AssetErr(sid, runId, errInfo.getAssetDescr(), error);
+                    AssetErr assetErr = new AssetErr(runId, errInfo.getAssetDescr(), error);
                     session.save(assetErr);
                 }
             }
-
             session.getTransaction().commit();
         }
         catch (Exception e) {
@@ -39,7 +35,6 @@ public class GqMeterErrorInfo {
                 if (session.isOpen()) {
                     session.flush();
                     session.close();
-                    session.clear();
                 }
             }
             catch (Exception e) {
