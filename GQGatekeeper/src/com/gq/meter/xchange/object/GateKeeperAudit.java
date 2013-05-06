@@ -1,6 +1,6 @@
 package com.gq.meter.xchange.object;
 
-// Generated Mar 1, 2013 12:57:30 PM by Hibernate Tools 3.4.0.CR1
+// Generated May 2, 2013 1:01:39 PM by Hibernate Tools 3.4.0.CR1
 
 import java.util.Date;
 
@@ -9,10 +9,9 @@ import java.util.Date;
  */
 public class GateKeeperAudit implements java.io.Serializable {
 
-    private int sId;
+    private Short sid;
     private String enterpriseId;
     private String comment;
-    private Integer scanPurchased;
     private Date expDttm;
     private Date creDttm;
 
@@ -25,24 +24,23 @@ public class GateKeeperAudit implements java.io.Serializable {
         this.creDttm = creDttm;
     }
 
-    public GateKeeperAudit(String enterpriseId, String comment, Integer scanPurchased, Date expDttm, Date creDttm) {
+    public GateKeeperAudit(String enterpriseId, String comment, Date expDttm, Date creDttm) {
         this.enterpriseId = enterpriseId;
         this.comment = comment;
-        this.scanPurchased = scanPurchased;
         this.expDttm = expDttm;
         this.creDttm = creDttm;
     }
 
-    public int getsId() {
-        return sId;
+    public Short getSid() {
+        return this.sid;
     }
 
-    public void setsId(int sId) {
-        this.sId = sId;
+    public void setSid(Short sid) {
+        this.sid = sid;
     }
 
     public String getEnterpriseId() {
-        return enterpriseId;
+        return this.enterpriseId;
     }
 
     public void setEnterpriseId(String enterpriseId) {
@@ -71,14 +69,6 @@ public class GateKeeperAudit implements java.io.Serializable {
 
     public void setCreDttm(Date creDttm) {
         this.creDttm = creDttm;
-    }
-
-    public Integer getScanPurchased() {
-        return scanPurchased;
-    }
-
-    public void setScanPurchased(Integer scanPurchased) {
-        this.scanPurchased = scanPurchased;
     }
 
 }

@@ -1,6 +1,6 @@
 package com.gq.meter.xchange.object;
 
-// Generated Mar 1, 2013 12:56:28 PM by Hibernate Tools 3.4.0.CR1
+// Generated May 2, 2013 12:01:38 PM by Hibernate Tools 3.4.0.CR1
 
 import java.util.Date;
 
@@ -10,16 +10,26 @@ import java.util.Date;
 public class ClientData implements java.io.Serializable {
 
     private Integer runId;
+    private String meterId;
     private String data;
-    private Date fwdDttm;
+    private Date creDttm;
+    private String comment;
 
     public ClientData() {
     }
 
-    public ClientData(Integer runId, String data, Date fwdDttm) {
-        this.runId = runId;
+    public ClientData(String meterId, String data, Date creDttm) {
+        this.meterId = meterId;
         this.data = data;
-        this.fwdDttm = fwdDttm;
+        this.creDttm = creDttm;
+    }
+
+    public ClientData(Integer runId, String meterId, String data, Date creDttm, String comment) {
+        this.runId = runId;
+        this.meterId = meterId;
+        this.data = data;
+        this.creDttm = creDttm;
+        this.comment = comment;
     }
 
     public Integer getRunId() {
@@ -30,6 +40,14 @@ public class ClientData implements java.io.Serializable {
         this.runId = runId;
     }
 
+    public String getMeterId() {
+        return this.meterId;
+    }
+
+    public void setMeterId(String meterId) {
+        this.meterId = meterId;
+    }
+
     public String getData() {
         return this.data;
     }
@@ -38,12 +56,20 @@ public class ClientData implements java.io.Serializable {
         this.data = data;
     }
 
-    public Date getFwdDttm() {
-        return this.fwdDttm;
+    public Date getCreDttm() {
+        return this.creDttm;
     }
 
-    public void setFwdDttm(Date fwdDttm) {
-        this.fwdDttm = fwdDttm;
+    public void setCreDttm(Date creDttm) {
+        this.creDttm = creDttm;
+    }
+
+    public String getComment() {
+        return this.comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
     }
 
 }

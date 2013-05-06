@@ -18,6 +18,11 @@ import com.gq.meter.xchange.util.HibernateUtil;
  */
 public class EnterpriseModel {
 
+    /**
+     * This method used to return all the enterprises list registered for GQMeter
+     * 
+     * @return
+     */
     public List<Enterprise> getAllEnterprises() {
         Session session = null;
         try {

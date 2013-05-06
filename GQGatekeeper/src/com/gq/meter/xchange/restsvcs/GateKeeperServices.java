@@ -11,7 +11,6 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
 
 import javax.ws.rs.core.MediaType;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
@@ -76,6 +75,7 @@ public class GateKeeperServices {
         }
         catch (JsonSyntaxException e) {
             GQGateKeeperConstants.logger.fatal("Unmarshall exception is occured : ", e);
+            // return Response.status(404).entity(e.getMessage()).type("text/plain").build();
         }
 
         GQGateKeeperConstants.logger.info("Unmarshalll is finished successfully");
@@ -83,6 +83,7 @@ public class GateKeeperServices {
 
         GQGateKeeperConstants.logger.info("Sending unmarshalled data for validation");
         gkf.process(gqMeterResponse);
+        // TODO: send a resposne back to the rest client
+        // return Response.status(200).entity("Success").type("text/plain").build();
     }
-
 }

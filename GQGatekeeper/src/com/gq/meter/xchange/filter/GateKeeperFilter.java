@@ -11,6 +11,7 @@ import org.hibernate.Session;
 import com.gq.meter.GQMeterResponse;
 import com.gq.meter.assist.ProtocolData;
 import com.gq.meter.xchange.controller.GQDataXchangeController;
+import com.gq.meter.xchange.model.GqMeterErrorInfo;
 import com.gq.meter.xchange.object.Enterprise;
 import com.gq.meter.xchange.object.EnterpriseMeter;
 import com.gq.meter.xchange.object.GateKeeper;
@@ -31,6 +32,7 @@ public class GateKeeperFilter {
      * @param gqmResponse
      */
     public void process(GQMeterResponse gqmResponse) {
+        // TODO : validate all the failure scenarios
         Session session = null;
         MeterRun meterRun = null;
 
@@ -113,9 +115,8 @@ public class GateKeeperFilter {
                     + " : " + pdList.size());
 
             // ---------------------------------------------------------------------------------------------------------//
-            GQGateKeeperConstants.logger.info("GATEKEEPER");
             // checking meterid from the GateKeeper table
-            hql = "FROM GateKeeper WHERE enterprise_id = :ENTERPRISE_ID";
+            hql = "FROM GateKeeper WHERE enterprise_id = :ENTERPRISE_ID";// prepared stmt
             GQGateKeeperConstants.logger.info("GATEKEEPER ::: " + hql);
             query = session.createQuery(hql);
             query.setParameter("ENTERPRISE_ID", enterpriseId);
@@ -130,49 +131,49 @@ public class GateKeeperFilter {
                 return;
             }
 
-            char checkCondition = gatekeeperResult.get(0).getChkCndtn();
-            int scanRemaining = gatekeeperResult.get(0).getScnRmng();
-            if (checkCondition == 'c') {
-                GQGateKeeperConstants.logger.info("Validating the license based on scan reamining");
-                // Check total asset scanned allowed
-                if (scanRemaining < discovered || scanRemaining <= 0) {
-                    GQGateKeeperConstants.logger.info("Scanning is not allowed, exceeds the license limit");
-                    session.close();
-                    return;
-                }
-            }
-            else if (checkCondition == 'e') {
-                GQGateKeeperConstants.logger.info("Validating the license based expiry date");
-                // Compare today date and expired date
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-                String expirydDate = sdf.format(gatekeeperResult.get(0).getExpDttm());
-                String currDate = sdf.format(new Date());
-                GQGateKeeperConstants.logger.info("Curr date : " + currDate + " expirydate : " + expirydDate);
-                int dateValue = expirydDate.compareTo(currDate);
+            // char checkCondition = gatekeeperResult.get(0).getChkCndtn();
+            // int scanRemaining = gatekeeperResult.get(0).getScnRmng();
+            // if (checkCondition == 'c') {
+            // GQGateKeeperConstants.logger.info("Validating the license based on scan reamining");
+            // // Check total asset scanned allowed
+            // if (scanRemaining < discovered || scanRemaining <= 0) {
+            // GQGateKeeperConstants.logger.info("Scanning is not allowed, exceeds the license limit");
+            // session.close();
+            // return;
+            // }
+            // }
+            // else if (checkCondition == 'e') {
+            GQGateKeeperConstants.logger.info("Validating the license based expiry date");
+            // Compare today date and expired date
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            String expirydDate = sdf.format(gatekeeperResult.get(0).getExpDttm());
+            String currDate = sdf.format(new Date());
+            GQGateKeeperConstants.logger.info("Curr date : " + currDate + " expirydate : " + expirydDate);
+            int dateValue = expirydDate.compareTo(currDate);
 
-                GQGateKeeperConstants.logger.info("==============  " + dateValue);
-                if (dateValue == -1) {
-                    GQGateKeeperConstants.logger.info("License is expired");
-                    GQGateKeeperConstants.logger
-                            .info("The date is expired please renewal the license, Data insertion restricted");
-                    session.close();
-                    return;
-                }
-                else if (dateValue == 0) {
-                    GQGateKeeperConstants.logger.info("Today license is going to expire : " + expirydDate);
-                }
-                else if (dateValue == 1) {
-                    GQGateKeeperConstants.logger.info("The license wil expiry on : " + expirydDate);
-                }
+            GQGateKeeperConstants.logger.info("==============  " + dateValue);
+            if (dateValue == -1) {
+                GQGateKeeperConstants.logger.info("License is expired");
+                GQGateKeeperConstants.logger
+                        .info("The date is expired please renewal the license, Data insertion restricted");
+                session.close();
+                return;
             }
+            else if (dateValue == 0) {
+                GQGateKeeperConstants.logger.info("Today license is going to expire : " + expirydDate);
+            }
+            else if (dateValue == 1) {
+                GQGateKeeperConstants.logger.info("The license wil expiry on : " + expirydDate);
+            }
+            // }
 
-            scanRemaining = scanRemaining - discovered;
-            GQGateKeeperConstants.logger.info("Scan remain : " + scanRemaining);
+            // scanRemaining = scanRemaining - discovered;
+            // GQGateKeeperConstants.logger.info("Scan remain : " + scanRemaining);
             // update gatekeeper table once decremented the count
 
             GateKeeper gateKeeper = (GateKeeper) session.load(GateKeeper.class, gatekeeperResult.get(0)
                     .getEnterpriseId());
-            gateKeeper.setScnRmng(scanRemaining);
+            // gateKeeper.setScnRmng(scanRemaining);
 
             // ---------------------------------------------------------------------------------------------------------//
             GQGateKeeperConstants.logger.info("ENTERPRISE" + enterpriseId.trim());
@@ -212,11 +213,13 @@ public class GateKeeperFilter {
             // inserting runid - auto incremented
             meterRun = new MeterRun(meterId, recordDT, scanned, discovered, runTimeMs);
             Integer runid = (Integer) session.save(meterRun);
-            session.flush();
+            session.getTransaction().commit();
 
             gqmResponse.setRunid(runid);
+            // TODO: solve the error which occured while saving the data into asset_err table
+            // Inserting error information into asset_err table
+            GqMeterErrorInfo.insertErrorInfo(gqmResponse.getErrorInformationList(), gqmResponse.getRunid());
 
-            session.getTransaction().commit();
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -226,7 +229,6 @@ public class GateKeeperFilter {
                 if (session.isOpen()) {
                     session.flush();
                     session.close();
-                    session.clear();
                 }
             }
             catch (Exception e) {

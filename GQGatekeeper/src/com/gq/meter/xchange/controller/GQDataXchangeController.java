@@ -50,6 +50,7 @@ public class GQDataXchangeController {
             Builder builder = service.type(MediaType.APPLICATION_JSON);
 
             ClientResponse response = builder.post(ClientResponse.class, form);
+            // TODO: create a 200 response where we are sending the data and receive it here
             GQGateKeeperConstants.logger.info("Data is sent successfully to : " + fwdUrl);
         }
         catch (Exception e) {
@@ -57,7 +58,8 @@ public class GQDataXchangeController {
             GQGateKeeperConstants.logger.info("Saving data to Client Data table for backup");
 
             ClientDataModel cDataModel = new ClientDataModel();
-            cDataModel.saveClientData(gqmResponse.getRunid(), gqmResponse.toString(), new Date());
+            cDataModel.saveClientData(gqmResponse.getRunid(), gqmResponse.getGqmid(), gqmResponse.toString(),
+                    new Date(), e.getMessage());
         }
     }
 }

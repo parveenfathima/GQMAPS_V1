@@ -3,7 +3,7 @@
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <!-- Generated Mar 4, 2013 2:18:48 PM by Hibernate Tools 3.4.0.CR1 -->
 <hibernate-mapping>
-    <class name="com.gq.meter.object.AssetErr" table="asset_err" catalog="gqmaps">
+    <class name="com.gq.meter.object.AssetErr" table="asset_err" catalog="gqexchange">
         <id name="sid" type="long">
             <column name="sid" />
             <generator class="increment" />
