@@ -112,7 +112,7 @@ public class EnterpriseServices {
         Enterprise entObject = null;
         try {
             entObject = GQRegistrationConstants.gson.fromJson(entObjectString, Enterprise.class);
-            GQGateKeeperConstants.logger.info("Saving the new enterprise : " + entObject.getEnterpriseId());
+            GQGateKeeperConstants.logger.info("Saving the new enterprise : " + entObject.getSid());
 
             EnterpriseModel entmodel = new EnterpriseModel();
             entmodel.updateEnterprise(entObject);

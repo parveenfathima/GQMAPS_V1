@@ -104,10 +104,15 @@ public class EnterpriseModel {
     public void addEnterprise(Enterprise entObject) throws Exception {
         Session session = null;
         try {
-            session = HibernateUtil.getSessionFactory().getCurrentSession();
+            GQGateKeeperConstants.logger.info("1");
+            session = HibernateUtil.getSessionFactory().openSession();
+            GQGateKeeperConstants.logger.info("2");
             session.beginTransaction();
+            GQGateKeeperConstants.logger.info("3");
             session.save(entObject);
+            GQGateKeeperConstants.logger.info("4");
             session.getTransaction().commit();
+            GQGateKeeperConstants.logger.info("5");
         }
         catch (Exception e) {
             GQGateKeeperConstants.logger.error("Exception occured while creating the enterprise ", e);
@@ -136,18 +141,19 @@ public class EnterpriseModel {
     public void updateEnterprise(Enterprise entObject) throws Exception {
         Session session = null;
         try {
-            GQGateKeeperConstants.logger.info("###########################################");
             session = HibernateUtil.getSessionFactory().getCurrentSession();
             session.beginTransaction();
-            Enterprise oldEntObject = (Enterprise) session.load(Enterprise.class, entObject.getEnterpriseId());
+            Enterprise oldEntObject = (Enterprise) session.load(Enterprise.class, entObject.getSid());
             // only update the changed values
+            if (entObject.getEnterpriseId() == null && entObject.getUserId() == null && entObject.getPasswd() == null) {
+                throw new Exception("invalid enterprise data for update");
+            }
             oldEntObject.setEnterpriseId(entObject.getEnterpriseId());
             oldEntObject.setUserId(entObject.getUserId());
             oldEntObject.setPasswd(entObject.getPasswd());
             oldEntObject.setStoreFwd(entObject.getStoreFwd());
             oldEntObject.setFwdUrl(entObject.getFwdUrl());
             session.getTransaction().commit();
-            GQGateKeeperConstants.logger.info("###########################################");
         }
         catch (Exception e) {
             GQGateKeeperConstants.logger.error("Exception occured while creating the enterprise ", e);
@@ -165,5 +171,4 @@ public class EnterpriseModel {
             }
         }
     }
-
 }

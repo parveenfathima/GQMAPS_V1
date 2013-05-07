@@ -34,7 +34,6 @@ public class GateKeeperModel {
             else {
                 // if gatekeeper instance exists then only update the expiry date and scan remaining
                 gkeeper.setExpDttm(gkAudit.getExpDttm());
-                // int scanRemaining = gkeeper.getScnRmng();
             }
 
             session.save(gkeeper);// saving gatekeeper
