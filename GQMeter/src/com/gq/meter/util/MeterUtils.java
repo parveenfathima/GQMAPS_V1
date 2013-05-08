@@ -51,7 +51,6 @@ public class MeterUtils {
         Asset assetObj = null;
         try {
 
-            String protocolId = "protocolid";
             String appId = "app_id";
             String assetUsg = "assetUsg";
             Byte assetStrength = 1;
@@ -63,6 +62,7 @@ public class MeterUtils {
             String sysContact = null; // string
             String sysLocation = null; // string
             String assetId = null; // unique identifier about the asset
+            String protocolId = null;
 
             String oidString = "1.3.6.1.2.1.1";
             String temp;

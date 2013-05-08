@@ -63,6 +63,7 @@ public class StorageMeter implements GQSNMPMeter {
         try {
             // the below line is used to get the system basic info.
             assetObj = MeterUtils.sysBasicInfo(communityString, ipAddress, snmpVersion, toggleSwitches);
+            assetObj.setProtocolId(MeterConstants.STORAGE_PROTOCOL);
 
             String oidString = null;
             String temp;
@@ -84,7 +85,7 @@ public class StorageMeter implements GQSNMPMeter {
 
             }
             else {
-                errorList.add("Root OID : 1.3.6.1.2.1.1.5.0" + " " + MeterConstants.ASSET_ID_ERROR);
+                errorList.add(assetId + " Root OID : 1.3.6.1.2.1.1.5.0" + " " + MeterConstants.ASSET_ID_ERROR);
             }
 
             // ASSET ID , RUN ID STARTS HERE.

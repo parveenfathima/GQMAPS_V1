@@ -60,4 +60,12 @@ public class MeterConstants {
 
     public static final String PRINTER = "GqMaps Printer Meter";
 
+    public static final String COMPUTER_PROTOCOL = "computer";
+
+    public static final String PRINTER_PROTOCOL = "printer";
+
+    public static final String NSRG_PROTOCOL = "nsrg";
+
+    public static final String STORAGE_PROTOCOL = "storage";
+
 } // class ends

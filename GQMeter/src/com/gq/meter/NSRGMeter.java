@@ -68,6 +68,7 @@ public class NSRGMeter implements GQSNMPMeter {
         try {
             // the below line is used to get the system basic info.
             assetObj = MeterUtils.sysBasicInfo(communityString, ipAddress, snmpVersion, toggleSwitches);
+            assetObj.setProtocolId(MeterConstants.NSRG_PROTOCOL);
 
             String oidString = null;
             String temp;
@@ -122,7 +123,8 @@ public class NSRGMeter implements GQSNMPMeter {
                         numberOfPorts = (short) Integer.parseInt(tempStr);
                     }
                     else {
-                        errorList.add("Root OID : 1.3.6.1.2.1.1" + " " + "Unable to determine number of ports");
+                        errorList.add(assetId + " Root OID : 1.3.6.1.2.1.1" + " "
+                                + "Unable to determine number of ports");
                     }
                     // The following oid's is used to get number of active ports
 
@@ -135,7 +137,7 @@ public class NSRGMeter implements GQSNMPMeter {
 
                     }
                     else {
-                        errorList.add("Root OID : 1.3.6.1.2.1.2.2.1.7" + " "
+                        errorList.add(assetId + " Root OID : 1.3.6.1.2.1.2.2.1.7" + " "
                                 + "Unable to determine total number of active ports");
                     }
                     // The following oid's is used to get the network in and out bytes
@@ -152,7 +154,8 @@ public class NSRGMeter implements GQSNMPMeter {
                         networkBytesOut = networkBytes.get("OutBytes");
                     }
                     else {
-                        errorList.add("Root OID : 1.3.6.1.2.1.2.2.1" + " " + "Unable to get network bandwidth details");
+                        errorList.add(assetId + " Root OID : 1.3.6.1.2.1.2.2.1" + " "
+                                + "Unable to get network bandwidth details");
                     }
                 } // main if loop ends
                   // The following oid's is used to get the devices that are connected to NSRG.
@@ -167,7 +170,7 @@ public class NSRGMeter implements GQSNMPMeter {
                         connectedDevices = ConnectedDevicesCalc(result, rootOID, id);
                     }
                     else {
-                        errorList.add("Root OID : 1.3.6.1.2.1.4.22.1.4" + " "
+                        errorList.add(assetId + " Root OID : 1.3.6.1.2.1.4.22.1.4" + " "
                                 + "Unable to provide list of connected devices");
                     }
                 } // 1st if loop ends
