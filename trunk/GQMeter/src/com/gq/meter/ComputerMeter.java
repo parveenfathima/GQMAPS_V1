@@ -91,6 +91,7 @@ public class ComputerMeter implements GQSNMPMeter {
         try {
             // the below line is used to get the system basic info.
             assetObj = MeterUtils.sysBasicInfo(communityString, ipAddress, snmpVersion, toggleSwitches);
+            assetObj.setProtocolId(MeterConstants.COMPUTER_PROTOCOL);
 
             String oidString = null;
             String temp;
@@ -145,7 +146,7 @@ public class ComputerMeter implements GQSNMPMeter {
                     assetObj.setAssetId(assetId);
                 }
                 else {
-                    errorList.add("Root OID : 1.3.6.1.2.1.2.2.1" + " "
+                    errorList.add(assetId + " Root OID : 1.3.6.1.2.1.2.2.1" + " "
                             + "Unable to get network bandwidth details and unable to collate asset ID");
                 }// 2nd else ends
             }// 1st else ends
@@ -189,7 +190,7 @@ public class ComputerMeter implements GQSNMPMeter {
                         } // 2nd if loop ends
                     } // 1st if loop ends
                     else {
-                        errorList.add("Root OID : 1.3.6.1.2.1.25.1" + " "
+                        errorList.add(assetId + " Root OID : 1.3.6.1.2.1.25.1" + " "
                                 + "Unable to get number of users and processes");
                     }
 
@@ -258,8 +259,8 @@ public class ComputerMeter implements GQSNMPMeter {
                         } // 1st else loop ends
                     } // 1st if loop ends
                     else {
-                        errorList
-                                .add("Root OID : 1.3.6.1.2.1.25.2.3.1" + " " + "Unable to get disk and memory details");
+                        errorList.add(assetId + " Root OID : 1.3.6.1.2.1.25.2.3.1" + " "
+                                + "Unable to get disk and memory details");
                     }
 
                     // The following oid's is used to get CPU load
@@ -271,7 +272,8 @@ public class ComputerMeter implements GQSNMPMeter {
                         cpuLoad = (short) cpuLoadCalc(result, rootOID);
                     }
                     else {
-                        errorList.add("Root OID : 1.3.6.1.2.1.25.3.3.1.2" + " " + "Unable to compute CPU load");
+                        errorList.add(assetId + " Root OID : 1.3.6.1.2.1.25.3.3.1.2" + " "
+                                + "Unable to compute CPU load");
                     }
 
                     // the following oid's is used to get network in and out bytes for windows
@@ -291,7 +293,7 @@ public class ComputerMeter implements GQSNMPMeter {
                             networkBytesOut = Long.parseLong(networkBytesOutStr);
                         } // 2nd if loop ends
                         else {
-                            errorList.add("Root OID : 1.3.6.1.2.1.2.2.1" + " "
+                            errorList.add(assetId + " Root OID : 1.3.6.1.2.1.2.2.1" + " "
                                     + "Unable to get network bandwidth details and unable to collate asset ID");
                         }
                     }// 1st if loop ends
@@ -321,7 +323,7 @@ public class ComputerMeter implements GQSNMPMeter {
                             } // for loop ends
                         }// 1st if loop ends
                         else {
-                            errorList.add("Root OID : 1.3.6.1.2.1.2.2.1" + " "
+                            errorList.add(assetId + " Root OID : 1.3.6.1.2.1.2.2.1" + " "
                                     + "Unable to get network bandwidth details  and unable to collate asset ID");
                         }
                     } // 1st else loop ends
@@ -348,7 +350,7 @@ public class ComputerMeter implements GQSNMPMeter {
                                 isWindows, id);
                     } // 2nd if loop ends
                     else {
-                        errorList.add("Root OID : 1.3.6.1.2.1.25.6.3.1.4" + " "
+                        errorList.add(assetId + " Root OID : 1.3.6.1.2.1.25.6.3.1.4" + " "
                                 + "Unable to get list of installed software");
                     }
                 } // 1st if loop ends.
@@ -364,7 +366,7 @@ public class ComputerMeter implements GQSNMPMeter {
                         connectedDevices = ConnectedDevicesCalc(result, ipAddress, id);
                     }
                     else {
-                        errorList.add("Root OID : 1.3.6.1.2.1.6.13.1.1" + " "
+                        errorList.add(assetId + " Root OID : 1.3.6.1.2.1.6.13.1.1" + " "
                                 + "Unable to get port number and ip address of connected devices");
                     }
                 } // 1st if loop ends
@@ -388,7 +390,7 @@ public class ComputerMeter implements GQSNMPMeter {
                         processList = ProcessCalc(result, rootOID, sysRunNameResult, cpuShareResult, memShareResult, id);
                     } // 2nd if loop ends
                     else {
-                        errorList.add("Root OID : .1.3.6.1.2.1.25" + " "
+                        errorList.add(assetId + " Root OID : .1.3.6.1.2.1.25" + " "
                                 + "Unable to get the system run name, cpu and memory share");
                     }
                 } // 1st if loop ends
@@ -398,9 +400,7 @@ public class ComputerMeter implements GQSNMPMeter {
             errorList.add(ipAddress + " " + e.getMessage());
         }
 
-        String descr = "descr";
-
-        OsType osTypeObj = new OsType(osId, descr);
+        OsType osTypeObj = new OsType(osId, sysDescription);
 
         CompSnapshot snapShot = new CompSnapshot(id, sysIP, osId, totalMemory, usedMemory, totalVirtualMemory,
                 usedVirtualMemory, totalDiskSpace, usedDiskSpace, cpuLoad, upTime, numLoggedInUsers, numProcesses,

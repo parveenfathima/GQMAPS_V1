@@ -91,7 +91,7 @@ public class PrinterMeter implements GQSNMPMeter {
         String extras = null; // anything device specific but to be discussed , v2
 
         long upTime = 0; // seconds
-        Character outOfPaperIndicator = 0; // 0 means no paper , v2
+        Character outOfPaperIndicator = 'n'; // 0 means no paper , v2
         Short printsTakenCount = 0; // v2
         double tonerPercentage = 0;
         long totalMemory = 0; // bytes
@@ -117,6 +117,7 @@ public class PrinterMeter implements GQSNMPMeter {
         try {
             // the below line is used to get the system basic info.
             assetObj = MeterUtils.sysBasicInfo(communityString, ipAddress, snmpVersion, toggleSwitches);
+            assetObj.setProtocolId(MeterConstants.PRINTER_PROTOCOL);
 
             String oidString = null;
             String temp;
@@ -136,7 +137,7 @@ public class PrinterMeter implements GQSNMPMeter {
                 assetObj.setAssetId(assetId);
             }
             else {
-                errorList.add("Root OID : .1.3.6.1.2.1.2.2.1" + " " + MeterConstants.ASSET_ID_ERROR);
+                errorList.add(assetId + " Root OID : .1.3.6.1.2.1.2.2.1" + " " + MeterConstants.ASSET_ID_ERROR);
             }
 
             // ASSET ID , RUN ID STARTS HERE.
@@ -171,7 +172,7 @@ public class PrinterMeter implements GQSNMPMeter {
                         }
                     } // if loop ends
                     else {
-                        errorList.add("Root OID : 1.3.6.1.2.1.43.11.1.1.6" + " "
+                        errorList.add(assetId + " Root OID : 1.3.6.1.2.1.43.11.1.1.6" + " "
                                 + "Unable to determine if printer is a color printer");
                     }
 
@@ -191,7 +192,8 @@ public class PrinterMeter implements GQSNMPMeter {
                     }
                     else {
                         errorList
-                                .add("Root OID : 1.3.6.1.2.1.25.3 - Unable to determine manufacture model, current state and operational state of the printer");
+                                .add(assetId
+                                        + " Root OID : 1.3.6.1.2.1.25.3 - Unable to determine manufacture model, current state and operational state of the printer");
                     }
 
                     // The below oid's is used to get the toner percentage
@@ -203,7 +205,8 @@ public class PrinterMeter implements GQSNMPMeter {
                         tonerPercentage = tonerPercentageCalc(result, rootOID);
                     }
                     else {
-                        errorList.add("Root OID : 1.3.6.1.2.1.43.11.1.1" + " " + "Unable to get the toner percentage");
+                        errorList.add(assetId + " Root OID : 1.3.6.1.2.1.43.11.1.1" + " "
+                                + "Unable to get the toner percentage");
                     }
 
                     oidString = "1.3.6.1.2.1.25.2.3.1";
@@ -229,7 +232,8 @@ public class PrinterMeter implements GQSNMPMeter {
                         usedDiskSpace = mainUsedDiskSpace + subusedDiskSpace;
                     } // if loop ends
                     else {
-                        errorList.add("Root OID : 1.3.6.1.2.1.25.2.3.1 - Unable to get disk and memory details");
+                        errorList.add(assetId
+                                + " Root OID : 1.3.6.1.2.1.25.2.3.1 - Unable to get disk and memory details");
                     }
                 } // if loop ends
 
@@ -244,7 +248,7 @@ public class PrinterMeter implements GQSNMPMeter {
                         connectedDevices = ConnectedDevicesCalc(result, ipAddress, id);
                     }
                     else {
-                        errorList.add("Root OID : 1.3.6.1.2.1.6.13.1.1" + " "
+                        errorList.add(assetId + " Root OID : 1.3.6.1.2.1.6.13.1.1" + " "
                                 + "Unable to get port number and ip address of connected devices");
                     }
 
@@ -346,8 +350,8 @@ public class PrinterMeter implements GQSNMPMeter {
 
         String totalValue = null;
         String remainingUsage = null;
-        double totalValueFloat = 0L;
-        double remainingUsagefloat = 0L;
+        double totalValueDouble = 0L;
+        double remainingUsageDouble = 0L;
         double finalTonerPercentage = 0L;
         String rootId = rootOid.toString();
 
@@ -360,28 +364,31 @@ public class PrinterMeter implements GQSNMPMeter {
 
                 String totalValuestr = vb.getVariable().toString().trim();
                 if (!totalValuestr.trim().isEmpty() && totalValuestr != null) {
-                    totalValueFloat = Double.parseDouble(totalValuestr);
+                    totalValueDouble = Double.parseDouble(totalValuestr);
                 }
                 else {
-                    errorList.add(MeterConstants.NO_VALUE + " " + totalValueFloat);
+                    errorList.add(MeterConstants.NO_VALUE + " " + totalValueDouble);
                 }
             }
             else if (remainingUsage != null && vb.getOid().toString().equals(remainingUsage)) {
 
                 String remainingUsageStr = vb.getVariable().toString().trim();
                 if (!remainingUsageStr.trim().isEmpty() && remainingUsageStr != null) {
-                    remainingUsagefloat = Double.parseDouble(remainingUsageStr);
+                    remainingUsageDouble = Double.parseDouble(remainingUsageStr);
                 }
                 else {
-                    errorList.add(MeterConstants.NO_VALUE + " " + remainingUsagefloat);
+                    errorList.add(MeterConstants.NO_VALUE + " " + remainingUsageDouble);
                 }
             } // else if loop ends
 
         } // for loop ends
-        double finalTonerPercentageCalc = (remainingUsagefloat / totalValueFloat) * 100;
+        double finalTonerPercentageCalc = (remainingUsageDouble / totalValueDouble) * 100;
         DecimalFormat df = new DecimalFormat("#0.00");
         String finalTonerPercentageStr = df.format(finalTonerPercentageCalc);
         finalTonerPercentage = Double.parseDouble(finalTonerPercentageStr);
+        if (finalTonerPercentage < 0) {
+            finalTonerPercentage = 0;
+        }
         return finalTonerPercentage;
     }
 
