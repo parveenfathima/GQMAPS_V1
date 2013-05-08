@@ -307,18 +307,18 @@ public final class ITAssetDiscoverer {
         System.out.println("TOTAL duration taken for meter execution : " + (endTime - startTime));
 
         // Sending the generated json output to the server
-        // ClientConfig config = new DefaultClientConfig();
-        // Client client = Client.create(config);
-        //
-        // WebResource service = client.resource(MeterUtils.restURL);
-        // service = service.path("gqm-gk").path("gatekeeper");
-        //
-        // Form form = new Form();
-        // form.add("gqMeterResponse", gson.toJson(gqmResponse));
-        // form.add("summary", "Sending the data from GQMeter to GQGatekeeper");
-        //
-        // Builder builder = service.type(MediaType.APPLICATION_JSON);
-        // ClientResponse response = builder.post(ClientResponse.class, form);
+        ClientConfig config = new DefaultClientConfig();
+        Client client = Client.create(config);
+
+        WebResource service = client.resource(MeterUtils.restURL);
+        service = service.path("gqm-gk").path("gatekeeper");
+
+        Form form = new Form();
+        form.add("gqMeterResponse", gson.toJson(gqmResponse));
+        form.add("summary", "Sending the data from GQMeter to GQGatekeeper");
+
+        Builder builder = service.type(MediaType.APPLICATION_JSON);
+        ClientResponse response = builder.post(ClientResponse.class, form);
         // System.out.println("Form response " + response.getEntity(String.class));
     }
 
