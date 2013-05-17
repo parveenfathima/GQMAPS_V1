@@ -10,7 +10,7 @@ import java.util.Date;
 public class Enterprise implements java.io.Serializable {
 
     private Short sid;
-    private Character enterpriseId;
+    private String enterpriseId;
     private char blCd;
     private String EName;
     private String phone;
@@ -38,7 +38,7 @@ public class Enterprise implements java.io.Serializable {
     public Enterprise() {
     }
 
-    public Enterprise(Character enterpriseId, char blCd, String EName, String phone, String email, String userId,
+    public Enterprise(String enterpriseId, char blCd, String EName, String phone, String email, String userId,
             String UName, String passwd, Date creDttm, char storeFwd) {
         this.enterpriseId = enterpriseId;
         this.blCd = blCd;
@@ -52,7 +52,7 @@ public class Enterprise implements java.io.Serializable {
         this.storeFwd = storeFwd;
     }
 
-    public Enterprise(Character enterpriseId, char blCd, String EName, String phone, String email, char active,
+    public Enterprise(String enterpriseId, char blCd, String EName, String phone, String email, char active,
             String userId, String UName, String passwd, Short secQtn1, String ans1, Short secQtn2, String ans2,
             Date creDttm, char storeFwd, String fwdUrl, Integer noOfEmpl, Integer noOfAssets, Integer dcSqft,
             Character regCmplt, Double dcUsePctg, Double assetRentPctg, Integer dcTemp, String comments) {
@@ -90,11 +90,11 @@ public class Enterprise implements java.io.Serializable {
         this.sid = sid;
     }
 
-    public Character getEnterpriseId() {
+    public String getEnterpriseId() {
         return this.enterpriseId;
     }
 
-    public void setEnterpriseId(Character enterpriseId) {
+    public void setEnterpriseId(String enterpriseId) {
         this.enterpriseId = enterpriseId;
     }
 

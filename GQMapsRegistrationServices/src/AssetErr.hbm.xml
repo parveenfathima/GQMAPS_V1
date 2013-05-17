@@ -6,7 +6,7 @@
     <class name="com.gq.meter.object.AssetErr" table="asset_err" catalog="gqexchange">
         <id name="sid" type="long">
             <column name="sid" />
-            <generator class="increment" />
+            <generator class="native" />
         </id>
         <property name="runId" type="int">
             <column name="run_id" not-null="true" />
