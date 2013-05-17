@@ -14,7 +14,7 @@
         <property name="blCd" type="char">
             <column name="bl_cd" length="1" not-null="true" />
         </property>
-        <property name="EName" type="string">
+        <property name="eName" type="string">
             <column name="e_name" length="40" not-null="true" />
         </property>
         <property name="phone" type="string">
@@ -25,9 +25,6 @@
         </property>
         <property name="userId" type="string">
             <column name="user_id" length="12" not-null="true" />
-        </property>
-        <property name="UName" type="string">
-            <column name="u_name" length="35" not-null="true" />
         </property>
         <property name="passwd" type="string">
             <column name="passwd" length="45" not-null="true" />
@@ -44,40 +41,30 @@
         <property name="ans2" type="string">
             <column name="ans2" length="20" />
         </property>
-        <property name="creDttm" type="timestamp">
-            <column name="cre_dttm" length="19" not-null="true" />
-        </property>
-        <property name="storeFwd" type="char">
+         <property name="storeFwd" type="char">
             <column name="store_fwd" length="1" not-null="true" />
-        </property>
-        <property name="active" type="char">
-            <column name="active" length="1" not-null="true" />
         </property>
         <property name="fwdUrl" type="string">
             <column name="fwd_url" length="200" />
         </property>
-        <property name="noOfEmpl" type="java.lang.Integer">
+         <property name="noOfEmpl" type="java.lang.Integer">
             <column name="no_of_empl" />
         </property>
-        <property name="noOfAssets" type="java.lang.Integer">
-            <column name="no_of_assets" />
+         <property name="entSqft" type="java.lang.Integer">
+            <column name="ent_sqft" />
+        </property>
+        <property name="entAssetCount" type="java.lang.Integer">
+            <column name="ent_asset_cnt" />
         </property>
         <property name="dcSqft" type="java.lang.Integer">
             <column name="dc_sqft" />
         </property>
-        <property name="regCmplt" type="java.lang.Character">
-            <column name="reg_cmplt" length="1">
-                <comment>registration completed</comment>
-            </column>
+        <property name="dcAssetCount" type="java.lang.Integer">
+            <column name="dc_asset_cnt" />
         </property>
         <property name="dcUsePctg" type="java.lang.Double">
             <column name="dc_use_pctg" precision="22" scale="0">
                 <comment>how much percentage of datacenter are effectively used linked to recommendation</comment>
-            </column>
-        </property>
-        <property name="assetRentPctg" type="java.lang.Double">
-            <column name="asset_rent_pctg" precision="22" scale="0">
-                <comment>how much percentage of assets are rented linked to recommendation</comment>
             </column>
         </property>
         <property name="dcTemp" type="java.lang.Integer">
@@ -85,8 +72,19 @@
                 <comment>Linked to recommendation Ambient DC temperature</comment>
             </column>
         </property>
+        <property name="regCmplt" type="java.lang.Character">
+            <column name="reg_cmplt" length="1">
+                <comment>registration completed</comment>
+            </column>
+        </property>
+        <property name="active" type="char">
+            <column name="active" length="1" not-null="true" />
+        </property>
         <property name="comments" type="string">
             <column name="comments" length="200" />
+        </property>
+        <property name="creDttm" type="timestamp">
+            <column name="cre_dttm" length="19" not-null="true" />
         </property>
     </class>
 </hibernate-mapping>
