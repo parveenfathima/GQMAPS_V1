@@ -11,75 +11,63 @@ public class Enterprise implements java.io.Serializable {
 
     private Short sid;
     private String enterpriseId;
-    private char blCd;
-    private String EName;
+    private String blCd;
+    private String eName;
     private String phone;
     private String email;
-    private char active;
     private String userId;
-    private String UName;
     private String passwd;
     private Short secQtn1;
     private String ans1;
     private Short secQtn2;
     private String ans2;
-    private Date creDttm;
     private char storeFwd;
     private String fwdUrl;
     private Integer noOfEmpl;
-    private Integer noOfAssets;
+    private Integer entSqft;
+    private Integer entAssetCount;
     private Integer dcSqft;
-    private Character regCmplt;
+    private Integer dcAssetCount;
     private Double dcUsePctg;
-    private Double assetRentPctg;
     private Integer dcTemp;
+    private Character regCmplt;
+    private char active;
     private String comments;
+    private Date creDttm;
 
     public Enterprise() {
     }
 
-    public Enterprise(String enterpriseId, char blCd, String EName, String phone, String email, String userId,
-            String UName, String passwd, Date creDttm, char storeFwd) {
+    public Enterprise(Short sid, String enterpriseId, String blCd, String eName, String phone, String email,
+            String userId, String passwd, Short secQtn1, String ans1, Short secQtn2, String ans2, char storeFwd,
+            String fwdUrl, Integer noOfEmpl, Integer entSqft, Integer entAssetCount, Integer dcSqft,
+            Integer dcAssetCount, Double dcUsePctg, Integer dcTemp, Character regCmplt, char active, String comments,
+            Date creDttm) {
+        this.sid = sid;
         this.enterpriseId = enterpriseId;
         this.blCd = blCd;
-        this.EName = EName;
+        this.seteName(eName);
         this.phone = phone;
         this.email = email;
         this.userId = userId;
-        this.UName = UName;
-        this.passwd = passwd;
-        this.creDttm = creDttm;
-        this.storeFwd = storeFwd;
-    }
-
-    public Enterprise(String enterpriseId, char blCd, String EName, String phone, String email, char active,
-            String userId, String UName, String passwd, Short secQtn1, String ans1, Short secQtn2, String ans2,
-            Date creDttm, char storeFwd, String fwdUrl, Integer noOfEmpl, Integer noOfAssets, Integer dcSqft,
-            Character regCmplt, Double dcUsePctg, Double assetRentPctg, Integer dcTemp, String comments) {
-        this.enterpriseId = enterpriseId;
-        this.blCd = blCd;
-        this.EName = EName;
-        this.phone = phone;
-        this.email = email;
-        this.active = active;
-        this.userId = userId;
-        this.UName = UName;
         this.passwd = passwd;
         this.secQtn1 = secQtn1;
         this.ans1 = ans1;
         this.secQtn2 = secQtn2;
         this.ans2 = ans2;
-        this.creDttm = creDttm;
         this.storeFwd = storeFwd;
         this.fwdUrl = fwdUrl;
         this.noOfEmpl = noOfEmpl;
-        this.noOfAssets = noOfAssets;
+        this.entSqft = entSqft;
+        this.entAssetCount = entAssetCount;
         this.dcSqft = dcSqft;
-        this.regCmplt = regCmplt;
+        this.dcAssetCount = dcAssetCount;
         this.dcUsePctg = dcUsePctg;
-        this.assetRentPctg = assetRentPctg;
         this.dcTemp = dcTemp;
+        this.regCmplt = regCmplt;
+        this.active = active;
         this.comments = comments;
+        this.creDttm = creDttm;
     }
 
     public Short getSid() {
@@ -98,20 +86,12 @@ public class Enterprise implements java.io.Serializable {
         this.enterpriseId = enterpriseId;
     }
 
-    public char getBlCd() {
+    public String getBlCd() {
         return this.blCd;
     }
 
-    public void setBlCd(char blCd) {
+    public void setBlCd(String blCd) {
         this.blCd = blCd;
-    }
-
-    public String getEName() {
-        return this.EName;
-    }
-
-    public void setEName(String EName) {
-        this.EName = EName;
     }
 
     public String getPhone() {
@@ -136,14 +116,6 @@ public class Enterprise implements java.io.Serializable {
 
     public void setUserId(String userId) {
         this.userId = userId;
-    }
-
-    public String getUName() {
-        return this.UName;
-    }
-
-    public void setUName(String UName) {
-        this.UName = UName;
     }
 
     public String getPasswd() {
@@ -226,14 +198,6 @@ public class Enterprise implements java.io.Serializable {
         this.noOfEmpl = noOfEmpl;
     }
 
-    public Integer getNoOfAssets() {
-        return this.noOfAssets;
-    }
-
-    public void setNoOfAssets(Integer noOfAssets) {
-        this.noOfAssets = noOfAssets;
-    }
-
     public Integer getDcSqft() {
         return this.dcSqft;
     }
@@ -258,14 +222,6 @@ public class Enterprise implements java.io.Serializable {
         this.dcUsePctg = dcUsePctg;
     }
 
-    public Double getAssetRentPctg() {
-        return this.assetRentPctg;
-    }
-
-    public void setAssetRentPctg(Double assetRentPctg) {
-        this.assetRentPctg = assetRentPctg;
-    }
-
     public Integer getDcTemp() {
         return this.dcTemp;
     }
@@ -280,6 +236,38 @@ public class Enterprise implements java.io.Serializable {
 
     public void setComments(String comments) {
         this.comments = comments;
+    }
+
+    public Integer getEntSqft() {
+        return entSqft;
+    }
+
+    public void setEntSqft(Integer entSqft) {
+        this.entSqft = entSqft;
+    }
+
+    public Integer getEntAssetCount() {
+        return entAssetCount;
+    }
+
+    public void setEntAssetCount(Integer entAssetCount) {
+        this.entAssetCount = entAssetCount;
+    }
+
+    public Integer getDcAssetCount() {
+        return dcAssetCount;
+    }
+
+    public void setDcAssetCount(Integer dcAssetCount) {
+        this.dcAssetCount = dcAssetCount;
+    }
+
+    public String geteName() {
+        return eName;
+    }
+
+    public void seteName(String eName) {
+        this.eName = eName;
     }
 
 }

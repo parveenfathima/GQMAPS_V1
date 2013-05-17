@@ -7,22 +7,22 @@ package com.gq.meter.object;
  */
 public class BusinessLine implements java.io.Serializable {
 
-    private char blCd;
+    private String blCd;
     private String descr;
 
     public BusinessLine() {
     }
 
-    public BusinessLine(char blCd, String descr) {
+    public BusinessLine(String blCd, String descr) {
         this.blCd = blCd;
         this.descr = descr;
     }
 
-    public char getBlCd() {
+    public String getBlCd() {
         return this.blCd;
     }
 
-    public void setBlCd(char blCd) {
+    public void setBlCd(String blCd) {
         this.blCd = blCd;
     }
 
