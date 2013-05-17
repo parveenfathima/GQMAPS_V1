@@ -39,7 +39,7 @@ public class EnterpriseServices {
             EnterpriseModel entModel = new EnterpriseModel();
             boolean authValue = entModel.authenticate(authObject);
             if (authValue) {
-                return Response.status(200).build();
+                return Response.ok(GQRegistrationConstants.gson.toJson("success")).build();
             }
             else {
                 return Response.status(401).build();

@@ -8,7 +8,7 @@
             <column name="sid" />
             <generator class="increment" />
         </id>
-        <property name="enterpriseId" type="character">
+        <property name="enterpriseId" type="string">
             <column name="enterprise_id" length="10" not-null="true" unique="true" />
         </property>
         <property name="blCd" type="char">
