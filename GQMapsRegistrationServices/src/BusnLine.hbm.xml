@@ -4,7 +4,7 @@
 <!-- Generated Mar 1, 2013 12:56:00 PM by Hibernate Tools 3.4.0.CR1 -->
 <hibernate-mapping>
     <class name="com.gq.meter.object.BusinessLine" table="busn_line" catalog="gqexchange">
-        <id name="blCd" type="char">
+        <id name="blCd" type="string">
             <column name="bl_cd" length="5" />
             <generator class="assigned" />
         </id>
