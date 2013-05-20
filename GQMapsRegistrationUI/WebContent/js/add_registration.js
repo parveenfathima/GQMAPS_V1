@@ -25,25 +25,34 @@ function validateForm()
 {
 		//declaring and initializing form variables
 		
+		
 		var vEName = $.trim($('#txtEName').val()); //mandatory field
 		var vBusCat = $('#cmbBusCategory option:selected').val(); //mandatory field
 		var vPhone = $.trim($('#txtPhone').val()); //mandatory field
 		var vEmail = $.trim($('#txtEmail').val()); //mandatory field
-		var vUsername = $.trim($('#txtUsername').val()); //mandatory field
 		var vSaveFwd = $('#cmbSaveFwd').val(); //mandatory field
 		var vStoreFwd = $.trim($('#txtUrl').val());
 		var vQues1 = $('#cmbQues1 option:selected').val(); //mandatory field
 		var vAns1 = $.trim($('#txtAns1').val()); //mandatory field
 		var vQues2 = $('#cmbQues2 option:selected').val(); //mandatory field
 		var vAns2 = $.trim($('#txtAns2').val()); //mandatory field
-		var vComments = $.trim($('#taComments').val()); 
+
 		var vEmp = $.trim($('#txtEmp').val());
-		var vAsset = $.trim($('#txtAsset').val());
-		var vSqft = $.trim($('#txtSqft').val());
+	
+		var vESqft = $.trim($('#txtESqft').val());		
+		var vEAsset = $.trim($('#txtEAsset').val());
+		var vDCSqft = $.trim($('#txtDCSqft').val());		
+		var vDCAsset = $.trim($('#txtDCAsset').val());	
+		var vDCUsed = $.trim($('#txtDCUsed').val());	
+		var vDCTemp = $.trim($('#txtDCTemp').val());	
+		var vRegCompleted = $.trim($('#cmbRegCompl').val());	
+		var vActive = $.trim($('#cmbActive').val());	 
+
+		var vComments = $.trim($('#taComments').val()); 
 		
 		//checking the mandatory fields for null to alert user to enter the appropriate values
 		
-		if(vEName.length == 0)
+		if(vEName.length === 0)
 		{
 			alert("Enter Enterprise Name");	
 			$('#txtEName').select();
@@ -67,7 +76,7 @@ function validateForm()
 			$('#txtPhone').select();
 			return false;			
 		}
-		else if(vEmail.length == 0)
+		else if(vEmail.length === 0)
 		{
 			alert("Enter E-mail ID");
 			$('#txtEmail').select();
@@ -77,12 +86,6 @@ function validateForm()
 		{
 			alert("Enter a valid E-mail ID");
 			$('#txtEmail').select();	
-			return false;			
-		}
-		else if(vUsername.length == 0)
-		{
-			alert("Enter Username");
-			$('#txtUsername').select();		
 			return false;			
 		}
 		else if(vQues1 == "")
@@ -102,7 +105,7 @@ function validateForm()
 		{
 			return false;
 		}
-		else if(vQues2 == "")
+		else if(vQues2 === "")
 		{
 			alert("Select your Security Question 2");
 			$('#cmbQues2').focus();
@@ -114,7 +117,7 @@ function validateForm()
 			$('#cmbQues2').focus();
 			return false;			
 		}
-		else if(vAns2 == "" || vAns2.length == 0 || vAns2.length > 9)
+		else if(vAns2 === "" || vAns2.length === 0 || vAns2.length > 9)
 		{
 			alert("Enter a valid Answer 2 with less than 10 characters");
 			$('#txtAns2').focus();
@@ -124,30 +127,36 @@ function validateForm()
 		else if(!validateAns(vAns2, "2", "oldQA"))
 		{
 			return false;
-		}
+		}							
 		else 
-		{
-			//TODO the form submission code goes here
-			
+		{	
+			var vQuery = "";
 			var vEId = generateEntpID("eid");
 			var vUId = generateEntpID("uid");
-			//var dt = new Date();
-			//var vDateTime = dt.getFullYear() + "-" + convertToTwoDigit(dt.getMonth()) + "-" + convertToTwoDigit(dt.getDate()) + " " + convertToTwoDigit(dt.getHours()) + ":" 
-			//								 + convertToTwoDigit(dt.getMinutes()) + ":" + convertToTwoDigit(dt.getSeconds());
 			
 			var vDateTime = getDtTime();
 			var vPassword = "Gq@123";	
 
-			if(vStoreFwd === "") vStoreFwd = null;
-			if(vComments === "") vComments = null;
-			if(vEmp === "") vEmp = null;
-			if(vAsset  === "") vAsset = null;
-			if(vSqft  === "") vSqft = null;										 
+			if(vEmp === "")	vEmp = 0;
+			if(vESqft === "")	vESqft = 0;
+			if(vEAsset  === "") vEAsset  = 0;
+			if(vDCSqft  === "")	vDCSqft  = 0;
+			if(vDCAsset === "") vDCAsset = 0;
+			if(vDCUsed  === "") vDCUsed  = 0;
+			if(vDCTemp   === "") vDCTemp   = 0;
+			if(vStoreFwd === "") vStoreFwd = " ";
+			if(vComments === "") vComments = " ";			
+				 
 		
 			var vType = "POST";
 			var vUrl = "http://localhost:8080/GQMapsRegistrationServices/gqm-gk/enterprise/addRegistration";						
 			
-			var vQuery = '{"enterpriseId":"' + vEId + '", "blCd":"' + vBusCat + '", "EName":"' + vEName + '", "phone":"' + vPhone + '", "email":"' + vEmail + '", "port": "8080", "userId":"' + vUId + '", "UName":"' + vUsername + '", "passwd":"' + vPassword + '", "secQtn1":"' + vQues1 + '", "ans1":"' + vAns1 + '", "secQtn2":"' + vQues2 + '", "ans2":"' + vAns2 + '", "creDttm":"' + vDateTime + '", "noOfEmpl":' + vEmp + ', "noOfAssets":' + vAsset + ', "dcSqft":' + vSqft + ', "comments":' + vComments + ', "storeFwd":"' + vSaveFwd + '", "fwdUrl":' + vStoreFwd + ', "regCmplt": "n"}';
+			vQuery = '{"enterpriseId":"' + vEId + '", "blCd":"' + vBusCat + '", "eName":"' + vEName + '", "phone":"' + vPhone + '", "email":"' + vEmail;
+			vQuery = vQuery + '", "userId":"' + vUId + '", "passwd":"' + vPassword + '", "secQtn1":"' + vQues1 + '", "ans1":"' + vAns1;
+			vQuery = vQuery + '", "secQtn2":"' + vQues2 + '", "ans2":"' + vAns2 + '", "storeFwd":"' + vSaveFwd;
+			vQuery = vQuery + '", "fwdUrl":"' + vStoreFwd + '", "noOfEmpl":"' + vEmp + '", "entSqft":"' + vESqft + '", "entAssetCount" : "' + vEAsset ;
+			vQuery = vQuery + '", "dcSqft":"' + vDCSqft + '", "dcAssetCount": "' + vDCAsset + '", "dc_use_pctg" : "' + vDCUsed + '", "dc_temp" : "' + vDCTemp;
+			vQuery = vQuery + '", "regCmplt" : "' + vRegCompleted + '", "active": "' + vActive + '", "comments":"' + vComments + '","creDttm":"' + vDateTime + '"}';
 			
 			$.ajax
 			({

@@ -61,6 +61,12 @@ function validateForm()
 		{
 			return false;
 		}
+		else if(vQues2 === vQues1)
+		{
+			alert("Select unique security questions");
+			$('#cmbQues2').focus();
+			return false;			
+		}
 		else if(!validateAns(vAns2, "2", "oldQA"))
 		{
 			return false;
@@ -70,6 +76,7 @@ function validateForm()
 			//user id validation
 			  
 			var vUrl = 'http://localhost:8080/GQMapsRegistrationServices/gqm-gk/enterprise/getRegistration';
+			var vQuery = "";
 
 			$.ajax({
 				type : "GET",
@@ -86,7 +93,8 @@ function validateForm()
 								if( vUserID === $.trim(n["userId"]))
 								{
 									isValid = 1; //valid user
-									$.jStorage.set("jsUserId", vUserID);											
+									$.jStorage.set("jsUserId", vUserID);
+									$.jStorage.set("jsSId", n["sid"]);											
 								}							  
 							});
 							
@@ -99,27 +107,58 @@ function validateForm()
 							else
 							{
 								//alert("Valid user");	
-								$.jStorage.set("jsUserId", vUserID);	
+								//$.jStorage.set("jsUserId", vUserID);	
 								
 								// Check for Change Security Questions option
 								var isChecked = $('#chkChageQA').is(':checked');
-								
+								var vSId = $.jStorage.get("jsSId");
 								if(isChecked)
 								{			
-										if(validateChangeQA())   //validating the fields in Change Security Questions for proper values to submi the form if the checkbox is checked
-										{
-										  
-										  alert("Form is ready to submit - includes change sec question");
-										  //TODO prepare a query string with Change Security Questions' fields
-										}
+									if(!validateChangeQA())   //validating the fields in Change Security Questions for proper values to submi the form if the checkbox is checked
+									{
+										return false;
+									}
+									else
+									{
+									  
+									  alert("Form is ready to submit - includes change sec question : " + vSId + "ques val : " + vQues1 + "  " + vQues2 );
+																	
+									  var vCQues1 = $('#cmbChangeQues1').val();
+									  var vCAns1 = $('#txtChangeAns1').val();
+									  var vCQues2 = $('#cmbChangeQues2').val();
+									  var vCAns2 = $('#txtChangeAns2').val();									  									  
+									  
+									  vQuery =  '{"sid":"' + vSId + '", "passwd":"' + vNewPwd + '", "secQtn1":"' + vCQues1 + '", "ans1":"' + vCAns1 + '", "secQtn2":"' + vCQues2 + '", "ans2":"' + vCAns2 + '"}';
+									  alert(vQuery);	
+									}
 								}
 								else
 								{
-								  alert("Form is ready to submit - only new pwd");
-								  // TODO prepare a query string without the Change Security Questions' fields
+									alert("Form is ready to submit - only new pwd : " + vSId);									
+									vQuery =  '{"sid":"' + vSId + '", "passwd":"' + vNewPwd + '", "secQtn1":"0", "ans1":" ","secQtn2":"0", "ans2":" "}';	
+									alert(vQuery);							  
 								}
 								
 								// TODO form submission code goes here
+								
+								$.ajax
+								({
+									type:"PUT",
+									contentType: "application/json",
+									url:"http://localhost:8080/GQMapsRegistrationServices/gqm-gk/enterprise/updatePassword",
+									async:false,
+									data:vQuery,
+									dataType: "json",
+									success:function(json)
+									{
+										alert("Updated successfully!");
+										//$("#frmAddRegn")[0].reset();
+									},
+									failure:function(json)
+									{
+										alert("Error: " + json.status + " " + json.responseText);
+									} 
+								});								
 								return true;	
 							}											
 					} // end of if(vRecLen != 0 && vUserID != "admin")
@@ -302,6 +341,12 @@ function validateChangeQA()
 		if(!validateQues(vCQues2, "2", "newQA"))
 		{
 			return false;
+		}
+		else if(vCQues2 === vCQues1)
+		{
+			alert("Select unique security questions");
+			$('#cmbChangeQues2').focus();
+			return false;			
 		}
 		else if(!validateAns(vCAns2, "2", "newQA"))
 		{
