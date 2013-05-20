@@ -11,7 +11,7 @@
         <property name="enterpriseId" type="string">
             <column name="enterprise_id" length="10" not-null="true" unique="true" />
         </property>
-        <property name="blCd" type="char">
+        <property name="blCd" type="string">
             <column name="bl_cd" length="1" not-null="true" />
         </property>
         <property name="eName" type="string">
