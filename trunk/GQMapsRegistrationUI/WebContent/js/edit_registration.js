@@ -2,8 +2,6 @@
 var arrEntp = new Array(enterprise()); // global array to store all the enterprises from the rest service
 var gEId = ""; // global enterprise id.
 var gRegStatus = "";
-var gLongitude = null;
-var gLatitude = null;
 var gMeterId = 0;
 
 $(document).ready(function() 
@@ -22,9 +20,6 @@ $(document).ready(function()
 		return false;
 	 }
    }); 
-   
-
-	
 });
 
 
@@ -52,9 +47,10 @@ function saveGeneral()
 }
 
 // updating only the changed enterprise
+
 function updateEntp(dbEntp)
 {
-		var formEntp = new enterprise($.trim($("#txtEID").val()), $.trim($("#txtEName").val()), $.trim($("#txtUID").val()), $.trim($("#txtPwd").val()), $.trim($("#cmbSaveFwd").val()), $.trim($("#txtUrl").val()), dbEntp.getRegStatus());
+		var formEntp = new enterprise(dbEntp.getSId(), $.trim($("#txtEID").val()), $.trim($("#txtEName").val()), $.trim($("#txtUID").val()), $.trim($("#txtPwd").val()), $.trim($("#cmbSaveFwd").val()), $.trim($("#txtUrl").val()), dbEntp.getRegStatus());
 		
 		if(compareObject(dbEntp, formEntp))
 		{
@@ -66,13 +62,13 @@ function updateEntp(dbEntp)
 			
 			//TODO call to ajax
 			
-			var vType = "PUT";
-			var vUrl = "http://localhost:8080/GQMapsRegistrationServices/gqm-gk/enterpriseMeters/" +  dbEntp.getSId();						
+			var vType = "POST";
+			var vUrl = "http://localhost:8080/GQMapsRegistrationServices/gqm-gk/enterprise/updateRegistration";						
 	
 			var vQuery = "";
 			
-			vQuery = vQuery + '{"meterId":"' + vMId + '","protocolId":"' + vProtocol + '", "enterpriseId":"' + vEId + '", "descr":"' + vDesc + '", "address":"' + vAddress;
-			vQuery = vQuery + '","phone":"' + vPhone + '", "creDttm":"' + vDtTime + '", "latitude":' + gLongitude + ', "longitude":' + gLatitude + '}';																		
+			vQuery = vQuery + '{"sid":"' + dbEntp.getSId() + '", "enterpriseId":"' + formEntp.getEId() + '", "userId":"' + formEntp.getUId() + '", "passwd":"' ;
+			vQuery = vQuery + 	formEntp.getPwd() + '", "storeFwd":"' + formEntp.getOutput() + '", "fwdUrl":"' + formEntp.getUrl() + '"}';														
 					
 			$.ajax
 			({
@@ -83,24 +79,21 @@ function updateEntp(dbEntp)
 				data:vQuery,
 				dataType: "json",
 				success:function(json) 
-				{
-					gLongitude = null;
-					gLatitude = null;	
-					gMeterId = 0;				
-					alert("Meter details saved successfully!");
-					$('#frmMeter').get(0).reset();
-					loadMeters();
+				{				
+					alert("Enterprise general details are saved successfully!");
+					//$( "#dlgGeneral" ).dialog( "close" );
+					listEnterprise();
+					gEId = "";
 				},
 				error:function(json)
 				{
-					resetVariables();	
 					alert("Error: " + json.status + " " + json.responseText);
 				}
 			});	
-			
-			gEId = ""
+
 		}
 }
+
 
 // compare the enterprise values before and after the change. If changed, then only the ajax will be called to update.
 function compareObject(obj1, obj2)
@@ -180,9 +173,8 @@ function addEntpMeter(dbEntp)
 		return false;	
 	}	
 	else 
-	{
-		getLocation();
-		//alert("latitude and longitude are: " + gLongitude + "  " + gLatitude);
+	{	
+		getGeoLocation(vAddress);	
 		
 		validateMeterId(vMId);
 		
@@ -196,11 +188,10 @@ function addEntpMeter(dbEntp)
 	
 		var vType = "POST";
 		var vUrl = "http://localhost:8080/GQMapsRegistrationServices/gqm-gk/enterpriseMeters/addEntMeters";						
-
+				
 		var vQuery = "";
-		
 		vQuery = vQuery + '{"meterId":"' + vMId + '","protocolId":"' + vProtocol + '", "enterpriseId":"' + vEId + '", "descr":"' + vDesc + '", "address":"' + vAddress;
-		vQuery = vQuery + '","phone":"' + vPhone + '", "creDttm":"' + vDtTime + '", "latitude":' + gLongitude + ', "longitude":' + gLatitude + '}';																		
+		vQuery = vQuery + '","phone":"' + vPhone + '", "creDttm":"' + vDtTime + '", "latitude":' + $.jStorage.get("jsLat")  + ', "longitude":' + $.jStorage.get("jsLong")  + '}';																		
 				
 		$.ajax
 		({
@@ -214,7 +205,10 @@ function addEntpMeter(dbEntp)
 			{
 				gLongitude = null;
 				gLatitude = null;	
-				gMeterId = 0;				
+				gMeterId = 0;	
+				$.jStorage.set("jsLat", ""); 
+				$.jStorage.set("jsLong", "");			
+				
 				alert("Meter details saved successfully!");
 				$('#frmMeter').get(0).reset();
 				loadMeters();
@@ -364,7 +358,7 @@ function listEnterprise()
 							var vEId = n["enterpriseId"];
 							gRegStatus = n["regCmplt"];
 							
-							arrEntp[i] = new enterprise(n["enterpriseId"], n["EName"], n["userId"], n["passwd"], n["storeFwd"], n["fwdUrl"], n["regCmplt"]);											
+							arrEntp[i] = new enterprise(n["sid"], n["enterpriseId"], n["EName"], n["userId"], n["passwd"], n["storeFwd"], n["fwdUrl"], n["regCmplt"]);											
 							
 							if(gRegStatus === 'n')
 								vEntpList += '<tr style="height:25px; color: #FF0000">';
@@ -401,8 +395,9 @@ function listEnterprise()
 }
 
 // enterprise object's constructor, get and set methods		
-function enterprise(eid, ename, uid, pwd, output, url, regStatus)   
+function enterprise(sid, eid, ename, uid, pwd, output, url, regStatus)   
 {
+	this.sid = sid;
 	this.eid = eid;
 	this.ename = ename;
 	this.uid = uid;
@@ -410,6 +405,16 @@ function enterprise(eid, ename, uid, pwd, output, url, regStatus)
 	this.output = output;
 	this.url = url;
 	this.regStatus = regStatus;
+}
+
+enterprise.prototype.getSId = function()
+{
+	return this.sid;	
+}
+
+enterprise.prototype.setSId = function(sid)
+{
+	this.sid = sid;
 }
 
 enterprise.prototype.getEId = function()
@@ -495,29 +500,6 @@ function convertToTwoDigit(no)
 	return (no >=0 && no <10 ? ("0"+ no) : no)
 }
 
-
-
-// funtion that returns the longitue and latitude of an address passed.
-function getLocation() 
-{
-	var geocoder = new google.maps.Geocoder();
-	var address = document.getElementById("taAddress").value;
-
-		geocoder.geocode({ 'address': address }, function (results, status) 
-		{
-			if (status == google.maps.GeocoderStatus.OK) 
-			{				
-				gLatitude = results[0].geometry.location.lat();
-				gLongitude = results[0].geometry.location.lng();
-			} 
-			else 
-			{
-				gLatitude = null;
-				gLongitude = null;
-			}
-		});
-}
-
 //check for unique meter id 
 function validateMeterId(meterId)
 {
@@ -589,4 +571,25 @@ function loadMeters()
 		} 
 	});	
 			
+}
+
+// funtion that returns the longitue and latitude of an address passed.
+function getGeoLocation(address) {
+	var geocoder = new google.maps.Geocoder();
+	//var address = document.getElementById("taAddress").value;
+	
+	geocoder.geocode({ 'address': address }, function (results, status) {
+		
+		if (status === google.maps.GeocoderStatus.OK) 
+		{
+			$.jStorage.set("jsLat", results[0].geometry.location.lat());
+			$.jStorage.set("jsLong", results[0].geometry.location.lng());
+			
+		} else 
+		{
+			$.jStorage.set("jsLat", ""); 
+			$.jStorage.set("jsLong", "");
+			alert("Request failed.");
+		}
+	});
 }
