@@ -5,6 +5,7 @@ import java.util.List;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
@@ -121,6 +122,30 @@ public class EnterpriseServices {
             GQGateKeeperConstants.logger.error("Exception occured while creating the new enterprise", e);
             return Response.status(400).build();
         }
-        return Response.status(200).build();
+//        return Response.status(200).build();
+        return Response.ok(GQRegistrationConstants.gson.toJson("success")).build();
     }
+    
+
+    @Path("/updatePassword")
+    @PUT
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response updatePwd(String entObjectString) {
+        Enterprise entObject = null;
+        try {
+            entObject = GQRegistrationConstants.gson.fromJson(entObjectString, Enterprise.class);
+            GQGateKeeperConstants.logger.info("Updating new password : " + entObject.getSid());
+            System.out.println("sid is :" + entObject.getSid());
+
+            EnterpriseModel entmodel = new EnterpriseModel();
+            entmodel.updatePassword(entObject);
+        }
+        catch (Exception e) {
+            GQGateKeeperConstants.logger.error("Exception occured while creating the new enterprise", e);
+            return Response.status(400).build();
+        }
+//        return Response.status(200).build();
+        return Response.ok(GQRegistrationConstants.gson.toJson("success")).build();
+    }    
+    
 }
