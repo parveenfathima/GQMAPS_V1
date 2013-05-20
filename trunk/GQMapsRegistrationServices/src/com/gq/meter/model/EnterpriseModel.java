@@ -171,4 +171,42 @@ public class EnterpriseModel {
             }
         }
     }
+    
+    public void updatePassword(Enterprise entObject) throws Exception {
+        Session session = null;
+        try {
+            session = HibernateUtil.getSessionFactory().getCurrentSession();
+            session.beginTransaction();
+            Enterprise oldEntObject = (Enterprise) session.load(Enterprise.class, entObject.getSid());
+
+
+            oldEntObject.setPasswd(entObject.getPasswd());
+
+            if(entObject.getSecQtn1() != 0 && entObject.getSecQtn2() != 0)
+            {
+            	oldEntObject.setSecQtn1(entObject.getSecQtn1());
+            	oldEntObject.setAns1(entObject.getAns1());
+            	oldEntObject.setSecQtn2(entObject.getSecQtn2());
+            	oldEntObject.setAns2(entObject.getAns2());
+            }
+              
+            session.getTransaction().commit();
+        }
+        catch (Exception e) {
+            GQGateKeeperConstants.logger.error("Exception occured while creating the enterprise ", e);
+            throw new Exception(e);
+        }
+        finally {
+            try {
+                if (session.isOpen()) {
+                    session.flush();
+                    session.close();
+                }
+            }
+            catch (Exception e) {
+                throw new Exception(e);
+            }
+        }
+    }
+    
 }
