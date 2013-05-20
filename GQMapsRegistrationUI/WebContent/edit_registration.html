@@ -16,6 +16,9 @@
                 
         <script src="SlickGrid-master/lib/jquery-1.7.min.js"></script>
         <script src="SlickGrid-master/lib/jquery.event.drag-2.2.js"></script>
+        
+        <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?key=AIzaSyBGIi2rSK9Qp2dY1EewX-JUsK0sjQsxAak&sensor=false"></script> 
+        
         <script src="SlickGrid-master/slick.core.js"></script>
         <script src="SlickGrid-master/slick.grid.js"></script>      
         <script src="SlickGrid-master/slick.dataview.js"></script>
@@ -26,8 +29,15 @@
         <script src = "js/edit_registration.js"> </script>            		 
         <script src = "js/general.js"> </script> 
         
-        <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?key=AIzaSyBGIi2rSK9Qp2dY1EewX-JUsK0sjQsxAak&sensor=false"></script> 
-    
+        
+        
+        <script type="text/javascript">
+    	<!--
+        
+			
+		     
+		//-->
+    	</script>
         <style>
 			body { font-size: 62.5%; }
 			label, input { display:block; }
@@ -104,7 +114,7 @@
                                 <input type="text" name="txtPhone" id="txtPhone" class="text ui-widget-content ui-corner-all"/>
                                 
                                 <label for="taAddress" >Address <font color="#FF0000"> * </font> </label>
-                                <textarea name="taAddress" id="taAddress" rows = "2" style="width:200px" onBlur="GetLocation();"> </textarea>
+                                <textarea name="taAddress" id="taAddress" rows = "2" style="width:200px" > </textarea>
                                 <br><br>
                                 <label for="txtDesc">Description</label>
                                 <input type="text" name="txtDesc" id="txtDesc" class="text ui-widget-content ui-corner-all" />
@@ -143,17 +153,7 @@
                             <fieldset>   
                                 <label for="txtNewExpiry" >New Scan Expiry Date</label> 
                                 <input type="text" name="txtNewExpiry" id="txtNewExpiry" class="text ui-widget-content ui-corner-all"/>
-                                
-                                <label for="txtNewScanCount" >New Scan Count</label>
-                                <input type="text" name="txtNewScanCount" id="txtNewScanCount" class="text ui-widget-content ui-corner-all"/>
-                                
-                                <label for="cmbCondition" >Check Condition</label> 
-                                <select name="cmbCondition" id="cmbCondition"/>
-                                <option value = "y">Yes</option>
-                                <option value = "n"> No</option>
-                                </select>
-                                <br><br>
-                                
+                                                                
                                 <label for="taComments" >Purchase Comments</label>  
                                 <textarea name="taComments" id="taComments" rows = "2" style="width:200px"> </textarea>
 								<br><br>
