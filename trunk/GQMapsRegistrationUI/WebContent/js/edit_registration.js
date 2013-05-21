@@ -1,8 +1,9 @@
 
 var arrEntp = new Array(enterprise()); // global array to store all the enterprises from the rest service
-var gEId = ""; // global enterprise id.
+var gArrayIndex = ""; // global enterprise id.
 var gRegStatus = "";
 var gMeterId = 0;
+var arrIndex;
 
 $(document).ready(function() 
 {
@@ -26,16 +27,26 @@ $(document).ready(function()
 // opening the general dialog with the selected enterprise's basic information to edit by the admin user. 
 function openGeneralDialog(i)
 {
-	gEId = i;
+	gArrayIndex = i;
+
 	$( "#dlgGeneral" ).dialog( "open" );
-	$("#hBasic").text(arrEntp[i].getEId() + " - " + arrEntp[i].getEName());
+	$("#hBasic").text(arrEntp[i].getEName());
+	
 	$("#txtEID").val(arrEntp[i].getEId());
 	$("#txtEName").val(arrEntp[i].getEName());
 	$("#txtUID").val(arrEntp[i].getUId());
 	$("#txtPwd").val(arrEntp[i].getPwd());
 	$("#cmbSaveFwd").val(arrEntp[i].getOutput());
 	$("#txtUrl").val(arrEntp[i].getUrl());
-	
+	$("#txtESqft").val(arrEntp[i].getESqft());
+	$("#txtEAsset").val(arrEntp[i].getEAsset());
+	$("#txtDCSqft").val(arrEntp[i].getDSqft());
+	$("#txtDCAsset").val(arrEntp[i].getDAsset());
+	$("#txtDCUsed").val(arrEntp[i].getDcUsed());
+	$("#txtDCTemp").val(arrEntp[i].getDcTemp());
+	$("cmbActive").val(arrEntp[i].getActive());				
+	$("#cmbRegCompl").val(arrEntp[i].getRegStatus());
+			
 	$("#txtEID").focus();
 	
 }
@@ -43,15 +54,33 @@ function openGeneralDialog(i)
 // saving the enterprise general information dialog
 function saveGeneral()
 {
-	updateEntp(arrEntp[gEId]);   
+	updateEntp(arrEntp[gArrayIndex]);   
 }
 
 // updating only the changed enterprise
 
 function updateEntp(dbEntp)
 {
-		var formEntp = new enterprise(dbEntp.getSId(), $.trim($("#txtEID").val()), $.trim($("#txtEName").val()), $.trim($("#txtUID").val()), $.trim($("#txtPwd").val()), $.trim($("#cmbSaveFwd").val()), $.trim($("#txtUrl").val()), dbEntp.getRegStatus());
+		alert(dbEntp.toString());
 		
+		var eid = $.trim($("#txtEID").val());
+		var ename = $.trim($("#txtEName").val());
+		var uid = $.trim($("#txtUID").val());
+		var pwd = $.trim($("#txtPwd").val());
+		var output = $.trim($("#cmbSaveFwd").val());
+		var url = $.trim($("#txtUrl").val());
+		var eSqft = $.trim($("#txtESqft").val());
+		var eAsset = $.trim($("#txtEAsset").val());
+		var dSqft = $.trim($("#txtDCSqft").val());
+		var dAsset = $.trim($("#txtDCAsset").val());
+		var dcUsed = $.trim($("#txtDCUsed").val());
+		var dcTemp = $.trim($("#txtDCTemp").val());
+		var active = $.trim($("#cmbRegCompl").val());
+		var regStatus = $.trim($("#cmbActive").val());
+		
+		
+		var formEntp = new enterprise(dbEntp.getSId(),eid, ename, uid, pwd, output, url, eSqft, eAsset, dSqft, dAsset, dcUsed, dcTemp, active, regStatus);
+			
 		if(compareObject(dbEntp, formEntp))
 		{
 			alert("No changes");
@@ -68,8 +97,13 @@ function updateEntp(dbEntp)
 			var vQuery = "";
 			
 			vQuery = vQuery + '{"sid":"' + dbEntp.getSId() + '", "enterpriseId":"' + formEntp.getEId() + '", "userId":"' + formEntp.getUId() + '", "passwd":"' ;
-			vQuery = vQuery + 	formEntp.getPwd() + '", "storeFwd":"' + formEntp.getOutput() + '", "fwdUrl":"' + formEntp.getUrl() + '"}';														
-					
+			vQuery = vQuery + 	formEntp.getPwd() + '", "storeFwd":"' + formEntp.getOutput() + '", "fwdUrl":"' + formEntp.getUrl() + '"entSqft":"' + formEntp.getESqft();
+			vQuery = vQuery + '", "entAssetCount":"'+ formEntp.getEAsset() + '", "dcSqft": "' + formEntp.getDSqft() + '", "dcAssetCount":"'+ formEntp.getDAsset();
+			vQuery = vQuery + '", "dc_use_pctg":"'+ formEntp.getDcUsed() + '", "dc_temp":"'+ formEntp.getDcTemp()+ '", "regCmplt":"' + formEntp.getRegStatus();
+			vQuery = vQuery + '", "active":"' + formEntp.getActive()+ '"}';	
+			
+			alert(formEntp.toString());	
+			
 			$.ajax
 			({
 				type:vType,
@@ -83,7 +117,7 @@ function updateEntp(dbEntp)
 					alert("Enterprise general details are saved successfully!");
 					//$( "#dlgGeneral" ).dialog( "close" );
 					listEnterprise();
-					gEId = "";
+					gArrayIndex = "";
 				},
 				error:function(json)
 				{
@@ -127,7 +161,7 @@ function showDate()
 // opening the meter dialog for the selected enterprise to add the meter details. 
 function openMeterDialog(eId)
 {
-	gEId = eId;
+	gArrayIndex = eId;
 	$( "#dlgMeter" ).dialog( "open" );
 
 	//loading the protocols from db in the dropdown in general.js
@@ -137,7 +171,7 @@ function openMeterDialog(eId)
 
 function saveMeter()
 {
-	addEntpMeter(arrEntp[gEId]);
+	addEntpMeter(arrEntp[gArrayIndex]);
 }
 
 function addEntpMeter(dbEntp)
@@ -225,14 +259,14 @@ function addEntpMeter(dbEntp)
 // opening the meter dialog for the selected enterprise to add the validity details. 
 function openValidityDialog(eId)
 {
-	gEId = eId;
+	gArrayIndex = eId;
 	$( "#dlgValidity" ).dialog( "open" );
 	$('#txtNewExpiry').blur(); 	
 }
 
 function saveValidity()
 {
-	updateGateKpr(arrEntp[gEId]);
+	updateGateKpr(arrEntp[gArrayIndex]);
 }
 
 function updateGateKpr(dbEntp)
@@ -285,7 +319,7 @@ function updateGateKpr(dbEntp)
 				alert("Validity details saved successfully!");
 				//$("#validity")[0].reset();
 				//TODO ajax call for gatekpr to be done as the service is not giving proper result which has got some issues in saving the data. need to be checked.
-				gEId = ""
+				gArrayIndex = ""
 				
 			},
 			error:function(json)
@@ -302,8 +336,8 @@ function updateGateKpr(dbEntp)
 $(function() {
 	  $( "#dlgGeneral" ).dialog({
 		  autoOpen: false,
-		  height: 435,
-		  width: 300,
+		  height: 870,
+		  width: 400,
 		  modal: true,
 		  position: "center"
 	  });		  
@@ -354,11 +388,8 @@ function listEnterprise()
 						var vEId = "";	
 
 						$.each(json, function(i,n)
-						{		
-							var vEId = n["enterpriseId"];
-							gRegStatus = n["regCmplt"];
-							
-							arrEntp[i] = new enterprise(n["sid"], n["enterpriseId"], n["EName"], n["userId"], n["passwd"], n["storeFwd"], n["fwdUrl"], n["regCmplt"]);											
+						{								
+							arrEntp[i] = new enterprise(n["sid"], n["enterpriseId"], n["eName"], n["userId"], n["passwd"], n["storeFwd"], n["fwdUrl"], n["entSqft"], n["entAssetCount"], n["dcSqft"], n["dcAssetCount"], n["dc_use_pctg"], n["dc_temp"], n["active"], n["regCmplt"]);											
 							
 							if(gRegStatus === 'n')
 								vEntpList += '<tr style="height:25px; color: #FF0000">';
@@ -372,6 +403,7 @@ function listEnterprise()
 							vEntpList += '<td class = "td-font-b">' +  arrEntp[i].getEName() + '</td>';
 							vEntpList += '<td class = "td-font-b">' +  arrEntp[i].getUId()  + '</td>';
 							vEntpList += '<td class = "td-font-b">' +  arrEntp[i].getPwd() + '</td>';
+							vEntpList += '<td class = "td-font-b">' +  arrEntp[i].getActive() + '</td>';
 							vEntpList += '<td class = "td-font-b">' +  arrEntp[i].getRegStatus() + '</td>';
 							vEntpList += '</tr>';														
 						});	
@@ -395,7 +427,7 @@ function listEnterprise()
 }
 
 // enterprise object's constructor, get and set methods		
-function enterprise(sid, eid, ename, uid, pwd, output, url, regStatus)   
+function enterprise(sid, eid, ename, uid, pwd, output, url, eSqft, eAsset, dSqft, dAsset, dcUsed, dcTemp, active, regStatus)   
 {
 	this.sid = sid;
 	this.eid = eid;
@@ -404,6 +436,13 @@ function enterprise(sid, eid, ename, uid, pwd, output, url, regStatus)
 	this.pwd = pwd;
 	this.output = output;
 	this.url = url;
+	this.eSqft = eSqft;
+	this.eAsset = eAsset;
+	this.dSqft = dSqft;
+	this.dAsset = dAsset;
+	this.dcUsed = dcUsed;
+	this.dcTemp = dcTemp;
+	this.active = active;
 	this.regStatus = regStatus;
 }
 
@@ -477,6 +516,78 @@ enterprise.prototype.setUrl = function(url)
 	this.url = url;
 }
 
+enterprise.prototype.getESqft = function()
+{
+	return this.eSqft;
+}
+
+enterprise.prototype.setESqft = function(eSqft)
+{
+	this.eSqft = eSqft;
+}
+
+enterprise.prototype.getEAsset = function()
+{
+	return this.eAsset;
+}
+
+enterprise.prototype.setEAsset = function(eAsset)
+{
+	this.eAsset = eAsset;
+}
+
+enterprise.prototype.getDSqft = function()
+{
+	return this.dSqft;
+}
+
+enterprise.prototype.setDSqft = function(dSqft)
+{
+	this.dSqft = dSqft;
+}
+
+enterprise.prototype.getDAsset = function()
+{
+	return this.dAsset;
+}
+
+enterprise.prototype.setDAsset = function(dAsset)
+{
+	this.dAsset = dAsset;
+}
+
+enterprise.prototype.getDcUsed = function()
+{
+	return this.dcUsed;
+}
+
+enterprise.prototype.setDcUsed = function(dcUsed)
+{
+	this.dcUsed = dcUsed;
+}
+
+enterprise.prototype.getDcTemp = function()
+{
+	return this.dcTemp;
+}
+
+enterprise.prototype.setDcTemp = function(dcTemp)
+{
+	this.dcTemp = dcTemp;
+}
+
+
+enterprise.prototype.getActive = function()
+{
+	return this.active;
+}
+
+enterprise.prototype.setActive = function(active)
+{
+	this.active = active;
+}
+
+
 enterprise.prototype.getRegStatus = function()
 {
 	return this.regStatus;
@@ -489,7 +600,8 @@ enterprise.prototype.setRegStatus = function(url)
 
 enterprise.prototype.toString = function()  
 {
-	return(this.eid + " " + this.ename + " " + this.uid + " " + this.pwd + " " + this.output + " " + this.url + " " + this.regStatus);
+	sid, eid, ename, uid, pwd, output, url, eSqft, eAsset, dSqft, dAsset, dcUsed, dcTemp, active, regStatus
+	return(this.eid + ", " + this.ename + ", " + this.uid + ", " + this.pwd + ", " + this.output + ", " + this.url + ", " + this.eSqft + ", " + this.eAsset + ", " + this.dSqft + ", " + this.dAsset + ", " + this.dcUsed + ", " + this.dcTemp + ", " + this.active + ", " + this.regStatus);
 } // end of subject object	
 
 
@@ -533,7 +645,7 @@ function validateMeterId(meterId)
 
 function resetVariables()
 {
-	  gEId = "";
+	  gArrayIndex = "";
 	  gLongitude = null;
 	  gLatitude = null;	
 	  gRegStatus = "";

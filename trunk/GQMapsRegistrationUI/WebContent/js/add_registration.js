@@ -37,7 +37,7 @@ function validateForm()
 		var vQues2 = $('#cmbQues2 option:selected').val(); //mandatory field
 		var vAns2 = $.trim($('#txtAns2').val()); //mandatory field
 
-		var vEmp = $.trim($('#txtEmp').val());
+		var vEmp = $.trim($('#cmbEmpCount').val());
 	
 		var vESqft = $.trim($('#txtESqft').val());		
 		var vEAsset = $.trim($('#txtEAsset').val());
@@ -169,7 +169,7 @@ function validateForm()
 				success:function(json)
 				{
 					alert("Registered successfully!");
-					//$("#frmAddRegn")[0].reset();
+					$("#frmAddRegn")[0].reset();
 				},
 				failure:function(json)
 				{
