@@ -72,7 +72,7 @@
                 <comment>Linked to recommendation Ambient DC temperature</comment>
             </column>
         </property>
-        <property name="regCmplt" type="java.lang.Character">
+        <property name="regCmplt" type="char">
             <column name="reg_cmplt" length="1">
                 <comment>registration completed</comment>
             </column>
