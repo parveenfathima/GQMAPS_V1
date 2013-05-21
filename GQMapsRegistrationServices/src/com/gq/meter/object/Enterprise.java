@@ -30,7 +30,7 @@ public class Enterprise implements java.io.Serializable {
     private Integer dcAssetCount;
     private Double dcUsePctg;
     private Integer dcTemp;
-    private Character regCmplt;
+    private char regCmplt;
     private char active;
     private String comments;
     private Date creDttm;
@@ -41,7 +41,7 @@ public class Enterprise implements java.io.Serializable {
     public Enterprise(Short sid, String enterpriseId, String blCd, String eName, String phone, String email,
             String userId, String passwd, Short secQtn1, String ans1, Short secQtn2, String ans2, char storeFwd,
             String fwdUrl, Integer noOfEmpl, Integer entSqft, Integer entAssetCount, Integer dcSqft,
-            Integer dcAssetCount, Double dcUsePctg, Integer dcTemp, Character regCmplt, char active, String comments,
+            Integer dcAssetCount, Double dcUsePctg, Integer dcTemp, char regCmplt, char active, String comments,
             Date creDttm) {
         this.sid = sid;
         this.enterpriseId = enterpriseId;
@@ -206,11 +206,11 @@ public class Enterprise implements java.io.Serializable {
         this.dcSqft = dcSqft;
     }
 
-    public Character getRegCmplt() {
+    public char getRegCmplt() {
         return this.regCmplt;
     }
 
-    public void setRegCmplt(Character regCmplt) {
+    public void setRegCmplt(char regCmplt) {
         this.regCmplt = regCmplt;
     }
 
