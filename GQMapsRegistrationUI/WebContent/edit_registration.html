@@ -85,10 +85,44 @@
                                         <option value = "C">Consume</option>
                                         <option value = "F">Forward</option>
                                     </select>
+  
                                     <br><br>
                                     <label for="txtUrl">Forward URL</label>
-                                    <input type="text" name="txtUrl" id="txtUrl"  class="text ui-widget-content ui-corner-all"/>  
-									
+                                    <input type="text" name="txtUrl" id="txtUrl"  class="text ui-widget-content ui-corner-all"/>                                                                          
+                                    
+                                    <label for="txtESqft" class = "label-font">Enterprise Sqft.</label>
+                                    <input type="text" name="txtESqft" id="txtESqft" class="text ui-widget-content ui-corner-all"/>
+                                    
+                                    <label for="txtEAsset" class = "label-font">Enterprise Asset Count</label>
+                                    <input type="text" name="txtEAsset" id="txtEAsset" class="text ui-widget-content ui-corner-all"/>
+                                    
+                                    <label for="txtDCSqft" class = "label-font">DC Sqft.</label>
+                                    <input type="text" name="txtDCSqft" id="txtDCSqft" class="text ui-widget-content ui-corner-all"/>
+                                    
+                                    <label for="txtDCAsset" class = "label-font">DC Asset Count</label>
+                                    <input type="text" name="txtDCAsset" id="txtDCAsset" class="text ui-widget-content ui-corner-all"/>
+                                    
+                                    <label for="txtDCUsed" class = "label-font">DC Used Percentage</label>
+                                    <input type="text" name="txtDCUsed" id="txtDCUsed" class="text ui-widget-content ui-corner-all"/>
+                                    
+                                    <label for="txtDCTemp" class = "label-font">DC Temperature</label>
+                                    <input type="text" name="txtDCTemp" id="txtDCTemp" class="text ui-widget-content ui-corner-all"/>
+                                    
+                                    <label for="cmbRegCompl" class = "label-font">Registration Completed</label>
+                                    <select name="cmbRegCompl" id="cmbRegCompl" style="width:200px">
+                                        <option value = "n" selected = "selected">n</option>
+                                        <option value = "y" >y</option>
+                                    </select>
+
+									<label for="cmbActive" class = "label-font">Active Status</label>
+                                    <select name="cmbActive" id="cmbActive" style="width:200px">
+                                        <option value = "n" selected = "selected">n</option>
+                                        <option value = "y" >y</option>
+                                    </select>                                    
+                                                                                                                                           
+                                    <br><br>
+
+									<center>
                                     <input type="button" id = "sbtnGeneral" value="Submit" style="float:left; margin-left:90px;" onClick="saveGeneral();"/>
                                     <input type="reset" value="Reset" />
                                
