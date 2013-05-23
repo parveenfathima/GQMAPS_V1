@@ -70,5 +70,10 @@ public class GateKeeperAudit implements java.io.Serializable {
     public void setCreDttm(Date creDttm) {
         this.creDttm = creDttm;
     }
+    
+    public String toString()
+    {
+    	return ("\nGate keeper audit: " + this.sid + ", " + this.enterpriseId + ", " + this.comment  + ", " + this.expDttm + ", " + this.creDttm);
+    }
 
 }

@@ -28,7 +28,7 @@ public class Enterprise implements java.io.Serializable {
     private Integer entAssetCount;
     private Integer dcSqft;
     private Integer dcAssetCount;
-    private Double dcUsePctg;
+    private Integer dcUsePctg;
     private Integer dcTemp;
     private char regCmplt;
     private char active;
@@ -41,7 +41,7 @@ public class Enterprise implements java.io.Serializable {
     public Enterprise(Short sid, String enterpriseId, String blCd, String eName, String phone, String email,
             String userId, String passwd, Short secQtn1, String ans1, Short secQtn2, String ans2, char storeFwd,
             String fwdUrl, Integer noOfEmpl, Integer entSqft, Integer entAssetCount, Integer dcSqft,
-            Integer dcAssetCount, Double dcUsePctg, Integer dcTemp, char regCmplt, char active, String comments,
+            Integer dcAssetCount, Integer dcUsePctg, Integer dcTemp, char regCmplt, char active, String comments,
             Date creDttm) {
         this.sid = sid;
         this.enterpriseId = enterpriseId;
@@ -214,11 +214,11 @@ public class Enterprise implements java.io.Serializable {
         this.regCmplt = regCmplt;
     }
 
-    public Double getDcUsePctg() {
+    public Integer getDcUsePctg() {
         return this.dcUsePctg;
     }
 
-    public void setDcUsePctg(Double dcUsePctg) {
+    public void setDcUsePctg(Integer dcUsePctg) {
         this.dcUsePctg = dcUsePctg;
     }
 
