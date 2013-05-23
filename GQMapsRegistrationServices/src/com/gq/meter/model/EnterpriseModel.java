@@ -145,14 +145,24 @@ public class EnterpriseModel {
             session.beginTransaction();
             Enterprise oldEntObject = (Enterprise) session.load(Enterprise.class, entObject.getSid());
             // only update the changed values
-            if (entObject.getEnterpriseId() == null && entObject.getUserId() == null && entObject.getPasswd() == null) {
-                throw new Exception("invalid enterprise data for update");
-            }
+//            if (entObject.getEnterpriseId() == null && entObject.getUserId() == null && entObject.getPasswd() == null) {
+//                throw new Exception("invalid enterprise data for update");
+//            }
             oldEntObject.setEnterpriseId(entObject.getEnterpriseId());
             oldEntObject.setUserId(entObject.getUserId());
             oldEntObject.setPasswd(entObject.getPasswd());
             oldEntObject.setStoreFwd(entObject.getStoreFwd());
             oldEntObject.setFwdUrl(entObject.getFwdUrl());
+            oldEntObject.setEntSqft(entObject.getEntSqft());
+            oldEntObject.setEntAssetCount(entObject.getEntAssetCount());
+            oldEntObject.setDcSqft(entObject.getDcSqft());
+            oldEntObject.setDcAssetCount(entObject.getDcAssetCount());
+            oldEntObject.setDcUsePctg(entObject.getDcUsePctg());
+            oldEntObject.setDcTemp(entObject.getDcTemp());
+            oldEntObject.setRegCmplt(entObject.getRegCmplt());
+            oldEntObject.setActive(entObject.getActive());
+            
+          
             session.getTransaction().commit();
         }
         catch (Exception e) {
