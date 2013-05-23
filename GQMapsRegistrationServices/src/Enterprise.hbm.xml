@@ -62,15 +62,11 @@
         <property name="dcAssetCount" type="java.lang.Integer">
             <column name="dc_asset_cnt" />
         </property>
-        <property name="dcUsePctg" type="java.lang.Double">
-            <column name="dc_use_pctg" precision="22" scale="0">
-                <comment>how much percentage of datacenter are effectively used linked to recommendation</comment>
-            </column>
+        <property name="dcUsePctg" type="java.lang.Integer">
+            <column name="dc_use_pctg" />
         </property>
         <property name="dcTemp" type="java.lang.Integer">
-            <column name="dc_temp">
-                <comment>Linked to recommendation Ambient DC temperature</comment>
-            </column>
+            <column name="dc_temp" />
         </property>
         <property name="regCmplt" type="char">
             <column name="reg_cmplt" length="1">
