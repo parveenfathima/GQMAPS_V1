@@ -39,5 +39,9 @@ public class GateKeeper implements java.io.Serializable {
     public void setExpDttm(Date expDttm) {
         this.expDttm = expDttm;
     }
-
+    
+    public String toString()
+    {
+    	return ("\nGate Keeper: " + this.getEnterpriseId() + " " + this.getExpDttm() );
+    }
 }
