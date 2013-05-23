@@ -35,7 +35,8 @@ public class GateKeeperServices {
             GQGateKeeperConstants.logger.error("Exception occured while fetching the enterprises list ", e);
             return Response.status(400).build();
         }
-        return Response.status(200).build();
+        //return Response.status(200).build();
+        return Response.ok(GQRegistrationConstants.gson.toJson("success")).build();
     }
 
 }

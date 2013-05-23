@@ -107,13 +107,14 @@ public class EnterpriseServices {
      * @return
      */
     @Path("/updateRegistration")
-    @POST
+    @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     public Response updateEnterprise(String entObjectString) {
         Enterprise entObject = null;
         try {
             entObject = GQRegistrationConstants.gson.fromJson(entObjectString, Enterprise.class);
-            GQGateKeeperConstants.logger.info("Saving the new enterprise : " + entObject.getSid());
+            GQGateKeeperConstants.logger.info("Updating the enterprise : " + entObject.getSid());
+            System.out.println("sid is :" + entObject.getSid());
 
             EnterpriseModel entmodel = new EnterpriseModel();
             entmodel.updateEnterprise(entObject);
