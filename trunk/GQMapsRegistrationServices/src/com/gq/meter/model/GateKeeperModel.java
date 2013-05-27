@@ -66,30 +66,4 @@ public class GateKeeperModel {
         }
 
     }
-
-    public void addGateKeeper(GateKeeper gKeeper) throws Exception {
-        Session session = null;
-        try {
-            session = HibernateUtil.getSessionFactory().getCurrentSession();
-            session.beginTransaction();
-            session.saveOrUpdate(gKeeper);
-            session.getTransaction().commit();
-        }
-        catch (Exception e) {
-            GQGateKeeperConstants.logger.error("Exception occured while creating the enterprise ", e);
-            throw new Exception(e);
-        }
-        finally {
-            try {
-                if (session.isOpen()) {
-                    session.flush();
-                    session.close();
-                }
-            }
-            catch (Exception e) {
-                throw new Exception(e);
-            }
-        }
-    }
-
 }
