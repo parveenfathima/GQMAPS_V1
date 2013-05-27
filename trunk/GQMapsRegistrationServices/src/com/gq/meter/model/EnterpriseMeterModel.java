@@ -23,14 +23,15 @@ public class EnterpriseMeterModel {
      * 
      * @return
      */
-    public List<EnterpriseMeter> getAllEnterpriseMeters() throws Exception {
+    public List<EnterpriseMeter> getEnterpriseMeters(String entpId) throws Exception {
         Session session = null;
         try {
             session = HibernateUtil.getSessionFactory().getCurrentSession();
             session.beginTransaction();
 
-            String hql = "FROM EnterpriseMeter";
+            String hql = "FROM EnterpriseMeter WHERE enterpriseId = :ENT_ID";
             Query query = session.createQuery(hql);
+            query.setParameter("ENT_ID", entpId);
             List<EnterpriseMeter> entMeterResult = query.list();
             return entMeterResult;
         }

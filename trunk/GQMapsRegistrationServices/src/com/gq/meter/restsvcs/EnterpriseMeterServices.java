@@ -10,6 +10,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -33,12 +34,13 @@ public class EnterpriseMeterServices {
     @Path("/getEntMeters")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getAllEnterprises() {
+    public Response getEnterprises(@QueryParam("entpId") String entpId) {
+
         GQGateKeeperConstants.logger.info("Generating all the enterprise meters list from GQGatekeeper");
         EnterpriseMeterModel entMeterModel = new EnterpriseMeterModel();
         List<EnterpriseMeter> entMeterResult = null;
         try {
-            entMeterResult = entMeterModel.getAllEnterpriseMeters();
+            entMeterResult = entMeterModel.getEnterpriseMeters(entpId);
         }
         catch (Exception e) {
             GQGateKeeperConstants.logger.error("Exception occured while fetching the enterprises list ", e);
