@@ -153,6 +153,7 @@ public class EnterpriseModel {
             oldEntObject.setPasswd(entObject.getPasswd());
             oldEntObject.setStoreFwd(entObject.getStoreFwd());
             oldEntObject.setFwdUrl(entObject.getFwdUrl());
+            oldEntObject.setNoOfEmpl(entObject.getNoOfEmpl());
             oldEntObject.setEntSqft(entObject.getEntSqft());
             oldEntObject.setEntAssetCount(entObject.getEntAssetCount());
             oldEntObject.setDcSqft(entObject.getDcSqft());
