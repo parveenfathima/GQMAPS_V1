@@ -44,9 +44,7 @@ function validateForm()
 		var vDCSqft = $.trim($('#txtDCSqft').val());		
 		var vDCAsset = $.trim($('#txtDCAsset').val());	
 		var vDCUsed = $.trim($('#txtDCUsed').val());	
-		var vDCTemp = $.trim($('#txtDCTemp').val());	
-		var vRegCompleted = $.trim($('#cmbRegCompl').val());	
-		var vActive = $.trim($('#cmbActive').val());	 
+		var vDCTemp = $.trim($('#txtDCTemp').val());	 
 
 		var vComments = $.trim($('#taComments').val()); 
 		
@@ -149,14 +147,16 @@ function validateForm()
 				 
 		
 			var vType = "POST";
-			var vUrl = "http://localhost:8080/GQMapsRegistrationServices/gqm-gk/enterprise/addRegistration";						
+			//var vUrl = "http://localhost:8080/GQMapsRegistrationServices/gqm-gk/enterprise/addRegistration";	
+			//var vUrl = "http://192.168.1.95:8080/GQMapsRegistrationServices/gqm-gk/enterprise/addRegistration";						
+			var vUrl = $.jStorage.get("jsUrl") + "enterprise/addRegistration";	
 			
 			vQuery = '{"enterpriseId":"' + vEId + '", "blCd":"' + vBusCat + '", "eName":"' + vEName + '", "phone":"' + vPhone + '", "email":"' + vEmail;
-			vQuery = vQuery + '", "userId":"' + vUId + '", "passwd":"' + vPassword + '", "secQtn1":"' + vQues1 + '", "ans1":"' + vAns1;
+			vQuery = vQuery + '", "userId": "' + vUId + '", "passwd": "' + vPassword + '", "secQtn1":"' + vQues1 + '", "ans1":"' + vAns1;
 			vQuery = vQuery + '", "secQtn2":"' + vQues2 + '", "ans2":"' + vAns2 + '", "storeFwd":"' + vSaveFwd;
 			vQuery = vQuery + '", "fwdUrl":"' + vStoreFwd + '", "noOfEmpl":"' + vEmp + '", "entSqft":"' + vESqft + '", "entAssetCount" : "' + vEAsset ;
 			vQuery = vQuery + '", "dcSqft":"' + vDCSqft + '", "dcAssetCount": "' + vDCAsset + '", "dc_use_pctg" : "' + vDCUsed + '", "dc_temp" : "' + vDCTemp;
-			vQuery = vQuery + '", "regCmplt" : "' + vRegCompleted + '", "active": "' + vActive + '", "comments":"' + vComments + '","creDttm":"' + vDateTime + '"}';
+			vQuery = vQuery + '", "regCmplt" : "n", "active": "n", "comments":"' + vComments + '","creDttm":"' + vDateTime + '"}';
 			
 			$.ajax
 			({

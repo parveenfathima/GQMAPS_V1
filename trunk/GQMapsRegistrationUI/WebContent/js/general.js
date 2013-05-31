@@ -1,4 +1,11 @@
 $.jStorage.set("jsQuestions", "");
+//$.jStorage.set("jsUrl", "http://192.168.1.95:8080/GQMapsRegistrationServices/gqm-gk/");
+$.jStorage.set("jsUrl", "http://localhost:8080/GQMapsRegistrationServices/gqm-gk/");
+
+$(document).ready(function() 
+{
+
+});
 
 function logout()
 {
@@ -21,8 +28,12 @@ function getDtTime()
 //loads all the security questions from the db used for change password and add registration pages.
 function loadSecQuestions()
 {
+			
 			var vType = "GET";
-			var vUrl = "http://localhost:8080/GQMapsRegistrationServices/gqm-gk/secQuest/getSecQuestions";						
+			//var vUrl = "http://localhost:8080/GQMapsRegistrationServices/gqm-gk/secQuest/getSecQuestions";
+			//var vUrl = "http://192.168.1.95:8080/GQMapsRegistrationServices/gqm-gk/secQuest/getSecQuestions";									
+			var vUrl = $.jStorage.get("jsUrl") + "secQuest/getSecQuestions";	
+			
 					
 			$.ajax
 			({
@@ -49,7 +60,7 @@ function loadSecQuestions()
 				},
 				error:function(json)
 				{
-					alert("Error: " + json.status + " " + json.responseText);
+					alert("Error from loading security questions: " + json.status + " " + json.responseText);
 				} 
 			});			
 }
@@ -60,7 +71,9 @@ function loadSecQuestions()
 function loadBusLine()
 {
 		var vType = "GET";
-		var vUrl = "http://localhost:8080/GQMapsRegistrationServices/gqm-gk/busnLine/getBusnLine";						
+		//var vUrl = "http://localhost:8080/GQMapsRegistrationServices/gqm-gk/busnLine/getBusnLine";		
+		//var vUrl = "http://192.168.1.95:8080/GQMapsRegistrationServices/gqm-gk/busnLine/getBusnLine";								
+		var vUrl = $.jStorage.get("jsUrl") + "busnLine/getBusnLine";
 				
 		$.ajax
 		({
@@ -82,7 +95,7 @@ function loadBusLine()
 			},
 			error:function(json)
 			{
-				alert("Error: " + json.status + " " + json.responseText);
+				alert("Error from loading business lines: " + json.status + " " + json.responseText);
 			} 
 		});	
 }
@@ -93,7 +106,8 @@ function loadProtocol()
 {
 			var vType = "GET";
 			//var vUrl = "http://localhost:8080/GQMapsRegistrationServices/gqm-gk/secQuest/getSecQuestions";						
-			var vUrl = "http://localhost:8080/GQMapsRegistrationServices/gqm-gk/protocol/getProtocols";		
+			//var vUrl = "http://192.168.1.95:8080/GQMapsRegistrationServices/gqm-gk/protocol/getProtocols";	
+			var vUrl = $.jStorage.get("jsUrl") + "protocol/getProtocols";	
 			
 			var items = document.getElementById("cmbProtocol").options.length;
 			
@@ -122,7 +136,7 @@ function loadProtocol()
 					},
 					error:function(json)
 					{
-						alert("Error: " + json.status + " " + json.responseText);
+						alert("Error from loading protocols: " + json.status + " " + json.responseText);
 					} 
 				});	
 			}

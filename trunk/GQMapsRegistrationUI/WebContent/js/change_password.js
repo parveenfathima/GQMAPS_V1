@@ -75,7 +75,10 @@ function validateForm()
 		{
 			//user id validation
 			  
-			var vUrl = 'http://localhost:8080/GQMapsRegistrationServices/gqm-gk/enterprise/getRegistration';
+			//var vUrl = 'http://localhost:8080/GQMapsRegistrationServices/gqm-gk/enterprise/getRegistration';
+			//var vUrl = 'http://192.168.1.95:8080/GQMapsRegistrationServices/gqm-gk/enterprise/getRegistration';	
+			var vUrl = $.jStorage.get("jsUrl") + "enterprise/getRegistration";			
+			
 			var vQuery = "";
 
 			$.ajax({
@@ -90,12 +93,12 @@ function validateForm()
 					{									
 							$.each(json, function(i,n)
 							{											
-								if( vUserID === $.trim(n["userId"]))
+								if( vUserID === $.trim(n["userId"]) && vQues1 === $.trim(n["secQtn1"]) && vAns1 === $.trim(n["ans1"]) && vQues2 === $.trim(n["secQtn2"]) && vAns2 === $.trim(n["ans2"]))
 								{
 									isValid = 1; //valid user
 									$.jStorage.set("jsUserId", vUserID);
-									$.jStorage.set("jsSId", n["sid"]);											
-								}							  
+									$.jStorage.set("jsSId", n["sid"]);									
+								}	
 							});
 							
 							if(isValid === 0) //invalid user
@@ -145,14 +148,16 @@ function validateForm()
 								({
 									type:"PUT",
 									contentType: "application/json",
-									url:"http://localhost:8080/GQMapsRegistrationServices/gqm-gk/enterprise/updatePassword",
+									//url:"http://localhost:8080/GQMapsRegistrationServices/gqm-gk/enterprise/updatePassword",
+									//url:"http://192.168.1.95:8080/GQMapsRegistrationServices/gqm-gk/enterprise/updatePassword",
+									url: $.jStorage.get("jsUrl") + "enterprise/updatePassword",
 									async:false,
 									data:vQuery,
 									dataType: "json",
 									success:function(json)
 									{
 										alert("Updated successfully!");
-										//$("#frmAddRegn")[0].reset();
+										$("#frmAddRegn")[0].reset();  
 									},
 									failure:function(json)
 									{
