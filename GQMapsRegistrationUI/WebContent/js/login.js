@@ -31,8 +31,8 @@ function userLogin()
 	} 
 	else 
 	{
-		var vUrl = 'http://localhost:8080/GQMapsRegistrationServices/gqm-gk/enterprise/getRegistration';
-		//var vUrl = 'http://localhost:8080/GQMapsRegistrationServices/gqm-gk/enterprise/authenticate';
+		//var vUrl = 'http://localhost:8080/GQMapsRegistrationServices/gqm-gk/enterprise/getRegistration';
+		var vUrl = 'http://192.168.1.95:8080/GQMapsRegistrationServices/gqm-gk/enterprise/getRegistration';
 
 		$.ajax({
 			type : "GET",
@@ -46,12 +46,8 @@ function userLogin()
 			{
 				var vRecLen = json.length;
 				
-				$('#productInfo').append(json);
-				
 				if(vRecLen != 0)
 				{
-					$('#productInfo').append(json[0]["userId"] + " " + json[0]["passwd"] +"\n" + json[1]["userId"] + " " + json[1]["passwd"] +"\n" 
-					+ json[2]["userId"] + " " + json[2]["passwd"]);
 					
 					if(user === "admin" && pwd ==="admin")
 					{
