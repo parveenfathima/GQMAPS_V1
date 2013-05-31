@@ -30,14 +30,13 @@
         <script src = "js/general.js"> </script> 
         
         
-        
-        <script type="text/javascript">
-    	<!--
-        
-			
-		     
-		//-->
-    	</script>
+
+	   <script type="text/javascript">
+           $(function() {
+                   $("#txtNewExpiry").datepicker({ dateFormat: "dd-mm-yy" }).val()
+           });
+       </script>
+           
         <style>
 			body { font-size: 62.5%; }
 			label, input { display:block; }
@@ -68,63 +67,77 @@
                         <form>
                             <fieldset>                            
            
-                                    <label for="txtEID">Enterprise ID <font color="#FF0000"> * </font> </label>                               
-                                    <input type="text" name="txtEID" id="txtEID"  class="text ui-widget-content ui-corner-all"/>
+           						<table>
+                                	<tr>
+                                    	<td><label for="txtEID">Enterprise ID <font color="#FF0000"> * </font> </label></td>
+                                        <td><input type="text" name="txtEID" id="txtEID"  style = "width:100px;"/></td>
+                                        <td><label for="txtEName" >Enterprise Name <font color="#FF0000"> * </font> </label>          </td>
+                                        <td><input type="text" name="txtEName" id="txtEName"  disabled="disabled" style = "width:100px;"></td>         
+                                    </tr>
+                                    <tr>
+                                    	<td><label for="txtUID" >User ID <font color="#FF0000"> * </font> </label>           </td>
+                                        <td><input type="text" name="txtUID" id="txtUID" class="text ui-widget-content ui-corner-all"/></td>
+                                        <td> <label for="txtPwd" >Password <font color="#FF0000"> * </font> </label>   </td>
+                                        <td> <input type="text" name="txtPwd" id="txtPwd"  class="text ui-widget-content ui-corner-all"/></td>
+                                    </tr>
                                     
-                                    <label for="txtEName" >Enterprise Name <font color="#FF0000"> * </font> </label>                                    
-                                    <input type="text" name="txtEName" id="txtEName"  disabled="disabled" class="text ui-widget-content ui-corner-all"/>
-                                    
-                                    <label for="txtUID" >User ID <font color="#FF0000"> * </font> </label>                                    
-                                    <input type="text" name="txtUID" id="txtUID" class="text ui-widget-content ui-corner-all"/>
-                                    
-                                    <label for="txtPwd" >Password <font color="#FF0000"> * </font> </label>                                    
-                                    <input type="text" name="txtPwd" id="txtPwd"  class="text ui-widget-content ui-corner-all"/>
-                                    
-                                    <label for="cmbSaveFwd" >Consume / Forward</label>                                    
-                                    <select name="cmbSaveFwd" id="cmbSaveFwd" style="width:100px">
-                                        <option value = "C">Consume</option>
-                                        <option value = "F">Forward</option>
-                                    </select>
-  
-                                    <br><br>
-                                    <label for="txtUrl">Forward URL</label>
-                                    <input type="text" name="txtUrl" id="txtUrl"  class="text ui-widget-content ui-corner-all"/>                                                                          
-                                    
-                                    <label for="txtESqft" class = "label-font">Enterprise Sqft.</label>
-                                    <input type="text" name="txtESqft" id="txtESqft" class="text ui-widget-content ui-corner-all"/>
-                                    
-                                    <label for="txtEAsset" class = "label-font">Enterprise Asset Count</label>
-                                    <input type="text" name="txtEAsset" id="txtEAsset" class="text ui-widget-content ui-corner-all"/>
-                                    
-                                    <label for="txtDCSqft" class = "label-font">DC Sqft.</label>
-                                    <input type="text" name="txtDCSqft" id="txtDCSqft" class="text ui-widget-content ui-corner-all"/>
-                                    
-                                    <label for="txtDCAsset" class = "label-font">DC Asset Count</label>
-                                    <input type="text" name="txtDCAsset" id="txtDCAsset" class="text ui-widget-content ui-corner-all"/>
-                                    
-                                    <label for="txtDCUsed" class = "label-font">DC Used Percentage</label>
-                                    <input type="text" name="txtDCUsed" id="txtDCUsed" class="text ui-widget-content ui-corner-all"/>
-                                    
-                                    <label for="txtDCTemp" class = "label-font">DC Temperature</label>
-                                    <input type="text" name="txtDCTemp" id="txtDCTemp" class="text ui-widget-content ui-corner-all"/>
-                                    
-                                    <label for="cmbRegCompl" class = "label-font">Registration Completed</label>
-                                    <select name="cmbRegCompl" id="cmbRegCompl" style="width:200px">
-                                        <option value = "n" selected = "selected">n</option>
-                                        <option value = "y" >y</option>
-                                    </select>
+                                    <tr>
+                                    	<td> <label for="cmbSaveFwd" >Consume / Forward</label>                 </td>
+                                        <td>                                    
+                                        	<select name="cmbSaveFwd" id="cmbSaveFwd" style="width:100px">
+                                                <option value = "C">Consume</option>
+                                                <option value = "F">Forward</option>
+                                            </select>
+                                        </td>
+                                        <td><label for="txtUrl">Forward URL</label></td>
+                                        <td> <input type="text" name="txtUrl" id="txtUrl"  class="text ui-widget-content ui-corner-all"/>  </td>
+                                    </tr>
 
-									<label for="cmbActive" class = "label-font">Active Status</label>
-                                    <select name="cmbActive" id="cmbActive" style="width:200px">
-                                        <option value = "n" selected = "selected">n</option>
-                                        <option value = "y" >y</option>
-                                    </select>                                    
+                                    <tr>
+                                    	<td><label for="txtESqft" class = "label-font">Enterprise Sqft.</label></td>
+                                        <td> <input type="text" name="txtESqft" id="txtESqft" class="text ui-widget-content ui-corner-all"/></td>
+                                        <td><label for="txtEAsset" class = "label-font">Enterprise Asset Count</label></td>
+                                        <td><input type="text" name="txtEAsset" id="txtEAsset" class="text ui-widget-content ui-corner-all"/></td>
+                                    </tr>
+                                    <tr>
+                                    	<td><label for="txtDCSqft" class = "label-font">DC Sqft.</label></td>
+                                        <td><input type="text" name="txtDCSqft" id="txtDCSqft" class="text ui-widget-content ui-corner-all"/></td>
+                                        <td><label for="txtDCAsset" class = "label-font">DC Asset Count</label></td>
+                                        <td><input type="text" name="txtDCAsset" id="txtDCAsset" class="text ui-widget-content ui-corner-all"/></td>
+                                    </tr>  
+                                    <tr> 
+                                        <td><label for="txtDCUsed" class = "label-font">DC Used Percentage</label></td>
+                                        <td><input type="text" name="txtDCUsed" id="txtDCUsed" class="text ui-widget-content ui-corner-all"/></td>
+                                        <td><label for="txtDCTemp" class = "label-font">DC Temperature</label></td>
+                                        <td><input type="text" name="txtDCTemp" id="txtDCTemp" class="text ui-widget-content ui-corner-all"/></td>                                        
+                                    </tr>
+                                    <tr> 
+                                    	<td><label for="cmbEmpCount" class = "label-font">Total Employees</label></td>
+                                        <td>
+                                            <select name="cmbEmpCount" id="cmbEmpCount" style="width:200px">
+                                                <option value = "1" selected = "selected">0-100</option>
+                                                <option value = "2" >100-200</option>
+                                                <option value = "3" >200-500</option>
+                                                <option value = "4" >>500</option>
+                                            </select>                                        
+                                        </td>                                    
+                                        <td><label for="taComments" class = "label-font">Comments</label></td>
+                                        <td><textarea name="taComments" id="taComments" disabled="disabled" rows = "3" style="width:200px"> </textarea></td>
+                                        
+                                    </tr>                                    
+                                    <tr> 
+                                        <td><label for="chkRegCompl" class = "label-font">Registration Completed</label></td>
+                                        <td><input type = "checkbox" id = "chkRegCompl" name = "chkRegCompl"></td>
+                                        <td><label for="chkActive" class = "label-font">Active Status</label></td>
+                                        <td><input type = "checkbox" id = "chkActive" name = "chkActive"></td>                                        
+                                    </tr>                                                                                                                                                                             
+                                </table>
                                                                                                                                            
-                                    <br><br>
+                                <br><br> 
 
-									<center>
-                                    <input type="button" id = "sbtnGeneral" value="Submit" style="float:left; margin-left:90px;" onClick="saveGeneral();"/>
-                                    <input type="reset" value="Reset" />
+                             
+                                <input type="button" id = "sbtnGeneral" value="Submit" style="float:left; margin-left:300px; margin-right: 20px" onClick="saveGeneral();"/>
+                                <input type="reset"  value="Reset" />
                                
                             </fieldset>
                         </form>
