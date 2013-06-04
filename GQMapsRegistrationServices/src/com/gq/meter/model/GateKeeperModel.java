@@ -3,6 +3,7 @@
  */
 package com.gq.meter.model;
 
+import java.util.Date;
 import java.util.List;
 
 import org.hibernate.Query;
@@ -41,9 +42,17 @@ public class GateKeeperModel {
                 gkeeper.setExpDttm(gkAudit.getExpDttm());
             }
             else {
-                // if gatekeeper instance exists then only update the expiry date and scan remaining
+                // if gatekeeper instance exists then only update the expiry
+                // date and scan remaining
                 gkeeper = result.get(0);
-                gkeeper.setExpDttm(gkAudit.getExpDttm());
+
+                Date gkAuditDate = gkAudit.getExpDttm();
+                Date gkeeperDate = gkeeper.getExpDttm();
+
+                if (gkAuditDate.after(gkeeperDate)) {
+                    gkeeper.setExpDttm(gkAudit.getExpDttm());
+                }
+
             }
             session.save(gkeeper);// saving gatekeeper
             session.save(gkAudit);// saving gatekeeperaudit
