@@ -113,7 +113,7 @@ function loadProtocol()
 			
 			//loading the protocols only once since the dialog can be opened many times	
 			
-			if(items === 1)		
+			if(items === 0)		
 			{
 				$.ajax
 				({
@@ -127,7 +127,7 @@ function loadProtocol()
 						var vValues = "";
 						$.each(json, function(i,n)
 						{
-							vValues = vValues + '<option value = "'+ json[i]["protocolId"] + '" >' + json[i]["protocolId"] + '</option>';
+								vValues = vValues + '<option value = "'+ json[i]["protocolId"] + '" >' + json[i]["protocolId"] + '</option>';
 						});
 						
 						$("#cmbProtocol").append(vValues);  

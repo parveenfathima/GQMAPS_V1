@@ -6,6 +6,9 @@ var gMeterId = 0;
 var gUserId = 0;
 var arrIndex;
 
+$.jStorage.set("jsLat", "0.00"); 
+$.jStorage.set("jsLong", "0.00");
+
 $(document).ready(function() 
 {
 	listEnterprise();
@@ -32,7 +35,7 @@ function openGeneralDialog(i)
 	gArrayIndex = i;
 
 	$( "#dlgGeneral" ).dialog( "open" );
-	$("#hBasic").text(arrEntp[i].getEName());
+	$("#hBasic").text(arrEntp[i].getEName().toUpperCase());
 	
 	$("#txtEID").val(arrEntp[i].getEId());
 	$("#txtEName").val(arrEntp[i].getEName());
@@ -61,15 +64,19 @@ function openGeneralDialog(i)
 	var isRegistered = $.trim(arrEntp[i].getRegStatus());
 	
 	if(isRegistered === 'y')
+	{
 		$('input:checkbox[name=chkRegCompl]').attr('checked',true);
+		$("#txtEID").attr("disabled", "disabled");
+		$("#chkRegCompl").attr("disabled", "disabled");		
+	}
 	else
+	{
 		$('input:checkbox[name=chkRegCompl]').attr('checked',false);
-			
+		$(txtEID).removeAttr("disabled");
+		$("#chkRegCompl").removeAttr("disabled");
+	}
 
-	$("#txtEID").focus();
-	
-	//alert(arrEntp[i].toString());
-	
+	$("#txtEID").focus();	
 }
 
 // saving the enterprise general information dialog
@@ -213,7 +220,7 @@ function openMeterDialog(index)
 	//loading the protocols from db in the dropdown in general.js
 	loadProtocol();
 	$("#tblMeterList").val("");
-	loadMeters();
+	loadMeters(index);
 }
 
 function saveMeter()
@@ -285,16 +292,14 @@ function addEntpMeter(dbEntp)
 			dataType: "json",
 			success:function(json) 
 			{
-				gLongitude = null;
-				gLatitude = null;	
 				gMeterId = 0;	
-				$.jStorage.set("jsLat", ""); 
-				$.jStorage.set("jsLong", "");			
+				$.jStorage.set("jsLat", "0.00"); 
+				$.jStorage.set("jsLong", "0.00");			
 				
 				alert("Meter details saved successfully!");
-				$('#frmMeter').get(0).reset();
-				$("#tblMeterList").val("");  
-				loadMeters();
+				//$('#frmMeter').get(0).reset();
+				gArrayIndex = "";
+				window.location.href = "edit_registration.html";
 			},
 			error:function(json)
 			{
@@ -324,17 +329,17 @@ function updateGateKpr(dbEntp)
 		
 	var vExpDate = $.trim($("#txtNewExpiry").val());
 	
-	var vComments = $.trim($("#taComments").val());
+	var vComments = $.trim($("#taValComments").val());
 	
 	if (vExpDate === "" || vExpDate.length === 0)
 	{
 		alert("Select expiry date");
-		$("#txtNewExpiry").select();
+		$('#txtNewExpiry').blur(); 	
 	}
 	else if(vComments === "" || vComments.length === 0)
 	{
 		alert("Enter comments");
-		$("#taComments").select();
+		$("#taValComments").focus();
 	}
 	else
 	{
@@ -344,15 +349,15 @@ function updateGateKpr(dbEntp)
 
 		var date = vExpDate.split("-");
 		var vEDt = new Date(date[2], date[1] - 1, date[0]);
-	
-		var vExpDt = vEDt.getFullYear() + "-" + convertToTwoDigit(vEDt.getMonth()+1) + "-" + convertToTwoDigit(vEDt.getDate() + " " + convertToTwoDigit(vEDt.getHours()) + ":" 
-										 + convertToTwoDigit(vEDt.getMinutes()) + ":" + convertToTwoDigit(vEDt.getSeconds()));
+		
 		var dt = new Date();
 		var vCDtTime = dt.getFullYear() + "-" + convertToTwoDigit(dt.getMonth()+1) + "-" + convertToTwoDigit(dt.getDate()) + " " + convertToTwoDigit(dt.getHours()) + ":" 
 										 + convertToTwoDigit(dt.getMinutes()) + ":" + convertToTwoDigit(dt.getSeconds());
-
-		var vQuery = '{"enterpriseId" : "' + dbEntp.getEId() + '", "comment" : "' + vComments + '", "expDttm" : "' + vExpDt +'","creDttm" : "' + vCDtTime + '"}';																				 
-		alert(vQuery);	
+	
+		var vExpDt = vEDt.getFullYear() + "-" + convertToTwoDigit(vEDt.getMonth()+1) + "-" + convertToTwoDigit(vEDt.getDate()) + " " + convertToTwoDigit(dt.getHours()) + ":" 
+										 + convertToTwoDigit(dt.getMinutes()) + ":" + convertToTwoDigit(dt.getSeconds());
+		
+		var vQuery = '{"enterpriseId" : "' + dbEntp.getEId() + '", "comment" : "' + vComments + '", "expDttm" : "' + vExpDt +'","creDttm" : "' + vCDtTime + '"}';																					
 			
 		$.ajax
 		({
@@ -386,8 +391,8 @@ function updateGateKpr(dbEntp)
 $(function() {
 	  $( "#dlgGeneral" ).dialog({
 		  autoOpen: false,
-		  height: 550,
-		  width: 700,
+		  height: 475,
+		  width: 475,
 		  modal: true,
 		  position: "center"
 	  });		  
@@ -397,7 +402,7 @@ $(function() {
 $(function() {
 	  $( "#dlgMeter" ).dialog({
 		  autoOpen: false,
-		  height: 502,
+		  height: 465,
 		  width: 300,
 		  modal: true,
 		  position: "center"
@@ -441,10 +446,8 @@ function listEnterprise()
 						$.each(json, function(i,n)
 						{								
 							arrEntp[i] = new enterprise($.trim(n["sid"]), $.trim(n["enterpriseId"]), $.trim(n["eName"]), $.trim(n["userId"]), $.trim(n["passwd"]), $.trim(n["storeFwd"]), $.trim(n["fwdUrl"]), $.trim(n["noOfEmpl"]), $.trim(n["entSqft"]), $.trim(n["entAssetCount"]), $.trim(n["dcSqft"]), $.trim(n["dcAssetCount"]), $.trim(n["dcUsePctg"]), $.trim(n["dcTemp"]), $.trim(n["comments"]), $.trim(n["active"]), $.trim(n["regCmplt"]));											
-							
-							
-							//alert("user percentage is " + n["dcUsePctg"] + "   " + n["dcTemp"]);
-							if(gRegStatus === 'n')
+														
+							if($.trim(n["regCmplt"]) === 'n')
 								vEntpList += '<tr style="height:25px; color: #FF0000">';
 							else
 								vEntpList += '<tr>';
@@ -452,12 +455,11 @@ function listEnterprise()
 							vEntpList += '<td> <input type = "button" class = "button-font-a" id = "btnGeneral" title = "General" onClick = "openGeneralDialog(' + i + ')"/></td>';
 							vEntpList += '<td> <input type = "button" class = "button-font-a" id = "btnMeter" title = "Add Meter" onClick = "openMeterDialog(' + i + ')"/></td>';
 							vEntpList += '<td> <input type = "button" class = "button-font-a" id = "btnValidity" title = "Add Validity" onClick = "openValidityDialog(' + i + ')"/></td>';                                            
-							vEntpList += '<td class = "td-font-b">' +  arrEntp[i].getEId() + '</td>';
-							vEntpList += '<td class = "td-font-b">' +  arrEntp[i].getEName() + '</td>';
-							vEntpList += '<td class = "td-font-b">' +  arrEntp[i].getUId()  + '</td>';
-							vEntpList += '<td class = "td-font-b">' +  arrEntp[i].getPwd() + '</td>';
-							vEntpList += '<td class = "td-font-b">' +  arrEntp[i].getActive() + '</td>';
-							vEntpList += '<td class = "td-font-b">' +  arrEntp[i].getRegStatus() + '</td>';
+							vEntpList += '<td class = "td-font-b" style = "padding-left: 20px;">' +  arrEntp[i].getEId() + '</td>';
+							vEntpList += '<td class = "td-font-b" style = "padding-left: 20px;">' +  arrEntp[i].getEName() + '</td>';
+							vEntpList += '<td class = "td-font-b" style = "padding-left: 20px;">' +  arrEntp[i].getUId()  + '</td>';
+							vEntpList += '<td class = "td-font-b" style = "padding-left: 20px;">' +  arrEntp[i].getPwd() + '</td>';
+							vEntpList += '<td class = "td-font-b" style = "padding-left: 20px;">' +  arrEntp[i].getRegStatus() + '</td>';
 							vEntpList += '</tr>';														
 						});	
 						
@@ -721,19 +723,23 @@ function validateMeterId(meterId)
 function resetVariables()
 {
 	  gArrayIndex = "";
-	  gLongitude = null;
-	  gLatitude = null;	
+	  //gLongitude = null;
+	  //gLatitude = null;	
 	  gRegStatus = "";
 	  gMeterId = 0;
 }
 
 //loads meter details from the db
-function loadMeters()
+function loadMeters(i)
 {
+	
 	var vType = "GET";	
 	//var vUrl = "http://localhost:8080/GQMapsRegistrationServices/gqm-gk/enterpriseMeters/getEntMeters";		
-	var vUrl = $.jStorage.get("jsUrl") + "enterpriseMeters/getEntMeters";
+	var vUrl = $.jStorage.get("jsUrl") + "enterpriseMeters/getEntMeters/?entpId=" + arrEntp[i].getEId();
 	
+	var vValues = "";
+	$("#tblMeterList").text("");
+	$("#mCaption").text("Add Meter for " + arrEntp[i].getEName());
 	$.ajax
 	({
 		type:vType,
@@ -743,15 +749,20 @@ function loadMeters()
 		dataType: "json",
 		success:function(json)
 		{				
-			var vValues = "";
-			$.each(json, function(i,n)
-			{
-				vValues = vValues + '<tr>';                                        
-				vValues = vValues + '<td width="80px" style = "padding-left:10px">' + n["meterId"] + '</td>';
-				vValues = vValues + '<td width="120px" style = "padding-left:20px">' + n["protocolId"] + '</td>';
-				vValues = vValues + '</tr>';
-			});
-			$("#tblMeterList").append(vValues);  
+				
+				if(json.length > 0 )
+				{
+					$.each(json, function(i,n)
+					{
+						vValues = vValues + '<tr>';                                        
+						vValues = vValues + '<td width="80px" style = "padding-left:10px">' + n["meterId"] + '</td>';
+						vValues = vValues + '<td width="120px" style = "padding-left:20px">' + n["protocolId"] + '</td>';
+						vValues = vValues + '</tr>';
+						
+					});
+				}
+				$("#tblMeterList").append(vValues);  
+			
 		},
 		error:function(json)
 		{
@@ -775,8 +786,8 @@ function getGeoLocation(address) {
 			
 		} else 
 		{
-			$.jStorage.set("jsLat", ""); 
-			$.jStorage.set("jsLong", "");
+			$.jStorage.set("jsLat", "0.00"); 
+			$.jStorage.set("jsLong", "0.00");
 			alert("Request failed.");
 		}
 	});
