@@ -35,7 +35,7 @@ function openGeneralDialog(i)
 	gArrayIndex = i;
 
 	$( "#dlgGeneral" ).dialog( "open" );
-	$("#hBasic").text(arrEntp[i].getEName().toUpperCase());
+	$("#hBasic").text("General details of " + arrEntp[i].getEName());
 	
 	$("#txtEID").val(arrEntp[i].getEId());
 	$("#txtEName").val(arrEntp[i].getEName());
@@ -121,8 +121,13 @@ function updateEntp(dbEntp)
 
 	
 	var formEntp = new enterprise(dbEntp.getSId(),eid, ename, uid, pwd, output, url, empCount, eSqft, eAsset, dSqft, dAsset, dcUsed, dcTemp, comments, active, regStatus);
-											 
-	if(compareObject(dbEntp, formEntp))
+	
+	if(!validatePwd(formEntp.getPwd()))
+	{
+		$("#txtPwd").select();
+		return false;
+	}										 
+	else if(compareObject(dbEntp, formEntp))
 	{
 		alert("No changes found");
 		$( "#dlgGeneral" ).dialog( "close" );
@@ -315,7 +320,8 @@ function openValidityDialog(index)
 {
 	gArrayIndex = index;
 	$( "#dlgValidity" ).dialog( "open" );
-	$('#txtNewExpiry').blur(); 	
+	$("#hValidity").text("Add validity details for " + arrEntp[gArrayIndex].getEName());
+	//$('#txtNewExpiry').blur(); 	
 }
 
 function saveValidity()
@@ -480,6 +486,8 @@ function listEnterprise()
 			}
 		});			  		
 }
+
+//-------------------------------------------------Enterprise object---------------------------------------------------
 
 // enterprise object's constructor, get and set methods		
 function enterprise(sid, eid, ename, uid, pwd, output, url, eEmpCount, eSqft, eAsset, dSqft, dAsset, dcUsed, dcTemp, comments, active, regStatus)   
@@ -683,6 +691,9 @@ enterprise.prototype.toString = function()
 } // end of subject object	
 
 
+//-------------------------------------------------/Enterprise object---------------------------------------------------
+
+
 function convertToTwoDigit(no)
 {
 	return (no >=0 && no <10 ? ("0"+ no) : no)
@@ -732,14 +743,13 @@ function resetVariables()
 //loads meter details from the db
 function loadMeters(i)
 {
-	
 	var vType = "GET";	
 	//var vUrl = "http://localhost:8080/GQMapsRegistrationServices/gqm-gk/enterpriseMeters/getEntMeters";		
 	var vUrl = $.jStorage.get("jsUrl") + "enterpriseMeters/getEntMeters/?entpId=" + arrEntp[i].getEId();
 	
 	var vValues = "";
 	$("#tblMeterList").text("");
-	$("#mCaption").text("Add Meter for " + arrEntp[i].getEName());
+	$("#hMeter").text("Add Meter for " + arrEntp[i].getEName());
 	$.ajax
 	({
 		type:vType,

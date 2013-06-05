@@ -59,7 +59,17 @@ function validateForm()
 		{
 			return false;
 		}
-		else if(validatePwd(vNewPwd, vConfPwd))
+		else if(!validatePwd(vNewPwd)) // calling it from change security question to set focus back to this page
+		{
+			$('#txtNewPwd').focus();
+			return false;
+		}
+		else if(!validatePwd(vConfPwd))
+		{
+			$("#txtConfPwd").focus();
+			return false;
+		}		
+		else if(comparePwd(vNewPwd, vConfPwd))
 		{
 			//user id validation
 			  
@@ -112,22 +122,21 @@ function validateForm()
 									else
 									{
 									  
-									  alert("Form is ready to submit - includes change sec question : " + vSId + "ques val : " + vQues1 + "  " + vQues2 );
+									  //alert("Form is ready to submit - includes change sec question : " + vSId + "ques val : " + vQues1 + "  " + vQues2 );
 																	
 									  var vCQues1 = $('#cmbChangeQues1').val();
 									  var vCAns1 = $('#txtChangeAns1').val();
 									  var vCQues2 = $('#cmbChangeQues2').val();
 									  var vCAns2 = $('#txtChangeAns2').val();									  									  
 									  
-									  vQuery =  '{"sid":"' + vSId + '", "passwd":"' + vNewPwd + '", "secQtn1":"' + vCQues1 + '", "ans1":"' + vCAns1 + '", "secQtn2":"' + vCQues2 + '", "ans2":"' + vCAns2 + '"}';
-									  alert(vQuery);	
+									  vQuery =  '{"sid":"' + vSId + '", "passwd":"' + vNewPwd + '", "secQtn1":"' + vCQues1 + '", "ans1":"' + vCAns1 + '", "secQtn2":"' + vCQues2 + '", "ans2":"' + vCAns2 + '"}';	
 									}
 								}
 								else
 								{
-									alert("Form is ready to submit - only new pwd : " + vSId);									
+									//alert("Form is ready to submit - only new pwd : " + vSId);									
 									vQuery =  '{"sid":"' + vSId + '", "passwd":"' + vNewPwd + '", "secQtn1":"0", "ans1":" ","secQtn2":"0", "ans2":" "}';	
-									//alert(vQuery);							  
+						  
 								}
 								
 								// TODO form submission code goes here
@@ -172,113 +181,19 @@ function validateForm()
 		}	
 }
 
-// validating the password to contain max of 6-12 chars with at least 1 special, number, uppercase and lowercase characters...
-function validatePwd(password, confPwd)
+function comparePwd(password, confPwd)
 {
-		if(password.length < 6 || password.length >12)   //check for the password length to be between 6-12 characters
-		{
-			alert("Enter a valid password");
-			setFocusNewPwd();
-		}
-		else if(!checkSpecialChar(password))   //check whether the password contains at least one special character
-		{
-			alert('Password should contain at least one special character');
-			setFocusNewPwd();		
-		}
-		else if(!checkForNoInString(password))   //check whether the password contains at least one number
-		{
-			alert('Password should contain at least one number');
-			setFocusNewPwd();
-		}
-		else if(!checkForUCase(password))   //check whether the password contains at least one uppercase character
-		{
-			alert('Password should contain at least one uppercase character');
-			setFocusNewPwd();
-		}		
-		else if(!checkForLCase(password))   //check whether the password contains at least one lowercase
-		{
-			alert('Password should contain at least one lowercase character');
-			setFocusNewPwd();
-		}
-		else if(password != confPwd)
-		{
-			alert("Re-type the New Password in Confirm Password field");
-			$('#txtConfPwd').focus();
-			return false;
-		}
-		else
-		{
-			return true;    
-		}
+	  if(password != confPwd)
+	  {
+		  alert("Re-type the New Password in Confirm Password field");
+		  $('#txtConfPwd').focus();
+		  return false;
+	  }
+	  else
+	  {
+		  return true;    
+	  }
 }
- 
- 
-//function to check for a string containing a special character
-function checkSpecialChar(string)
-{
-		var vPwdFlag = 0; 
-		for (var i = 0; i < string.length; i++) 
-		{
-			var specialChars = "!@#$%^&*()+=-[]\\\';,./{}|\":<>?~_";
-			if (specialChars.indexOf(string.charAt(i)) != -1) 
-			{
-				vPwdFlag = 1;
-				break;
-			}
-		}	
-
-		if(vPwdFlag == 0)
-			return false;
-		else if(vPwdFlag == 1)
-			return true;
-}
-
-
-//function to check for a string containing a number
-function checkForNoInString(string)
-{
-		var numbers = string.match(/\d+/g);
-		
-		if (numbers == null) 
-		{
-			return false;
-		}
-		return true;
-}
-
-
-//function to check for a string containing an uppercase character
-function checkForUCase(string)
-{
-	var vUpperCaseStr = new RegExp('[A-Z]');
-	
-	if(!string.match(vUpperCaseStr))
-		return false;
-		
-	return true;
-}
-
-
-//function to check for a string containing a lowercase character
-function checkForLCase(string)
-{
-	var vLowerCaseStr = new RegExp('[a-z]');
-	
-	if(!string.match(vLowerCaseStr))
-		return false;
-		
-	return true;
-}
-
-
-//function to set focus on the New Password field
-function setFocusNewPwd()
-{
-		$('#txtNewPwd').focus();
-		$('#txtNewPwd').select();
-		return false;
-}
-
 
 //funciton to enable/disable the fields when the Change Security Questions checkbox is checked/unchecked
 function changeQA()
