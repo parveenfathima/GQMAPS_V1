@@ -24,7 +24,6 @@ function getDtTime()
 											 + convertToTwoDigit(dt.getMinutes()) + ":" + convertToTwoDigit(dt.getSeconds()));
 }
 
-
 //loads all the security questions from the db used for change password and add registration pages.
 function loadSecQuestions()
 {
@@ -32,7 +31,9 @@ function loadSecQuestions()
 			var vType = "GET";
 			//var vUrl = "http://localhost:8080/GQMapsRegistrationServices/gqm-gk/secQuest/getSecQuestions";
 			//var vUrl = "http://192.168.1.95:8080/GQMapsRegistrationServices/gqm-gk/secQuest/getSecQuestions";									
+			
 			var vUrl = $.jStorage.get("jsUrl") + "secQuest/getSecQuestions";	
+			
 			
 					
 			$.ajax
@@ -142,3 +143,112 @@ function loadProtocol()
 			}
 }
 
+//-------------------------------------PASSWORD FIELD related functions------------------------------
+
+// validating the password to contain max of 6-12 chars with at least 1 special, number, uppercase and lowercase characters...
+function validatePwd(password)
+{
+		if(password.length < 6 || password.length >12)   //check for the password length to be between 6-12 characters
+		{
+			alert("Enter a valid password");
+			return false;
+		}
+		else if(!checkSpecialChar(password))   //check whether the password contains at least one special character
+		{
+			alert('Password should contain at least one special character');
+			return false;
+		}
+		else if(!checkForNoInString(password))   //check whether the password contains at least one number
+		{
+			alert('Password should contain at least one number');
+			return false;
+		}
+		else if(!checkForUCase(password))   //check whether the password contains at least one uppercase character
+		{
+			alert('Password should contain at least one uppercase character');
+			return false;
+		}		
+		else if(!checkForLCase(password))   //check whether the password contains at least one lowercase
+		{
+			alert('Password should contain at least one lowercase character');
+			return false;
+		}
+		else
+		{
+			return true;    
+		}
+}
+ 
+//function to check for a string containing a special character
+function checkSpecialChar(string)
+{
+		var vPwdFlag = 0; 
+		for (var i = 0; i < string.length; i++) 
+		{
+			var specialChars = "!@#$%^&*()+=-[]\\\';,./{}|\":<>?~_";
+			if (specialChars.indexOf(string.charAt(i)) != -1) 
+			{
+				vPwdFlag = 1;
+				break;
+			}
+		}	
+
+		if(vPwdFlag == 0)
+			return false;
+		else if(vPwdFlag == 1)
+			return true;
+}
+
+
+//function to check for a string containing a number
+function checkForNoInString(string)
+{
+		var numbers = string.match(/\d+/g);
+		
+		if (numbers == null) 
+		{
+			return false;
+		}
+		return true;
+}
+
+
+//function to check for a string containing an uppercase character
+function checkForUCase(string)
+{
+	var vUpperCaseStr = new RegExp('[A-Z]');
+	
+	if(!string.match(vUpperCaseStr))
+		return false;
+		
+	return true;
+}
+
+
+//function to check for a string containing a lowercase character
+function checkForLCase(string)
+{
+	var vLowerCaseStr = new RegExp('[a-z]');
+	
+	if(!string.match(vLowerCaseStr))
+		return false;
+		
+	return true;
+}
+
+
+//function to set focus on the New Password field
+function setFocusNewPwd()
+{
+		$('#txtNewPwd').focus();
+		$('#txtNewPwd').select();
+		return false;
+}
+
+function setFocusEditPwd()
+{
+		$('#txtPwd').select();
+		return false;
+}
+
+//-------------------------------------/PASSWORD FIELD related functions------------------------------
