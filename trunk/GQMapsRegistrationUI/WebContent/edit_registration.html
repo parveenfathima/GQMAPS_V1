@@ -25,9 +25,10 @@
 
         <script src="jquery-ui-1.10.2.custom/js/jquery-ui-1.10.0.custom.js"></script>        
         
-		<script src = "js/jstorage.js"> </script>         
+		<script src = "js/jstorage.js"> </script>    
+        <script src = "js/general.js"> </script>      
         <script src = "js/edit_registration.js"> </script>            		 
-        <script src = "js/general.js"> </script> 
+
         
         
 
@@ -123,7 +124,7 @@
                                             </select>                                        
                                         </td>                                    
                                         <td style = "padding-left: 5px;"><label for="taComments" >Comments</label></td>
-                                        <td><textarea name="taComments" id="taComments" disabled="disabled" rows = "2" style="width:100px"> </textarea></td>
+                                        <td><textarea name="taComments" id="taComments" disabled="disabled" rows = "2" style="overflow:auto;resize:none; width:100px"> </textarea></td>
                                         
                                     </tr>      
                                     <tr><td></td><td></td></tr>             
@@ -175,7 +176,7 @@
                                     </tr>                                   
                                     <tr>
                                     	<td><label for="taAddress" >Address <font color="#FF0000"> * </font> </label></td>
-                                        <td><textarea name="taAddress" id="taAddress" rows = "2" style="width:200px" > </textarea></td>
+                                        <td><textarea name="taAddress" id="taAddress" rows = "2" style="overflow:auto;resize:none;width:200px" > </textarea></td>
                                     </tr>
                                     <tr>
                                     	<td><label for="txtDesc">Description</label></td>
@@ -220,7 +221,7 @@
                                 <input type="text" name="txtNewExpiry" id="txtNewExpiry" class="text ui-widget-content ui-corner-all"/>
                                                                 
                                 <label for="taValComments" >Purchase Comments</label>  
-                                <textarea name="taValComments" id="taValComments" rows = "2" style="width:200px"> </textarea>
+                                <textarea name="taValComments" id="taValComments" rows = "2" style="overflow:auto;resize:none;width:200px"> </textarea>
 								<br><br>
                                 <input type="button" id = "sbtnValidity" value="Submit" style="float:left; margin-left:90px;" onClick="saveValidity();"/><input type="reset" value="Reset" /> 
                             </fieldset>
