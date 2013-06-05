@@ -16,19 +16,7 @@ $(document).ready(function()
 		
 		//loading the security questions
 		loadSecQuestions();
-		
-		var items = document.getElementById("cmbChangeQues1").options.length;
-		
-		//loading the security questions stored in the jStorage variable which was updated in general.js:loadSecQuestions() 	
 
-		if(items === 1)	
-		{
-			$("#cmbChangeQues1").append($.jStorage.get("jsQuestions"));   
-			$("#cmbChangeQues2").append($.jStorage.get("jsQuestions"));
-			$("#cmbChangeQues1").val("");  
-			$("#cmbChangeQues2").val("");
-		}
-		
 		isValid = 0; // 0 and 1 indicates invalid and valid user flags.
 });
 
@@ -139,7 +127,7 @@ function validateForm()
 								{
 									alert("Form is ready to submit - only new pwd : " + vSId);									
 									vQuery =  '{"sid":"' + vSId + '", "passwd":"' + vNewPwd + '", "secQtn1":"0", "ans1":" ","secQtn2":"0", "ans2":" "}';	
-									alert(vQuery);							  
+									//alert(vQuery);							  
 								}
 								
 								// TODO form submission code goes here
@@ -157,7 +145,8 @@ function validateForm()
 									success:function(json)
 									{
 										alert("Updated successfully!");
-										$("#frmAddRegn")[0].reset();  
+										//$("#frmAddRegn")[0].reset();  
+										window.location.href = "login.html";
 									},
 									failure:function(json)
 									{

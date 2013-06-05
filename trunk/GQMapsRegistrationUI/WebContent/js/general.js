@@ -50,13 +50,12 @@ function loadSecQuestions()
 						vValues = vValues + '<option value = "'+ json[i]["questionId"] + '" >' + json[i]["question"] + '</option>';
 					});
 					
-					//the same values can be loaded in the change security questions by storing it in the jStorage variable without calling the ajax once again. This is only in the change password page.
 					$.jStorage.set("jsQuestions", vValues);
 					
                     $("#cmbQues1").append(vValues);   
 					$("#cmbQues2").append(vValues);
-					$("#cmbQues1").val("");  
-					$("#cmbQues2").val("");  					                          
+					$("#cmbChangeQues1").append(vValues);
+					$("#cmbChangeQues2").append(vValues); 					                          
 				},
 				error:function(json)
 				{
@@ -130,7 +129,8 @@ function loadProtocol()
 								vValues = vValues + '<option value = "'+ json[i]["protocolId"] + '" >' + json[i]["protocolId"] + '</option>';
 						});
 						
-						$("#cmbProtocol").append(vValues);  
+						$("#cmbProtocol").append(vValues); 
+						 
 	
 												  
 					},
