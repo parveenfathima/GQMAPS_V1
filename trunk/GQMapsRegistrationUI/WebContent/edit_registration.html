@@ -152,7 +152,7 @@
                 </div>
                 
                 <div id="dlgMeter">
-                		<center><h1 id = "mCaption"> </h1></center>
+                		<center><h1 id = "hMeter"> </h1></center>
                         <font color="#FF0000"> * </font> indicates required fields
                         <form id = "frmMeter">
                             <fieldset>   
@@ -213,14 +213,14 @@
                 </div>  
                 
                 <div id="dlgValidity">
-                		<center><h1> Add Enterprise Validity Details </h1></center>
+                		<center><h1 id = "hValidity"> </h1></center>
                         <font color="#FF0000"> * </font> indicates required fields
                         <form id ="validity">
                             <fieldset>   
-                                <label for="txtNewExpiry" >New Scan Expiry Date</label> 
+                                <label for="txtNewExpiry" >New Scan Expiry Date <font color="#FF0000"> * </font> </label> 
                                 <input type="text" name="txtNewExpiry" id="txtNewExpiry" class="text ui-widget-content ui-corner-all"/>
                                                                 
-                                <label for="taValComments" >Purchase Comments</label>  
+                                <label for="taValComments" >Purchase Comments <font color="#FF0000"> * </font> </label>  
                                 <textarea name="taValComments" id="taValComments" rows = "2" style="overflow:auto;resize:none;width:200px"> </textarea>
 								<br><br>
                                 <input type="button" id = "sbtnValidity" value="Submit" style="float:left; margin-left:90px;" onClick="saveValidity();"/><input type="reset" value="Reset" /> 
