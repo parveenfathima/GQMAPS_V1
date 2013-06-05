@@ -9,7 +9,7 @@ function userLogin()
 {
 	var user = $.trim($('#txtUserId').val());
 	var pwd = $.trim($('#pwdPassword').val());
-	var isValid = 1;
+	var isValid = 0;
 	
 	$.jStorage.set("jsUserId", "");
 	$.jStorage.set("jsPwd", "");
@@ -18,21 +18,22 @@ function userLogin()
 	{
 		alert("Enter Username");
 		$('#txtUserId').focus();
-		isValid = 0;
-	} else if (pwd.length === 0) 
+	} 
+	else if (pwd.length === 0) 
 	{
 		alert("Enter Password");
 		$('#pwdPassword').focus();
-		isValid = 0;
-	} else if ((user == 'admin') && (pwd == 'admin')) 
+	} 
+	else if ((user === 'admin') && (pwd === 'admin')) 
 	{
-		window.location.href = "edit_registration.html";
+		isValid = 1;
 		$.jStorage.set("jsUserID", user);
+		$.jStorage.set("jsPwd", pwd);
+		window.location.href = "edit_registration.html";
 	} 
 	else 
 	{
-		//var vUrl = 'http://localhost:8080/GQMapsRegistrationServices/gqm-gk/enterprise/getRegistration';
-		var vUrl = 'http://192.168.1.95:8080/GQMapsRegistrationServices/gqm-gk/enterprise/getRegistration';
+		var vUrl = $.jStorage.get("jsUrl") + "enterprise/getRegistration";
 
 		$.ajax({
 			type : "GET",
@@ -45,51 +46,42 @@ function userLogin()
 			success : function(json) 
 			{
 				var vRecLen = json.length;
-				
-				if(vRecLen != 0)
+							
+				if(vRecLen > 0)
 				{
+					$.each(json, function(i,n)
+					{								
+						if( user === $.trim(n["userId"]) && pwd === $.trim(n["passwd"]))
+						{
+							isValid = 1;
+							
+							$.jStorage.set("jsUserId", user);
+							$.jStorage.set("jsPwd", pwd);										
+						}
+					  
+					});		
 					
-					if(user === "admin" && pwd ==="admin")
+					if(isValid === 1)
 					{
-						isValid = 1;
-						$.jStorage.set("jsUserId", user);
-						$.jStorage.set("jsPwd", pwd);						
-						window.location.href = "edit_registration.html";
+						window.location.href = "add_registration.html";	
 					}
 					else
 					{
-						$.each(json, function(i,n)
-						{											
-							if( user === $.trim(n["userId"]) && pwd === $.trim(n["passwd"]))
-							{
-								isValid = 1;
-								$.jStorage.set("jsUserId", user);
-								$.jStorage.set("jsPwd", pwd);								
-								window.location.href = "add_registration.html";						
-							}
-							else
-							{
-								isValid = 0;
-							}
-						  
-						});
-						
-						if(isValid === 0)
-						{
-							alert("Invalid User");	
-							$.jStorage.set("jsUserId", "");
-							$.jStorage.set("jsPwd", "");	
-							$('#txtUserId').val("");
-							$('#pwdPassword').val("");	
-							$('#txtUserId').focus();												
-						}
-					}					
+						alert("Invalid user credential!");
+						$.jStorage.set("jsUserId", "");
+						$.jStorage.set("jsPwd", "");	
+						$('#txtUserId').val("");
+						$('#pwdPassword').val("");	
+						$('#txtUserId').focus();
+					}
+					
 				}
 				
 			}, //end of success
 			error : function(json) 
 			{
-				alert("Invalid User: " + json.status + " " + json.responseText);
+				//alert("Invalid User Credentials" + json.status + " " + json.responseText);
+				alert("Error: Invalid user credentials!");
 			}
 		});
 	}

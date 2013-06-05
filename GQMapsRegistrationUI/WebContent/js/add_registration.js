@@ -155,7 +155,7 @@ function validateForm()
 			vQuery = vQuery + '", "userId": "' + vUId + '", "passwd": "' + vPassword + '", "secQtn1":"' + vQues1 + '", "ans1":"' + vAns1;
 			vQuery = vQuery + '", "secQtn2":"' + vQues2 + '", "ans2":"' + vAns2 + '", "storeFwd":"' + vSaveFwd;
 			vQuery = vQuery + '", "fwdUrl":"' + vStoreFwd + '", "noOfEmpl":"' + vEmp + '", "entSqft":"' + vESqft + '", "entAssetCount" : "' + vEAsset ;
-			vQuery = vQuery + '", "dcSqft":"' + vDCSqft + '", "dcAssetCount": "' + vDCAsset + '", "dc_use_pctg" : "' + vDCUsed + '", "dc_temp" : "' + vDCTemp;
+			vQuery = vQuery + '", "dcSqft":"' + vDCSqft + '", "dcAssetCount": "' + vDCAsset + '", "dcUsePctg" : "' + vDCUsed + '", "dcTemp" : "' + vDCTemp;
 			vQuery = vQuery + '", "regCmplt" : "n", "active": "n", "comments":"' + vComments + '","creDttm":"' + vDateTime + '"}';
 			
 			$.ajax
