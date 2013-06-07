@@ -38,7 +38,7 @@ public class MeterRunServices {
             GQGateKeeperConstants.logger.error("Exception occured while fetching the meter list ", e);
             return Response.status(400).build();
         }
-        // Returning all the enterprises in JSON format
+        // Returning all the meterList in JSON format
         return Response.ok(GQRegistrationConstants.gson.toJson(meterResult)).build();
     }
 

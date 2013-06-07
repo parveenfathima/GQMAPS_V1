@@ -3,14 +3,20 @@
  */
 package com.gq.meter.restsvcs;
 
+import java.util.List;
+
 import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import com.gq.meter.model.GateKeeperModel;
 import com.gq.meter.object.GateKeeperAudit;
+import com.gq.meter.object.GateKeeper;
 import com.gq.meter.util.GQGateKeeperConstants;
 import com.gq.meter.util.GQRegistrationConstants;
 
@@ -35,8 +41,26 @@ public class GateKeeperServices {
             GQGateKeeperConstants.logger.error("Exception occured while fetching the enterprises list ", e);
             return Response.status(400).build();
         }
-        //return Response.status(200).build();
+        // return Response.status(200).build();
         return Response.ok(GQRegistrationConstants.gson.toJson("success")).build();
+    }
+
+    @Path("/getExpiryDate")
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getExpiryDate(@QueryParam("entpId") String entpId) {
+        List<GateKeeper> expDate = null;
+
+        try {
+            GateKeeperModel gkModel = new GateKeeperModel();
+            expDate = gkModel.getExpiryDate(entpId);
+
+        }
+        catch (Exception e) {
+            GQGateKeeperConstants.logger.error("Exception occured while fetching the Expirydate ", e);
+            return Response.status(400).build();
+        }
+        return Response.ok(GQRegistrationConstants.gson.toJson(expDate)).build();
     }
 
 }

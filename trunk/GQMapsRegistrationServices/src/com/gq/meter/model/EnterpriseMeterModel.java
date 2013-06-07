@@ -85,4 +85,38 @@ public class EnterpriseMeterModel {
         }
     }
 
+    /**
+     * This method used to fetch all the protocols for enterprise
+     * 
+     * @return
+     */
+    public List<EnterpriseMeter> getProtocol(String entpId) throws Exception {
+        Session session = null;
+        try {
+            session = HibernateUtil.getSessionFactory().getCurrentSession();
+            session.beginTransaction();
+
+            String hql = "SELECT DISTINCT(protocolId) FROM EnterpriseMeter where enterprise_id = :ENT_ID ";
+            Query query = session.createQuery(hql);
+            query.setParameter("ENT_ID", entpId);
+            List<EnterpriseMeter> entMeterResult = query.list();
+            return entMeterResult;
+        }
+        catch (Exception e) {
+            GQGateKeeperConstants.logger.error("Exception occured while fetching the protocolId ", e);
+            throw new Exception(e);
+        }
+        finally {
+            try {
+                if (session.isOpen()) {
+                    session.flush();
+                    session.close();
+                }
+            }
+            catch (Exception e) {
+                GQGateKeeperConstants.logger.error("Exception occured while closing the session ", e);
+                throw new Exception(e);
+            }
+        }
+    }
 }

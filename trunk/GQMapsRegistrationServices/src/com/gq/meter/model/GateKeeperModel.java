@@ -75,4 +75,38 @@ public class GateKeeperModel {
         }
 
     }
+
+    /**
+     * This method used to fetch all the expirydate for enterprise
+     * 
+     * @return
+     */
+    public List<GateKeeper> getExpiryDate(String entpId) throws Exception {
+        Session session = null;
+        try {
+            session = HibernateUtil.getSessionFactory().getCurrentSession();
+            session.beginTransaction();
+            String hql = "SELECT  DATEDIFF(expDttm, now()) FROM GateKeeper WHERE enterprise_id = :ENT_ID";
+            Query query = session.createQuery(hql);
+            query.setParameter("ENT_ID", entpId);
+            List<GateKeeper> expDate = query.list();
+            return expDate;
+        }
+        catch (Exception e) {
+            GQGateKeeperConstants.logger.error("Exception occured while fetching the expirydate from gatekeeper ", e);
+            throw new Exception(e);
+        }
+        finally {
+            try {
+                if (session.isOpen()) {
+                    session.flush();
+                    session.close();
+                }
+            }
+            catch (Exception e) {
+                GQGateKeeperConstants.logger.error("Exception occured while closing the session ", e);
+                throw new Exception(e);
+            }
+        }
+    }
 }
