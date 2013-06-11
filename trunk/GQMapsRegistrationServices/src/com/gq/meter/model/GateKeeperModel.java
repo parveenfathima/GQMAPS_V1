@@ -77,7 +77,7 @@ public class GateKeeperModel {
     }
 
     /**
-     * This method used to fetch all the expirydate for enterprise
+     * This method used to fetch all the expiry date for enterprise
      * 
      * @return
      */
@@ -86,11 +86,11 @@ public class GateKeeperModel {
         try {
             session = HibernateUtil.getSessionFactory().getCurrentSession();
             session.beginTransaction();
-            String hql = "SELECT  DATEDIFF(expDttm, now()) FROM GateKeeper WHERE enterprise_id = :ENT_ID";
+            String hql = "SELECT  DATEDIFF(expDttm, now()) FROM GateKeeper WHERE enterpriseId = :ENT_ID";
             Query query = session.createQuery(hql);
             query.setParameter("ENT_ID", entpId);
-            List<GateKeeper> expDate = query.list();
-            return expDate;
+            List<GateKeeper> gkList = query.list();
+            return gkList;
         }
         catch (Exception e) {
             GQGateKeeperConstants.logger.error("Exception occured while fetching the expirydate from gatekeeper ", e);
