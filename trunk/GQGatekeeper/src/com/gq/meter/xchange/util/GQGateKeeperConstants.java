@@ -17,7 +17,7 @@ public class GQGateKeeperConstants {
     public static final Logger logger = Logger.getLogger("GQGateKeeperConstants.class");
 
     private static FileAppender fileappender;
-    private static String logFilePrefix = "C:\\Users\\GQ\\opt\\gq\\maps\\logs";
+    private static String logFilePrefix = "/opt//gq//maps//logs//";
     private static String logFileName = "gatekeeper.log";
     private static final String LOG_FILE_NAME_DATE_PATTERN = "yyyy-MM-dd";
 
