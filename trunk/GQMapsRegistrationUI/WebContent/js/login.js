@@ -56,14 +56,16 @@ function userLogin()
 							isValid = 1;
 							
 							$.jStorage.set("jsUserId", user);
-							$.jStorage.set("jsPwd", pwd);										
+							$.jStorage.set("jsPwd", pwd);		
+							$.jStorage.set("jsEntpId", n["enterpriseId"]);	
+							alert($.jStorage.get("jsEntpId"));						
 						}
 					  
 					});		
 					
 					if(isValid === 1)
 					{
-						window.location.href = "add_registration.html";	
+						window.location.href = "dashboard_full.html";	
 					}
 					else
 					{
