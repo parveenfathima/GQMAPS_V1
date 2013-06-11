@@ -3,68 +3,59 @@
  */
 package com.gq.meter.object;
 
-import java.util.Date;
-
 /**
- * @author GQ
+ * @author Rathish
  * 
  */
 public class EntpSummary implements java.io.Serializable {
-    private String enterpriseId;
-    private String eName;
-    private Date expDttm;
+    private Enterprise entp;
+    private EnterpriseMeter entpMeter;
+    private GateKeeper gkeeper;
 
     public EntpSummary() {
 
     }
 
-    public EntpSummary(String enterpriseId, String eName, Date expDttm) {
-        this.enterpriseId = enterpriseId;
-        this.eName = eName;
-        this.expDttm = expDttm;
-
+    /**
+     * @return the entp
+     */
+    public Enterprise getEntp() {
+        return entp;
     }
 
     /**
-     * @return the enterpriseId
+     * @param entp the entp to set
      */
-    public String getEnterpriseId() {
-        return enterpriseId;
+    public void setEntp(Enterprise entp) {
+        this.entp = entp;
     }
 
     /**
-     * @param enterpriseId the enterpriseId to set
+     * @return the entpMeter
      */
-    public void setEnterpriseId(String enterpriseId) {
-        this.enterpriseId = enterpriseId;
+    public EnterpriseMeter getEntpMeter() {
+        return entpMeter;
     }
 
     /**
-     * @return the eName
+     * @param entpMeter the entpMeter to set
      */
-    public String geteName() {
-        return eName;
+    public void setEntpMeter(EnterpriseMeter entpMeter) {
+        this.entpMeter = entpMeter;
     }
 
     /**
-     * @param eName the eName to set
+     * @return the gkeeper
      */
-    public void seteName(String eName) {
-        this.eName = eName;
+    public GateKeeper getGkeeper() {
+        return gkeeper;
     }
 
     /**
-     * @return the expDttm
+     * @param gkeeper the gkeeper to set
      */
-    public Date getExpDttm() {
-        return expDttm;
-    }
-
-    /**
-     * @param expDttm the expDttm to set
-     */
-    public void setExpDttm(Date expDttm) {
-        this.expDttm = expDttm;
+    public void setGkeeper(GateKeeper gkeeper) {
+        this.gkeeper = gkeeper;
     }
 
 }
