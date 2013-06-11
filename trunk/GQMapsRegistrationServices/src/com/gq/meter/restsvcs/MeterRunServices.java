@@ -54,7 +54,6 @@ public class MeterRunServices
 	{
 
 		GQGateKeeperConstants.logger.info("Retrieving the last scan");
-		System.out.println("inside service");
 		MeterRunModel meterRunModel = new MeterRunModel();
 		List<EntpMeterRun> entpMeterRun = null;
 
