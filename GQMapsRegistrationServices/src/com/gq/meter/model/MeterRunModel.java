@@ -57,6 +57,13 @@ public class MeterRunModel
 		}
 	}
 
+	/**
+	 * @author Hemalatha
+	 * 
+	 */
+
+	// This method returns the last scan done for an enterprise
+
 	public List<EntpMeterRun> getLastScan(String entpId) throws Exception
 	{
 		Session session = null;
@@ -64,15 +71,12 @@ public class MeterRunModel
 		{
 			session = HibernateUtil.getSessionFactory().getCurrentSession();
 			session.beginTransaction();
-			//String hql = "SELECT MAX(recDttm), assetScnd, assetDisc FROM meter_run WHERE enterpriseId = :ENT_ID";
-			
+
 			String hql = "select b.enterpriseId, MAX(a.recDttm), a.assetScnd, a.assetDisc from MeterRun a, EnterpriseMeter b where a.meterId = b.meterId and b.enterpriseId = :ENT_ID";
-			
-			
+
 			Query query = session.createQuery(hql);
 			query.setParameter("ENT_ID", entpId);
 			List<EntpMeterRun> meterRunResult = query.list();
-			System.out.println("resultant record count is :" + meterRunResult.size());
 			return meterRunResult;
 		}
 		catch (Exception e)
