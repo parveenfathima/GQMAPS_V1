@@ -17,8 +17,9 @@ import com.gq.meter.util.HibernateUtil;
  * 
  */
 public class EntpSummaryModel {
+    // TODO: combine the two methods
 
-    public List<EntpSummary> getEntpList(String entpId) throws Exception {
+    public List<EntpSummary> getEntpSummary(String entpId) throws Exception {
         Session session = null;
         try {
             session = HibernateUtil.getSessionFactory().getCurrentSession();
@@ -47,12 +48,14 @@ public class EntpSummaryModel {
         }
     }
 
-    public List<EntpSummary> getEntpSummary() throws Exception {
+    public List<EntpSummary> getEntpSummaryList() throws Exception {
         Session session = null;
         try {
             session = HibernateUtil.getSessionFactory().getCurrentSession();
             session.beginTransaction();
-            String hql = "select a.enterpriseId, a.eName, count(b.meterId), c.expDttm from Enterprise a, EnterpriseMeter b, GateKeeper c  where a.enterpriseId = b.enterpriseId AND a.enterpriseId = c.enterpriseId group by a.enterpriseId";
+            // String hql =
+            // "select a.enterpriseId, a.eName, count(b.meterId), c.expDttm from Enterprise a, EnterpriseMeter b, GateKeeper c  where a.enterpriseId = b.enterpriseId AND a.enterpriseId = c.enterpriseId group by a.enterpriseId";
+            String hql = "select a.enterpriseId, a.blCd, a.eName, a.phone, a.email, a.userId, a.passwd, a.secQtn1, a.ans1, a.secQtn2, a.ans2, a.storeFwd, a.fwdUrl, a.noOfEmpl, a.entSqft, a.entAssetCount, a.dcSqft, a.dcAssetCount, a.dcUsePctg, a.dcTemp, a.regCmplt, a.active, a.comments, a.creDttm, count(b.meterId), c.expDttm from Enterprise a, EnterpriseMeter b, GateKeeper c  where a.enterpriseId = b.enterpriseId AND a.enterpriseId = c.enterpriseId group by a.enterpriseId";
             Query query = session.createQuery(hql);
             List<EntpSummary> summaryResult = query.list();
             return summaryResult;

@@ -24,16 +24,16 @@ import com.gq.meter.util.GQRegistrationConstants;
  */
 @Path("/general")
 public class GeneralServices {
-    @Path("/getEntpList")
+    @Path("/getEntpSummary")
     @GET
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response getEntpList(@QueryParam("entpId") String entpId) {
+    public Response getEntpSummary(@QueryParam("entpId") String entpId) {
 
         GQGateKeeperConstants.logger.info("EnterpriseId is for single enterprise details is: : " + entpId);
         EntpSummaryModel entpModel = new EntpSummaryModel();
         List<EntpSummary> result = null;
         try {
-            result = entpModel.getEntpList(entpId);
+            result = entpModel.getEntpSummary(entpId);
         }
         catch (Exception e) {
             GQGateKeeperConstants.logger.error("Exception occured while fetching the details of enterpriseid ", e);
@@ -43,16 +43,16 @@ public class GeneralServices {
         // return Response.ok(200).build();
     }
 
-    @Path("/getEntpSummary")
+    @Path("/getEntpSummaryList")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getEntpSummary() {
+    public Response getEntpSummaryList() {
 
         GQGateKeeperConstants.logger.info("Generating summary of all enterprises");
         EntpSummaryModel entpModel = new EntpSummaryModel();
         List<EntpSummary> summaryResult = null;
         try {
-            summaryResult = entpModel.getEntpSummary();
+            summaryResult = entpModel.getEntpSummaryList();
         }
         catch (Exception e) {
             GQGateKeeperConstants.logger.error("Exception occured while fetching the details of enterpriseid ", e);
