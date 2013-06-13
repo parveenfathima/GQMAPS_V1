@@ -80,6 +80,7 @@
 	
 .center-block-div {
 	width:35%;
+	height: 50px;
 	}
 	
 .right-block-div {
@@ -115,7 +116,11 @@
 	}	
 	
 .right-block-content-div {
-	height:150px;
+	height:250px;
+	}	
+	
+.center-block-content-div {
+	height:110px;
 	}	
 .bottom-block-content-div {
 	height:180px;
