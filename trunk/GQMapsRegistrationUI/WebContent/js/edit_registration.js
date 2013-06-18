@@ -487,6 +487,7 @@ function listEnterprise()
 		});			  		
 }
 
+
 //-------------------------------------------------Enterprise object---------------------------------------------------
 
 // enterprise object's constructor, get and set methods		

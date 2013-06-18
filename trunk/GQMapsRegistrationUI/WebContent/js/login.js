@@ -46,7 +46,7 @@ function userLogin()
 			success : function(json) 
 			{
 				var vRecLen = json.length;
-							
+				var vFwdStore = "";			
 				if(vRecLen > 0)
 				{
 					$.each(json, function(i,n)
@@ -54,7 +54,7 @@ function userLogin()
 						if( user === $.trim(n["userId"]) && pwd === $.trim(n["passwd"]))
 						{
 							isValid = 1;
-							
+							vFwdStore = $.trim(n["storeFwd"]);
 							$.jStorage.set("jsUserId", user);
 							$.jStorage.set("jsPwd", pwd);		
 							$.jStorage.set("jsEntpId", n["enterpriseId"]);	
@@ -65,7 +65,12 @@ function userLogin()
 					
 					if(isValid === 1)
 					{
-						window.location.href = "dashboard_full.html";	
+						alert(vFwdStore);
+						
+						if(vFwdStore === "C")
+							window.location.href = "dashboard_full.html";	
+						else
+							window.location.href = "dashboard_forward.html";
 					}
 					else
 					{
