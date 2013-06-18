@@ -17,7 +17,7 @@ public class GQEDPConstants {
     public static final Logger logger = Logger.getLogger("GQEDPConstants.class");
 
     private static FileAppender fileappender;
-    private static String logFilePrefix = "C:\\Users\\yogalakshmi.s\\opt\\gq\\maps\\logs";
+    private static String logFilePrefix = "/opt/gq/maps/logs";
     private static String logFileName = "enterpriseDataProcessor.log";
 
     private static final String LOG_FILE_NAME_DATE_PATTERN = "yyyy-MM-dd";
