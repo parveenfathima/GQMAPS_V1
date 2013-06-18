@@ -303,7 +303,7 @@ public final class ITAssetDiscoverer {
 
         System.out.println("Total time taken for all COMPUTER meters : " + MeterUtils.compMeterTime);
         System.out.println("Total time taken for all PRINTER meters : " + MeterUtils.printMeterTime);
-        System.out.println("Total time taken for all ISR meters : " + MeterUtils.nsrgMeterTime);
+        System.out.println("Total time taken for all NSRG meters : " + MeterUtils.nsrgMeterTime);
         System.out.println("TOTAL duration taken for meter execution : " + (endTime - startTime));
 
         // Sending the generated json output to the server
@@ -331,6 +331,8 @@ public final class ITAssetDiscoverer {
         ITAssetDiscoverer itad = new ITAssetDiscoverer();
         String inputFilePath = args[0].trim();
         itad.discover(inputFilePath);
+        
+        System.out.println("Input File PATH:"+inputFilePath);
     }
 
     /**
