@@ -90,5 +90,28 @@ public class EnterpriseMeterServices {
         // Returning all the protocols in JSON format
         return Response.ok(GQRegistrationConstants.gson.toJson(entMeterResult)).build();
     }
+    
+    /**
+     * This method is used to get the protocol details of the particular enterprise
+     * 
+     * @return
+     */
+    @Path("/getMeterProtocol")
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getMeterProtocol(@QueryParam("meterId") String meterId) {
+        GQGateKeeperConstants.logger.info("Getting the protocol for the given meter_id");
+        EnterpriseMeterModel entMeterModel = new EnterpriseMeterModel();
+        List<EnterpriseMeter> entMeterResult = null;
+        try {
+            entMeterResult = entMeterModel.getMeterProtocol(meterId);
+        }
+        catch (Exception e) {
+            GQGateKeeperConstants.logger.error("Exception occured while fetching the Protocol list ", e);
+            return Response.status(400).build();
+        }
+        // Returning all the protocols in JSON format
+        return Response.ok(GQRegistrationConstants.gson.toJson(entMeterResult)).build();
+    }
 
 }
