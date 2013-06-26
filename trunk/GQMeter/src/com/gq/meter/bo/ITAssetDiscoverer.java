@@ -185,7 +185,7 @@ public final class ITAssetDiscoverer {
                         {
                             if (line.toLowerCase().startsWith(MeterConstants.METER_ID)) {
                                 gqmid = line.replace(MeterConstants.METER_ID, "").trim();
-                                
+                                //This Condition used to check meter id value is empty or not
                                 if(gqmid.isEmpty())
                                 {
                                 System.out.println("Meter Id is empty");
@@ -231,7 +231,6 @@ public final class ITAssetDiscoverer {
                              if (sToken.countTokens() == 2 || sToken.countTokens() == 3) {
                                 communityString = sToken.nextToken().trim();
                                 ipLowerbound = sToken.nextToken().trim();
-
                                 if (sToken.hasMoreTokens()) {
                                     ipUpperbound = sToken.nextToken().trim();
 
@@ -247,13 +246,20 @@ public final class ITAssetDiscoverer {
 
                                         communityIPMap.put(ipUpperbound, communityString);
                                     }
-                                    else {
+                                    else if(MeterUtils.ipComparator.compare(ipLowerbound, ipUpperbound)==0) {
+                                    	 System.out.println("IP lower bound : " + ipLowerbound + "IP upper bound : "
+                                                 + ipUpperbound + " \nBoth Ip's should be same.....");
+                                    	 System.out.println("Process Terminated Now.....");
+                                         System.exit(0);
+                                    }
+                                    else  {
                                         System.out.println("IP lower bound : " + ipLowerbound + "IP upper bound : "
                                                 + ipUpperbound + " -  : Invalid ip range");
-                                        errorList = new LinkedList<String>();
+                                        System.exit(0);
+                                        /*errorList = new LinkedList<String>();
                                         errorList.add(sToken + " -  : Invalid ip range");
                                         gqErrInfo = new GQErrorInformation("Invalid asset ip range", errorList);
-                                        gqerrorInfoList.add(gqErrInfo);
+                                        gqerrorInfoList.add(gqErrInfo);*/
                                     }
                                 }// if ends
                                 else {
@@ -263,6 +269,7 @@ public final class ITAssetDiscoverer {
                             else {
                                 System.out.println("INVALID : entry -" + line);
                                 System.out.println("Usage : COMMUNITY_STRING IP_LOWER_BOUND IP_UPPER_BOUND");
+                                System.exit(1);
                             }
                         }// else ends
                     }// for loop ends
