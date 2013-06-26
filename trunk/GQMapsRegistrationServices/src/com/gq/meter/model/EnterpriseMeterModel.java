@@ -144,11 +144,11 @@ public class EnterpriseMeterModel
 	
 	
 	/**
-	 * This method used to fetch all the protocols for enterprise
+	 * This method used to fetch the meter details of the given meter id for and enterprise
 	 * 
 	 * @return
 	 */
-	public List<EnterpriseMeter> getMeterProtocol(String meterId) throws Exception
+	public List<EnterpriseMeter> getMeter(String meterId) throws Exception
 	{
 		Session session = null;
 		try
@@ -156,10 +156,11 @@ public class EnterpriseMeterModel
 			session = HibernateUtil.getSessionFactory().getCurrentSession();
 			session.beginTransaction();
 
-			String hql = "SELECT DISTINCT(protocolId) FROM EnterpriseMeter where meterId = :MID ";
+			String hql = "FROM EnterpriseMeter where meterId = :MID ";
 			Query query = session.createQuery(hql);
 			query.setParameter("MID", meterId);
 			List<EnterpriseMeter> entMeterResult = query.list();
+			
 			return entMeterResult;
 		}
 		catch (Exception e)
