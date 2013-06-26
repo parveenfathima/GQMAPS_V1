@@ -85,7 +85,7 @@ public class NSRGMeter implements GQSNMPMeter {
             if (result != null && !result.isEmpty()) {
                 temp = oidString + ".1";
                 String assetIdVal = MeterUtils.getSNMPValue(temp, result);
-                assetId = MeterProtocols.NSRG + "-" + assetIdVal.replaceAll(":", "");
+                assetId =  "S -" + assetIdVal.replaceAll(":", "");
                 assetObj.setAssetId(assetId);
             }
             else {
@@ -193,7 +193,7 @@ public class NSRGMeter implements GQSNMPMeter {
 
         long NSRGendTime = System.currentTimeMillis();
         MeterUtils.nsrgMeterTime = MeterUtils.nsrgMeterTime + (NSRGendTime - NSRGstartTime);
-        System.out.println("Time taken bye the nsrg meter is : " + (NSRGendTime - NSRGstartTime));
+        System.out.println("Time taken by the nsrg meter is : " + (NSRGendTime - NSRGstartTime));
         return gqMeterObject;
     }
 
