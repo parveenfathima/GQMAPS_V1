@@ -181,19 +181,54 @@ public final class ITAssetDiscoverer {
                             continue;
                         }
                         // line starts with $ for meterid
-                        if (line.startsWith("$")) {
+                        if (line.startsWith("$")) 
+                        {
                             if (line.toLowerCase().startsWith(MeterConstants.METER_ID)) {
                                 gqmid = line.replace(MeterConstants.METER_ID, "").trim();
+                                
+                                if(gqmid.isEmpty())
+                                {
+                                System.out.println("Meter Id is empty");
+                                System.out.println("..............Check Meter Id .............");
+                                System.exit(0);
+                                }
                             }
                         }
                         // line starts with @ for switches
-                        else if (line.startsWith("@")) {
-                            MeterUtils.manageSwitches(line, switches);
+                        else if (line.startsWith("@")) 
+                        {
+                        	if(gqmid!=null)
+                        	{
+                        		String s_name=line.substring(1,line.indexOf(" "));
+                            	String v_name=line.substring(line.indexOf(" ")+1,line.length());
+                            	
+                            	if(s_name.equalsIgnoreCase(MeterConstants.COMPUTER_PROTOCOL)||s_name.equalsIgnoreCase(MeterConstants.PRINTER_PROTOCOL)||s_name.equalsIgnoreCase(MeterConstants.NSRG_PROTOCOL))
+                            	{
+                            		
+                            		if(v_name.equalsIgnoreCase(MeterConstants.FULL_DETAILS)||v_name.equalsIgnoreCase(MeterConstants.CONNECTED_DEVICES)||v_name.equalsIgnoreCase(MeterConstants.SNAPSHOT)||v_name.equalsIgnoreCase(MeterConstants.PROCESS)||v_name.equalsIgnoreCase(MeterConstants.INSTALLED_SOFTWARE)){
+                            		MeterUtils.manageSwitches(line, switches);
+                            		}
+                            		else {
+                            		MeterUtils.count++;
+                            		//System.out.println("Count2:"+MeterUtils.count);
+                            		}
+                            	}
+                            	else{
+                            		//MeterUtils.count++;
+                            		//System.out.println("Count1:"+MeterUtils.count);
+                            	}
+                        	}
+                        	else
+                        	{
+                        		System.out.println("Check Meter Id...");
+                        		System.out.println("Process stopped........");
+                        		System.exit(0);
+                        	}
                         }
                         else {
                             sToken = new StringTokenizer(line, " ");
 
-                            if (sToken.countTokens() == 2 || sToken.countTokens() == 3) {
+                             if (sToken.countTokens() == 2 || sToken.countTokens() == 3) {
                                 communityString = sToken.nextToken().trim();
                                 ipLowerbound = sToken.nextToken().trim();
 
@@ -312,14 +347,14 @@ public final class ITAssetDiscoverer {
 
         WebResource service = client.resource(MeterUtils.restURL);
         service = service.path("gqm-gk").path("gatekeeper");
-
+        System.out.println("Service:"+service);	
         Form form = new Form();
         form.add("gqMeterResponse", gson.toJson(gqmResponse));
         form.add("summary", "Sending the data from GQMeter to GQGatekeeper");
 
         Builder builder = service.type(MediaType.APPLICATION_JSON);
         ClientResponse response = builder.post(ClientResponse.class, form);
-        // System.out.println("Form response " + response.getEntity(String.class));
+      //  System.out.println("Form response " + response.getEntity(String.class));
     }
 
     public static void main(String[] args) throws IOException {

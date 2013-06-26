@@ -30,7 +30,7 @@ import com.gq.meter.object.CompSnapshot;
 import com.gq.meter.object.Computer;
 import com.gq.meter.object.OsType;
 import com.gq.meter.util.MeterConstants;
-import com.gq.meter.util.MeterProtocols;
+
 import com.gq.meter.util.MeterUtils;
 
 /**
@@ -124,7 +124,7 @@ public class ComputerMeter implements GQSNMPMeter {
                     HashMap<String, String> winNetworkMap = new HashMap<String, String>();
                     networkBytes = winAssetIdCalc(result, rootOID, winNetworkMap);
 
-                    assetId = MeterProtocols.COMPUTER + "-" + networkBytes.get("macWinNetworkValue");
+                    assetId =  "C -" + networkBytes.get("macWinNetworkValue");
                     assetObj.setAssetId(assetId);
 
                 }// 2nd if ends
@@ -142,7 +142,7 @@ public class ComputerMeter implements GQSNMPMeter {
 
                     HashMap<String, List<Long>> networkMap = new HashMap<String, List<Long>>();
                     networkBytes = linuxAssetIdCalc(result, rootOID, ethernet, networkMap, assetId, sysDescription);
-                    assetId = MeterProtocols.COMPUTER + "-" + networkBytes.get("assetId");
+                    assetId =  "C -" + networkBytes.get("assetId");
                     assetObj.setAssetId(assetId);
                 }
                 else {
@@ -416,7 +416,7 @@ public class ComputerMeter implements GQSNMPMeter {
         GQMeterData gqMeterObject = new GQMeterData(gqErrorInfo, compObject);
         long computerendTime = System.currentTimeMillis();
         MeterUtils.compMeterTime = MeterUtils.compMeterTime + (computerendTime - computerstartTime);
-        System.out.println("Time taken bye the computer meter is : " + (computerendTime - computerstartTime));
+        System.out.println("Time taken by the computer meter is : " + (computerendTime - computerstartTime));
         return gqMeterObject;
 
     } // GQMeterData method ends
@@ -880,19 +880,21 @@ public class ComputerMeter implements GQSNMPMeter {
     private HashSet<CompConnDevice> ConnectedDevicesCalc(List<VariableBinding> result, String ipAddress, CPNId id) {
 
         HashSet<CompConnDevice> connectedDevices = new HashSet<CompConnDevice>();
-
+        
         CompConnDevice connDevice = null;
         int runId = id.getRunId();
         String assetId = id.getAssetId();
         CompConnDeviceId compConnDeviceId = null;
 
         for (VariableBinding vb : result) { // for loop starts
+        	
             String expectedStr = vb.getVariable().toString();
             if (expectedStr != null && vb.getOid().toString().contains(expectedStr)
                     && expectedStr.equalsIgnoreCase("5")) { // 1st if loop starts
 
                 String targetOID = vb.getOid().toString();
                 String[] preFinalOID = targetOID.toString().split("\\.");
+                String port=preFinalOID[14];
                 String one = preFinalOID[15];
                 String two = preFinalOID[16];
                 String three = preFinalOID[17];
@@ -902,7 +904,7 @@ public class ComputerMeter implements GQSNMPMeter {
                 if (!FinalIP.trim().equals(ipAddress) && !FinalIP.trim().equals("0.0.0.0")
                         && !FinalIP.trim().equals("127.0.0.1")) { // 2nd if loop starts
                     if (FinalIP != null && FinalIP.trim().length() != 0) {
-                        compConnDeviceId = new CompConnDeviceId(runId, assetId, FinalIP);
+                        compConnDeviceId = new CompConnDeviceId(runId, assetId, FinalIP,port);
                         connDevice = new CompConnDevice(compConnDeviceId);
                         connectedDevices.add(connDevice);
                     }

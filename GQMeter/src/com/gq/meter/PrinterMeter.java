@@ -133,7 +133,7 @@ public class PrinterMeter implements GQSNMPMeter {
 
             if (result != null && !result.isEmpty()) {
                 String assetVal = assetCalc(result, rootOID);
-                assetId = MeterProtocols.PRINTER + "-" + assetVal;
+                assetId = "P -" + assetVal;
                 assetObj.setAssetId(assetId);
             }
             else {
@@ -274,7 +274,7 @@ public class PrinterMeter implements GQSNMPMeter {
         GQMeterData gqMeterObject = new GQMeterData(gqErrorInfo, printerObject);
         long printerEndTime = System.currentTimeMillis();
         MeterUtils.printMeterTime = MeterUtils.printMeterTime + (printerEndTime - printerStartTime);
-        System.out.println("Time taken bye the printer meter is : " + (printerEndTime - printerStartTime));
+        System.out.println("Time taken by the printer meter is : " + (printerEndTime - printerStartTime));
         return gqMeterObject;
     }
 
