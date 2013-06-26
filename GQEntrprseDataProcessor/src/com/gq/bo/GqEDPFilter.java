@@ -40,7 +40,7 @@ public class GqEDPFilter {
         System.out.println(" Total Asset Scanned : " + scanned);
 
         List<ProtocolData> pdList = gqmResponse.getAssetInformationList();
-
+        
         Session session = null;
         MeterRun meterRun = null;
         Meter meter = null;
@@ -103,6 +103,7 @@ public class GqEDPFilter {
             switch (pdData.getProtocol()) {
 
             case COMPUTER:
+            	//GQEDPConstants.logger.info("Data from GQEDP filter:"+pdData.getData());
                 Computer computerObj = gson.fromJson(pdData.getData(), Computer.class);
                 GqMeterComputer.insertData(computerObj, gqmResponse, meterRun.getRunId());
                 break;

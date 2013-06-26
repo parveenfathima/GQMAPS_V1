@@ -14,6 +14,9 @@
             <key-property name="ipAddr" type="string">
                 <column name="ip_addr" length="15" />
             </key-property>
+            <key-property name="port" type="string">
+            <column name="port" length="10"/>
+            </key-property>
         </composite-id>
     </class>
 </hibernate-mapping>

@@ -24,7 +24,7 @@ public class GqMeterComputer {
     public static void insertData(Computer computer, GQMeterResponse gqmResponse, int runId) {
 
         String meterId = gqmResponse.getGqmid();
-
+        
         GQEDPConstants.logger.info(meterId + " Data is ready to save in the computer asset ");
 
         Session session = null;
