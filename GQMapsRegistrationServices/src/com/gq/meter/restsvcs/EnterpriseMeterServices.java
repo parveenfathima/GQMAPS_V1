@@ -96,15 +96,15 @@ public class EnterpriseMeterServices {
      * 
      * @return
      */
-    @Path("/getMeterProtocol")
+    @Path("/getMeter")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getMeterProtocol(@QueryParam("meterId") String meterId) {
-        GQGateKeeperConstants.logger.info("Getting the protocol for the given meter_id");
+        GQGateKeeperConstants.logger.info("Getting the meter details for the given meter_id");
         EnterpriseMeterModel entMeterModel = new EnterpriseMeterModel();
         List<EnterpriseMeter> entMeterResult = null;
         try {
-            entMeterResult = entMeterModel.getMeterProtocol(meterId);
+            entMeterResult = entMeterModel.getMeter(meterId);
         }
         catch (Exception e) {
             GQGateKeeperConstants.logger.error("Exception occured while fetching the Protocol list ", e);
