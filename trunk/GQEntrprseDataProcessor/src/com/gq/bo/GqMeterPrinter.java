@@ -53,6 +53,7 @@ public class GqMeterPrinter {
 
             // snapshot
             PrinterSnapshot printerSnapshot = printer.getPrinterSnapShot();
+            if(printerSnapshot.getIpAddr()	!=	null) {
             try {
                 // System.out.println("PRINTER : snap shot cpn id has been set");
                 printerSnapshot.setId(cid);
@@ -62,7 +63,7 @@ public class GqMeterPrinter {
             catch (Exception e) {
                 GQEDPConstants.logger.error(meterId + " Data failed to save in the Printer Snapshot table ", e);
             }
-
+            }
             // connected device
             if (printer.getPrinterConnectedDevice() != null) {
                 HashSet<PrinterConnDevice> printerConnectedDevice = printer.getPrinterConnectedDevice();
