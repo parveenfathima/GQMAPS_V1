@@ -14,6 +14,17 @@
          <script src = "js/rest_service.js"> </script>  
          <script src = "js/input_file_generation.js"> </script>  
          
+		 <script LANGUAGE="Javascript">
+		 	function createFile()
+			{
+				alert("inside createFile");
+				var object = new ActiveXObject("Scripting.FileSystemObject");
+				var file = object.CreateTextFile("C:\\Hello.txt", false);
+				file.WriteLine('Hello World');
+				file.WriteLine('Hope is a thing with feathers, that perches on the soul.'); 
+				file.Close();
+			}
+         </script>
 
     </head>
     
@@ -45,7 +56,7 @@
                                             <label for = "cmbMeters" class = "label-font" >Meter ID <font color="#FF0000"> * </font> </label>
                                      </td>
                                      <td colspan="2">   
-                                            <select name = "cmbMeters" id = "cmbMeters" name = "cmbMeters" style="width:100px">
+                                            <select name = "cmbMeters" id = "cmbMeters" name = "cmbMeters" style="width:100px" >
                                            
                                             </select>
                                      </td>
@@ -56,7 +67,7 @@
                                             <label for="txtSwitch" class = "label-font">Switches <font color="#FF0000"> * </font> </label>
                                      </td>
                                      <td colspan="2">   
-                                            <input type="text" name="txtSwitch" id="txtSwitch" />
+                                            <input type="text" name="txtSwitch" id="txtSwitch" disabled = "disabled"/> 
                                      </td>
                                 </tr>
 								<tr></tr><tr></tr><tr></tr><tr></tr>    								<tr></tr><tr></tr><tr></tr><tr></tr>                                                              
@@ -79,9 +90,10 @@
 
                                         <td>
                                             <input type = "checkbox" id = "chkCD" name = "chkCD" > Connected Devices </input>
+                                        </td>
                                 </tr>
                                 <tr>
-                                		<td></td>                                          </td>
+                                		<td></td>                                          
                                  
                                         <td>
                                             <input type = "checkbox" id = "chkIS" name = "chkIS" > Installed Software</input>
@@ -90,7 +102,7 @@
                                 <tr>
                                 		<td></td>  
                                         <td>                                            
-                                            <input type = "checkbox" id = "chkCD" name = "chkCD" > Process </input>
+                                            <input type = "checkbox" id = "chkProc" name = "chkProc" > Process </input>
                                         </td>
                                 </tr>                                                           
 								<tr></tr><tr></tr><tr></tr><tr></tr>								<tr></tr><tr></tr><tr></tr><tr></tr>
@@ -119,9 +131,16 @@
                                      <td>   
                                             <input type="text" name="txtIPUB" id="txtIPUB" width = "150px"/>
                                      </td>
+                                     <td>   
+                                            <input type="button" name="btnAdd" id="btnAdd" value = "Add to Grid"/>
+                                     </td>
                                 </tr>                                               
                  
                             </table>  
+                            
+                            <table style = "margin-left:225px" id = "tblCString" border="1">
+                            	<tr><th> Community String </th> <th> IP Lower Bound</th> <th> IP Upper Bound </th><tr>
+                            </table>
                             <br>
                             <center>
                                 <input type="button" value="Generate Input File" id = "submit"/>
