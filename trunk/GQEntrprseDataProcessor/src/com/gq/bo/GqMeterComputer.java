@@ -8,6 +8,7 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 
 import com.gq.meter.GQMeterResponse;
+import com.gq.meter.assist.ProtocolData;
 import com.gq.meter.object.Asset;
 import com.gq.meter.object.CPNId;
 import com.gq.meter.object.CompConnDevice;
@@ -79,16 +80,19 @@ public class GqMeterComputer {
 
             // snapshot
             CompSnapshot compSnapshot = computer.getSnapShot();
-            compSnapshot.setId(cid);
-            try {
-                session.save(compSnapshot);
-                GQEDPConstants.logger.info(meterId + " Data successfully saved in the Computer Snapshot table ");
-            }
-            catch (Exception e) {
-                GQEDPConstants.logger.error(meterId + " Data failed to save in the Computer Snapshot table ", e);
+            if(compSnapshot.getIpAddr()!=null) {
+	            compSnapshot.setId(cid);
+	            try {
+	                session.save(compSnapshot);
+	                GQEDPConstants.logger.info(meterId + " Data successfully saved in the Computer Snapshot table ");
+	            }
+	            catch (Exception e) {
+	                GQEDPConstants.logger.error(meterId + " Data failed to save in the Computer Snapshot table ", e);
+	            }
             }
 
             // computer installed software
+            //GQEDPConstants.logger.info("Ins.Software List Details from GqMeterComputer:"+computer.getCompInstSwList());
             if (computer.getCompInstSwList() != null) {
                 ArrayList<CompInstSoftware> compInstSoftwareList = computer.getCompInstSwList();
 
@@ -109,6 +113,7 @@ public class GqMeterComputer {
             }
 
             // computer process list
+            //GQEDPConstants.logger.info("Process Details from GqMeterComputer:"+computer.getCompProcList());
             if (computer.getCompProcList() != null) {
                 ArrayList<CompProcess> compProcessList = computer.getCompProcList();
 
