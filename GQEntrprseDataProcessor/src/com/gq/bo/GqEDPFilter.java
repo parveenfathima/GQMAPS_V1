@@ -8,8 +8,10 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.gq.meter.GQMeterData;
 import com.gq.meter.GQMeterResponse;
 import com.gq.meter.assist.ProtocolData;
+import com.gq.meter.object.CompSnapshot;
 import com.gq.meter.object.Computer;
 import com.gq.meter.object.Meter;
 import com.gq.meter.object.MeterRun;
@@ -103,7 +105,6 @@ public class GqEDPFilter {
             switch (pdData.getProtocol()) {
 
             case COMPUTER:
-            	//GQEDPConstants.logger.info("Data from GQEDP filter:"+pdData.getData());
                 Computer computerObj = gson.fromJson(pdData.getData(), Computer.class);
                 GqMeterComputer.insertData(computerObj, gqmResponse, meterRun.getRunId());
                 break;
