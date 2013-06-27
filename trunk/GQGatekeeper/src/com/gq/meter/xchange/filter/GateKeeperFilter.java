@@ -240,4 +240,44 @@ public class GateKeeperFilter {
             xChange.sendToEntDataProcessor(fwdUrl, protocolId, gqmResponse);
         }
     }
+
+    public List<GateKeeper> getExpirydate(String meterId) throws Exception {
+
+        Session session = null;
+
+        GQGateKeeperConstants.logger.info("meterid from RestService is  " + meterId);
+        try {
+            session = HibernateUtil.getSessionFactory().getCurrentSession();
+            session.beginTransaction();
+            String hql = "select a.expDttm from GateKeeper a, EnterpriseMeter b where b.enterpriseId = a.enterpriseId and b.meterId = :METER_ID";
+            GQGateKeeperConstants.logger.info("GATEKEEPER ::: " + hql);
+            Query query = session.createQuery(hql);
+            query.setParameter("METER_ID", meterId);
+            GQGateKeeperConstants.logger.info("meterid before query Execution" + meterId);
+            List gatekeeperResult = query.list();
+
+            GQGateKeeperConstants.logger.debug("Result size After Query Execution " + gatekeeperResult.size());
+            GQGateKeeperConstants.logger.debug("Contents After Query Execution " + gatekeeperResult.get(0));
+            GQGateKeeperConstants.logger.debug("Before returning to Service " + gatekeeperResult);
+
+            return gatekeeperResult;
+        }
+        catch (Exception e) {
+
+            GQGateKeeperConstants.logger.error("Exception occured while fetching the enterpriseid ", e);
+            throw new Exception(e);
+        }
+        finally {
+            try {
+                if (session.isOpen()) {
+                    session.flush();
+                    session.close();
+                }
+            }
+            catch (Exception e) {
+                GQGateKeeperConstants.logger.error("Exception occured while closing the session ", e);
+                throw new Exception(e);
+            }
+        }
+    }
 }
