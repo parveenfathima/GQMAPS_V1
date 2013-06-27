@@ -37,7 +37,7 @@ import com.gq.meter.StorageMeter;
 import com.gq.meter.object.Asset;
 
 public class MeterUtils {
-    public static int count=0;
+    public static int count = 0;
     public static long snmpKnownTime = 0;
     public static long snmpUnknownTime = 0;
     public static long compMeterTime = 0;
