@@ -14,18 +14,6 @@
          <script src = "js/rest_service.js"> </script>  
          <script src = "js/input_file_generation.js"> </script>  
          
-		 <script LANGUAGE="Javascript">
-		 	function createFile()
-			{
-				alert("inside createFile");
-				var object = new ActiveXObject("Scripting.FileSystemObject");
-				var file = object.CreateTextFile("C:\\Hello.txt", false);
-				file.WriteLine('Hello World');
-				file.WriteLine('Hope is a thing with feathers, that perches on the soul.'); 
-				file.Close();
-			}
-         </script>
-
     </head>
     
     <body class="body">
