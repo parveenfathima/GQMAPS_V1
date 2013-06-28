@@ -430,7 +430,7 @@ $(function() {
 function listEnterprise()
 {			
 		//var vUrl = 'http://localhost:8080/GQMapsRegistrationServices/gqm-gk/enterprise/getRegistration';
-		var vUrl = $.jStorage.get("jsUrl") + "enterprise/getRegistration";
+		var vUrl = $.jStorage.get("jsUrl") + "general/getEntpSummaryList";
 		
 		$.ajax({
 			type : "GET",
@@ -451,22 +451,24 @@ function listEnterprise()
 
 						$.each(json, function(i,n)
 						{								
-							arrEntp[i] = new enterprise($.trim(n["sid"]), $.trim(n["enterpriseId"]), $.trim(n["eName"]), $.trim(n["userId"]), $.trim(n["passwd"]), $.trim(n["storeFwd"]), $.trim(n["fwdUrl"]), $.trim(n["noOfEmpl"]), $.trim(n["entSqft"]), $.trim(n["entAssetCount"]), $.trim(n["dcSqft"]), $.trim(n["dcAssetCount"]), $.trim(n["dcUsePctg"]), $.trim(n["dcTemp"]), $.trim(n["comments"]), $.trim(n["active"]), $.trim(n["regCmplt"]));											
+							arrEntp[i] = new enterprise($.trim(n["sid"]), $.trim(n["enterpriseId"]), $.trim(n["eName"]), $.trim(n["userId"]), $.trim(n["passwd"]), $.trim(n["storeFwd"]), $.trim(n["fwdUrl"]), $.trim(n["noOfEmpl"]), $.trim(n["entSqft"]), $.trim(n["entAssetCount"]), $.trim(n["dcSqft"]), $.trim(n["dcAssetCount"]), $.trim(n["dcUsePctg"]), $.trim(n["dcTemp"]), $.trim(n["comments"]), $.trim(n["active"]), $.trim(n["regCmplt"]), $.trim(n["mCount"]), $.trim(n["expDttm"]));		
+							
+							alert(arrEntp[i]);									
 														
 							if($.trim(n["regCmplt"]) === 'n')
 								vEntpList += '<tr style="height:25px; color: #FF0000">';
 							else
 								vEntpList += '<tr>';
 								
-							vEntpList += '<td> <input type = "button" class = "button-font-a" id = "btnGeneral" title = "General" onClick = "openGeneralDialog(' + i + ')"/></td>';
-							vEntpList += '<td> <input type = "button" class = "button-font-a" id = "btnMeter" title = "Add Meter" onClick = "openMeterDialog(' + i + ')"/></td>';
-							vEntpList += '<td> <input type = "button" class = "button-font-a" id = "btnValidity" title = "Add Validity" onClick = "openValidityDialog(' + i + ')"/></td>';                                            
-							vEntpList += '<td class = "td-font-b" style = "padding-left: 20px;">' +  arrEntp[i].getEId() + '</td>';
-							vEntpList += '<td class = "td-font-b" style = "padding-left: 20px;">' +  arrEntp[i].getEName() + '</td>';
-							vEntpList += '<td class = "td-font-b" style = "padding-left: 20px;">' +  arrEntp[i].getUId()  + '</td>';
-							vEntpList += '<td class = "td-font-b" style = "padding-left: 20px;">' +  arrEntp[i].getPwd() + '</td>';
-							vEntpList += '<td class = "td-font-b" style = "padding-left: 20px;">' +  arrEntp[i].getRegStatus() + '</td>';
-							vEntpList += '</tr>';														
+								vEntpList += '<td> <input type = "button" class = "button-font-a" id = "btnGeneral" title = "General" onClick = "openGeneralDialog(' + i + ')"/></td>';
+								vEntpList += '<td> <input type = "button" class = "button-font-a" id = "btnMeter" title = "Add Meter" onClick = "openMeterDialog(' + i + ')"/></td>';
+								vEntpList += '<td> <input type = "button" class = "button-font-a" id = "btnValidity" title = "Add Validity" onClick = "openValidityDialog(' + i + ')"/></td>';                                            
+								vEntpList += '<td  style = "padding-left: 34px;">' +  arrEntp[i].getEId() + '</td>';
+								vEntpList += '<td  style = "padding-left: 65px;">' +  arrEntp[i].getEName() + '</td>';
+								vEntpList += '<td  style = "padding-left: 80px;">' +  arrEntp[i].getMCount()  + '</td>';
+								vEntpList += '<td  style = "padding-left: 100px;">' +  arrEntp[i].getExpDate() + '</td>';
+	
+								vEntpList += '</tr>';														
 						});	
 						
 						$("#tblEList").append(vEntpList);		
@@ -491,7 +493,7 @@ function listEnterprise()
 //-------------------------------------------------Enterprise object---------------------------------------------------
 
 // enterprise object's constructor, get and set methods		
-function enterprise(sid, eid, ename, uid, pwd, output, url, eEmpCount, eSqft, eAsset, dSqft, dAsset, dcUsed, dcTemp, comments, active, regStatus)   
+function enterprise(sid, eid, ename, uid, pwd, output, url, eEmpCount, eSqft, eAsset, dSqft, dAsset, dcUsed, dcTemp, comments, active, regStatus, mcount, expDate)   
 {
 	this.sid = sid;
 	this.eid = eid;
@@ -510,6 +512,8 @@ function enterprise(sid, eid, ename, uid, pwd, output, url, eEmpCount, eSqft, eA
 	this.comments = comments;
 	this.active = active;
 	this.regStatus = regStatus;
+	this.mcount = mcount;
+	this.expDate = expDate;
 }
 
 enterprise.prototype.getSId = function()
@@ -683,6 +687,26 @@ enterprise.prototype.getRegStatus = function()
 enterprise.prototype.setRegStatus = function(url)
 {
 	this.url = regStatus;
+}
+
+enterprise.prototype.getMCount = function()
+{
+	return this.mcount;
+}
+
+enterprise.prototype.setMCount = function(mcount)
+{
+	this.mcount = mcount;
+}
+
+enterprise.prototype.getExpDate = function()
+{
+	return this.expDate;
+}
+
+enterprise.prototype.setExpDate = function(expDate)
+{
+	this.expDate = expDate;
 }
 
 enterprise.prototype.toString = function()  
