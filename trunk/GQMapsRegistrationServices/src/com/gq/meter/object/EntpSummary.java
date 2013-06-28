@@ -41,7 +41,7 @@ public class EntpSummary implements java.io.Serializable {
     
     //enterprise meter object members
     
-    private int mCount;
+    private long mCount;
     
     //gate keeper object members
     
@@ -311,12 +311,12 @@ public class EntpSummary implements java.io.Serializable {
 		this.expDttm = expDttm;
 	}
 
-	public int getmCount()
+	public long getmCount()
 	{
 		return mCount;
 	}
 
-	public void setmCount(int mCount)
+	public void setmCount(long mCount)
 	{
 		this.mCount = mCount;
 	}
