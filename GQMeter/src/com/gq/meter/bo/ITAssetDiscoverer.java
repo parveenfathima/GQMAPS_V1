@@ -314,7 +314,7 @@ public final class ITAssetDiscoverer {
             service = service.path("gqm-gk").path("metercheck");
             System.out.println("Validating the expiry date for the meter " + gqmid);
             ClientResponse response = service.queryParam("meterId", gqmid).post(ClientResponse.class);
-            String resp = response.getEntity(String.class);
+            String resp = response.getEntity(String.class).trim();
 
             if (resp.contains("valid")) {
                 System.out.println("The MeterId: " + gqmid + " is valid");
