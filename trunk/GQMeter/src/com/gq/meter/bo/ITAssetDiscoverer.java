@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -316,17 +315,8 @@ public final class ITAssetDiscoverer {
             System.out.println("Validating the expiry date for the meter " + gqmid);
             ClientResponse response = service.queryParam("meterId", gqmid).post(ClientResponse.class);
             String resp = response.getEntity(String.class);
-            String[] date = resp.split(" ");
-            String begin = date[0]; //
-            String end = begin.replace("[", " ");
-            // Expdate from the Database as String
-            String expDate = end.replace("\"", " ").trim();
 
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-            Date currentDate = new Date();
-            // Parsing the expiry date to the proper Date format
-            Date expirydate = dateFormat.parse(expDate);
-            if (expirydate.compareTo(currentDate) > 0) {
+            if (resp.contains("valid")) {
                 System.out.println("The MeterId: " + gqmid + " is valid");
             }
             else {
@@ -395,7 +385,6 @@ public final class ITAssetDiscoverer {
 
         WebResource service = client.resource(MeterUtils.restURL);
         service = service.path("gqm-gk").path("gatekeeper");
-        System.out.println("Service:"+service);
         Form form = new Form();
         form.add("gqMeterResponse", gson.toJson(gqmResponse));
         form.add("summary", "Sending the data from GQMeter to GQGatekeeper");
