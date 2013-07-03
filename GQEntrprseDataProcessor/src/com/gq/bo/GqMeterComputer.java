@@ -8,7 +8,6 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 
 import com.gq.meter.GQMeterResponse;
-import com.gq.meter.assist.ProtocolData;
 import com.gq.meter.object.Asset;
 import com.gq.meter.object.CPNId;
 import com.gq.meter.object.CompConnDevice;
@@ -17,6 +16,7 @@ import com.gq.meter.object.CompProcess;
 import com.gq.meter.object.CompSnapshot;
 import com.gq.meter.object.Computer;
 import com.gq.meter.object.OsType;
+
 import com.gq.util.GQEDPConstants;
 import com.gq.util.HibernateUtil;
 
@@ -32,6 +32,7 @@ public class GqMeterComputer {
 
         try {
             // This step will read hibernate.cfg.xml and prepare hibernate for use
+        	GQEDPConstants.logger.debug("Start a process to read a HIBERNATE xml file ");
             session = HibernateUtil.getSessionFactory().getCurrentSession();
             session.beginTransaction();
 
@@ -42,14 +43,17 @@ public class GqMeterComputer {
             computer.setId(cid);
 
             // inserting asset
+            GQEDPConstants.logger.debug("Create a Query to inserting a values to asset table");
             String hql = "FROM Asset WHERE assetId = :ASSET_ID";
             Query query = session.createQuery(hql);
             query.setParameter("ASSET_ID", assetId);
             List<?> result = query.list();
-
+            GQEDPConstants.logger.debug("To check a condition for Asset Query Result");
             if (result.size() == 0) {
                 try {
+                	GQEDPConstants.logger.debug("Ready to get the asset details");
                     Asset assetObj = computer.getAssetObj();
+                    GQEDPConstants.logger.debug("Ready to Insert data to Asset table");
                     session.save(assetObj);
                     GQEDPConstants.logger.info(meterId + " Computer Data successfully saved in the Asset table ");
                 }
@@ -80,7 +84,7 @@ public class GqMeterComputer {
 
             // snapshot
             CompSnapshot compSnapshot = computer.getSnapShot();
-            if(compSnapshot.getIpAddr()!=null) {
+            if(compSnapshot.getIpAddr() != null) {
 	            compSnapshot.setId(cid);
 	            try {
 	                session.save(compSnapshot);
@@ -90,9 +94,7 @@ public class GqMeterComputer {
 	                GQEDPConstants.logger.error(meterId + " Data failed to save in the Computer Snapshot table ", e);
 	            }
             }
-
             // computer installed software
-            //GQEDPConstants.logger.info("Ins.Software List Details from GqMeterComputer:"+computer.getCompInstSwList());
             if (computer.getCompInstSwList() != null) {
                 ArrayList<CompInstSoftware> compInstSoftwareList = computer.getCompInstSwList();
 
@@ -113,7 +115,6 @@ public class GqMeterComputer {
             }
 
             // computer process list
-            //GQEDPConstants.logger.info("Process Details from GqMeterComputer:"+computer.getCompProcList());
             if (computer.getCompProcList() != null) {
                 ArrayList<CompProcess> compProcessList = computer.getCompProcList();
 
