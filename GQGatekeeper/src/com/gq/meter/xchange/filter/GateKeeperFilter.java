@@ -21,7 +21,6 @@ import com.gq.meter.xchange.util.HibernateUtil;
 
 /**
  * @author Chandru
- * 
  */
 // this class is takes care of validating and distributing incoming requests
 public class GateKeeperFilter {
@@ -211,6 +210,8 @@ public class GateKeeperFilter {
 
             // ---------------------------------------------------------------------------------------------------------//
             // inserting runid - auto incremented
+            GQGateKeeperConstants.logger.debug("Meter Run Details are:" + meterId + "\n" + recordDT + "\n" + scanned
+                    + "\n" + discovered + "\n" + runTimeMs);
             meterRun = new MeterRun(meterId, recordDT, scanned, discovered, runTimeMs);
             Integer runid = (Integer) session.save(meterRun);
             session.getTransaction().commit();
