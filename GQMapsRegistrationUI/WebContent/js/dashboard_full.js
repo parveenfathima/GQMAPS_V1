@@ -10,6 +10,8 @@ $(document).ready(function()
 	loadMeterTypes();	
 	loadExpDays();
 	loadLastRunDetails();
+	loadTotAssets();
+	
 });
 
 
@@ -75,7 +77,7 @@ function loadMeterTypes()
 			{
 				vTypes = vTypes + "N/A";
 			}
-			alert("vTypes is: " + vTypes);
+			//alert("vTypes is: " + vTypes);
 		   	$("#mTypes").append(vTypes);
 			
 		},
@@ -93,7 +95,7 @@ function loadExpDays()
 	
 	var vUrl = $.jStorage.get("jsUrl") + "gatekeeper/getExpiryDays?entpId=" + $.jStorage.get("jsEntpId");	
 	
-	alert("meter count inside loadexpdays: " + $.jStorage.get("jsMeters"));
+	//alert("meter count inside loadexpdays: " + $.jStorage.get("jsMeters"));
 	
 	if($.jStorage.get("jsMeters") != 0)
 	{
@@ -153,5 +155,37 @@ function loadLastRunDetails()
 	{
 			   $("#lRunTotAssets").text(" Null ");	
 			   $("#lRunDt").text(" Null ");
+	}
+}
+
+function loadTotAssets()
+{
+	var vType = "GET";						
+	
+	var vUrl = $.jStorage.get("jsDBUrl") + "customerservices/getAssetCount";	
+	
+	if($.jStorage.get("jsMeters") != 0)
+	{
+	
+		$.ajax
+		({
+			type:vType,
+			contentType: "application/json",
+			url:vUrl,
+			async:false,
+			dataType: "json",
+			success:function(json)
+			{
+			   $("#totAssets").text(json[0]);					  
+			},
+			error:function(json)
+			{
+				alert("Error from loading count of assets: " + json.status + " " + json.responseText);
+			} 
+		});	
+	}
+	else
+	{
+			   $("#totAssets").text(" Null ");	
 	}
 }

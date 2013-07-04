@@ -40,9 +40,10 @@ $(document).ready(function()
 		else if(checkForIPAdd())
 		{
 			alert("valid");
-			createFile();
+			return true;
+		
 		}
-	});	
+	});
 	
 	$('#btnAdd').bind("click", function()
 	{
@@ -135,17 +136,39 @@ function checkForIPAdd()
 	else
 	{
 		
-		var vIPString = "^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$";
+		//var vIPString = "^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$";
 		
-		if(!vLB.match(vIPString))
+		//var vIPString = "/^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/";
+		
+		//var vIPString = "/^[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}$/";
+		
+		
+		var splitLB = vLB.split('.');
+		var splitUB = vUB.split('.');
+		
+		if (splitLB.length != 4)
 		{
-			//alert("false");
 			return "l";
 		}
-		else if(!vUB.match(vIPString))
+		else if(splitLB.length === 4)
 		{
-			//alert ("false");
+			for (var i=0; i<splitLB.length; i++) 
+			{
+				var s = splitLB[i];
+				if (s.length==0 || isNaN(s) || s<0 || s>255)
+					return "l";
+			}
+		}
+		else if(splitUB.length != 4)
 			return "u";
+		else if(splitUB === 4)
+		{
+			for (var i=0; i<splitUB.length; i++) 
+			{
+				var s = splitUB[i];
+				if (s.length==0 || isNaN(s) || s<0 || s>255)
+					return "u";
+			}
 		}
 		else
 		{
