@@ -8,6 +8,7 @@ import java.util.List;
 import org.hibernate.Query;
 import org.hibernate.Session;
 
+import com.gq.meter.GQErrorInformation;
 import com.gq.meter.GQMeterResponse;
 import com.gq.meter.assist.ProtocolData;
 import com.gq.meter.xchange.controller.GQDataXchangeController;
@@ -46,7 +47,6 @@ public class GateKeeperFilter {
 
         short scanned = gqmResponse.getAssetScanned();// total asset scanned from the input file
         short discovered = gqmResponse.getAssetDiscovered();// total asset actually discovered using GQMeter
-
         long runTimeMs = gqmResponse.getRunTimeMiliSeconds();
 
         GQGateKeeperConstants.logger.info(" GQMeter ID : " + meterId);
@@ -91,8 +91,7 @@ public class GateKeeperFilter {
 
             List<ProtocolData> pdList = gqmResponse.getAssetInformationList();
             List<ProtocolData> pdValidList = new LinkedList<ProtocolData>();
-
-            if (protocolId != GQGateKeeperConstants.PROTOCOL_IT) {
+            if (!protocolId.equals(GQGateKeeperConstants.PROTOCOL_IT)) {
 
                 for (ProtocolData pdData : pdList) {
                     GQGateKeeperConstants.logger.info("protocolId : " + protocolId + " from JSON : "
@@ -102,17 +101,15 @@ public class GateKeeperFilter {
                         GQGateKeeperConstants.logger.info("valid meter data has been added into pdValidList");
                     }
                 }// for loop ends
-
-                // Actual number of assets that are matches with the type of meter
-                // for which the enterprise is registered for.
+                 // Actual number of assets that are matches with the type of meter
+                 // for which the enterprise is registered for.
             }
             else {
                 pdValidList.addAll(pdList);
             }
             discovered = (short) pdValidList.size();
             GQGateKeeperConstants.logger.info(" Total number of assets after meter validation***  : " + discovered
-                    + " : " + pdList.size());
-
+                    + " : " + pdValidList.size());
             // ---------------------------------------------------------------------------------------------------------//
             // checking meterid from the GateKeeper table
             hql = "FROM GateKeeper WHERE enterprise_id = :ENTERPRISE_ID";// prepared stmt
