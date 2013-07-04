@@ -11,6 +11,7 @@ import com.gq.meter.model.AssetModel;
 import com.gq.meter.model.CustomerServiceModel;
 import com.gq.meter.object.AllCustomerServices;
 import com.gq.meter.object.Asset;
+import com.gq.meter.object.ProtocolCount;
 import com.gq.meter.util.CustomerServiceConstant;
 
 @Path("/customerservices")
@@ -42,5 +43,17 @@ public class CustomerServices {
         // Returning all the enterprises in JSON format
         CustomerServiceConstant.logger.info("Number of asset Id in asset" + assetresult);
         return CustomerServiceConstant.gson.toJson(assetresult);
+    }
+
+    @Path("/getEntpProtocolCount")
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public String getEntpProtocolCount() {
+        CustomerServiceConstant.logger.info("Generating all the customer service list from GQEntrprseDataProcessor");
+        AssetModel asset = new AssetModel();
+        List<ProtocolCount> protocolresult = asset.getEntpProtocolCount();
+        // Returning all the enterprises in JSON format
+        CustomerServiceConstant.logger.info("Number of asset Id in asset" + protocolresult);
+        return CustomerServiceConstant.gson.toJson(protocolresult);
     }
 }

@@ -3,12 +3,14 @@
  */
 package com.gq.meter.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
 
 import com.gq.meter.object.Asset;
+import com.gq.meter.object.ProtocolCount;
 import com.gq.meter.util.CustomerServiceConstant;
 import com.gq.meter.util.HibernateUtil;
 
@@ -32,7 +34,7 @@ public class AssetModel {
         }
         catch (Exception e) {
             CustomerServiceConstant.logger.error("Exception occured while getting the asset count", e);
-
+            return null;
         }
         finally {
             try {
@@ -45,6 +47,47 @@ public class AssetModel {
                 e.printStackTrace();
             }
         }
-        return null;
+
+    }
+
+    public List<ProtocolCount> getEntpProtocolCount() {
+        Session session = null;
+        try {
+            session = HibernateUtil.getSessionFactory().getCurrentSession();
+            session.beginTransaction();
+
+            String hql = "select protocolId, count(protocolId) FROM Asset group by protocolId";
+            Query query = session.createQuery(hql);
+            // List<ProtocolCount> assetResult = query.list();
+
+            List<Object[]> queryresult = query.list();
+            CustomerServiceConstant.logger.info("Fetching protocolId and its count in asset from database"
+                    + queryresult);
+            List<ProtocolCount> protocolresult = new ArrayList<ProtocolCount>();
+            for (Object[] list : queryresult) {
+                ProtocolCount assetlist = new ProtocolCount();
+                assetlist.setProtocolId((String) list[0]);
+                assetlist.setPcount((Long) list[1]);
+                protocolresult.add(assetlist);
+            }
+
+            return protocolresult;
+        }
+        catch (Exception e) {
+            CustomerServiceConstant.logger.error("Exception occured while getting the asset count", e);
+            return null;
+        }
+        finally {
+            try {
+                if (session.isOpen()) {
+                    session.flush();
+                    session.close();
+                }
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
     }
 }
