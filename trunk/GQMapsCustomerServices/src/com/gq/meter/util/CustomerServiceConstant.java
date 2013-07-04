@@ -16,7 +16,7 @@ public class CustomerServiceConstant {
     public static final Logger logger = Logger.getLogger("CustomerServiceConstant.class");
 
     private static FileAppender fileappender;
-    private static String logFilePrefix = "C:\\Users\\yogalakshmi.s\\opt\\gq\\maps\\logs";
+    private static String logFilePrefix = "/opt/gq/maps/logs/";
     private static String logFileName = "customerservices.log";
 
     private static final String LOG_FILE_NAME_DATE_PATTERN = "yyyy-MM-dd";
@@ -27,7 +27,7 @@ public class CustomerServiceConstant {
         logger.info("Inside create logger method");
 
         CustomerServiceConstant.logger.info("initializing gqmaps CustomerServices logger..."); // ???? !!!!!!
-        String logFile = logFilePrefix + "\\" + logFileName;
+        String logFile = logFilePrefix + logFileName;
         try {
             fileappender = new org.apache.log4j.DailyRollingFileAppender(new PatternLayout(
                     "  %-15C{1} | %d{MMM dd HH:mm} | %5p | %m%n"), logFile, LOG_FILE_NAME_DATE_PATTERN);
