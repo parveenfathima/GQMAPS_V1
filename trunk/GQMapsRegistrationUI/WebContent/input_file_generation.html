@@ -12,11 +12,11 @@
              
          <script src = "js/jstorage.js"> </script>
          <script src = "js/rest_service.js"> </script>  
-         <script src = "js/input_file_generation.js"> </script>  
+		 <script src = "js/input_file_generation.js"> </script>  
          
     </head>
     
-    <body class="body">
+    <body class="body" >
         <div class="main-div"> <!--main div-->
             <div class="header"><!--header -->
             	<img src="theme/images/gquotient_logo.png"  style = "padding-top:25px; padding-left:25px" width="161" height="53" align="left"/>
@@ -28,7 +28,7 @@
 
                     <div class="plain-div"> <!--plain div -->
       
-                        <form id = "frmInputFile" class = "plain-form"  method = "post" >
+                        <form id = "frmInputFile" class = "plain-form"  method = "POST" action = "createFile.jsp" >
                                    
                             <table align="center" id = "tblInputFile">  
                                 <tr>
@@ -109,15 +109,15 @@
                                 </tr>
                                 <tr>                                         
                                      <td>   
-                                            <input type="text" name="txtComString" id="txtComString" width = "150px"/>
+                                            <input type="text" name="txtComString" id="txtComString" width = "150px" value = "GQ"/>
 									 
                                      </td>
                                      <td>   
-                                            <input type="text" name="txtIPLB" id="txtIPLB" width = "150px"/>
+                                            <input type="text" name="txtIPLB" id="txtIPLB" width = "150px" value = "1.1.1.1" />
                                      
                                      </td>
                                      <td>   
-                                            <input type="text" name="txtIPUB" id="txtIPUB" width = "150px"/>
+                                            <input type="text" name="txtIPUB" id="txtIPUB" width = "150px" value = "2.2.2.2" />
                                      </td>
                                      <td>   
                                             <input type="button" name="btnAdd" id="btnAdd" value = "Add to Grid"/>
@@ -131,7 +131,7 @@
                             </table>
                             <br>
                             <center>
-                                <input type="button" value="Generate Input File" id = "submit"/>
+                                <input type="submit" value="Generate Input File" id = "submit"/>
                                 <input type="reset" value="Reset"/>
                             </center>
                             <br>
