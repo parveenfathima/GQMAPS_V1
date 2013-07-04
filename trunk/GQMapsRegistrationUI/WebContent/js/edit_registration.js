@@ -26,8 +26,15 @@ $(document).ready(function()
 		return false;
 	 }
    }); 
+   
+   $( "#btnCancel").bind("click", cancelEdit);
+   
 });
 
+function cancelEdit()
+{
+	$( "#dlgGeneral" ).dialog( "close" );
+}
 
 // opening the general dialog with the selected enterprise's basic information to edit by the admin user. 
 function openGeneralDialog(i)
@@ -453,8 +460,6 @@ function listEnterprise()
 						{								
 							arrEntp[i] = new enterprise($.trim(n["sid"]), $.trim(n["enterpriseId"]), $.trim(n["eName"]), $.trim(n["userId"]), $.trim(n["passwd"]), $.trim(n["storeFwd"]), $.trim(n["fwdUrl"]), $.trim(n["noOfEmpl"]), $.trim(n["entSqft"]), $.trim(n["entAssetCount"]), $.trim(n["dcSqft"]), $.trim(n["dcAssetCount"]), $.trim(n["dcUsePctg"]), $.trim(n["dcTemp"]), $.trim(n["comments"]), $.trim(n["active"]), $.trim(n["regCmplt"]), $.trim(n["mCount"]), $.trim(n["expDttm"]));		
 							
-							alert(arrEntp[i]);									
-														
 							if($.trim(n["regCmplt"]) === 'n')
 								vEntpList += '<tr style="height:25px; color: #FF0000">';
 							else
@@ -463,10 +468,10 @@ function listEnterprise()
 								vEntpList += '<td> <input type = "button" class = "button-font-a" id = "btnGeneral" title = "General" onClick = "openGeneralDialog(' + i + ')"/></td>';
 								vEntpList += '<td> <input type = "button" class = "button-font-a" id = "btnMeter" title = "Add Meter" onClick = "openMeterDialog(' + i + ')"/></td>';
 								vEntpList += '<td> <input type = "button" class = "button-font-a" id = "btnValidity" title = "Add Validity" onClick = "openValidityDialog(' + i + ')"/></td>';                                            
-								vEntpList += '<td  style = "padding-left: 34px;">' +  arrEntp[i].getEId() + '</td>';
-								vEntpList += '<td  style = "padding-left: 65px;">' +  arrEntp[i].getEName() + '</td>';
-								vEntpList += '<td  style = "padding-left: 80px;">' +  arrEntp[i].getMCount()  + '</td>';
-								vEntpList += '<td  style = "padding-left: 100px;">' +  arrEntp[i].getExpDate() + '</td>';
+								vEntpList += '<td  style = "padding-left: 34px;" class = "gen-form-font">' +  arrEntp[i].getEId() + '</td>';
+								vEntpList += '<td  style = "padding-left: 65px;" class = "gen-form-font">' +  arrEntp[i].getEName() + '</td>';
+								vEntpList += '<td  style = "padding-left: 80px;" class = "gen-form-font">' +  arrEntp[i].getMCount()  + '</td>';
+								vEntpList += '<td  style = "padding-left: 100px;" class = "gen-form-font">' +  arrEntp[i].getExpDate() + '</td>';
 	
 								vEntpList += '</tr>';														
 						});	

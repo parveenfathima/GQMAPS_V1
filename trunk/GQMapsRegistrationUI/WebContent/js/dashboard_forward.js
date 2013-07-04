@@ -9,7 +9,7 @@ $(document).ready(function()
 	loadMeterCount();
 	loadMeterTypes();	
 	loadExpDays();
-	loadLastRunDetails();
+	loadTotAssets();
 });
 
 
@@ -153,5 +153,37 @@ function loadLastRunDetails()
 	{
 			   $("#lRunTotAssets").text(" Null ");	
 			   $("#lRunDt").text(" Null ");
+	}
+}
+
+function loadTotAssets()
+{
+	var vType = "GET";						
+	
+	var vUrl = $.jStorage.get("jsDBUrl") + "customerservices/getAssetCount";	
+	
+	if($.jStorage.get("jsMeters") != 0)
+	{
+	
+		$.ajax
+		({
+			type:vType,
+			contentType: "application/json",
+			url:vUrl,
+			async:false,
+			dataType: "json",
+			success:function(json)
+			{
+			   $("#totAssets").text(json[0]);					  
+			},
+			error:function(json)
+			{
+				alert("Error from loading count of assets: " + json.status + " " + json.responseText);
+			} 
+		});	
+	}
+	else
+	{
+			   $("#totAssets").text(" Null ");	
 	}
 }
