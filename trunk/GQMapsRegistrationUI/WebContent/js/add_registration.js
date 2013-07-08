@@ -169,7 +169,8 @@ function validateForm()
 				success:function(json)
 				{
 					alert("Registered successfully!");
-					$("#frmAddRegn")[0].reset();
+					//TODO: email notification to be implemented
+					window.location.href = "login.html";
 				},
 				failure:function(json)
 				{
