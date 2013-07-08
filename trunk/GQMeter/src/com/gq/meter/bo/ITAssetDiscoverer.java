@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.StringTokenizer;
 import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.ws.rs.core.MediaType;
 
@@ -41,6 +43,8 @@ public final class ITAssetDiscoverer {
     private GQErrorInformation gqErrInfo = null;
     private List<GQErrorInformation> gqerrorInfoList = null;
     private static String gqmid = null;
+    private Pattern pattern;
+    private Matcher matcher;
 
     private Gson gson = new GsonBuilder().create();
     // public Gson gson = new GsonBuilder().setPrettyPrinting().create();
@@ -83,7 +87,7 @@ public final class ITAssetDiscoverer {
                 System.out.println("CommunityString : " + communityString + " - Ipaddress : " + ipAddress);
 
                 snmpDetails = MeterUtils.isSnmpConfigured(communityString, ipAddress);
-
+                System.out.println("SNMP Details from findAssets:" + snmpDetails);
                 if (snmpDetails != null && snmpDetails.size() != 0) {
                     snmpVersion = snmpDetails.get("snmpVersion");
                     assetDesc = snmpDetails.get("assetDesc");
@@ -119,6 +123,7 @@ public final class ITAssetDiscoverer {
                         }// else ends
                     }
                     else {
+                        System.out.println("From snmpunknownip else part");
                         snmpUnknownIPList.add(ipAddress);
                         this.setSnmpUnknownIPList(snmpUnknownIPList);
                         errorList = new LinkedList<String>();
@@ -199,13 +204,13 @@ public final class ITAssetDiscoverer {
                             sToken = new StringTokenizer(line, " ");
                             if (gqmid != null) {
                                 if (sToken.countTokens() == 2) {
-                                    String s_name = line.substring(1, line.indexOf(" "));
-                                    String v_name = line.substring(line.indexOf(" ") + 1, line.length());
+                                    String s_name = line.substring(0, line.indexOf(" "));
+                                    String v_name = line.replace(s_name, "").trim();
                                     List<String> l = new ArrayList<String>();
-                                    l.add(MeterConstants.COMPUTER_PROTOCOL);
-                                    l.add(MeterConstants.PRINTER_PROTOCOL);
-                                    l.add(MeterConstants.NSRG_PROTOCOL);
-                                    l.add(MeterConstants.STORAGE_PROTOCOL);
+                                    l.add(MeterConstants.COMPUTER_SWITCHS);
+                                    l.add(MeterConstants.PRINTER_SWITCHS);
+                                    l.add(MeterConstants.NSRG_SWITCHS);
+                                    l.add(MeterConstants.STORAGE_SWITCHS);
                                     if (l.contains(s_name)) {
                                         if (v_name.equalsIgnoreCase(MeterConstants.FULL_DETAILS)
                                                 || v_name.equalsIgnoreCase(MeterConstants.CONNECTED_DEVICES)
@@ -243,39 +248,58 @@ public final class ITAssetDiscoverer {
 
                                 if (sToken.hasMoreTokens()) {
                                     ipUpperbound = sToken.nextToken().trim();
+                                    if (isIPAddressValid(ipLowerbound) && isIPAddressValid(ipUpperbound)) {
 
-                                    // This condition used to check the lowerboundip is smaller than the upperboundip
-                                    if (MeterUtils.ipComparator.compare(ipLowerbound, ipUpperbound) == -1) {
-                                        communityIPMap.put(ipLowerbound, communityString);
-
-                                        // Here we iterate the ip range and find & add those intermediate ips to the map
-                                        while (!(ipLowerbound = MeterUtils.nextIpAddress(ipLowerbound))
-                                                .equals(ipUpperbound)) {
+                                        // This condition used to check the lowerboundip is greater than the
+                                        // upperboundip
+                                        if (MeterUtils.ipComparator.compare(ipLowerbound, ipUpperbound) == -1) {
                                             communityIPMap.put(ipLowerbound, communityString);
-                                        }
 
-                                        communityIPMap.put(ipUpperbound, communityString);
+                                            // Here we iterate the ip range and find & add those intermediate ips to
+                                            // the
+                                            // map
+                                            while (!(ipLowerbound = MeterUtils.nextIpAddress(ipLowerbound))
+                                                    .equals(ipUpperbound)) {
+                                                communityIPMap.put(ipLowerbound, communityString);
+                                            }
+                                            communityIPMap.put(ipUpperbound, communityString);
+                                        }
+                                        // This condition used to check the lowerboundip and ipupperboundip as same
+                                        else if (MeterUtils.ipComparator.compare(ipLowerbound, ipUpperbound) == 0) {
+                                            System.out.println("IP lower bound : " + ipLowerbound + "IP upper bound : "
+                                                    + ipUpperbound + " \nBoth Ip's should be same.....");
+                                            System.out.println("Process Terminated Now.....");
+                                            System.exit(0);
+                                        }
+                                        else {
+                                            System.out.println("IP lower bound : " + ipLowerbound + "IP upper bound : "
+                                                    + ipUpperbound + " -  : Invalid ip range");
+                                            System.exit(0);
+                                            /*
+                                             * errorList = new LinkedList<String>(); errorList.add(sToken +
+                                             * " -  : Invalid ip range"); gqErrInfo = new
+                                             * GQErrorInformation("Invalid asset ip range", errorList);
+                                             * gqerrorInfoList.add(gqErrInfo);
+                                             */
+                                        }
                                     }
-                                    else if (MeterUtils.ipComparator.compare(ipLowerbound, ipUpperbound) == 0) {
-                                        System.out.println("IP lower bound : " + ipLowerbound + "IP upper bound : "
-                                                + ipUpperbound + " \nBoth Ip's should be same.....");
-                                        System.out.println("Process Terminated Now.....");
-                                        System.exit(0);
+                                    else if (isIPAddressValid(ipLowerbound)) {
+                                        System.out.println("INVALID UPPERBOUNDIP:" + ipUpperbound);
+                                        communityIPMap.put(ipLowerbound, communityString);
                                     }
                                     else {
-                                        System.out.println("IP lower bound : " + ipLowerbound + "IP upper bound : "
-                                                + ipUpperbound + " -  : Invalid ip range");
-                                        System.exit(0);
-                                        /*
-                                         * errorList = new LinkedList<String>(); errorList.add(sToken +
-                                         * " -  : Invalid ip range"); gqErrInfo = new
-                                         * GQErrorInformation("Invalid asset ip range", errorList);
-                                         * gqerrorInfoList.add(gqErrInfo);
-                                         */
+                                        System.out.println("INVALID LOWERBOUNDIP:" + ipLowerbound);
+                                        communityIPMap.put(ipUpperbound, communityString);
                                     }
                                 }// if ends
                                 else {
-                                    communityIPMap.put(ipLowerbound, communityString);
+                                    if (isIPAddressValid(ipLowerbound)) {
+                                        communityIPMap.put(ipLowerbound, communityString);
+                                    }
+                                    else {
+                                        System.out.println(" Invalid IPAddress:" + ipLowerbound);
+                                        continue;
+                                    }
                                 }
                             }// if ends
                             else {
@@ -339,6 +363,13 @@ public final class ITAssetDiscoverer {
         return gqmid;
     }
 
+    private boolean isIPAddressValid(String ipAddress) {
+        pattern = Pattern.compile("^([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\." + "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\."
+                + "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\." + "([01]?\\d\\d?|2[0-4]\\d|25[0-5])$");
+        matcher = pattern.matcher(ipAddress);
+        return matcher.matches();
+    }
+
     public void discover(String inputFilePath) {
         gqmResponse = new GQMeterResponse();
         gqmResponse.setRecDttm(new Date());// -------------------------->test this
@@ -356,6 +387,11 @@ public final class ITAssetDiscoverer {
             assetsList = findassets(communityIPMap);
             gqmResponse.addToAssetInformationList(assetsList);
         }
+        else {
+            System.out.println("Process Terminated.....");
+            System.exit(0);
+        }
+
         long endTime = System.currentTimeMillis();
 
         gqmResponse.setRunTimeMiliSeconds((endTime - startTime));
