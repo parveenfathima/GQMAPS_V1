@@ -1,15 +1,22 @@
 
 //$.jStorage.set("jsUrl", "http://192.168.1.95:8080/GQMapsRegistrationServices/gqm-gk/");
-$.jStorage.set("jsUrl", "http://localhost:8080/GQMapsRegistrationServices/gqm-gk/");
+//$.jStorage.set("jsDBUrl", "http://192.168.1.95:8080/GQMapsCustomerServices/gqm-gqedp/");
+
+//$.jStorage.set("jsUrl", "http://localhost:8080/GQMapsRegistrationServices/gqm-gk/");
+//$.jStorage.set("jsDBUrl", "http://localhost:8080/GQMapsCustomerServices/gqm-gqedp/");
+
 $.jStorage.set("jsMeters", "");
 
 $(document).ready(function() 
 {
-	//alert($.jStorage.get("jsEntpId"));	
+	$("#entpName").text("Customer Dashboard for " + $.jStorage.get("jsEName"));
+	
+	
 	loadMeterCount();
 	loadMeterTypes();	
 	loadExpDays();
 	loadLastRunDetails();
+	
 	loadTotAssets();
 	
 });
@@ -163,6 +170,7 @@ function loadTotAssets()
 	var vType = "GET";						
 	
 	var vUrl = $.jStorage.get("jsDBUrl") + "customerservices/getAssetCount";	
+	//var vUrl = "http://localhost:8080/GQMapsCustomerServices/gqm-gqedp/customerservices/getAssetCount";
 	
 	if($.jStorage.get("jsMeters") != 0)
 	{
@@ -176,7 +184,9 @@ function loadTotAssets()
 			dataType: "json",
 			success:function(json)
 			{
-			   $("#totAssets").text(json[0]);					  
+			   	$("#totAssets").text(json[0]);		
+			   	loadProtocolTypes();	
+						  
 			},
 			error:function(json)
 			{
@@ -188,4 +198,49 @@ function loadTotAssets()
 	{
 			   $("#totAssets").text(" Null ");	
 	}
+}
+
+
+//load the protocol types 
+function loadProtocolTypes()
+{
+	var vType = "GET";						
+	
+	var vUrl = $.jStorage.get("jsDBUrl") + "customerservices/getEntpProtocolCount";
+	//var vUrl = "http://localhost:8080/GQMapsCustomerServices/gqm-gqedp/customerservices/getEntpProtocolCount";
+	
+	$.ajax
+	({
+		type:vType,
+		contentType: "application/json",
+		url:vUrl,
+		async:false,
+		dataType: "json",
+		success:function(json)
+		{
+			var pTypes = "";
+			
+			if($.jStorage.get("jsMeters") != 0)
+			{
+				//alert("load meter types: " + $.jStorage.get("jsMeters"));
+				jQuery.each(json, function(i, v) 
+				{
+					pTypes = pTypes + "<tr><td class = 'td-font'><span class='span-color'>" + v["protocolId"] + "</span></td><td class = 'td-font'><span class='span-color'>" + v["pcount"] + "</span></td></tr>";
+		
+			   });
+			}
+			else
+			{
+				pTypes = pTypes + "N/A";
+			}
+
+		   	$("#pTypes").append(pTypes);
+			
+		},
+		error:function(json)
+		{
+			alert("Error from loading meter types: " + json.status + " " + json.responseText);
+		} 
+	});	
+
 }

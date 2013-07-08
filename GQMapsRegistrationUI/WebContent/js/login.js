@@ -46,7 +46,8 @@ function userLogin()
 			success : function(json) 
 			{
 				var vRecLen = json.length;
-				var vFwdStore = "";			
+				var vFwdStore = "";	
+				var vActive = "n";		
 				if(vRecLen > 0)
 				{
 					$.each(json, function(i,n)
@@ -55,19 +56,28 @@ function userLogin()
 						{
 							isValid = 1;
 							vFwdStore = $.trim(n["storeFwd"]);
+							vActive = $.trim(n["active"]);
 							$.jStorage.set("jsUserId", user);
 							$.jStorage.set("jsPwd", pwd);		
 							$.jStorage.set("jsEntpId", n["enterpriseId"]);	
-							alert($.jStorage.get("jsEntpId"));						
+							$.jStorage.set("jsEName", n["eName"]);
 						}
 					  
 					});		
 					
 					if(isValid === 1)
-					{
-						alert(vFwdStore);
-						
-						if(vFwdStore === "C")
+					{		
+						if(vActive === "n")
+						{
+							alert("vActive: " + vActive);
+							alert("The enterprise is inactive. Please contact admin to start availing the services!");
+							$('#txtUserId').val("");
+							$('#pwdPassword').val("");
+							
+							//window.location.href = "login.html";
+							
+						}
+						else if(vFwdStore === "C")
 							window.location.href = "dashboard_full.html";	
 						else
 							window.location.href = "dashboard_forward.html";

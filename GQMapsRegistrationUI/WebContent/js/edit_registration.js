@@ -344,10 +344,24 @@ function updateGateKpr(dbEntp)
 	
 	var vComments = $.trim($("#taValComments").val());
 	
+	var now = new Date(); 
+	var today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+	
+	var date = vExpDate.split("-");
+	var dtStr = date[1] + "/" + date[0] + "/" + date[2];
+	
+	var vEDate = new Date(dtStr);
+
 	if (vExpDate === "" || vExpDate.length === 0)
 	{
 		alert("Select expiry date");
 		$('#txtNewExpiry').blur(); 	
+	}
+	else if(vEDate < today)
+	{
+		alert("Enter a valid date which should be greater than the current date");
+		$('#txtNewExpiry').val("");
+		$('#txtNewExpiry').focus();
 	}
 	else if(vComments === "" || vComments.length === 0)
 	{
