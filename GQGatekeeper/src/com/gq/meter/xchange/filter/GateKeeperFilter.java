@@ -8,7 +8,6 @@ import java.util.List;
 import org.hibernate.Query;
 import org.hibernate.Session;
 
-import com.gq.meter.GQErrorInformation;
 import com.gq.meter.GQMeterResponse;
 import com.gq.meter.assist.ProtocolData;
 import com.gq.meter.xchange.controller.GQDataXchangeController;
@@ -252,12 +251,11 @@ public class GateKeeperFilter {
             Query query = session.createQuery(hql);
             query.setParameter("METER_ID", meterId);
             GQGateKeeperConstants.logger.info("meterid before query Execution" + meterId);
-            List gatekeeperResult = query.list();
+            List<GateKeeper> gatekeeperResult = query.list();
 
             GQGateKeeperConstants.logger.debug("Result size After Query Execution " + gatekeeperResult.size());
             GQGateKeeperConstants.logger.debug("Contents After Query Execution " + gatekeeperResult.get(0));
             GQGateKeeperConstants.logger.debug("Before returning to Service " + gatekeeperResult);
-
             return gatekeeperResult;
         }
         catch (Exception e) {

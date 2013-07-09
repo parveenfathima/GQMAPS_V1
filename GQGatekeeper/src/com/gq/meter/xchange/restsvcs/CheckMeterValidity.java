@@ -48,7 +48,9 @@ public class CheckMeterValidity {
             String currDate = sdf.format(new Date());
             int dateValue = expirydDate.compareTo(currDate);
             if (dateValue < 0) {
-                result = "expired";
+                GQGateKeeperConstants.logger.info("validating the expiry date and date value is " + dateValue
+                        + "for the meter" + meterId);
+                result = "expired/invalid";
             }
             else {
                 result = "valid";
