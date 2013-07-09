@@ -68,7 +68,7 @@ public class GeneralServices {
     @GET
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getMeterRun(@QueryParam("sId") short sId) {
+    public Response getRegistrationEmail(@QueryParam("sId") short sId) {
 
         GQGateKeeperConstants.logger.info("Generating all the enterprise meters list from EnterpriseMeter");
         EnterpriseModel enpModel = new EnterpriseModel();
@@ -84,4 +84,5 @@ public class GeneralServices {
         // Returning all the meterList in JSON format
         return Response.ok(GQRegistrationConstants.gson.toJson(meterResult)).build();
     }
+
 }
