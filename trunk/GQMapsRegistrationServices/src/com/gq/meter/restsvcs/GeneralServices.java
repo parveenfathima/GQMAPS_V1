@@ -64,27 +64,6 @@ public class GeneralServices {
         // return Response.ok(200).build();
     }
 
-    @Path("/registrationEmail")
-    @GET
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response getRegistrationEmail(@QueryParam("sId") short sId) {
-
-        GQGateKeeperConstants.logger.info("Generating all the enterprise meters list from EnterpriseMeter");
-        EnterpriseModel enpModel = new EnterpriseModel();
-        List<Enterprise> meterResult = null;
-
-        try {
-            meterResult = enpModel.registrationEmail(sId);
-        }
-        catch (Exception e) {
-            GQGateKeeperConstants.logger.error("Exception occured while fetching the meter list ", e);
-            return Response.status(400).build();
-        }
-        // Returning all the meterList in JSON format
-        return Response.ok(GQRegistrationConstants.gson.toJson(meterResult)).build();
-    }
-
     @Path("/activationEmail")
     @GET
     @Consumes(MediaType.APPLICATION_JSON)
