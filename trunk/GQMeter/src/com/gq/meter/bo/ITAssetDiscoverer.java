@@ -346,12 +346,15 @@ public final class ITAssetDiscoverer {
             System.out.println("Validating the expiry date for the meter " + gqmid);
             ClientResponse response = service.queryParam("meterId", gqmid).post(ClientResponse.class);
             String resp = response.getEntity(String.class).trim();
-
-            if (resp.contains("valid")) {
+            System.out.println("service" + response);
+            System.out.println("resp" + resp);
+            String resp1 = resp.substring(0, 7);
+            System.out.println("response1" + resp1);
+            if (resp.equals(resp1)) {
                 System.out.println("The MeterId: " + gqmid + " is valid");
             }
             else {
-                System.out.println("Your Meter: " + gqmid + " is expired");
+                System.out.println("Your Meter: " + gqmid + " is expired/invalid ");
                 System.exit(0);
             }
 
