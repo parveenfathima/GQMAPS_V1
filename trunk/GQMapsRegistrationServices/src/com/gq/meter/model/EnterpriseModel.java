@@ -283,7 +283,7 @@ public class EnterpriseModel {
             // generateAndSendEmail();
         }
         catch (Exception e) {
-            GQGateKeeperConstants.logger.error("Exception occured while fetching the enterprises ", e);
+            GQGateKeeperConstants.logger.error("Exception occured while fetching the e-mailId ", e);
             throw new Exception(e);
         }
         finally {
@@ -299,26 +299,66 @@ public class EnterpriseModel {
             }
         }
     }
-    /*
-     * private void generateAndSendEmail() throws AddressException, MessagingException { // Step1
-     * System.out.println("\n 1st ===> setup Mail Server Properties.."); mailServerProperties = System.getProperties();
-     * mailServerProperties.put("mail.smtp.port", "587"); mailServerProperties.put("mail.smtp.auth", "true");
-     * mailServerProperties.put("mail.smtp.starttls.enable", "true");
-     * System.out.println("Mail Server Properties have been setup successfully..");
-     * 
-     * // Step2 System.out.println("\n\n 2nd ===> get Mail Session.."); getMailSession =
-     * javax.mail.Session.getDefaultInstance(mailServerProperties, null); generateMailMessage = new
-     * MimeMessage(getMailSession); generateMailMessage.addRecipient(Message.RecipientType.TO, new
-     * InternetAddress(entMeterResult)); generateMailMessage.addRecipient(Message.RecipientType.CC, new
-     * InternetAddress("rathishyoungstani@gmail.com")); generateMailMessage.setSubject("Greetings from iCrunched..");
-     * String emailBody = "Test email by iCrunched JavaMail API example. " + "<br><br> Regards, <br>iCrunched Admin";
-     * generateMailMessage.setContent(emailBody, "text/html");
-     * System.out.println("Mail Session has been created successfully..");
-     * 
-     * // Step3 System.out.println("\n\n 3rd ===> Get Session and Send mail"); Transport transport =
-     * getMailSession.getTransport("smtp"); // Enter your correct gmail UserID and Password
-     * transport.connect("smtp.gmail.com", "rathishyoungstani@gmail.com", "rathish@8055");
-     * transport.sendMessage(generateMailMessage, generateMailMessage.getAllRecipients()); transport.close(); }
-     */
+
+    public List<Enterprise> activationEmail(short sId) throws Exception {
+        Session session = null;
+        try {
+            session = HibernateUtil.getSessionFactory().getCurrentSession();
+            session.beginTransaction();
+
+            String hql = "select email FROM Enterprise where sid=:S_ID";
+            Query query = session.createQuery(hql);
+            query.setParameter("S_ID", sId);
+            List<Enterprise> entMeterResult = query.list();
+            String tomail = String.valueOf(entMeterResult.get(0));
+            System.out.println("mail id" + tomail);
+            System.out.println("\n 1st ===> setup Mail Server Properties..");
+            mailServerProperties = System.getProperties();
+            mailServerProperties.put("mail.smtp.port", "587");
+            mailServerProperties.put("mail.smtp.auth", "true");
+            mailServerProperties.put("mail.smtp.starttls.enable", "true");
+            System.out.println("Mail Server Properties have been setup successfully..");
+
+            // Step2
+            System.out.println("\n\n 2nd ===> get Mail Session..");
+            getMailSession = javax.mail.Session.getDefaultInstance(mailServerProperties, null);
+            generateMailMessage = new MimeMessage(getMailSession);
+            generateMailMessage.addRecipient(Message.RecipientType.TO, new InternetAddress(tomail));
+            generateMailMessage.addRecipient(Message.RecipientType.CC, new InternetAddress(
+                    "rathishyoungstani@gmail.com"));
+            generateMailMessage.setSubject("you have activated Sucessfully");
+            String sb = "Dear customer,<br>Registered Sucessfully.<br>Thanks,<br>Customer Support";
+            generateMailMessage.setContent(sb, "text/html");
+            System.out.println("Mail Session has been created successfully..");
+
+            // Step3
+            System.out.println("\n\n 3rd ===> Get Session and Send mail");
+            Transport transport = getMailSession.getTransport("smtp");
+            // Enter your correct gmail UserID and Password
+            transport.connect("smtp.gmail.com", "rathishyoungstani@gmail.com", "rathish@8055");
+            transport.sendMessage(generateMailMessage, generateMailMessage.getAllRecipients());
+            System.out.println("before closing the session");
+            transport.close();
+            System.out.println("\n\n ===> Your Java Program has just sent an Email successfully. Check your email..");
+            return entMeterResult;
+            // generateAndSendEmail();
+        }
+        catch (Exception e) {
+            GQGateKeeperConstants.logger.error("Exception occured while fetching the e-mail-Id ", e);
+            throw new Exception(e);
+        }
+        finally {
+            try {
+                if (session.isOpen()) {
+                    session.flush();
+                    session.close();
+                }
+            }
+            catch (Exception e) {
+                GQGateKeeperConstants.logger.error("Exception occured while closing the session ", e);
+                throw new Exception(e);
+            }
+        }
+    }
 
 }
