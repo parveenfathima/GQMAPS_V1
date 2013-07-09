@@ -3,6 +3,7 @@
  */
 package com.gq.meter.model;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
@@ -123,6 +124,21 @@ public class EnterpriseModel {
             GQGateKeeperConstants.logger.info("4");
             session.getTransaction().commit();
             GQGateKeeperConstants.logger.info("5");
+
+            String hql = "select max(sid),email from Enterprise ";
+            Query query = session.createQuery(hql);
+            List<Object[]> entMeterResult = query.list();
+
+            List<Enterprise> entp = new ArrayList<Enterprise>();
+
+            for (Object[] list : entMeterResult) {
+                Enterprise e = new Enterprise();
+                e.setSid((Short) list[0]);
+                entp.add(e);
+            }
+            System.out.println("reeslur is " + entp.get(0).getSid());
+            short sId = entp.get(0).getSid();
+            registrationEmail(sId);
         }
         catch (Exception e) {
             GQGateKeeperConstants.logger.error("Exception occured while creating the enterprise ", e);
