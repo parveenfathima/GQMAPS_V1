@@ -13,7 +13,9 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import com.gq.meter.model.EnterpriseModel;
 import com.gq.meter.model.EntpSummaryModel;
+import com.gq.meter.object.Enterprise;
 import com.gq.meter.object.EntpSummary;
 import com.gq.meter.util.GQGateKeeperConstants;
 import com.gq.meter.util.GQRegistrationConstants;
@@ -60,5 +62,26 @@ public class GeneralServices {
         }
         return Response.ok(GQRegistrationConstants.gson.toJson(summaryResult)).build();
         // return Response.ok(200).build();
+    }
+
+    @Path("/registrationEmail")
+    @GET
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getMeterRun(@QueryParam("sId") short sId) {
+
+        GQGateKeeperConstants.logger.info("Generating all the enterprise meters list from EnterpriseMeter");
+        EnterpriseModel enpModel = new EnterpriseModel();
+        List<Enterprise> meterResult = null;
+
+        try {
+            meterResult = enpModel.registrationEmail(sId);
+        }
+        catch (Exception e) {
+            GQGateKeeperConstants.logger.error("Exception occured while fetching the meter list ", e);
+            return Response.status(400).build();
+        }
+        // Returning all the meterList in JSON format
+        return Response.ok(GQRegistrationConstants.gson.toJson(meterResult)).build();
     }
 }
