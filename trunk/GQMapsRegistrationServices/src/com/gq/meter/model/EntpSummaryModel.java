@@ -57,7 +57,7 @@ public class EntpSummaryModel {
             session.beginTransaction();
             // String hql =
             // "select a.sid, a.enterpriseId, a.blCd, a.eName, a.phone, a.email, a.userId, a.passwd, a.secQtn1, a.ans1, a.secQtn2, a.ans2, a.storeFwd, a.fwdUrl, a.noOfEmpl, a.entSqft, a.entAssetCount, a.dcSqft, a.dcAssetCount, a.dcUsePctg, a.dcTemp, a.regCmplt, a.active, a.comments, a.creDttm, count(b.meterId), c.expDttm from Enterprise a, EnterpriseMeter b, GateKeeper c  where a.enterpriseId = b.enterpriseId AND a.enterpriseId = c.enterpriseId group by a.enterpriseId";
-            String hql = "select e.sid, e.enterpriseId, (select count(em.meterId) from EnterpriseMeter em where e.enterpriseId = em.enterpriseId), (select g.expDttm from GateKeeper g where e.enterpriseId = g.enterpriseId) from Enterprise e";
+            String hql = "select e.sid, e.enterpriseId, e.eName, (select count(em.meterId) from EnterpriseMeter em where e.enterpriseId = em.enterpriseId), (select g.expDttm from GateKeeper g where e.enterpriseId = g.enterpriseId) from Enterprise e";
             Query query = session.createQuery(hql);
             List<Object[]> summaryResult = query.list();
             System.out.println(summaryResult);
@@ -69,7 +69,7 @@ public class EntpSummaryModel {
                 entpSummary.setSid((Short) list[0]);
                 entpSummary.setEnterpriseId((String) list[1]);
                 // entpSummary.setBlCd((String) list[2].toString());
-                // entpSummary.seteName((String) list[3]);
+                entpSummary.seteName((String) list[2]);
                 // entpSummary.setPhone((String) list[4]);
                 // entpSummary.setEmail((String) list[5]);
                 // entpSummary.setUserId((String) list[6]);
@@ -92,8 +92,8 @@ public class EntpSummaryModel {
                 // entpSummary.setComments((String) list[23]);
                 // entpSummary.setCreDttm((Date) list[24]);
 
-                entpSummary.setmCount((Long) list[2]);
-                entpSummary.setExpDttm((Date) list[3]);
+                entpSummary.setmCount((Long) list[3]);
+                entpSummary.setExpDttm((Date) list[4]);
 
                 entpSummaryList.add(entpSummary);
             }
