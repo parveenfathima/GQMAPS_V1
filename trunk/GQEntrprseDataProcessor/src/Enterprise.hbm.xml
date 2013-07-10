@@ -26,20 +26,12 @@
         <property name="noOfEmpl" type="java.lang.Integer">
             <column name="no_of_empl" />
         </property>
-        <property name="noOfAssets" type="java.lang.Integer">
-            <column name="no_of_assets" />
-        </property>
         <property name="dcSqft" type="java.lang.Integer">
             <column name="dc_sqft" />
         </property>
         <property name="dcUsePctg" type="java.lang.Double">
             <column name="dc_use_pctg" precision="22" scale="0">
                 <comment>how much percentage of datacenter are effectively used linked to recommendation</comment>
-            </column>
-        </property>
-        <property name="assetRentPctg" type="java.lang.Double">
-            <column name="asset_rent_pctg" precision="22" scale="0">
-                <comment>how much percentage of assets are rented linked to recommendation</comment>
             </column>
         </property>
         <property name="dcTemp" type="java.lang.Integer">
