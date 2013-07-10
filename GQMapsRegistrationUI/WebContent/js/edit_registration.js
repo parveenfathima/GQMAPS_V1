@@ -96,6 +96,7 @@ function saveGeneral()
 
 function updateEntp(dbEntp)
 {		
+	
 	var eid = $.trim($("#txtEID").val());
 	var ename = $.trim($("#txtEName").val());
 	var uid = $.trim($("#txtUID").val());
@@ -116,6 +117,7 @@ function updateEntp(dbEntp)
 	var isRegistered = $('#chkRegCompl').is(':checked');
 	
 	var regStatus = "n";
+	
 	var active = "n";
 	
 	if(isRegistered)
@@ -178,7 +180,32 @@ function updateEntp(dbEntp)
 			dataType: "json",
 			success:function(json) 
 			{				
-				alert("Enterprise general details are saved successfully!");
+			
+				//sending activation email
+				
+				var url = $.jStorage.get("jsUrl") + "general/activationEmail?sId=" + dbEntp.getSId();	
+				var type = "GET";
+				if(dbEntp.getRegStatus() === "n" && formEntp.getRegStatus() === "y")
+				{
+						$.ajax
+						({
+							type:type,
+							contentType: "application/json",
+							url:url,
+							async:false,
+							dataType: "json",
+							success:function(json) 
+							{											
+								alert("An email has been sent to you with the username and password to login GQMaps! Thank you!");
+							},
+							error:function(json)
+							{
+								alert("Error from sending activation email: " + json.status + " " + json.responseText);
+							}
+						});
+				}
+				// end of activation email
+				
 				$( "#dlgGeneral" ).dialog( "close" );
 				window.location.href = "edit_registration.html";
 				gArrayIndex = "";
@@ -451,6 +478,7 @@ $(function() {
 function listEnterprise()
 {			
 		//var vUrl = 'http://localhost:8080/GQMapsRegistrationServices/gqm-gk/enterprise/getRegistration';
+		//var vUrl = 'http://localhost:8080/GQMapsRegistrationServices/gqm-gk/general/getEntpSummaryList';
 		var vUrl = $.jStorage.get("jsUrl") + "general/getEntpSummaryList";
 		
 		$.ajax({
@@ -471,13 +499,15 @@ function listEnterprise()
 						var vEId = "";	
 
 						$.each(json, function(i,n)
-						{								
-							arrEntp[i] = new enterprise($.trim(n["sid"]), $.trim(n["enterpriseId"]), $.trim(n["eName"]), $.trim(n["userId"]), $.trim(n["passwd"]), $.trim(n["storeFwd"]), $.trim(n["fwdUrl"]), $.trim(n["noOfEmpl"]), $.trim(n["entSqft"]), $.trim(n["entAssetCount"]), $.trim(n["dcSqft"]), $.trim(n["dcAssetCount"]), $.trim(n["dcUsePctg"]), $.trim(n["dcTemp"]), $.trim(n["comments"]), $.trim(n["active"]), $.trim(n["regCmplt"]), $.trim(n["mCount"]), $.trim(n["expDttm"]));		
+						{				
+									
+							arrEntp[i] = new enterprise($.trim(n["sid"]), $.trim(n["enterpriseId"]), $.trim(n["eName"]), $.trim(n["userId"]), $.trim(n["passwd"]), $.trim(n["storeFwd"]), $.trim(n["fwdUrl"]), $.trim(n["noOfEmpl"]), $.trim(n["entSqft"]), $.trim(n["entAssetCount"]), $.trim(n["dcSqft"]), $.trim(n["dcAssetCount"]), $.trim(n["dcUsePctg"]), $.trim(n["dcTemp"]), $.trim(n["comments"]), $.trim(n["active"]), $.trim(n["regCmplt"]), $.trim(n["mCount"]), $.trim(n["expDttm"]));	
 							
-							if($.trim(n["regCmplt"]) === 'n')
+							if(arrEntp[i].getRegStatus() === 'n')
 								vEntpList += '<tr style="height:25px; color: #FF0000">';
 							else
 								vEntpList += '<tr>';
+								
 								
 								vEntpList += '<td> <input type = "button" class = "button-font-a" id = "btnGeneral" title = "General" onClick = "openGeneralDialog(' + i + ')"/></td>';
 								vEntpList += '<td> <input type = "button" class = "button-font-a" id = "btnMeter" title = "Add Meter" onClick = "openMeterDialog(' + i + ')"/></td>';
@@ -486,7 +516,6 @@ function listEnterprise()
 								vEntpList += '<td  style = "padding-left: 65px;" class = "gen-form-font">' +  arrEntp[i].getEName() + '</td>';
 								vEntpList += '<td  style = "padding-left: 80px;" class = "gen-form-font">' +  arrEntp[i].getMCount()  + '</td>';
 								vEntpList += '<td  style = "padding-left: 100px;" class = "gen-form-font">' +  arrEntp[i].getExpDate() + '</td>';
-	
 								vEntpList += '</tr>';														
 						});	
 						
@@ -731,7 +760,7 @@ enterprise.prototype.setExpDate = function(expDate)
 enterprise.prototype.toString = function()  
 {
 	sid, eid, ename, uid, pwd, output, url, eSqft, eAsset, dSqft, dAsset, dcUsed, dcTemp, active, regStatus
-	return(this.eid + ", " + this.ename + ", " + this.uid + ", " + this.pwd + ", " + this.output + ", " + this.url + ", " + this.eEmpCount + ", "+ this.eSqft + ", " + this.eAsset + ", " + this.dSqft + ", " + this.dAsset + ", " + this.dcUsed + ", " + this.dcTemp + ", " + this.comments + ", " +this.active + ", " + this.regStatus);
+	return(this.eid + ", " + this.ename + ", " + this.uid + ", " + this.pwd + ", " + this.output + ", " + this.url + ", " + this.eEmpCount + ", "+ this.eSqft + ", " + this.eAsset + ", " + this.dSqft + ", " + this.dAsset + ", " + this.dcUsed + ", " + this.dcTemp + ", " + this.comments + ", " +this.active + ", " + this.regStatus + ", " + this.mcount + ", " + this.expDate);
 } // end of subject object	
 
 
