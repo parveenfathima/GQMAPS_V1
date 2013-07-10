@@ -19,11 +19,13 @@ public class EnterpriseMeter implements java.io.Serializable {
     private double latitude;
     private double longitude;
 
+    private long pcount;
+
     public EnterpriseMeter() {
     }
 
     public EnterpriseMeter(String meterId, String protocolId, String enterpriseId, String descr, String address,
-            String phone, double latitude, double longitude, Date creDttm) {
+            String phone, double latitude, double longitude, Date creDttm, long pcount) {
         this.meterId = meterId;
         this.protocolId = protocolId;
         this.enterpriseId = enterpriseId;
@@ -33,6 +35,7 @@ public class EnterpriseMeter implements java.io.Serializable {
         this.latitude = latitude;
         this.longitude = longitude;
         this.creDttm = creDttm;
+        this.setPcount(pcount);
     }
 
     public String getMeterId() {
@@ -105,6 +108,14 @@ public class EnterpriseMeter implements java.io.Serializable {
 
     public void setLongitude(double longitude) {
         this.longitude = longitude;
+    }
+
+    public long getPcount() {
+        return pcount;
+    }
+
+    public void setPcount(long pcount) {
+        this.pcount = pcount;
     }
 
 }
