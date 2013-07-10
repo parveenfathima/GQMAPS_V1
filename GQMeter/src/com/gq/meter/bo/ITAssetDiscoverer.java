@@ -45,6 +45,7 @@ public final class ITAssetDiscoverer {
     private static String gqmid = null;
     private Pattern pattern;
     private Matcher matcher;
+    private int meter_Count = 0;
 
     private Gson gson = new GsonBuilder().create();
     // public Gson gson = new GsonBuilder().setPrettyPrinting().create();
@@ -84,10 +85,9 @@ public final class ITAssetDiscoverer {
                 communityString = entry.getValue();
 
                 System.out.println("********************************************************************");
-                System.out.println("CommunityString : " + communityString + " - Ipaddress : " + ipAddress);
+                System.out.println(" [GQMETER] CommunityString : " + communityString + " - Ipaddress : " + ipAddress);
 
                 snmpDetails = MeterUtils.isSnmpConfigured(communityString, ipAddress);
-                System.out.println("SNMP Details from findAssets:" + snmpDetails);
                 if (snmpDetails != null && snmpDetails.size() != 0) {
                     snmpVersion = snmpDetails.get("snmpVersion");
                     assetDesc = snmpDetails.get("assetDesc");
@@ -123,11 +123,10 @@ public final class ITAssetDiscoverer {
                         }// else ends
                     }
                     else {
-                        System.out.println("From snmpunknownip else part");
                         snmpUnknownIPList.add(ipAddress);
                         this.setSnmpUnknownIPList(snmpUnknownIPList);
                         errorList = new LinkedList<String>();
-                        errorList.add(ipAddress + " -  : Cannot reach the asset");
+                        errorList.add(communityString + " - " + ipAddress + " -  : Cannot reach the asset");
                         gqErrInfo = new GQErrorInformation(null, errorList);
                         gqerrorInfoList.add(gqErrInfo);
                     }
@@ -135,7 +134,7 @@ public final class ITAssetDiscoverer {
             }// for loop ends
         }
         catch (Exception e) {
-            System.out.println("Exception occured while processing the communityIpMap ");
+            System.out.println(" [GQMETER] Exception occured while processing the communityIpMap ");
             e.printStackTrace();
         }
         finally {
@@ -174,7 +173,7 @@ public final class ITAssetDiscoverer {
                     String inputAssets = MeterUtils.read(assetFileStream);
 
                     if (inputAssets == null || inputAssets.trim().length() == 0) {
-                        System.out.println("*** The asset file is empty ***");
+                        System.out.println(" [GQMETER] *** The asset file is empty ***");
                         System.exit(1);
                     }// if ends
 
@@ -188,15 +187,22 @@ public final class ITAssetDiscoverer {
                         }
                         // line starts with $ for meterid
                         if (line.startsWith("$")) {
-                            if (line.toLowerCase().startsWith(MeterConstants.METER_ID)) {
-                                gqmid = line.replace(MeterConstants.METER_ID, "").trim();
-                                // This Condition used to check meter id value is empty or not
-                                if (gqmid.isEmpty()) {
-                                    System.out.println("Meter Id is empty");
-                                    System.out.println("..............Check Meter Id .............");
-                                    System.exit(0);
+                            meter_Count++;
+                            if (meter_Count == 1) {
+                                if (line.toLowerCase().startsWith(MeterConstants.METER_ID)) {
+                                    gqmid = line.replace(MeterConstants.METER_ID, "").trim();
+                                    // This Condition used to check meter id value is empty or not
+                                    if (gqmid.isEmpty()) {
+                                        System.out.println(" [GQMETER] Meter Id is empty");
+                                        System.out.println(" [GQMETER] ..............Check Meter Id .............");
+                                        System.exit(0);
+                                    }
+                                    isValid(gqmid);
                                 }
-                                isValid(gqmid);
+                            }
+                            else {
+                                System.out.println(" [GQMETER] Please Check Multiple Meter ID's are Given...");
+                                System.exit(0);
                             }
                         }
                         // line starts with @ for switches
@@ -204,38 +210,46 @@ public final class ITAssetDiscoverer {
                             sToken = new StringTokenizer(line, " ");
                             if (gqmid != null) {
                                 if (sToken.countTokens() == 2) {
-                                    String s_name = line.substring(0, line.indexOf(" "));
-                                    String v_name = line.replace(s_name, "").trim();
-                                    List<String> l = new ArrayList<String>();
-                                    l.add(MeterConstants.COMPUTER_SWITCHS);
-                                    l.add(MeterConstants.PRINTER_SWITCHS);
-                                    l.add(MeterConstants.NSRG_SWITCHS);
-                                    l.add(MeterConstants.STORAGE_SWITCHS);
-                                    if (l.contains(s_name)) {
-                                        if (v_name.equalsIgnoreCase(MeterConstants.FULL_DETAILS)
-                                                || v_name.equalsIgnoreCase(MeterConstants.CONNECTED_DEVICES)
-                                                || v_name.equalsIgnoreCase(MeterConstants.SNAPSHOT)
-                                                || v_name.equalsIgnoreCase(MeterConstants.PROCESS)
-                                                || v_name.equalsIgnoreCase(MeterConstants.INSTALLED_SOFTWARE)) {
+                                    String switchName = line.substring(0, line.indexOf(" "));
+                                    String switchValueName = line.replace(switchName, "").trim();
+                                    /*
+                                     * List<String> l = new ArrayList<String>(); l.add(MeterConstants.COMPUTER_SWITCHS);
+                                     * l.add(MeterConstants.PRINTER_SWITCHS); l.add(MeterConstants.NSRG_SWITCHS);
+                                     * l.add(MeterConstants.STORAGE_SWITCHS);
+                                     */
+                                    if (switchName.equals(MeterConstants.COMPUTER_SWITCHS)
+                                            || switchName.equals(MeterConstants.PRINTER_SWITCHS)
+                                            || switchName.equals(MeterConstants.NSRG_SWITCHS)
+                                            || switchName.equals(MeterConstants.STORAGE_SWITCHS)) {
+                                        if (switchValueName.equalsIgnoreCase(MeterConstants.FULL_DETAILS)
+                                                || switchValueName.equalsIgnoreCase(MeterConstants.CONNECTED_DEVICES)
+                                                || switchValueName.equalsIgnoreCase(MeterConstants.SNAPSHOT)
+                                                || switchValueName.equalsIgnoreCase(MeterConstants.PROCESS)
+                                                || switchValueName.equalsIgnoreCase(MeterConstants.INSTALLED_SOFTWARE)) {
+
                                             MeterUtils.manageSwitches(line, switches);
                                         }
                                         else {
-                                            System.out.println("Invalid Switch Value..");
-                                            MeterUtils.count++;
-                                            // System.out.println("Count2:"+MeterUtils.count);
+                                            System.out.println(" [GQMETER] Invalid Switch Value..");
+                                            System.exit(0);
                                         }
+                                    }
+                                    else {
+                                        System.out.println(" [GQMETER] ---Invalid Switch Name---");
+                                        System.out.println(" [GQMETER] Process Terminated Now...");
+                                        System.exit(0);
                                     }
                                 }
                                 else {
-                                    System.out.println("Check Switch Value is empty....");
-                                    System.out.println("Process should be stopped now.....");
+                                    System.out.println(" [GQMETER] Check Switch Value is empty....");
+                                    System.out.println(" [GQMETER] Process should be stopped now.....");
                                     System.exit(0);
                                 }
                             }
 
                             else {
-                                System.out.println("Check Meter Id...");
-                                System.out.println("Process stopped........");
+                                System.out.println(" [GQMETER] Check Meter Id...");
+                                System.out.println(" [GQMETER] Process stopped........");
                                 System.exit(0);
                             }
                         }
@@ -266,14 +280,15 @@ public final class ITAssetDiscoverer {
                                         }
                                         // This condition used to check the lowerboundip and ipupperboundip as same
                                         else if (MeterUtils.ipComparator.compare(ipLowerbound, ipUpperbound) == 0) {
-                                            System.out.println("IP lower bound : " + ipLowerbound + "IP upper bound : "
-                                                    + ipUpperbound + " \nBoth Ip's should be same.....");
-                                            System.out.println("Process Terminated Now.....");
+                                            System.out.println(" [GQMETER] IP lower bound : " + ipLowerbound
+                                                    + "IP upper bound : " + ipUpperbound
+                                                    + " \nBoth Ip's should be same.....");
+                                            System.out.println(" [GQMETER] Process Terminated Now.....");
                                             System.exit(0);
                                         }
                                         else {
-                                            System.out.println("IP lower bound : " + ipLowerbound + "IP upper bound : "
-                                                    + ipUpperbound + " -  : Invalid ip range");
+                                            System.out.println(" [GQMETER] IP lower bound : " + ipLowerbound
+                                                    + "IP upper bound : " + ipUpperbound + " -  : Invalid ip range");
                                             System.exit(0);
                                             /*
                                              * errorList = new LinkedList<String>(); errorList.add(sToken +
@@ -284,11 +299,11 @@ public final class ITAssetDiscoverer {
                                         }
                                     }
                                     else if (isIPAddressValid(ipLowerbound)) {
-                                        System.out.println("INVALID UPPERBOUNDIP:" + ipUpperbound);
+                                        System.out.println(" [GQMETER] INVALID UPPERBOUNDIP:" + ipUpperbound);
                                         communityIPMap.put(ipLowerbound, communityString);
                                     }
                                     else {
-                                        System.out.println("INVALID LOWERBOUNDIP:" + ipLowerbound);
+                                        System.out.println(" [GQMETER] INVALID LOWERBOUNDIP:" + ipLowerbound);
                                         communityIPMap.put(ipUpperbound, communityString);
                                     }
                                 }// if ends
@@ -297,27 +312,28 @@ public final class ITAssetDiscoverer {
                                         communityIPMap.put(ipLowerbound, communityString);
                                     }
                                     else {
-                                        System.out.println(" Invalid IPAddress:" + ipLowerbound);
+                                        System.out.println(" [GQMETER] Invalid IPAddress:" + ipLowerbound);
                                         continue;
                                     }
                                 }
                             }// if ends
                             else {
-                                System.out.println("INVALID : entry -" + line);
-                                System.out.println("Usage : COMMUNITY_STRING IP_LOWER_BOUND IP_UPPER_BOUND");
+                                System.out.println(" [GQMETER] INVALID : entry -" + line);
+                                System.out.println(" [GQMETER] Usage : COMMUNITY_STRING IP_LOWER_BOUND IP_UPPER_BOUND");
                                 System.exit(1);
                             }
                         }// else ends
                     }// for loop ends
                 }// if ends
                 else {
-                    System.out.println("Exception occured : Unable to locate the input file");
+                    System.out.println(" [GQMETER] Exception occured : Unable to locate the input file");
                     System.exit(1);
                 }
             }
             catch (Exception e) {
                 e.printStackTrace();
-                System.out.println("Exception occured : Unable to locate the input file for processing : " + e);
+                System.out.println(" [GQMETER] Exception occured : Unable to locate the input file for processing : "
+                        + e);
             }
             finally {
                 try {
@@ -330,7 +346,7 @@ public final class ITAssetDiscoverer {
                     return communityIPMap; // returns not null map with all the asset objects value
                 }
                 catch (Exception e) {
-                    System.out.println("Exception occured while closing the buffer after reading : " + e);
+                    System.out.println(" [GQMETER] Exception occured while closing the buffer after reading : " + e);
                 }
             }
         }
@@ -343,18 +359,15 @@ public final class ITAssetDiscoverer {
             Client client = Client.create(config);
             WebResource service = client.resource(MeterUtils.restURL);
             service = service.path("gqm-gk").path("metercheck");
-            System.out.println("Validating the expiry date for the meter " + gqmid);
+            System.out.println(" [GQMETER] Validating the expiry date for the meter " + gqmid);
             ClientResponse response = service.queryParam("meterId", gqmid).post(ClientResponse.class);
             String resp = response.getEntity(String.class).trim();
-            System.out.println("service" + response);
-            System.out.println("resp" + resp);
             String resp1 = resp.substring(0, 7);
-            System.out.println("response1" + resp1);
             if (resp.equals(resp1)) {
-                System.out.println("The MeterId: " + gqmid + " is valid");
+                System.out.println(" [GQMETER] The MeterId: " + gqmid + " is valid");
             }
             else {
-                System.out.println("Your Meter: " + gqmid + " is expired/invalid ");
+                System.out.println(" [GQMETER] Your Meter: " + gqmid + " is expired");
                 System.exit(0);
             }
 
@@ -374,6 +387,7 @@ public final class ITAssetDiscoverer {
     }
 
     public void discover(String inputFilePath) {
+        System.out.println(" [GQMETER] started successfully.......");
         gqmResponse = new GQMeterResponse();
         gqmResponse.setRecDttm(new Date());// -------------------------->test this
 
@@ -403,27 +417,29 @@ public final class ITAssetDiscoverer {
         gqmResponse.setGqmid(gqmid);
 
         System.out.println("::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::");
-        System.out.println("json of GQMeterData = " + gson.toJson(gqmResponse));
-        System.out.println("::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::");
-
         // The end time of the meter execution
 
-        System.out.println("Total number of assets taken after processing the inputfile : "
+        System.out.println(" [GQMETER] Total number of assets taken after processing the inputfile : "
                 + gqmResponse.getAssetScanned());
 
-        System.out.println("Total time taken to know snmp is installed on the devices : " + MeterUtils.snmpKnownTime);
-        System.out.println("Total time taken to know snmp is not installed on the devices : "
+        System.out.println(" [GQMETER] Total time taken to know snmp is installed on the devices : "
+                + MeterUtils.snmpKnownTime);
+        System.out.println(" [GQMETER] Total time taken to know snmp is not installed on the devices : "
                 + MeterUtils.snmpUnknownTime);
 
-        System.out.println("The list of snmp configured devices : " + this.getSnmpKnownIPList().toString());
-        System.out.println("The list of no snmp configured devices : " + this.getSnmpUnknownIPList().toString());
-        System.out.println("Total number of assets processed : " + this.getSnmpKnownIPList().size());
-        System.out.println("Total number of assets not processed : " + this.getSnmpUnknownIPList().size());
-
-        System.out.println("Total time taken for all COMPUTER meters : " + MeterUtils.compMeterTime);
-        System.out.println("Total time taken for all PRINTER meters : " + MeterUtils.printMeterTime);
-        System.out.println("Total time taken for all NSRG meters : " + MeterUtils.nsrgMeterTime);
-        System.out.println("TOTAL duration taken for meter execution : " + (endTime - startTime));
+        System.out.println(" [GQMETER] The list of snmp configured devices : " + this.getSnmpKnownIPList().toString());
+        System.out.println(" [GQMETER] The list of no snmp configured devices : "
+                + this.getSnmpUnknownIPList().toString());
+        // System.out.println("Total number of assets processed : " + this.getSnmpKnownIPList().size());
+        // System.out.println("Total number of assets not processed : " + this.getSnmpUnknownIPList().size());
+        System.out.println(" [GQMETER] Total number of Valid IP addresses found in given input file : "
+                + communityIPMap.size());
+        System.out.println(" [GQMETER] SNMP walk succeeded count is : " + this.getSnmpKnownIPList().size());
+        System.out.println(" [GQMETER] Total time taken for all COMPUTER meters : " + MeterUtils.compMeterTime);
+        System.out.println(" [GQMETER] Total time taken for all PRINTER meters : " + MeterUtils.printMeterTime);
+        System.out.println(" [GQMETER] Total time taken for all NSRG meters : " + MeterUtils.nsrgMeterTime);
+        System.out.println(" [GQMETER] TOTAL duration taken for meter execution : " + (endTime - startTime));
+        System.out.println(" [GQMETER] stopped ....");
 
         // Sending the generated json output to the server
         ClientConfig config = new DefaultClientConfig();
@@ -443,7 +459,7 @@ public final class ITAssetDiscoverer {
     public static void main(String[] args) throws IOException {
 
         if (args.length != 1) {
-            System.out.println("Usage : ASSETDETAILS_FILE_PATH");
+            System.out.println(" [GQMETER] Usage : ASSETDETAILS_FILE_PATH");
             System.exit(1);
         }
         ITAssetDiscoverer itad = new ITAssetDiscoverer();
