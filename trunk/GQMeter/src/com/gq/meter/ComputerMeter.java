@@ -416,7 +416,7 @@ public class ComputerMeter implements GQSNMPMeter {
         GQMeterData gqMeterObject = new GQMeterData(gqErrorInfo, compObject);
         long computerendTime = System.currentTimeMillis();
         MeterUtils.compMeterTime = MeterUtils.compMeterTime + (computerendTime - computerstartTime);
-        System.out.println("Time taken by the computer meter is : " + (computerendTime - computerstartTime));
+        System.out.println(" [GQMETER] Time taken by the computer meter is : " + (computerendTime - computerstartTime));
         return gqMeterObject;
 
     } // GQMeterData method ends
@@ -902,7 +902,7 @@ public class ComputerMeter implements GQSNMPMeter {
                 String FinalIP = one + "." + two + "." + three + "." + four;
 
                 if (!FinalIP.trim().equals(ipAddress) && !FinalIP.trim().equals("0.0.0.0")
-                        && !FinalIP.trim().equals("127.0.0.1") && port.length() == 4) { // 2nd if loop starts
+                        && !FinalIP.trim().equals("127.0.0.1") && port.length() <= 4) { // 2nd if loop starts
                     if (FinalIP != null && FinalIP.trim().length() != 0) {
                         compConnDeviceId = new CompConnDeviceId(runId, assetId, FinalIP, port);
                         connDevice = new CompConnDevice(compConnDeviceId);

@@ -126,7 +126,7 @@ public class StorageMeter implements GQSNMPMeter {
         GQMeterData gqMeterObject = new GQMeterData(gqErrorInfo, storageObj);
         long storageEndTime = System.currentTimeMillis();
         MeterUtils.storageMeterTime = MeterUtils.storageMeterTime + (storageEndTime - storageStartTime);
-        System.out.println("Time taken bye the storage meter is : " + (storageEndTime - storageStartTime));
+        System.out.println(" [GQMETER] Time taken by the storage meter is : " + (storageEndTime - storageStartTime));
         return gqMeterObject;
     }
 
