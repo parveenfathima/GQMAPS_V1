@@ -38,6 +38,10 @@ import com.gq.meter.object.Asset;
 
 public class MeterUtils {
     public static int count = 0;
+    public static int computer_Switch_Count = 0;
+    public static int printer_Switch_Count = 0;
+    public static int nsrg_Switch_Count = 0;
+    public static int storage_Switch_Count = 0;
     public static long snmpKnownTime = 0;
     public static long snmpUnknownTime = 0;
     public static long compMeterTime = 0;
@@ -45,7 +49,8 @@ public class MeterUtils {
     public static long nsrgMeterTime = 0;
     public static long storageMeterTime = 0;
     public static final String restURL = "http://gqexchange.com:8080/GQGatekeeper/";
-    //public static final String restURL = "http://localhost:8080/GQGatekeeper/";
+
+    // public static final String restURL = "http://localhost:8080/GQGatekeeper/";
 
     public static Asset sysBasicInfo(String communityString, String ipAddress, String snmpVersion,
             List<String> errorList) {
@@ -136,7 +141,7 @@ public class MeterUtils {
 
         if (result == null || result.isEmpty()) {
             // may be the device is serving snmp but not version 2 , so lets try version 1
-            System.out.println("SNMP Version2 is failed for this device,trying for version1 now");
+            System.out.println(" [GQMETER] SNMP Version2 is failed for this device,trying for version1 now");
             snmpVersion = MeterConstants.SNMP_VERSION_1;
 
             target = makeTarget(currIp, communityString, snmpVersion); // needs to be done only once.
@@ -144,14 +149,16 @@ public class MeterUtils {
 
             if (result == null || result.isEmpty()) {
                 // may be the device is not serving snmp at all. so lets get out or throw io exception
-                System.out.println("SNMP Version2 && version1 are failed, The asset is not configure with SNMP ");
+                System.out
+                        .println(" [GQMETER] SNMP Version2 && version1 are failed, The asset is not configure with SNMP ");
                 long snmpEndTime = System.currentTimeMillis();
 
                 snmpUnknownTime = snmpUnknownTime + (snmpEndTime - snmpStartTime);// Time taken to find snmp is not
                                                                                   // configured
                 assetDetails.put("snmpUnKnownIp", currIp);
 
-                System.out.println("### SNMP is not configured in this device ### : " + (snmpEndTime - snmpStartTime));
+                System.out.println(" [GQMETER] ### SNMP is not configured in this device ### : "
+                        + (snmpEndTime - snmpStartTime));
                 return assetDetails; // if snmp is configured & the SNMP_CHECK_OCTET doesn't exist then return null;
             }// 2nd if ends
         }// 1st if ends
@@ -164,7 +171,8 @@ public class MeterUtils {
         snmpKnownTime = snmpKnownTime + (snmpEndTime - snmpStartTime); // Time taken to find snmp is configured
         assetDetails.put("snmpKnownIp", currIp);
 
-        System.out.println("*** Time taken to find isSnmpConfigured or not : " + (snmpEndTime - snmpStartTime));
+        System.out.println(" [GQMETER] *** Time taken to find isSnmpConfigured or not : "
+                + (snmpEndTime - snmpStartTime));
         return assetDetails;
     }
 
@@ -181,6 +189,7 @@ public class MeterUtils {
         // call diff walks
 
         OID rootOID = new OID(oidString);
+
         List<VariableBinding> result = walk(rootOID, target);
         mProtocol = MeterProtocols.PRINTER;
 
@@ -263,17 +272,17 @@ public class MeterUtils {
 
             if (status) {
                 hostIsReachable = true;
-                System.out.println("Status : Host is reachable");
+                System.out.println(" [GQMETER] Status : Host is reachable");
             }
             else {
-                System.out.println("Status : Host is not reachable : " + ipAddress);
+                System.out.println(" [GQMETER] Status : Host is not reachable : " + ipAddress);
             }
         }
         catch (UnknownHostException e) {
-            System.err.println("Host does not exists : " + ipAddress);
+            System.err.println(" [GQMETER] Host does not exists : " + ipAddress);
         }
         catch (IOException e) {
-            System.err.println("Error in reaching the Host : " + ipAddress);
+            System.err.println(" [GQMETER] Error in reaching the Host : " + ipAddress);
         }
         return hostIsReachable;
     }// isAssetAlive ends
@@ -439,7 +448,7 @@ public class MeterUtils {
             snmp.close();
         }
         catch (IOException e) {
-            System.out.println("Exception occured while doing the snmp walk : " + e);
+            System.out.println(" [GQMETER] Exception occured while doing the snmp walk : " + e);
         }
         return ret;
     }
@@ -450,7 +459,6 @@ public class MeterUtils {
      * @return
      */
     public static String getSNMPValue(String octetString, List<VariableBinding> result) {
-
         for (VariableBinding vb : result) {
             if (octetString.equals(vb.getOid().toString())) {
                 return vb.getVariable().toString();
@@ -519,74 +527,102 @@ public class MeterUtils {
             HashMap<MeterProtocols, LinkedList<String>> assetSwitches) {
 
         if (line.toLowerCase().startsWith(MeterConstants.COMPUTER_SWITCHS)) {
-            line = line.replace(MeterConstants.COMPUTER_SWITCHS, "").trim();
-            LinkedList<String> compSwitchList = null;
-
-            if (line.contains(MeterConstants.FULL_DETAILS)) {
-                compSwitchList = new LinkedList<String>();
-                compSwitchList.add(MeterConstants.FULL_DETAILS);
-                assetSwitches.put(MeterProtocols.COMPUTER, compSwitchList);
+            computer_Switch_Count++;
+            if (computer_Switch_Count == 1) {
+                line = line.replace(MeterConstants.COMPUTER_SWITCHS, "").trim();
+                LinkedList<String> compSwitchList = null;
+                if (line.contains(MeterConstants.FULL_DETAILS)) {
+                    compSwitchList = new LinkedList<String>();
+                    compSwitchList.add(MeterConstants.FULL_DETAILS);
+                    assetSwitches.put(MeterProtocols.COMPUTER, compSwitchList);
+                }
+                else {
+                    compSwitchList = new LinkedList<String>();
+                    for (String switches : line.split("\\|")) {
+                        compSwitchList.add(switches);
+                    }
+                    assetSwitches.put(MeterProtocols.COMPUTER, compSwitchList);
+                }
             }
             else {
-                compSwitchList = new LinkedList<String>();
-                for (String switches : line.split("\\|")) {
-                    compSwitchList.add(switches);
-                }
-                assetSwitches.put(MeterProtocols.COMPUTER, compSwitchList);
+                System.out
+                        .println(" [GQMETER] Multiple Identical " + MeterConstants.COMPUTER_PROTOCOL + " Switches...");
+                System.exit(0);
             }
 
         }
         else if (line.toLowerCase().startsWith(MeterConstants.PRINTER_SWITCHS)) {
-            line = line.replace(MeterConstants.PRINTER_SWITCHS, "").trim();
-            LinkedList<String> printerSwitchList = null;
+            printer_Switch_Count++;
+            if (printer_Switch_Count == 1) {
+                line = line.replace(MeterConstants.PRINTER_SWITCHS, "").trim();
+                LinkedList<String> printerSwitchList = null;
 
-            if (line.contains(MeterConstants.FULL_DETAILS)) {
-                printerSwitchList = new LinkedList<String>();
-                printerSwitchList.add(MeterConstants.FULL_DETAILS);
-                assetSwitches.put(MeterProtocols.PRINTER, printerSwitchList);
+                if (line.contains(MeterConstants.FULL_DETAILS)) {
+                    printerSwitchList = new LinkedList<String>();
+                    printerSwitchList.add(MeterConstants.FULL_DETAILS);
+                    assetSwitches.put(MeterProtocols.PRINTER, printerSwitchList);
+                }
+                else {
+                    printerSwitchList = new LinkedList<String>();
+                    for (String switches : line.split("\\|")) {
+                        printerSwitchList.add(switches);
+                    }
+                    assetSwitches.put(MeterProtocols.PRINTER, printerSwitchList);
+                }
             }
             else {
-                printerSwitchList = new LinkedList<String>();
-                for (String switches : line.split("\\|")) {
-                    printerSwitchList.add(switches);
-                }
-                assetSwitches.put(MeterProtocols.PRINTER, printerSwitchList);
+                System.out.println(" [GQMETER] Multiple Identical " + MeterConstants.PRINTER_PROTOCOL + " Switches...");
+                System.exit(0);
             }
-
         }
         else if (line.toLowerCase().startsWith(MeterConstants.NSRG_SWITCHS)) {
-            line = line.replace(MeterConstants.NSRG_SWITCHS, "").trim();
-            LinkedList<String> isrSwitchList = null;
+            nsrg_Switch_Count++;
+            if (nsrg_Switch_Count == 1) {
+                line = line.replace(MeterConstants.NSRG_SWITCHS, "").trim();
+                LinkedList<String> isrSwitchList = null;
 
-            if (line.contains(MeterConstants.FULL_DETAILS)) {
-                isrSwitchList = new LinkedList<String>();
-                isrSwitchList.add(MeterConstants.FULL_DETAILS);
-                assetSwitches.put(MeterProtocols.NSRG, isrSwitchList);
+                if (line.contains(MeterConstants.FULL_DETAILS)) {
+                    isrSwitchList = new LinkedList<String>();
+                    isrSwitchList.add(MeterConstants.FULL_DETAILS);
+                    assetSwitches.put(MeterProtocols.NSRG, isrSwitchList);
+                }
+                else {
+                    isrSwitchList = new LinkedList<String>();
+                    for (String switches : line.split("\\|")) {
+                        isrSwitchList.add(switches);
+                    }
+                    assetSwitches.put(MeterProtocols.NSRG, isrSwitchList);
+                }
             }
             else {
-                isrSwitchList = new LinkedList<String>();
-                for (String switches : line.split("\\|")) {
-                    isrSwitchList.add(switches);
-                }
-                assetSwitches.put(MeterProtocols.NSRG, isrSwitchList);
+                System.out.println(" [GQMETER] Multiple Identical " + MeterConstants.NSRG_PROTOCOL + " Switches...");
+                System.exit(0);
             }
         }
         else if (line.toLowerCase().startsWith(MeterConstants.STORAGE_SWITCHS)) {
-            line = line.replace(MeterConstants.STORAGE_SWITCHS, "").trim();
-            LinkedList<String> isrSwitchList = null;
+            storage_Switch_Count++;
+            if (storage_Switch_Count == 1) {
+                line = line.replace(MeterConstants.STORAGE_SWITCHS, "").trim();
+                LinkedList<String> isrSwitchList = null;
 
-            if (line.contains(MeterConstants.FULL_DETAILS)) {
-                isrSwitchList = new LinkedList<String>();
-                isrSwitchList.add(MeterConstants.FULL_DETAILS);
-                assetSwitches.put(MeterProtocols.STORAGE, isrSwitchList);
+                if (line.contains(MeterConstants.FULL_DETAILS)) {
+                    isrSwitchList = new LinkedList<String>();
+                    isrSwitchList.add(MeterConstants.FULL_DETAILS);
+                    assetSwitches.put(MeterProtocols.STORAGE, isrSwitchList);
+                }
+                else {
+                    isrSwitchList = new LinkedList<String>();
+                    for (String switches : line.split("\\|")) {
+                        isrSwitchList.add(switches);
+                    }
+                    assetSwitches.put(MeterProtocols.STORAGE, isrSwitchList);
+                }
             }
             else {
-                isrSwitchList = new LinkedList<String>();
-                for (String switches : line.split("\\|")) {
-                    isrSwitchList.add(switches);
-                }
-                assetSwitches.put(MeterProtocols.STORAGE, isrSwitchList);
+                System.out.println(" [GQMETER] Multiple Identical " + MeterConstants.STORAGE_PROTOCOL + " Switches...");
+                System.exit(0);
             }
+
         }
         return assetSwitches;
     }
