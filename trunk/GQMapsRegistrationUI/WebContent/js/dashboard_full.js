@@ -76,8 +76,8 @@ function loadMeterTypes()
 				//alert("load meter types: " + $.jStorage.get("jsMeters"));
 				jQuery.each(json, function(i, v) 
 				{
-					vTypes = vTypes + "<tr><td class = 'td-font'><span class='span-color'>" + json[i] + "</span></td></tr>";
-		
+					vTypes = vTypes + "<tr><td class = 'td-font'><span class='span-color'>" + v["protocolId"] + "</span></td><td class = 'td-font'><span class='span-color'>" + v["pcount"] + "</span></td></tr>";
+
 			   });
 			}
 			else
