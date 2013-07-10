@@ -17,7 +17,6 @@ public class Enterprise implements java.io.Serializable {
     private String email;
     private char active;
     private String userId;
-    private String UName;
     private String passwd;
     private Short secQtn1;
     private String ans1;
@@ -27,11 +26,9 @@ public class Enterprise implements java.io.Serializable {
     private char storeFwd;
     private String fwdUrl;
     private Integer noOfEmpl;
-    private Integer noOfAssets;
     private Integer dcSqft;
     private Character regCmplt;
     private Double dcUsePctg;
-    private Double assetRentPctg;
     private Integer dcTemp;
     private String comments;
 
@@ -39,23 +36,22 @@ public class Enterprise implements java.io.Serializable {
     }
 
     public Enterprise(Character enterpriseId, char blCd, String EName, String phone, String email, String userId,
-            String UName, String passwd, Date creDttm, char storeFwd) {
+            String passwd, Date creDttm, char storeFwd) {
         this.enterpriseId = enterpriseId;
         this.blCd = blCd;
         this.EName = EName;
         this.phone = phone;
         this.email = email;
         this.userId = userId;
-        this.UName = UName;
         this.passwd = passwd;
         this.creDttm = creDttm;
         this.storeFwd = storeFwd;
     }
 
     public Enterprise(Character enterpriseId, char blCd, String EName, String phone, String email, char active,
-            String userId, String UName, String passwd, Short secQtn1, String ans1, Short secQtn2, String ans2,
-            Date creDttm, char storeFwd, String fwdUrl, Integer noOfEmpl, Integer noOfAssets, Integer dcSqft,
-            Character regCmplt, Double dcUsePctg, Double assetRentPctg, Integer dcTemp, String comments) {
+            String userId, String passwd, Short secQtn1, String ans1, Short secQtn2, String ans2, Date creDttm,
+            char storeFwd, String fwdUrl, Integer noOfEmpl, Integer dcSqft, Character regCmplt, Double dcUsePctg,
+            Integer dcTemp, String comments) {
         this.enterpriseId = enterpriseId;
         this.blCd = blCd;
         this.EName = EName;
@@ -63,7 +59,6 @@ public class Enterprise implements java.io.Serializable {
         this.email = email;
         this.active = active;
         this.userId = userId;
-        this.UName = UName;
         this.passwd = passwd;
         this.secQtn1 = secQtn1;
         this.ans1 = ans1;
@@ -73,11 +68,9 @@ public class Enterprise implements java.io.Serializable {
         this.storeFwd = storeFwd;
         this.fwdUrl = fwdUrl;
         this.noOfEmpl = noOfEmpl;
-        this.noOfAssets = noOfAssets;
         this.dcSqft = dcSqft;
         this.regCmplt = regCmplt;
         this.dcUsePctg = dcUsePctg;
-        this.assetRentPctg = assetRentPctg;
         this.dcTemp = dcTemp;
         this.comments = comments;
     }
@@ -136,14 +129,6 @@ public class Enterprise implements java.io.Serializable {
 
     public void setUserId(String userId) {
         this.userId = userId;
-    }
-
-    public String getUName() {
-        return this.UName;
-    }
-
-    public void setUName(String UName) {
-        this.UName = UName;
     }
 
     public String getPasswd() {
@@ -226,14 +211,6 @@ public class Enterprise implements java.io.Serializable {
         this.noOfEmpl = noOfEmpl;
     }
 
-    public Integer getNoOfAssets() {
-        return this.noOfAssets;
-    }
-
-    public void setNoOfAssets(Integer noOfAssets) {
-        this.noOfAssets = noOfAssets;
-    }
-
     public Integer getDcSqft() {
         return this.dcSqft;
     }
@@ -256,14 +233,6 @@ public class Enterprise implements java.io.Serializable {
 
     public void setDcUsePctg(Double dcUsePctg) {
         this.dcUsePctg = dcUsePctg;
-    }
-
-    public Double getAssetRentPctg() {
-        return this.assetRentPctg;
-    }
-
-    public void setAssetRentPctg(Double assetRentPctg) {
-        this.assetRentPctg = assetRentPctg;
     }
 
     public Integer getDcTemp() {
