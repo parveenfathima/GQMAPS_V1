@@ -25,6 +25,7 @@ public class Enterprise implements java.io.Serializable {
     private Date creDttm;
     private char storeFwd;
     private String fwdUrl;
+    private String fwdPwd;
     private Integer noOfEmpl;
     private Integer dcSqft;
     private Character regCmplt;
@@ -201,6 +202,20 @@ public class Enterprise implements java.io.Serializable {
 
     public void setFwdUrl(String fwdUrl) {
         this.fwdUrl = fwdUrl;
+    }
+
+    /**
+     * @return the fwdPwd
+     */
+    public String getFwdPwd() {
+        return fwdPwd;
+    }
+
+    /**
+     * @param fwdPwd the fwdPwd to set
+     */
+    public void setFwdPwd(String fwdPwd) {
+        this.fwdPwd = fwdPwd;
     }
 
     public Integer getNoOfEmpl() {
