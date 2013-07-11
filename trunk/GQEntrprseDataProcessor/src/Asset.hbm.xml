@@ -27,7 +27,7 @@
             <column name="srvr_app_id" length="20" />
         </property>
         <property name="assetUsg" type="string">
-            <column name="asset_usg" length="45" />
+            <column name="asset_usg" length="20" />
         </property>
         <property name="assetStrength" type="java.lang.Byte">
             <column name="asset_strength" />

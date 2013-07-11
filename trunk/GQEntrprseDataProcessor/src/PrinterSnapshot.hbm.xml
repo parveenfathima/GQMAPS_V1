@@ -30,8 +30,8 @@
         <property name="upTime" type="java.lang.Long">
             <column name="up_time" />
         </property>
-        <property name="tonerPctg" type="java.lang.Double">
-            <column name="toner_pctg" precision="22" scale="0" />
+        <property name="toner_status" type="string">
+            <column name="toner_status" length="10" />
         </property>
         <property name="outOfPaprInd" type="java.lang.Character">
             <column name="out_of_papr_ind" length="1" />
@@ -39,7 +39,7 @@
         <property name="prntsTknCnt" type="java.lang.Short">
             <column name="prnts_tkn_cnt" />
         </property>
-        <property name="errorCnd" type="string">
+        <!-- <property name="errorCnd" type="string">
             <column name="error_cnd" length="10" />
         </property>
         <property name="oprState" type="string">
@@ -47,7 +47,7 @@
         </property>
         <property name="crntState" type="string">
             <column name="crnt_state" length="10" />
-        </property>
+        </property> -->
         <property name="mfgMdl" type="string">
             <column name="mfg_mdl" length="30" />
         </property>
@@ -56,6 +56,12 @@
         </property>
         <property name="extras" type="string">
             <column name="extras" length="200" />
+        </property>
+        <property name="prntr_status" type="java.lang.Integer">
+        <column name="prntr_status"/> 
+        </property>
+        <property name="aux_status" type="java.lang.Integer">
+        <column name="aux_status"/> 
         </property>
     </class>
 </hibernate-mapping>

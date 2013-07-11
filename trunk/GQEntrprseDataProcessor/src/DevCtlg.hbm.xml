@@ -52,5 +52,12 @@
         <property name="monthlyRent" type="java.lang.Integer">
             <column name="monthly_rent" />
         </property>
+        <property name="enPerMinLoad" type="java.lang.Double">
+            <column name="en_per_min_load" precision="22" scale="0"></column>
+        </property>
+        <property name="enPerMinIdle" type="java.lang.Double">
+            <column name="en_per_min_idle" precision="22" scale="0"></column>
+        </property>
+        
     </class>
 </hibernate-mapping>
