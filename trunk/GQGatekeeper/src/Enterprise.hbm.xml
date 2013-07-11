@@ -53,6 +53,9 @@
         <property name="fwdUrl" type="string">
             <column name="fwd_url" length="200" />
         </property>
+        <property name="fwdPwd" type="string">
+            <column name="fwd_pwd" length="10" />
+        </property>
         <property name="noOfEmpl" type="java.lang.Integer">
             <column name="no_of_empl" />
         </property>
