@@ -10,7 +10,7 @@ public class AllCustomerServices {
     List<Protocol> protocolResult;
     List<Rcmndtn> rcmndtnResult;
     List<SrvrAppType> srvrAppTypeResult;
-    List<DeviceCatalog> deviceCatalogResult;
+    List<DevCtlg> DevCtlgResult;
 
     public List<LocationMaster> getLocationMasterResult() {
         return locationMasterResult;
@@ -60,17 +60,17 @@ public class AllCustomerServices {
         this.srvrAppTypeResult = srvrAppTypeResult;
     }
 
-    public List<DeviceCatalog> getDeviceCatalogResult() {
-        return deviceCatalogResult;
+    public List<DevCtlg> getDevCtlgResult() {
+        return DevCtlgResult;
     }
 
-    public void setDeviceCatalogResult(List<DeviceCatalog> deviceCatalogResult) {
-        this.deviceCatalogResult = deviceCatalogResult;
+    public void setDevCtlgResult(List<DevCtlg> DevCtlgResult) {
+        this.DevCtlgResult = DevCtlgResult;
     }
 
     public AllCustomerServices(List<LocationMaster> locationMasterResult, List<OsType> ostypeResult,
             List<PwrSlab> pwrSlabResult, List<Protocol> protocolResult, List<Rcmndtn> rcmndtnResult,
-            List<SrvrAppType> srvrAppTypeResult, List<DeviceCatalog> deviceCatalogResult) {
+            List<SrvrAppType> srvrAppTypeResult, List<DevCtlg> DevCtlgResult) {
         super();
         this.locationMasterResult = locationMasterResult;
         this.ostypeResult = ostypeResult;
@@ -78,6 +78,6 @@ public class AllCustomerServices {
         this.protocolResult = protocolResult;
         this.rcmndtnResult = rcmndtnResult;
         this.srvrAppTypeResult = srvrAppTypeResult;
-        this.deviceCatalogResult = deviceCatalogResult;
+        this.DevCtlgResult = DevCtlgResult;
     }
 }

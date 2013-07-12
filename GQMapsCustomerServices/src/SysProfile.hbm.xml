@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated Jul 10, 2013 12:02:17 PM by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+    <class name="com.gq.meter.object.SysProfile" table="sys_profile" catalog="gqmaps">
+        <id name="keyy" type="string">
+            <column name="keyy" length="40" />
+            <generator class="assigned" />
+        </id>
+        <property name="value" type="string">
+            <column name="value" length="50" />
+        </property>
+    </class>
+</hibernate-mapping>
