@@ -24,7 +24,7 @@
 		<property name="hibernate.hbm2ddl.auto">update</property>
 
 		<!-- Mapping files -->
-		<mapping resource="DeviceCatalog.hbm.xml" />
+		<mapping resource="DevCtlg.hbm.xml" />
 		<mapping resource="LocationMaster.hbm.xml" />
 		<mapping resource="OsType.hbm.xml" />
 		<mapping resource="Protocol.hbm.xml" />
@@ -32,6 +32,9 @@
 		<mapping resource="Rcmndtn.hbm.xml" />
 		<mapping resource="SrvrAppType.hbm.xml" />
 		<mapping resource="Asset.hbm.xml" />
+		<mapping resource="CompSnpsht.hbm.xml" />
+		<mapping resource="SysProfile.hbm.xml" />
+		<mapping resource="MeterRun.hbm.xml" />
 	</session-factory>
 </hibernate-configuration>
 

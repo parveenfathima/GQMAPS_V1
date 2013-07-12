@@ -6,7 +6,7 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 
 import com.gq.meter.object.AllCustomerServices;
-import com.gq.meter.object.DeviceCatalog;
+import com.gq.meter.object.DevCtlg;
 import com.gq.meter.object.LocationMaster;
 import com.gq.meter.object.OsType;
 import com.gq.meter.object.Protocol;
@@ -61,7 +61,7 @@ public class CustomerServiceModel {
 
             String deviceCatalog = "FROM DeviceCatalog";
             Query deviceCatalogQuery = session.createQuery(deviceCatalog);
-            List<DeviceCatalog> deviceCatalogResult = deviceCatalogQuery.list();
+            List<DevCtlg> deviceCatalogResult = deviceCatalogQuery.list();
             // CustomerServiceConstant.logger.info("deviceCatalogResult : " + deviceCatalogResult);
 
             allCustomerServices = new AllCustomerServices(locationMasterResult, ostypeResult, pwrSlabResult,
