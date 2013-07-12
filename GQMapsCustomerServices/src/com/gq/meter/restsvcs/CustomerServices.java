@@ -7,10 +7,12 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import com.gq.meter.model.AssetLoadModel;
 import com.gq.meter.model.AssetModel;
 import com.gq.meter.model.CustomerServiceModel;
 import com.gq.meter.object.AllCustomerServices;
 import com.gq.meter.object.Asset;
+import com.gq.meter.object.AssetLoad;
 import com.gq.meter.object.ProtocolCount;
 import com.gq.meter.util.CustomerServiceConstant;
 
@@ -56,4 +58,30 @@ public class CustomerServices {
         CustomerServiceConstant.logger.info("Number of asset Id in asset" + protocolresult);
         return CustomerServiceConstant.gson.toJson(protocolresult);
     }
+
+    @Path("/mostConsumedAssets")
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public String mostConsumedAssets() {
+        CustomerServiceConstant.logger.info("Generating all the customer service list from GQEntrprseDataProcessor");
+        AssetLoadModel mostAsset = new AssetLoadModel();
+
+        List<AssetLoad> assetresult = mostAsset.mostConsumedAssets();
+        // Returning all the enterprises in JSON format
+        CustomerServiceConstant.logger.info("Number of asset Id in asset" + assetresult);
+        return CustomerServiceConstant.gson.toJson(assetresult);
+    }
+
+    @Path("/leastConsumedAssets")
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public String leastConsumedAssets() {
+        CustomerServiceConstant.logger.info("Generating all the customer service list from GQEntrprseDataProcessor");
+        AssetLoadModel leastAsset = new AssetLoadModel();
+        List<AssetLoad> assetresult = leastAsset.leastConsumedAssets();
+        // Returning all the enterprises in JSON format
+        CustomerServiceConstant.logger.info("Number of asset Id in asset" + assetresult);
+        return CustomerServiceConstant.gson.toJson(assetresult);
+    }
+
 }
