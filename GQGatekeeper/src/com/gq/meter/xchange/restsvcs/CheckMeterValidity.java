@@ -45,15 +45,19 @@ public class CheckMeterValidity {
             gatekeeperResult = gkf.getExpirydate(meterId);
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
             String expirydDate = sdf.format(gatekeeperResult.get(0));
+            Object o = gatekeeperResult.get(1);
+            String protocolId = o.toString();
             String currDate = sdf.format(new Date());
             int dateValue = expirydDate.compareTo(currDate);
+            GQGateKeeperConstants.logger.debug("Expiry Result from GateKeeperResult:" + expirydDate);
+            GQGateKeeperConstants.logger.debug("ProtocolId from GateKeeperResult:" + protocolId);
             if (dateValue < 0) {
                 GQGateKeeperConstants.logger.info("validating the expiry date and date value is " + dateValue
                         + "for the meter" + meterId);
-                result = "expired/invalid";
+                result = "expired";
             }
             else {
-                result = "valid";
+                result = "valid" + protocolId;
             }
         }
         catch (Exception e) {
