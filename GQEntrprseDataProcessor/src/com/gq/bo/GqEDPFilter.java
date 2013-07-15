@@ -42,7 +42,7 @@ public class GqEDPFilter {
         System.out.println(" Total Asset Scanned : " + scanned);
 
         List<ProtocolData> pdList = gqmResponse.getAssetInformationList();
-        
+
         Session session = null;
         MeterRun meterRun = null;
         Meter meter = null;
@@ -77,6 +77,9 @@ public class GqEDPFilter {
             // inserting runid
             // TODO : create a squence table which includes runid and assetid and generates a unique key to replace the
             // redendunt use of runid and assetid on all the tables
+            GQEDPConstants.logger.debug("Ready to store the Data in Meter Run Table");
+            GQEDPConstants.logger.debug("Details are" + runId + "\n" + meterId + "\n" + recordDT + "\n" + scanned
+                    + "\n" + discovered + "\n" + runTimeMs);
             meterRun = new MeterRun(runId, meterId, recordDT, scanned, discovered, runTimeMs);
             session.save(meterRun);
             GQEDPConstants.logger.info(meterId + " Data successfully saved in the meterRun table ");
@@ -105,6 +108,7 @@ public class GqEDPFilter {
             switch (pdData.getProtocol()) {
 
             case COMPUTER:
+
                 Computer computerObj = gson.fromJson(pdData.getData(), Computer.class);
                 GqMeterComputer.insertData(computerObj, gqmResponse, meterRun.getRunId());
                 break;
