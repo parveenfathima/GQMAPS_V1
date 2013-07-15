@@ -85,7 +85,7 @@ public class NSRGMeter implements GQSNMPMeter {
             if (result != null && !result.isEmpty()) {
                 temp = oidString + ".1";
                 String assetIdVal = MeterUtils.getSNMPValue(temp, result);
-                assetId = "S -" + assetIdVal.replaceAll(":", "");
+                assetId = "S-" + assetIdVal.replaceAll(":", "");
                 assetObj.setAssetId(assetId);
             }
             else {

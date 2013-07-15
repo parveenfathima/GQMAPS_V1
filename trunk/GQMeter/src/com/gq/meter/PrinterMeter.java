@@ -124,7 +124,7 @@ public class PrinterMeter implements GQSNMPMeter {
 
             if (result != null && !result.isEmpty()) {
                 String assetVal = assetCalc(result, rootOID);
-                assetId = "P -" + assetVal;
+                assetId = "P-" + assetVal;
                 assetObj.setAssetId(assetId);
             }
             else {
@@ -412,7 +412,6 @@ public class PrinterMeter implements GQSNMPMeter {
             if (printerStatusOid != null && !printerStatusOid.trim().isEmpty()
                     && vb.getOid().toString().equals(printerStatusOid)) { // if loop starts
                 String printerStatusValueStr = vb.getVariable().toString().trim();
-
                 if (!printerStatusValueStr.trim().isEmpty() && printerStatusValueStr != null) {
                     int printerStatusValue = Integer.parseInt(printerStatusValueStr);
                     // check in the predefined map whether the map has the value
@@ -448,9 +447,14 @@ public class PrinterMeter implements GQSNMPMeter {
             else if (auxStatusOid != null && !auxStatusOid.trim().isEmpty()
                     && vb.getOid().toString().equals(auxStatusOid)) { // else if loop starts
                 String auxStatusValueStr = vb.getVariable().toString().trim();
-
-                if (!auxStatusValueStr.trim().isEmpty() && auxStatusValueStr != null) { // if loop starts
-                    int auxStatusValue = Integer.parseInt(auxStatusValueStr);
+                int auxStatusValue = 0;
+                if (!auxStatusValueStr.trim().isEmpty() && auxStatusValueStr != null) {// if loop starts
+                    if (auxStatusValueStr.equalsIgnoreCase("p")) {
+                        auxStatusValue = 100;
+                    }
+                    else {
+                        auxStatusValue = Integer.parseInt(auxStatusValueStr);
+                    }
                     // check in the predefined map whether the map has the value
                     if (printerAuxStatusMap.containsKey(auxStatusValue)) {
                         auxConditionalStatus = auxStatusValue + " " + "-" + " "
