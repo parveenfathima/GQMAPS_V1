@@ -4,6 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ArrayList;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -107,6 +108,7 @@ public class GateKeeperFilter {
                 pdValidList.addAll(pdList);
             }
             discovered = (short) pdValidList.size();
+            gqmResponse.setAssetDiscovered(discovered);
             GQGateKeeperConstants.logger.info(" Total number of assets after meter validation***  : " + discovered
                     + " : " + pdValidList.size());
             // ---------------------------------------------------------------------------------------------------------//
@@ -252,11 +254,18 @@ public class GateKeeperFilter {
             query.setParameter("METER_ID", meterId);
             GQGateKeeperConstants.logger.info("meterid before query Execution" + meterId);
             List<GateKeeper> gatekeeperResult = query.list();
-
+            String hql1 = "select protocolId from EnterpriseMeter where meterId= :METER_ID";
+            Query query1 = session.createQuery(hql1);
+            query1.setParameter("METER_ID", meterId);
+            List<GateKeeper> gatekeeperResult1 = query1.list();
+            GQGateKeeperConstants.logger.debug("Protocol Id from GateKeeperResult:" + gatekeeperResult1.get(0));
             GQGateKeeperConstants.logger.debug("Result size After Query Execution " + gatekeeperResult.size());
             GQGateKeeperConstants.logger.debug("Contents After Query Execution " + gatekeeperResult.get(0));
             GQGateKeeperConstants.logger.debug("Before returning to Service " + gatekeeperResult);
-            return gatekeeperResult;
+            List<GateKeeper> finalGateKeeperResult = new ArrayList<GateKeeper>();
+            finalGateKeeperResult.addAll(gatekeeperResult);
+            finalGateKeeperResult.addAll(gatekeeperResult1);
+            return finalGateKeeperResult;
         }
         catch (Exception e) {
 
