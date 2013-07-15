@@ -68,4 +68,6 @@ public class MeterConstants {
 
     public static final String STORAGE_PROTOCOL = "storage";
 
+    public static String PROTOCOL_ID = "it";
+
 } // class ends
