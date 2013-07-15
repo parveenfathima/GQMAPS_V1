@@ -210,6 +210,7 @@ public final class ITAssetDiscoverer {
                             sToken = new StringTokenizer(line, " ");
                             if (gqmid != null) {
                                 if (sToken.countTokens() == 2) {
+                                    line = line.toLowerCase();
                                     String switchName = line.substring(0, line.indexOf(" "));
                                     String switchValueName = line.replace(switchName, "").trim();
                                     /*
@@ -221,21 +222,23 @@ public final class ITAssetDiscoverer {
                                             || switchName.equals(MeterConstants.PRINTER_SWITCHS)
                                             || switchName.equals(MeterConstants.NSRG_SWITCHS)
                                             || switchName.equals(MeterConstants.STORAGE_SWITCHS)) {
-                                        if (switchValueName.equalsIgnoreCase(MeterConstants.FULL_DETAILS)
-                                                || switchValueName.equalsIgnoreCase(MeterConstants.CONNECTED_DEVICES)
-                                                || switchValueName.equalsIgnoreCase(MeterConstants.SNAPSHOT)
-                                                || switchValueName.equalsIgnoreCase(MeterConstants.PROCESS)
-                                                || switchValueName.equalsIgnoreCase(MeterConstants.INSTALLED_SOFTWARE)) {
+                                        if (switchValueName.contains(MeterConstants.FULL_DETAILS)
+                                                || switchValueName.contains(MeterConstants.CONNECTED_DEVICES)
+                                                || switchValueName.contains(MeterConstants.SNAPSHOT)
+                                                || switchValueName.contains(MeterConstants.PROCESS)
+                                                || switchValueName.contains(MeterConstants.INSTALLED_SOFTWARE)) {
 
                                             MeterUtils.manageSwitches(line, switches);
                                         }
                                         else {
                                             System.out.println(" [GQMETER] Invalid Switch Value..");
+                                            System.out.println(" [GQMETER] Process terminated Now....");
                                             System.exit(0);
                                         }
                                     }
                                     else {
                                         System.out.println(" [GQMETER] ---Invalid Switch Name---");
+                                        System.out.println(" [GQMETER] " + line);
                                         System.out.println(" [GQMETER] Process Terminated Now...");
                                         System.exit(0);
                                     }
@@ -362,8 +365,11 @@ public final class ITAssetDiscoverer {
             System.out.println(" [GQMETER] Validating the expiry date for the meter " + gqmid);
             ClientResponse response = service.queryParam("meterId", gqmid).post(ClientResponse.class);
             String resp = response.getEntity(String.class).trim();
-            String resp1 = resp.substring(0, 7);
-            if (resp.equals(resp1)) {
+            String protocolId = resp.substring(6, (resp.length() - 1));
+            if (!MeterConstants.PROTOCOL_ID.equals(protocolId)) {
+                MeterConstants.PROTOCOL_ID = protocolId;
+            }
+            if (resp.contains("valid")) {
                 System.out.println(" [GQMETER] The MeterId: " + gqmid + " is valid");
             }
             else {
@@ -421,17 +427,13 @@ public final class ITAssetDiscoverer {
 
         System.out.println(" [GQMETER] Total number of assets taken after processing the inputfile : "
                 + gqmResponse.getAssetScanned());
-
         System.out.println(" [GQMETER] Total time taken to know snmp is installed on the devices : "
                 + MeterUtils.snmpKnownTime);
         System.out.println(" [GQMETER] Total time taken to know snmp is not installed on the devices : "
                 + MeterUtils.snmpUnknownTime);
-
         System.out.println(" [GQMETER] The list of snmp configured devices : " + this.getSnmpKnownIPList().toString());
         System.out.println(" [GQMETER] The list of no snmp configured devices : "
                 + this.getSnmpUnknownIPList().toString());
-        // System.out.println("Total number of assets processed : " + this.getSnmpKnownIPList().size());
-        // System.out.println("Total number of assets not processed : " + this.getSnmpUnknownIPList().size());
         System.out.println(" [GQMETER] Total number of Valid IP addresses found in given input file : "
                 + communityIPMap.size());
         System.out.println(" [GQMETER] SNMP walk succeeded count is : " + this.getSnmpKnownIPList().size());
@@ -440,11 +442,9 @@ public final class ITAssetDiscoverer {
         System.out.println(" [GQMETER] Total time taken for all NSRG meters : " + MeterUtils.nsrgMeterTime);
         System.out.println(" [GQMETER] TOTAL duration taken for meter execution : " + (endTime - startTime));
         System.out.println(" [GQMETER] stopped ....");
-
         // Sending the generated json output to the server
         ClientConfig config = new DefaultClientConfig();
         Client client = Client.create(config);
-
         WebResource service = client.resource(MeterUtils.restURL);
         service = service.path("gqm-gk").path("gatekeeper");
         Form form = new Form();
@@ -453,7 +453,6 @@ public final class ITAssetDiscoverer {
 
         Builder builder = service.type(MediaType.APPLICATION_JSON);
         ClientResponse response = builder.post(ClientResponse.class, form);
-        // System.out.println("Form response " + response.getEntity(String.class));
     }
 
     public static void main(String[] args) throws IOException {
