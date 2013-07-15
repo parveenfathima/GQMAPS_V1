@@ -34,6 +34,7 @@ import com.gq.meter.GQMeterData;
 import com.gq.meter.NSRGMeter;
 import com.gq.meter.PrinterMeter;
 import com.gq.meter.StorageMeter;
+import com.gq.meter.bo.ITAssetDiscoverer;
 import com.gq.meter.object.Asset;
 
 public class MeterUtils {
@@ -232,16 +233,20 @@ public class MeterUtils {
             String snmpVersion, LinkedList<String> switchList) {
 
         GQMeterData assetObject = null;
-        if (protocol.equals(MeterProtocols.PRINTER)) {
+        if (protocol.equals(MeterProtocols.PRINTER)
+                && (MeterConstants.PROTOCOL_ID.equals("it") || MeterConstants.PROTOCOL_ID.equals("printer"))) {
             assetObject = new PrinterMeter().implement(communityString, currIp, snmpVersion, switchList);
         }
-        else if (protocol.equals(MeterProtocols.NSRG)) {
+        else if (protocol.equals(MeterProtocols.NSRG)
+                && (MeterConstants.PROTOCOL_ID.equals("it") || MeterConstants.PROTOCOL_ID.equals("nsrg"))) {
             assetObject = new NSRGMeter().implement(communityString, currIp, snmpVersion, switchList);
         }
-        else if (protocol.equals(MeterProtocols.COMPUTER)) {
+        else if (protocol.equals(MeterProtocols.COMPUTER)
+                && (MeterConstants.PROTOCOL_ID.equals("it") || MeterConstants.PROTOCOL_ID.equals("computer"))) {
             assetObject = new ComputerMeter().implement(communityString, currIp, snmpVersion, switchList);
         }
-        else if (protocol.equals(MeterProtocols.STORAGE)) {
+        else if (protocol.equals(MeterProtocols.STORAGE)
+                && (MeterConstants.PROTOCOL_ID.equals("it") || MeterConstants.PROTOCOL_ID.equals("storage"))) {
             assetObject = new StorageMeter().implement(communityString, currIp, snmpVersion, switchList);
         }
         /*
@@ -531,7 +536,7 @@ public class MeterUtils {
             if (computer_Switch_Count == 1) {
                 line = line.replace(MeterConstants.COMPUTER_SWITCHS, "").trim();
                 LinkedList<String> compSwitchList = null;
-                if (line.contains(MeterConstants.FULL_DETAILS)) {
+                if (line.equals(MeterConstants.FULL_DETAILS)) {
                     compSwitchList = new LinkedList<String>();
                     compSwitchList.add(MeterConstants.FULL_DETAILS);
                     assetSwitches.put(MeterProtocols.COMPUTER, compSwitchList);
@@ -539,7 +544,15 @@ public class MeterUtils {
                 else {
                     compSwitchList = new LinkedList<String>();
                     for (String switches : line.split("\\|")) {
-                        compSwitchList.add(switches);
+                        if (switches.equals("snap_shot") || switches.equals("conn_devices")
+                                || switches.equals("process") || switches.equals("inst_sw")) {
+                            compSwitchList.add(switches);
+                        }
+                        else {
+                            System.out.println(" [GQMETER] --Invalid Switch Value--");
+                            System.out.println(" [GQMETER] Process terminated Now....");
+                            System.exit(0);
+                        }
                     }
                     assetSwitches.put(MeterProtocols.COMPUTER, compSwitchList);
                 }
