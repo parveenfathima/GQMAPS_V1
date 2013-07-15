@@ -56,8 +56,22 @@ public class AssetLoadModel {
                 AssetLoad asstLoad = new AssetLoad((String) list[0], (String) list[1], (Double) list[2]);
                 assetLoad.add(asstLoad);
             }
+            List finalAssetLoad = new ArrayList();
+            int len = assetLoad.size();
+            if (len > 4) {
+                for (int i = 0; i < 5; i++) {
+                    AssetLoad a = new AssetLoad();
+                    a.setAssetId(((AssetLoad) assetLoad.get(i)).getAssetId());
+                    a.setName(((AssetLoad) assetLoad.get(i)).getName());
+                    a.setLoadAvg(((AssetLoad) assetLoad.get(i)).getLoadAvg());
+                    finalAssetLoad.add(a);
+                }
+                return finalAssetLoad;
+            }
+            else {
+                return assetLoad;
+            }
 
-            return assetLoad;
         }
         catch (Exception e) {
             CustomerServiceConstant.logger.error("Exception occured while getting the Maximum Asset Load", e);
@@ -113,8 +127,22 @@ public class AssetLoadModel {
                 AssetLoad asstLoad = new AssetLoad((String) list[0], (String) list[1], (Double) list[2]);
                 assetLoad.add(asstLoad);
             }
+            List finalAssetLoad = new ArrayList();
+            int len = assetLoad.size();
+            if (len > 4) {
+                for (int i = 0; i < 5; i++) {
+                    AssetLoad a = new AssetLoad();
+                    a.setAssetId(((AssetLoad) assetLoad.get(i)).getAssetId());
+                    a.setName(((AssetLoad) assetLoad.get(i)).getName());
+                    a.setLoadAvg(((AssetLoad) assetLoad.get(i)).getLoadAvg());
+                    finalAssetLoad.add(a);
+                }
+                return finalAssetLoad;
+            }
+            else {
+                return assetLoad;
+            }
 
-            return assetLoad;
         }
         catch (Exception e) {
             CustomerServiceConstant.logger.error("Exception occured while getting the Maximum Asset Load", e);
