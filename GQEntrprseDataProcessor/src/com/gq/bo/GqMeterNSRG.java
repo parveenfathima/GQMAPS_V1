@@ -53,15 +53,16 @@ public class GqMeterNSRG {
 
             // snapshot
             NSRGSnapshot nsrgSnapshot = nsrg.getNsrgSnapShot();
-            try {
-                nsrgSnapshot.setId(cid);
-                session.save(nsrgSnapshot);
-                GQEDPConstants.logger.info(meterId + " Data  successfully saved in the NSRG Snapshot table ");
+            if (nsrgSnapshot.getIpAddr() != null) {
+                try {
+                    nsrgSnapshot.setId(cid);
+                    session.save(nsrgSnapshot);
+                    GQEDPConstants.logger.info(meterId + " Data  successfully saved in the NSRG Snapshot table ");
+                }
+                catch (Exception e) {
+                    GQEDPConstants.logger.error(meterId + " Data failed to save in the NSRG Snapshot table ", e);
+                }
             }
-            catch (Exception e) {
-                GQEDPConstants.logger.error(meterId + " Data failed to save in the NSRG Snapshot table ", e);
-            }
-
             // connected device
             if (nsrg.getNsrgConnectedDevices() != null) {
                 HashSet<NSRGConnDevice> nsrgConnectedDevices = nsrg.getNsrgConnectedDevices();
