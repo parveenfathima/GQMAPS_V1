@@ -2,19 +2,156 @@
 <html>
     <head>
          <meta charset="utf-8">
-         <title>Add Registration</title>
+         <title>Customer Dashboard</title>
         
          <link type="text/css" href = "jquery-ui-1.10.2.custom/css/blitzer/jquery-ui-1.10.2.custom.css" rel="stylesheet" />
          <link type="text/css" href = "css/gqmaps.css" rel="stylesheet" />
          <link type="text/css" href="css/gqhome.css" rel="stylesheet" />
-
+         
+          <script type='text/javascript' src='https://www.google.com/jsapi'></script>
+		   
          <script src = "jquery-ui-1.10.2.custom/js/jquery-1.9.1.js" ></script>
          <script src = "jquery-ui-1.10.2.custom/js/jquery-ui-1.10.2.custom.js" ></script> 
-                   
+                       
+         <script src = "js/jstorage.js"> </script> 
+                            
          <script src = "js/rest_service.js"> </script>              
-         <script src = "js/jstorage.js"> </script>
-  
-         <script src = "js/dashboard_full.js"> </script>   
+         <script src = "js/dashboard_full.js"> </script>
+         
+		<script type="text/javascript">
+      
+            // Load the Visualization API and the piechart package.
+            google.load('visualization', '1.0', {'packages':['corechart']});
+      
+            // Set a callback to run when the Google Visualization API is loaded.
+            google.setOnLoadCallback(drawChart);
+      
+            // Callback that creates and populates a data table,
+            // instantiates the pie chart, passes in the data and
+            // draws it.
+            function drawChart() 
+            {
+      
+                // Create the data table
+				//TODO: ajax call to get the data dynamically
+            
+                var jsonPieData  ={
+                    "cols": [
+                                {"label":"Topping","type":"string"},
+                                {"label":"Slices","type":"number"}
+                            ],
+                    "rows": [
+                                {"c":[{"v":"Servers"},{"v":10}]},
+                                {"c":[{"v":"Networking"},{"v":15}]},
+                                {"c":[{"v":"AC"},{"v":20}]},
+                                {"c":[{"v":"Others"},{"v":5}]}
+                            ]
+                };
+                
+                var data = new google.visualization.DataTable(jsonPieData);
+                
+                // Set chart options
+                var options = {'title':'Power consumption by asset type',
+                               'is3D': true,
+                               'width':350,
+                               'height':200};
+        
+                // Instantiate and draw our chart, passing in some options.
+                var chart = new google.visualization.PieChart(document.getElementById('pie-chart_div'));
+                chart.draw(data, options);
+             }
+        </script>         
+         
+         
+         <script type="text/javascript">
+    
+           google.load('visualization', '1', {packages: ['annotatedtimeline']});
+              
+              function drawATLChart() 
+              {
+
+              		var chartdata  ={
+									"cols": [
+												{"label":"Recording Date","type":"date"},
+												{"label":"Topping","type":"number"},
+												{"label":"Slices","type":"number"}
+											],
+									"rows": [
+												
+												{"c":[{"v": new Date(2012, 1, 08, 09, 24, 0)},{"v":215},{"v":173}]},
+												{"c":[{"v": new Date(2012, 1, 08, 09, 26, 0)},{"v":205},{"v":183}]},
+												{"c":[{"v": new Date(2012, 1, 08, 09, 28, 0)},{"v":0},{"v":213}]}
+											]
+								};
+			  
+			  var data = new google.visualization.DataTable(chartdata); 
+              var annotatedtimeline = new google.visualization.AnnotatedTimeLine(
+              document.getElementById('ATLChart_Div'));
+              
+              annotatedtimeline.draw(data, 
+                        {'displayAnnotations': true,
+                        lineWidth: 1,
+                        'fill': 0,
+                        title:'Company Performance', 
+                        titleY: 'Dollars (Millions)',
+                        displayLegendValues:true,
+                        displayZoomButtons:false,
+                        legendPosition:'newRow',
+                        dateFormat:'EEE, MMM d,yy HH:mm',
+                        'colors': ['green', 'red', 'orange'],
+                        'displayRangeSelector' : false
+                        }
+                        );
+              }
+              
+              google.setOnLoadCallback(drawATLChart);
+        </script>  
+        
+        <!--	Bar chart -->
+        <script type="text/javascript">
+        
+			// Load the Visualization API and the piechart package.
+			google.load('visualization', '1.0', {'packages':['corechart']});
+		  
+			// Set a callback to run when the Google Visualization API is loaded.
+			google.setOnLoadCallback(drawChart);
+		  
+			// Callback that creates and populates a data table,
+			// instantiates the pie chart, passes in the data and
+			// draws it.
+			function drawChart() 
+			{
+		  
+				  // Create the data table.	
+				  var jsonBarData  ={
+					  "cols": [
+								  {"label":"Topping","type":"string"},
+								  {"label":"Load","type":"number"}
+							  ],
+					  "rows": [
+								  {"c":[{"v":"Servers"},{"v":8}]},
+								  {"c":[{"v":"Printers/Networking"},{"v":1}]},
+								  {"c":[{"v":"Air Conditioning"},{"v":36}]},
+								  {"c":[{"v":"Desktops"},{"v":4}]},
+								  {"c":[{"v":"Misc"},{"v":17}]}
+							  ]
+				  };
+							  
+				  var data = new google.visualization.DataTable(jsonBarData);
+			  
+				  // Set chart options
+				  var options = {'title':'Power consumption by asset type',
+								 'width':300,
+								 'height':200};
+			  
+				 var chart = new google.visualization.BarChart(document.getElementById('bar-chart_div'));
+				 
+				 chart.draw(data, options);
+		  
+			}
+        </script>        
+            
+        
 
     </head>
     
@@ -31,9 +168,107 @@
             <div class="content-div" style="margin-left:5px;"><!--content div-->
 				 <div class="plain-div"> <!--plain div -->
       
-                        
-                        
-                        <div class="block-div left-block-div">
+					<div> <!--first row dive -->      
+                    	   
+                            <div class="block-div top-block-div"> <!-- chart div -->
+                                <div class="inner-head">
+                                    &nbsp; CHART
+                                </div>
+                                <div  class="inner-content top-block-content-div" >
+                                        <table>
+                                            <tr>
+                                                <td>
+                                                    <div id="pie-chart_div" style="width: 300px; height: 200px; "></div>
+                                                </td>
+                                                <td>
+                                                    <div id="ATLChart_Div" style="width: 310px; height: 200px;  padding-left:2px"></div>
+                                                </td>
+                                                <td>
+                                                    <div id="bar-chart_div" style="width: 300px; height: 200px;"></div>
+                                                </td>
+                                            </tr>
+                                       </table>
+
+                                </div>
+                            </div>    <!-- /chart div -->
+                            
+                            <div class="block-div right-block-div">  <!-- alert div -->                        
+                                <div class="inner-head">
+                                    &nbsp; ALERTS
+                                    
+                                </div>
+                                <div class="inner-content right-block-content-div">
+                                
+                                    <br> 
+                                    <span id = "mExpDays" class = "span-font span-color"> 
+                                
+                                    </span>
+                                </div>
+                                
+                                
+                                <div>
+                                        <div >
+                                            <input type = "button" id = "configAssets" value = "Configure Assets" /> 
+                                        </div>
+                                        <div>
+                                            <input type = "button" id = "updateMeterInputFile" value = "Update Meter Input File" /> 
+                                        </div> 
+                                        <div>
+                                            <input type = "button" id = "operatingPremises" value = "Operating Premises" />
+                                        </div> 
+                            	</div>                                  
+                            </div>   <!-- /alert div -->  
+                            
+                                            
+                    </div> <!--/first row dive -->  
+                    
+                    <div> <!-- second row top5 and pue -->
+                            <div class="block-div bottom-block-div">
+                                <div class="inner-head">
+                                    &nbsp; TOP5 MOST & LEAST LOADED ASSETS
+                                       
+                                </div>
+                                
+                                <div class="center-inner-content">
+                                    
+                                    <div style="float:left; margin-left:5px; margin-right:5px; height=100px;">
+                                        &nbsp;Most loaded assets for the last 30 days
+                                        <table id = "mostAssets" class = "table-style" border="1px">
+                                            <tr> <th class = "th-font" >Asset Name</th> <th class = "th-font" >Load Avg</th> </tr>
+                                               
+                                        </table>                            
+                                    </div>
+                                    <div>
+                                        &nbsp;Least loaded assets for the last 30 days
+                                        <table id = "leastAssets" class = "table-style" border="1px">
+                                            <tr> <th class = "th-font" >Asset Name</th> <th class = "th-font" >Load Avg</th> </tr>
+                                               
+                                        </table>                            
+                                    </div>
+                                
+                                </div>             
+                                
+                            </div>
+                            
+                            
+                            <div class="block-div right-block-div">
+                            
+                                <div class="inner-head">
+                                    &nbsp; CURRENT MONTH PUE
+                                    
+                                </div>
+                                <div class="inner-content right-block-content-div">
+                                    
+                                </div>  
+                            </div>                    
+                    
+                    
+                    
+                    </div>  <!-- /second row top5 and pue -->   
+                    
+                    <div> <!-- 3rd row with meter and aseets block -->
+                    
+                        <div class="block-div left-block-div" >
                             <div class="inner-head">
                                 &nbsp; METER
                             </div>
@@ -51,15 +286,19 @@
                                 
                                 </span>
                                 
-                                <br> &nbsp;&nbsp;Total number of assets scanned is
+                                <br> &nbsp;&nbsp;Total assets scanned in the last run is
                                 <span id = "lRunTotAssets" class = "span-font span-color"> 
                             
                                 </span>
-                                <br>&nbsp;&nbsp;The last run date and time is 
+                                <br>&nbsp;&nbsp;on  
                                 <span id = "lRunDt" class = "span-font span-color"> 
                             
                                 </span>
                             </div>
+                        </div>     
+                        
+                        <div class="block-div left-block-div" style="float:left;">
+                           
                             
                             <div class="inner-head">
                                 &nbsp; ASSETS
@@ -77,81 +316,26 @@
          
                             </div>  
                                                  
-                            <div>
-                                    <div >
-                                        <input type = "button" id = "configAssets" value = "Configure Assets" /> 
-                                    </div>
-                                    <div>
-                                        <input type = "button" id = "updateMeterInputFile" value = "Update Meter Input File" /> 
-                                    </div> 
-                                    <div>
-                                        <input type = "button" id = "operatingPremises" value = "Operating Premises" />
-                                    </div> 
-                            </div>
-                             
-                        </div> <!--/left div -->
-                        
-                        
-                        <div class="block-div bottom-block-div">
-                            <div class="inner-head">
-                            	&nbsp; TOP5 ASSETS
-	                               
-                            </div>
-                            <div class="center-inner-content">
-                   
-                            </div> 
-    
-                                     
-                            
-                        </div>
-                        
-                        
-                        <div class="block-div right-block-div">
-                        
-   							<div class="inner-head">
-                             	&nbsp; CURRENT MONTH PUE
-                                
-                            </div>
-                            <div class="inner-content right-block-content-div">
-                                
-                            </div>  
-                        </div>
-                        <div class="block-div right-block-div">                          
-                            <div class="inner-head">
-                             	&nbsp; ALERTS
-                                
-                            </div>
-                            <div class="inner-content right-block-content-div">
-                            
-                                <br> 
-                                <span id = "mExpDays" class = "span-font span-color"> 
-                            
-                                </span>
-                                
-                                
-                            </div>
-                        </div>  
-                        
-                        <div class="block-div bottom-block-div">
-                            <div class="inner-head">
-                                &nbsp; CHART
-                            </div>
-                            <div class="inner-content bottom-block-content-div">
-                                <iframe src="google-chart1.html" width = "400px" height = "260px" margin-top = "2px">
-								</iframe>
-                            </div>  
-                        </div>
+                         
+                        </div>                                       
+                    
+                    </div>   <!-- /3rd row with meter and aseets block -->             
+
                         
               </div><!--/plain div -->
            
             </div><!--/content div -->
             
-            <div class = "footer">
+            <div class = "footer" position="fixed">
              	<font class="Copyrights-font">© Copyright 2012 Gquotient</font>
             </div>
         
-        </div> <!--/main div -->
-        
+        </div> <!--/main div -->     
+
+		       
+
+         
+
     </body>
     
 </html>
