@@ -167,12 +167,11 @@ public class PrinterMeter implements GQSNMPMeter {
                                 + "Unable to determine if printer is a color printer");
                     }
 
-                    // The following oid's is used to get the errorCondition, operationalState , currentState ,
+                    // The following oid's is used to get the PrinterStatus and AuxPrinterStatus
                     // mfgMakeAndModel
                     oidString = "1.3.6.1.2.1.25.3";
                     rootOID = new OID(oidString);
                     result = MeterUtils.walk(rootOID, target);
-
                     if (result != null && !result.isEmpty()) {
                         printerStatus = printerStatusCalc(result, rootOID);
                         prntrStatus = printerStatus.get("printerStatusState");
@@ -409,6 +408,7 @@ public class PrinterMeter implements GQSNMPMeter {
         String auxStatusOid = rootId + ".5.1.2.1";
         String N_A = "Not Avaiable";
         for (VariableBinding vb : result) { // for loop starts
+
             if (printerStatusOid != null && !printerStatusOid.trim().isEmpty()
                     && vb.getOid().toString().equals(printerStatusOid)) { // if loop starts
                 String printerStatusValueStr = vb.getVariable().toString().trim();
@@ -449,11 +449,13 @@ public class PrinterMeter implements GQSNMPMeter {
                 String auxStatusValueStr = vb.getVariable().toString().trim();
                 int auxStatusValue = 0;
                 if (!auxStatusValueStr.trim().isEmpty() && auxStatusValueStr != null) {// if loop starts
-                    if (auxStatusValueStr.equalsIgnoreCase("p")) {
+                    if (auxStatusValueStr.equalsIgnoreCase("@")) {
                         auxStatusValue = 100;
+                        System.out.println(auxStatusValue);
                     }
                     else {
-                        auxStatusValue = Integer.parseInt(auxStatusValueStr);
+                        auxStatusValue = Integer.parseInt(auxStatusValueStr, 16);
+                        System.out.println(auxStatusValue);
                     }
                     // check in the predefined map whether the map has the value
                     if (printerAuxStatusMap.containsKey(auxStatusValue)) {
