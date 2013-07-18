@@ -213,11 +213,6 @@ public final class ITAssetDiscoverer {
                                     line = line.toLowerCase();
                                     String switchName = line.substring(0, line.indexOf(" "));
                                     String switchValueName = line.replace(switchName, "").trim();
-                                    /*
-                                     * List<String> l = new ArrayList<String>(); l.add(MeterConstants.COMPUTER_SWITCHS);
-                                     * l.add(MeterConstants.PRINTER_SWITCHS); l.add(MeterConstants.NSRG_SWITCHS);
-                                     * l.add(MeterConstants.STORAGE_SWITCHS);
-                                     */
                                     if (switchName.equals(MeterConstants.COMPUTER_SWITCHS)
                                             || switchName.equals(MeterConstants.PRINTER_SWITCHS)
                                             || switchName.equals(MeterConstants.NSRG_SWITCHS)
@@ -229,33 +224,33 @@ public final class ITAssetDiscoverer {
                                                 || switchValueName.contains(MeterConstants.INSTALLED_SOFTWARE)) {
 
                                             MeterUtils.manageSwitches(line, switches);
-                                        }
+                                        }// 4th if ends
                                         else {
                                             System.out.println(" [GQMETER] Invalid Switch Value..");
                                             System.out.println(" [GQMETER] Process terminated Now....");
                                             System.exit(0);
                                         }
-                                    }
+                                    }// 3rd if ends
                                     else {
                                         System.out.println(" [GQMETER] ---Invalid Switch Name---");
                                         System.out.println(" [GQMETER] " + line);
                                         System.out.println(" [GQMETER] Process Terminated Now...");
                                         System.exit(0);
                                     }
-                                }
+                                }// 2nd if ends
                                 else {
                                     System.out.println(" [GQMETER] Check Switch Value is empty....");
                                     System.out.println(" [GQMETER] Process should be stopped now.....");
                                     System.exit(0);
                                 }
-                            }
+                            }// 1st if ends
 
                             else {
                                 System.out.println(" [GQMETER] Check Meter Id...");
                                 System.out.println(" [GQMETER] Process stopped........");
                                 System.exit(0);
                             }
-                        }
+                        } // else if ends
                         else {
                             sToken = new StringTokenizer(line, " ");
 
