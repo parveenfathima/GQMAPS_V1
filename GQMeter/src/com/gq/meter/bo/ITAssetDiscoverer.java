@@ -365,15 +365,16 @@ public final class ITAssetDiscoverer {
             System.out.println(" [GQMETER] Validating the expiry date for the meter " + gqmid);
             ClientResponse response = service.queryParam("meterId", gqmid).post(ClientResponse.class);
             String resp = response.getEntity(String.class).trim();
+            String resp1 = resp.substring(1, 6);
             String protocolId = resp.substring(6, (resp.length() - 1));
             if (!MeterConstants.PROTOCOL_ID.equals(protocolId)) {
                 MeterConstants.PROTOCOL_ID = protocolId;
             }
-            if (resp.contains("valid")) {
+            if (resp1.equals("valid")) {
                 System.out.println(" [GQMETER] The MeterId: " + gqmid + " is valid");
             }
             else {
-                System.out.println(" [GQMETER] Your Meter: " + gqmid + " is expired");
+                System.out.println(" [GQMETER] Your Meter: " + gqmid + " is expired/Invalid");
                 System.exit(0);
             }
 
@@ -441,7 +442,7 @@ public final class ITAssetDiscoverer {
         System.out.println(" [GQMETER] Total time taken for all PRINTER meters : " + MeterUtils.printMeterTime);
         System.out.println(" [GQMETER] Total time taken for all NSRG meters : " + MeterUtils.nsrgMeterTime);
         System.out.println(" [GQMETER] TOTAL duration taken for meter execution : " + (endTime - startTime));
-        System.out.println(" [GQMETER] stopped ....");
+        System.out.println(" [GQMETER] ended successfully ....");
         // Sending the generated json output to the server
         ClientConfig config = new DefaultClientConfig();
         Client client = Client.create(config);
