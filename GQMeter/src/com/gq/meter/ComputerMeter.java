@@ -899,17 +899,16 @@ public class ComputerMeter implements GQSNMPMeter {
         for (VariableBinding vb : result) {
             ip_addr = vb.getVariable().toString();
             ip[i] = ip_addr;
-            // System.out.println("IPADDRESS:" + ip[i]);
             i++;
         }
         i = 0;
+        // Getting ports from List
         for (VariableBinding vb : result1) {
             ip_port = Integer.parseInt(vb.getVariable().toString());
             port[i] = ip_port;
-            // System.out.println("PORT:" + port[i]);
             i++;
         }
-        // Getting port from List
+        // Used to get the IPaddress and port from the SNMPwalkresult based on the condition
         for (i = 0; i < result.size(); i++) {
             if (!ip[i].equals("0.0.0.0") && !ip[i].equals("127.0.0.1") && !ip[i].equals(ipAddress)
                     && (port[i] >= 1024 && port[i] <= 12000)) {
@@ -919,8 +918,13 @@ public class ComputerMeter implements GQSNMPMeter {
                 connectedDevices.add(connDevice);
 
             }
+            else if (!ip[i].equals("0.0.0.0") && !ip[i].equals("127.0.0.1") && !ip[i].equals(ipAddress)
+                    && port[i] > 12000) {
+                compConnDeviceId = new CompConnDeviceId(runId, assetId, ip[i], 0);
+                connDevice = new CompConnDevice(compConnDeviceId);
+                connectedDevices.add(connDevice);
+            }
         }
-
         return connectedDevices;
     }
 
