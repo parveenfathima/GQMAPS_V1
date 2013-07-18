@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -99,6 +100,7 @@ public class ComputerMeter implements GQSNMPMeter {
             boolean isWindows = false;
             OID rootOID = null;
             List<VariableBinding> result = null;
+            List<VariableBinding> result1 = null;
 
             sysDescription = assetObj.getDescr();
             if (null != sysDescription) { // 1st if starts
@@ -360,10 +362,13 @@ public class ComputerMeter implements GQSNMPMeter {
                         || element.equalsIgnoreCase(MeterConstants.CONNECTED_DEVICES)) { // 1st if loop starts
 
                     if (result != null && !result.isEmpty()) {
-                        oidString = ".1.3.6.1.2.1.6.13.1.1";
+                        oidString = ".1.3.6.1.2.1.6.13.1.4";
                         rootOID = new OID(oidString);
                         result = MeterUtils.walk(rootOID, target);
-                        connectedDevices = ConnectedDevicesCalc(result, ipAddress, id);
+                        oidString = ".1.3.6.1.2.1.6.13.1.5";
+                        rootOID = new OID(oidString);
+                        result1 = MeterUtils.walk(rootOID, target);
+                        connectedDevices = ConnectedDevicesCalc(result, result1, ipAddress, id);
                     }
                     else {
                         errorList.add(assetId + " Root OID : 1.3.6.1.2.1.6.13.1.1" + " "
@@ -877,7 +882,8 @@ public class ComputerMeter implements GQSNMPMeter {
      * @param ipAddress
      * @return
      */
-    private HashSet<CompConnDevice> ConnectedDevicesCalc(List<VariableBinding> result, String ipAddress, CPNId id) {
+    private HashSet<CompConnDevice> ConnectedDevicesCalc(List<VariableBinding> result, List<VariableBinding> result1,
+            String ipAddress, CPNId id) {
 
         HashSet<CompConnDevice> connectedDevices = new HashSet<CompConnDevice>();
 
@@ -885,33 +891,36 @@ public class ComputerMeter implements GQSNMPMeter {
         int runId = id.getRunId();
         String assetId = id.getAssetId();
         CompConnDeviceId compConnDeviceId = null;
+        String ip[] = new String[result.size()];
+        int port[] = new int[result1.size()];
+        String ip_addr;
+        int ip_port, i = 0;
+        // Getting IPaddress from List
+        for (VariableBinding vb : result) {
+            ip_addr = vb.getVariable().toString();
+            ip[i] = ip_addr;
+            // System.out.println("IPADDRESS:" + ip[i]);
+            i++;
+        }
+        i = 0;
+        for (VariableBinding vb : result1) {
+            ip_port = Integer.parseInt(vb.getVariable().toString());
+            port[i] = ip_port;
+            // System.out.println("PORT:" + port[i]);
+            i++;
+        }
+        // Getting port from List
+        for (i = 0; i < result.size(); i++) {
+            if (!ip[i].equals("0.0.0.0") && !ip[i].equals("127.0.0.1") && !ip[i].equals(ipAddress)
+                    && (port[i] >= 1024 && port[i] <= 12000)) {
 
-        for (VariableBinding vb : result) { // for loop starts
+                compConnDeviceId = new CompConnDeviceId(runId, assetId, ip[i], port[i]);
+                connDevice = new CompConnDevice(compConnDeviceId);
+                connectedDevices.add(connDevice);
 
-            String expectedStr = vb.getVariable().toString();
-            if (expectedStr != null && vb.getOid().toString().contains(expectedStr)
-                    && expectedStr.equalsIgnoreCase("5")) { // 1st if loop starts
+            }
+        }
 
-                String targetOID = vb.getOid().toString();
-                String[] preFinalOID = targetOID.toString().split("\\.");
-                String port = preFinalOID[19];
-                int port_Value = Integer.parseInt(port);
-                String one = preFinalOID[15];
-                String two = preFinalOID[16];
-                String three = preFinalOID[17];
-                String four = preFinalOID[18];
-                String FinalIP = one + "." + two + "." + three + "." + four;
-
-                if (!FinalIP.trim().equals(ipAddress) && !FinalIP.trim().equals("0.0.0.0")
-                        && !FinalIP.trim().equals("127.0.0.1") && (port_Value >= 1024 && port_Value <= 9999)) { // 2nd if loop starts
-                     if (FinalIP != null && FinalIP.trim().length() != 0) {
-                        compConnDeviceId = new CompConnDeviceId(runId, assetId, FinalIP, port);
-                        connDevice = new CompConnDevice(compConnDeviceId);
-                        connectedDevices.add(connDevice);
-                    }
-                } // 2nd if loop ends
-            } // 1st if loop ends
-        } // for loop ends
         return connectedDevices;
     }
 
