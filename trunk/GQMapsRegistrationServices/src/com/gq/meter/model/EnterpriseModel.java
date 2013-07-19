@@ -261,6 +261,7 @@ public class EnterpriseModel {
             mailServerProperties.put("mail.smtp.port", "587");
             mailServerProperties.put("mail.smtp.auth", "true");
             mailServerProperties.put("mail.smtp.starttls.enable", "true");
+            mailServerProperties.put("mail.smtp.ssl.trust", "smtp.gmail.com");
             System.out.println("Mail Server Properties have been setup successfully..");
 
             // Step2
@@ -271,18 +272,7 @@ public class EnterpriseModel {
             generateMailMessage.addRecipient(Message.RecipientType.CC, new InternetAddress(
                     "rathishyoungstani@gmail.com"));
             generateMailMessage.setSubject("you are Registered Sucessfully");
-            /*
-             * StringBuilder sb = new StringBuilder(); sb.append(
-             * "Dear Customer,<br><br><br> <p>Thank  you for registering for the gqmaps application.Your first step towards successfully managing and monitoring your IT infrastructure"
-             * ); sb.append(
-             * "</p><p>Your registration process will be complete after manual verification of a few details by a GQuotient expert."
-             * ); sb.append(
-             * "</p><p>You will be contacted shortly at the number you have registered with to complete the process within the next 48 business hours."
-             * ); sb.append("</p><p>Please do not reply to this mail."); sb.append(
-             * "</p><p>If you are not contacted within the above time interval, please contact technical support at support@gquotient.com"
-             * ); sb.append("<br><br><br>Regards, <br><br><br><br><br><br>GQMaps Supporte.");
-             */
-            String sb = "Dear customer,<br>Registered Sucessfully.<br>Thanks,<br>Customer Support";
+            String sb = "Dear Customer,<br><br> <p>Thank  you for registering for the gqmaps application.Your first step towards successfully managing and monitoring your IT infrastructure </p><p>Your registration process will be complete after manual verification of a few details by a GQuotient expert.</p><p>You will be contacted shortly at the number you have registered with to complete the process within the next 48 business hours.</p><p>Please do not reply to this mail.</p><p>If you are not contacted within the above time interval, please contact technical support at support@gquotient.com<br>Regards,<br><br>GQMaps Support.";
             generateMailMessage.setContent(sb, "text/html");
             System.out.println("Mail Session has been created successfully..");
 
@@ -322,17 +312,30 @@ public class EnterpriseModel {
             session = HibernateUtil.getSessionFactory().getCurrentSession();
             session.beginTransaction();
 
-            String hql = "select email FROM Enterprise where sid=:S_ID";
+            String hql = "select email,userId,passwd FROM Enterprise where sid=:S_ID";
             Query query = session.createQuery(hql);
             query.setParameter("S_ID", sId);
-            List<Enterprise> entMeterResult = query.list();
-            String tomail = String.valueOf(entMeterResult.get(0));
-            System.out.println("mail id" + tomail);
+            List<Object[]> entMeterResult = query.list();
+
+            List<Enterprise> entpList = new ArrayList<Enterprise>();
+
+            for (Object[] list : entMeterResult) {
+                Enterprise entp = new Enterprise();
+                entp.setEmail((String) list[0]);
+                entp.setUserId((String) list[1]);
+                entp.setPasswd((String) list[2]);
+                entpList.add(entp);
+            }
+
+            String tomail = String.valueOf(entpList.get(0).getEmail());
+            String uName = String.valueOf(entpList.get(0).getUserId());
+            String passwd = String.valueOf(entpList.get(0).getPasswd());
             System.out.println("\n 1st ===> setup Mail Server Properties..");
             mailServerProperties = System.getProperties();
             mailServerProperties.put("mail.smtp.port", "587");
             mailServerProperties.put("mail.smtp.auth", "true");
             mailServerProperties.put("mail.smtp.starttls.enable", "true");
+            mailServerProperties.put("mail.smtp.ssl.trust", "smtp.gmail.com");
             System.out.println("Mail Server Properties have been setup successfully..");
 
             // Step2
@@ -342,8 +345,12 @@ public class EnterpriseModel {
             generateMailMessage.addRecipient(Message.RecipientType.TO, new InternetAddress(tomail));
             generateMailMessage.addRecipient(Message.RecipientType.CC, new InternetAddress(
                     "rathishyoungstani@gmail.com"));
-            generateMailMessage.setSubject("you have activated Sucessfully");
-            String sb = "Dear customer,<br>Registered Sucessfully.<br>Thanks,<br>Customer Support";
+            generateMailMessage.setSubject("you are Activated Sucessfully");
+            String sb = "Dear Customer,<br><br><p>We are very pleased to welcome you to use the GQMaps application.The application can be accessed via http://<<192.168.1.95>>:8080/gqmaps</p> <br><br>User Id: "
+                    + uName
+                    + "<br>Password: "
+                    + passwd
+                    + "<br><br><p>Please change your password upon first login.Please do not reply to this mail.</p><p>If you have any difficulties accessing the application, technical support can be reached via support@gquotient.com</p><br>Regards,<br>GQMaps Support.";
             generateMailMessage.setContent(sb, "text/html");
             System.out.println("Mail Session has been created successfully..");
 
@@ -356,7 +363,7 @@ public class EnterpriseModel {
             System.out.println("before closing the session");
             transport.close();
             System.out.println("\n\n ===> Your Java Program has just sent an Email successfully. Check your email..");
-            return entMeterResult;
+            return entpList;
             // generateAndSendEmail();
         }
         catch (Exception e) {
@@ -376,5 +383,4 @@ public class EnterpriseModel {
             }
         }
     }
-
 }
