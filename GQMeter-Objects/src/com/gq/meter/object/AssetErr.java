@@ -9,14 +9,14 @@ package com.gq.meter.object;
 public class AssetErr implements java.io.Serializable {
 
     private long sid;
-    private int runId;
+    private long runId;
     private String sysDesc;
     private String errMsg;
 
     public AssetErr() {
     }
 
-    public AssetErr(int runId, String sysDesc, String errMsg) {
+    public AssetErr(long runId, String sysDesc, String errMsg) {
         this.runId = runId;
         this.sysDesc = sysDesc;
         this.errMsg = errMsg;
@@ -30,11 +30,11 @@ public class AssetErr implements java.io.Serializable {
         this.sid = sid;
     }
 
-    public int getRunId() {
-        return this.runId;
+    public long getRunId() {
+        return runId;
     }
 
-    public void setRunId(int runId) {
+    public void setRunId(long runId) {
         this.runId = runId;
     }
 

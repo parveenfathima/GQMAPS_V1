@@ -10,7 +10,7 @@ import java.util.Date;
  */
 public class CompInstSoftwareId implements java.io.Serializable {
 
-    private int runId;
+    private Long runId;
     private String assetId;
     private String name;
     private Date instDttm;
@@ -18,18 +18,18 @@ public class CompInstSoftwareId implements java.io.Serializable {
     public CompInstSoftwareId() {
     }
 
-    public CompInstSoftwareId(int runId, String assetId, String name, Date instDttm) {
+    public CompInstSoftwareId(Long runId, String assetId, String name, Date instDttm) {
         this.runId = runId;
         this.assetId = assetId;
         this.name = name;
         this.instDttm = instDttm;
     }
 
-    public int getRunId() {
-        return this.runId;
+    public Long getRunId() {
+        return runId;
     }
 
-    public void setRunId(int runId) {
+    public void setRunId(Long runId) {
         this.runId = runId;
     }
 
@@ -57,29 +57,62 @@ public class CompInstSoftwareId implements java.io.Serializable {
         this.instDttm = instDttm;
     }
 
-    public boolean equals(Object other) {
-        if ((this == other)) return true;
-        if ((other == null)) return false;
-        if (!(other instanceof CompInstSoftwareId)) return false;
-        CompInstSoftwareId castOther = (CompInstSoftwareId) other;
-
-        return (this.getRunId() == castOther.getRunId())
-                && ((this.getAssetId() == castOther.getAssetId()) || (this.getAssetId() != null
-                        && castOther.getAssetId() != null && this.getAssetId().equals(castOther.getAssetId())))
-                && ((this.getName() == castOther.getName()) || (this.getName() != null && castOther.getName() != null && this
-                        .getName().equals(castOther.getName())))
-                && ((this.getInstDttm() == castOther.getInstDttm()) || (this.getInstDttm() != null
-                        && castOther.getInstDttm() != null && this.getInstDttm().equals(castOther.getInstDttm())));
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((assetId == null) ? 0 : assetId.hashCode());
+        result = prime * result + ((instDttm == null) ? 0 : instDttm.hashCode());
+        result = prime * result + ((name == null) ? 0 : name.hashCode());
+        result = prime * result + ((runId == null) ? 0 : runId.hashCode());
+        return result;
     }
 
-    public int hashCode() {
-        int result = 17;
-
-        result = 37 * result + this.getRunId();
-        result = 37 * result + (getAssetId() == null ? 0 : this.getAssetId().hashCode());
-        result = 37 * result + (getName() == null ? 0 : this.getName().hashCode());
-        result = 37 * result + (getInstDttm() == null ? 0 : this.getInstDttm().hashCode());
-        return result;
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        CompInstSoftwareId other = (CompInstSoftwareId) obj;
+        if (assetId == null) {
+            if (other.assetId != null) {
+                return false;
+            }
+        }
+        else if (!assetId.equals(other.assetId)) {
+            return false;
+        }
+        if (instDttm == null) {
+            if (other.instDttm != null) {
+                return false;
+            }
+        }
+        else if (!instDttm.equals(other.instDttm)) {
+            return false;
+        }
+        if (name == null) {
+            if (other.name != null) {
+                return false;
+            }
+        }
+        else if (!name.equals(other.name)) {
+            return false;
+        }
+        if (runId == null) {
+            if (other.runId != null) {
+                return false;
+            }
+        }
+        else if (!runId.equals(other.runId)) {
+            return false;
+        }
+        return true;
     }
 
 }

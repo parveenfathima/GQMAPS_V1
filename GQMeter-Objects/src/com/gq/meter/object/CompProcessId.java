@@ -1,4 +1,5 @@
 package com.gq.meter.object;
+
 // default package
 // Generated Feb 21, 2013 2:37:27 PM by Hibernate Tools 3.4.0.CR1
 
@@ -7,7 +8,7 @@ package com.gq.meter.object;
  */
 public class CompProcessId implements java.io.Serializable {
 
-    private int runId;
+    private Long runId;
     private String assetId;
     private String procName;
     private int cpuShareCs;
@@ -16,7 +17,7 @@ public class CompProcessId implements java.io.Serializable {
     public CompProcessId() {
     }
 
-    public CompProcessId(int runId, String assetId, String procName, int cpuShareCs, int memShareKb) {
+    public CompProcessId(Long runId, String assetId, String procName, int cpuShareCs, int memShareKb) {
         this.runId = runId;
         this.assetId = assetId;
         this.procName = procName;
@@ -24,11 +25,11 @@ public class CompProcessId implements java.io.Serializable {
         this.memShareKb = memShareKb;
     }
 
-    public int getRunId() {
-        return this.runId;
+    public Long getRunId() {
+        return runId;
     }
 
-    public void setRunId(int runId) {
+    public void setRunId(Long runId) {
         this.runId = runId;
     }
 
@@ -64,30 +65,61 @@ public class CompProcessId implements java.io.Serializable {
         this.memShareKb = memShareKb;
     }
 
-    public boolean equals(Object other) {
-        if ((this == other)) return true;
-        if ((other == null)) return false;
-        if (!(other instanceof CompProcessId)) return false;
-        CompProcessId castOther = (CompProcessId) other;
-
-        return (this.getRunId() == castOther.getRunId())
-                && ((this.getAssetId() == castOther.getAssetId()) || (this.getAssetId() != null
-                        && castOther.getAssetId() != null && this.getAssetId().equals(castOther.getAssetId())))
-                && ((this.getProcName() == castOther.getProcName()) || (this.getProcName() != null
-                        && castOther.getProcName() != null && this.getProcName().equals(castOther.getProcName())))
-                && (this.getCpuShareCs() == castOther.getCpuShareCs())
-                && (this.getMemShareKb() == castOther.getMemShareKb());
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((assetId == null) ? 0 : assetId.hashCode());
+        result = prime * result + cpuShareCs;
+        result = prime * result + memShareKb;
+        result = prime * result + ((procName == null) ? 0 : procName.hashCode());
+        result = prime * result + ((runId == null) ? 0 : runId.hashCode());
+        return result;
     }
 
-    public int hashCode() {
-        int result = 17;
-
-        result = 37 * result + this.getRunId();
-        result = 37 * result + (getAssetId() == null ? 0 : this.getAssetId().hashCode());
-        result = 37 * result + (getProcName() == null ? 0 : this.getProcName().hashCode());
-        result = 37 * result + this.getCpuShareCs();
-        result = 37 * result + this.getMemShareKb();
-        return result;
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        CompProcessId other = (CompProcessId) obj;
+        if (assetId == null) {
+            if (other.assetId != null) {
+                return false;
+            }
+        }
+        else if (!assetId.equals(other.assetId)) {
+            return false;
+        }
+        if (cpuShareCs != other.cpuShareCs) {
+            return false;
+        }
+        if (memShareKb != other.memShareKb) {
+            return false;
+        }
+        if (procName == null) {
+            if (other.procName != null) {
+                return false;
+            }
+        }
+        else if (!procName.equals(other.procName)) {
+            return false;
+        }
+        if (runId == null) {
+            if (other.runId != null) {
+                return false;
+            }
+        }
+        else if (!runId.equals(other.runId)) {
+            return false;
+        }
+        return true;
     }
 
 }

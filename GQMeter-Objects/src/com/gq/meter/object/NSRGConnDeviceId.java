@@ -1,4 +1,5 @@
 package com.gq.meter.object;
+
 // default package
 // Generated Feb 21, 2013 4:19:35 PM by Hibernate Tools 3.4.0.CR1
 
@@ -7,24 +8,24 @@ package com.gq.meter.object;
  */
 public class NSRGConnDeviceId implements java.io.Serializable {
 
-    private int runId;
+    private Long runId;
     private String assetId;
     private String ipAddr;
 
     public NSRGConnDeviceId() {
     }
 
-    public NSRGConnDeviceId(int runId, String assetId, String ipAddr) {
+    public NSRGConnDeviceId(Long runId, String assetId, String ipAddr) {
         this.runId = runId;
         this.assetId = assetId;
         this.ipAddr = ipAddr;
     }
 
-    public int getRunId() {
-        return this.runId;
+    public Long getRunId() {
+        return runId;
     }
 
-    public void setRunId(int runId) {
+    public void setRunId(Long runId) {
         this.runId = runId;
     }
 
@@ -44,26 +45,53 @@ public class NSRGConnDeviceId implements java.io.Serializable {
         this.ipAddr = ipAddr;
     }
 
-    public boolean equals(Object other) {
-        if ((this == other)) return true;
-        if ((other == null)) return false;
-        if (!(other instanceof NSRGConnDeviceId)) return false;
-        NSRGConnDeviceId castOther = (NSRGConnDeviceId) other;
-
-        return (this.getRunId() == castOther.getRunId())
-                && ((this.getAssetId() == castOther.getAssetId()) || (this.getAssetId() != null
-                        && castOther.getAssetId() != null && this.getAssetId().equals(castOther.getAssetId())))
-                && ((this.getIpAddr() == castOther.getIpAddr()) || (this.getIpAddr() != null
-                        && castOther.getIpAddr() != null && this.getIpAddr().equals(castOther.getIpAddr())));
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((assetId == null) ? 0 : assetId.hashCode());
+        result = prime * result + ((ipAddr == null) ? 0 : ipAddr.hashCode());
+        result = prime * result + ((runId == null) ? 0 : runId.hashCode());
+        return result;
     }
 
-    public int hashCode() {
-        int result = 17;
-
-        result = 37 * result + this.getRunId();
-        result = 37 * result + (getAssetId() == null ? 0 : this.getAssetId().hashCode());
-        result = 37 * result + (getIpAddr() == null ? 0 : this.getIpAddr().hashCode());
-        return result;
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        NSRGConnDeviceId other = (NSRGConnDeviceId) obj;
+        if (assetId == null) {
+            if (other.assetId != null) {
+                return false;
+            }
+        }
+        else if (!assetId.equals(other.assetId)) {
+            return false;
+        }
+        if (ipAddr == null) {
+            if (other.ipAddr != null) {
+                return false;
+            }
+        }
+        else if (!ipAddr.equals(other.ipAddr)) {
+            return false;
+        }
+        if (runId == null) {
+            if (other.runId != null) {
+                return false;
+            }
+        }
+        else if (!runId.equals(other.runId)) {
+            return false;
+        }
+        return true;
     }
 
 }
