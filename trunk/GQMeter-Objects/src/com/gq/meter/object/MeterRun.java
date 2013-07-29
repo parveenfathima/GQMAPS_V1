@@ -9,7 +9,7 @@ import java.util.Date;
  */
 public class MeterRun implements java.io.Serializable {
 
-    private Integer runId;
+    private Long runId;
     private String meterId;
     private Date recDttm;
     private short assetScnd;
@@ -20,7 +20,7 @@ public class MeterRun implements java.io.Serializable {
 
     }
 
-    public MeterRun(Integer runId, String meterId, Date recDttm, short assetScnd, short assetDisc, long runTimeMs) {
+    public MeterRun(Long runId, String meterId, Date recDttm, short assetScnd, short assetDisc, long runTimeMs) {
         super();
         this.runId = runId;
         this.meterId = meterId;
@@ -30,11 +30,11 @@ public class MeterRun implements java.io.Serializable {
         this.runTimeMs = runTimeMs;
     }
 
-    public Integer getRunId() {
-        return this.runId;
+    public Long getRunId() {
+        return runId;
     }
 
-    public void setRunId(Integer runId) {
+    public void setRunId(Long runId) {
         this.runId = runId;
     }
 
