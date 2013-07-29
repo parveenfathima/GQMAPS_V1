@@ -12,7 +12,7 @@ public class GQMeterResponse {
     String gqmid;
 
     // run id
-    int runid;
+    Long runid;
 
     // time when data is recorded at client site
     Date recDttm;
@@ -44,11 +44,11 @@ public class GQMeterResponse {
     // there is no one to one correspondence between this list and the asset info list
     List<GQErrorInformation> errorInformationList = new LinkedList<GQErrorInformation>();
 
-    public int getRunid() {
+    public Long getRunid() {
         return runid;
     }
 
-    public void setRunid(int runid) {
+    public void setRunid(Long runid) {
         this.runid = runid;
     }
 
