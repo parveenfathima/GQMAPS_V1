@@ -8,22 +8,22 @@ package com.gq.meter.object;
  */
 public class SrvrAppType implements java.io.Serializable {
 
-    private int srvrAppId;
+    private Short srvrAppId;
     private String descr;
 
     public SrvrAppType() {
     }
 
-    public SrvrAppType(int srvrAppId, String descr) {
+    public SrvrAppType(Short srvrAppId, String descr) {
         this.srvrAppId = srvrAppId;
         this.descr = descr;
     }
 
-    public int getSrvrAppId() {
+    public Short getSrvrAppId() {
         return srvrAppId;
     }
 
-    public void setSrvrAppId(int srvrAppId) {
+    public void setSrvrAppId(Short srvrAppId) {
         this.srvrAppId = srvrAppId;
     }
 

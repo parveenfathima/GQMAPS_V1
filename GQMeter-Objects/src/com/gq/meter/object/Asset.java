@@ -11,21 +11,21 @@ import java.util.Date;
 public class Asset implements java.io.Serializable {
 
     private String assetId;
-    private DevCtlg devCtlg;
-    private AssetImp assetImp;
     private String protocolId;
     private String name;
     private String descr;
+    private String ipAddr;
     private String contact;
     private String location;
-    private int srvrAppId;
+    private Short srvrAppId;
     private String assetUsg;
     private String ownership;
     private String dcEnt;
     private Character active;
     private Date inactiveDttm;
     private String ctlgId;
-    private int imp_level;
+    private Byte imp_level;
+    private String type_id;
 
     public Asset() {
     }
@@ -36,27 +36,8 @@ public class Asset implements java.io.Serializable {
         this.assetUsg = assetUsg;
     }
 
-    public Asset(String assetId, DevCtlg devCtlg, AssetImp assetImp, String protocolId, String name, String descr,
-            String contact, String location, int srvrAppId, String assetUsg, String ownership, String dcEnt,
-            Character active, Date inactiveDttm) {
-        this.assetId = assetId;
-        this.devCtlg = devCtlg;
-        this.assetImp = assetImp;
-        this.protocolId = protocolId;
-        this.name = name;
-        this.descr = descr;
-        this.contact = contact;
-        this.location = location;
-        this.srvrAppId = srvrAppId;
-        this.assetUsg = assetUsg;
-        this.ownership = ownership;
-        this.dcEnt = dcEnt;
-        this.active = active;
-        this.inactiveDttm = inactiveDttm;
-    }
-
-    public Asset(String assetId, String protocolId, String name, String descr, String contact, String location,
-            int srvrAppId, String assetUsg, String ctlgId, int imp_level) {
+    public Asset(String assetId, String protocolId, String name, String descr, String ipAddr, String contact,
+            String location, Short srvrAppId, String assetUsg, String ctlgId, Byte imp_level) {
         super();
         this.assetId = assetId;
         this.protocolId = protocolId;
@@ -68,6 +49,41 @@ public class Asset implements java.io.Serializable {
         this.assetUsg = assetUsg;
         this.ctlgId = ctlgId;
         this.imp_level = imp_level;
+        this.ipAddr = ipAddr;
+    }
+
+    public Asset(String assetId, String protocolId, String name, String descr, String ipAddr, String contact,
+            String location, Short srvrAppId, String assetUsg, String ownership, String dcEnt, Character active,
+            Date inactiveDttm, String ctlgId, Byte imp_level, String type_id) {
+        super();
+        this.assetId = assetId;
+        this.protocolId = protocolId;
+        this.name = name;
+        this.descr = descr;
+        this.ipAddr = ipAddr;
+        this.contact = contact;
+        this.location = location;
+        this.srvrAppId = srvrAppId;
+        this.assetUsg = assetUsg;
+        this.ownership = ownership;
+        this.dcEnt = dcEnt;
+        this.active = active;
+        this.inactiveDttm = inactiveDttm;
+        this.ctlgId = ctlgId;
+        this.imp_level = imp_level;
+        this.type_id = type_id;
+    }
+
+    public Asset(String assetId, String protocolId, String name, String descr, String ipAddr, String contact,
+            String location) {
+        super();
+        this.assetId = assetId;
+        this.protocolId = protocolId;
+        this.name = name;
+        this.descr = descr;
+        this.ipAddr = ipAddr;
+        this.contact = contact;
+        this.location = location;
     }
 
     public String getCtlgId() {
@@ -78,11 +94,11 @@ public class Asset implements java.io.Serializable {
         this.ctlgId = ctlgId;
     }
 
-    public int getImp_level() {
+    public Byte getImp_level() {
         return imp_level;
     }
 
-    public void setImp_level(int imp_level) {
+    public void setImp_level(Byte imp_level) {
         this.imp_level = imp_level;
     }
 
@@ -92,22 +108,6 @@ public class Asset implements java.io.Serializable {
 
     public void setAssetId(String assetId) {
         this.assetId = assetId;
-    }
-
-    public DevCtlg getDevCtlg() {
-        return this.devCtlg;
-    }
-
-    public void setDevCtlg(DevCtlg devCtlg) {
-        this.devCtlg = devCtlg;
-    }
-
-    public AssetImp getAssetImp() {
-        return this.assetImp;
-    }
-
-    public void setAssetImp(AssetImp assetImp) {
-        this.assetImp = assetImp;
     }
 
     public String getProtocolId() {
@@ -134,6 +134,14 @@ public class Asset implements java.io.Serializable {
         this.descr = descr;
     }
 
+    public String getIpAddr() {
+        return ipAddr;
+    }
+
+    public void setIpAddr(String ipAddr) {
+        this.ipAddr = ipAddr;
+    }
+
     public String getContact() {
         return this.contact;
     }
@@ -150,11 +158,11 @@ public class Asset implements java.io.Serializable {
         this.location = location;
     }
 
-    public int getSrvrAppId() {
+    public Short getSrvrAppId() {
         return srvrAppId;
     }
 
-    public void setSrvrAppId(int srvrAppId) {
+    public void setSrvrAppId(Short srvrAppId) {
         this.srvrAppId = srvrAppId;
     }
 
@@ -196,6 +204,14 @@ public class Asset implements java.io.Serializable {
 
     public void setInactiveDttm(Date inactiveDttm) {
         this.inactiveDttm = inactiveDttm;
+    }
+
+    public String getType_id() {
+        return type_id;
+    }
+
+    public void setType_id(String type_id) {
+        this.type_id = type_id;
     }
 
 }
