@@ -4,21 +4,12 @@ import java.util.List;
 
 public class AllCustomerServices {
 
-    List<LocationMaster> locationMasterResult;
     List<OsType> ostypeResult;
-    List<PwrSlab> pwrSlabResult;
+
     List<Protocol> protocolResult;
-    List<Rcmndtn> rcmndtnResult;
+
     List<SrvrAppType> srvrAppTypeResult;
     List<DevCtlg> DevCtlgResult;
-
-    public List<LocationMaster> getLocationMasterResult() {
-        return locationMasterResult;
-    }
-
-    public void setLocationMasterResult(List<LocationMaster> locationMasterResult) {
-        this.locationMasterResult = locationMasterResult;
-    }
 
     public List<OsType> getOstypeResult() {
         return ostypeResult;
@@ -28,28 +19,12 @@ public class AllCustomerServices {
         this.ostypeResult = ostypeResult;
     }
 
-    public List<PwrSlab> getPwrSlabResult() {
-        return pwrSlabResult;
-    }
-
-    public void setPwrSlabResult(List<PwrSlab> pwrSlabResult) {
-        this.pwrSlabResult = pwrSlabResult;
-    }
-
     public List<Protocol> getProtocolResult() {
         return protocolResult;
     }
 
     public void setProtocolResult(List<Protocol> protocolResult) {
         this.protocolResult = protocolResult;
-    }
-
-    public List<Rcmndtn> getRcmndtnResult() {
-        return rcmndtnResult;
-    }
-
-    public void setRcmndtnResult(List<Rcmndtn> rcmndtnResult) {
-        this.rcmndtnResult = rcmndtnResult;
     }
 
     public List<SrvrAppType> getSrvrAppTypeResult() {
@@ -68,16 +43,12 @@ public class AllCustomerServices {
         this.DevCtlgResult = DevCtlgResult;
     }
 
-    public AllCustomerServices(List<LocationMaster> locationMasterResult, List<OsType> ostypeResult,
-            List<PwrSlab> pwrSlabResult, List<Protocol> protocolResult, List<Rcmndtn> rcmndtnResult,
-            List<SrvrAppType> srvrAppTypeResult, List<DevCtlg> DevCtlgResult) {
+    public AllCustomerServices(List<Protocol> protocolResult, List<SrvrAppType> srvrAppTypeResult,
+            List<DevCtlg> devCtlgResult) {
         super();
-        this.locationMasterResult = locationMasterResult;
-        this.ostypeResult = ostypeResult;
-        this.pwrSlabResult = pwrSlabResult;
         this.protocolResult = protocolResult;
-        this.rcmndtnResult = rcmndtnResult;
         this.srvrAppTypeResult = srvrAppTypeResult;
-        this.DevCtlgResult = DevCtlgResult;
+        DevCtlgResult = devCtlgResult;
     }
+
 }
