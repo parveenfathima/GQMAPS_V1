@@ -1,6 +1,6 @@
 package com.gq.meter.object;
-
-// Generated Jul 10, 2013 12:02:17 PM by Hibernate Tools 3.4.0.CR1
+// default package
+// Generated Aug 1, 2013 3:46:57 PM by Hibernate Tools 3.4.0.CR1
 
 import java.util.Date;
 
@@ -9,7 +9,7 @@ import java.util.Date;
  */
 public class MeterRun implements java.io.Serializable {
 
-    private Integer runId;
+    private Long runId;
     private String meterId;
     private Date recDttm;
     private short assetScnd;
@@ -27,11 +27,11 @@ public class MeterRun implements java.io.Serializable {
         this.runTimeMs = runTimeMs;
     }
 
-    public Integer getRunId() {
+    public Long getRunId() {
         return this.runId;
     }
 
-    public void setRunId(Integer runId) {
+    public void setRunId(Long runId) {
         this.runId = runId;
     }
 
