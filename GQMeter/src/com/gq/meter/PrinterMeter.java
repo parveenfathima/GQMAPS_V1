@@ -68,7 +68,7 @@ public class PrinterMeter implements GQSNMPMeter {
 
         long printerStartTime = System.currentTimeMillis();
         Snmp snmp = null;
-        int runId = 0;
+        Long runId = 0L;
         String assetId = null; // unique identifier about the asset
         CPNId id = null;
 
@@ -270,7 +270,7 @@ public class PrinterMeter implements GQSNMPMeter {
         GQMeterData gqMeterObject = new GQMeterData(gqErrorInfo, printerObject);
         long printerEndTime = System.currentTimeMillis();
         MeterUtils.printMeterTime = MeterUtils.printMeterTime + (printerEndTime - printerStartTime);
-        System.out.println(" [GQMETER] Time taken by the printer meter is : " + (printerEndTime - printerStartTime));
+        // System.out.println(" [GQMETER] Time taken by the printer meter is : " + (printerEndTime - printerStartTime));
         return gqMeterObject;
     }
 
@@ -451,11 +451,9 @@ public class PrinterMeter implements GQSNMPMeter {
                 if (!auxStatusValueStr.trim().isEmpty() && auxStatusValueStr != null) {// if loop starts
                     if (auxStatusValueStr.equalsIgnoreCase("@")) {
                         auxStatusValue = 100;
-                        System.out.println(auxStatusValue);
                     }
                     else {
                         auxStatusValue = Integer.parseInt(auxStatusValueStr, 16);
-                        System.out.println(auxStatusValue);
                     }
                     // check in the predefined map whether the map has the value
                     if (printerAuxStatusMap.containsKey(auxStatusValue)) {
@@ -517,7 +515,7 @@ public class PrinterMeter implements GQSNMPMeter {
      */
     private HashSet<PrinterConnDevice> ConnectedDevicesCalc(List<VariableBinding> result, String ipAddress, CPNId id) {
 
-        int runId = id.getRunId();
+        Long runId = id.getRunId();
         String assetId = id.getAssetId();
         HashSet<PrinterConnDevice> connectedDevices = new HashSet<PrinterConnDevice>();
 

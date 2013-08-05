@@ -48,7 +48,7 @@ public class ComputerMeter implements GQSNMPMeter {
 
         long computerstartTime = System.currentTimeMillis();
         Snmp snmp = null;
-        int runId = 0;
+        Long runId = 0L;
         String assetId = null; // unique identifier about the asset
         String sysDescription = null;
         CPNId id = null;
@@ -98,6 +98,7 @@ public class ComputerMeter implements GQSNMPMeter {
             String temp;
             String tempStr;
             boolean isWindows = false;
+            boolean isLinux = false;
             OID rootOID = null;
             List<VariableBinding> result = null;
             List<VariableBinding> result1 = null;
@@ -110,6 +111,7 @@ public class ComputerMeter implements GQSNMPMeter {
                 }
                 else if (sysDescription.contains("linux")) {
                     osId = "linux";
+                    isLinux = true;
                 }
                 else if (sysDescription.contains("unix")) {
                     osId = "unix";
@@ -349,7 +351,7 @@ public class ComputerMeter implements GQSNMPMeter {
                         List<VariableBinding> dateResult = MeterUtils.walk(rootOID, target);
 
                         installedSwList = installedSwListCalc(appResult, softwareResult, dateResult, rootOID,
-                                isWindows, id);
+                                isWindows, isLinux, id);
                     } // 2nd if loop ends
                     else {
                         errorList.add(assetId + " Root OID : 1.3.6.1.2.1.25.6.3.1.4" + " "
@@ -421,7 +423,8 @@ public class ComputerMeter implements GQSNMPMeter {
         GQMeterData gqMeterObject = new GQMeterData(gqErrorInfo, compObject);
         long computerendTime = System.currentTimeMillis();
         MeterUtils.compMeterTime = MeterUtils.compMeterTime + (computerendTime - computerstartTime);
-        System.out.println(" [GQMETER] Time taken by the computer meter is : " + (computerendTime - computerstartTime));
+        // System.out.println(" [GQMETER] Time taken by the computer meter is : " + (computerendTime -
+        // computerstartTime));
         return gqMeterObject;
 
     } // GQMeterData method ends
@@ -795,32 +798,51 @@ public class ComputerMeter implements GQSNMPMeter {
      */
     private ArrayList<CompInstSoftware> installedSwListCalc(List<VariableBinding> appResult,
             List<VariableBinding> softwareResult, List<VariableBinding> dateResult, OID rootOid, boolean isWindows,
-            CPNId id) {
-        int runId = id.getRunId();
+            boolean isLinux, CPNId id) {
+        Long runId = id.getRunId();
         String assetId = id.getAssetId();
         int installedSoftwareSize = appResult.size();
         if (!isWindows) {
             installedSoftwareSize = (installedSoftwareSize / 2) + 100;
         }
+
         ArrayList<CompInstSoftware> installedSwList = new ArrayList<CompInstSoftware>(installedSoftwareSize);
         CompInstSoftwareId ins = null;
         try {
-            for (int i = 0; i < appResult.size(); i++) { // for loop starts
-                if (appResult.get(i).getVariable().toString().trim().equals("4")) { // 1st if loop starts
-                    String softwareName = softwareResult.get(i).getVariable().toString().trim();
-                    Date installDate = getDate(dateResult.get(i).getVariable().toString().trim(), isWindows);
-                    if (softwareName != null && softwareName.trim().length() != 0) { // 2nd if loop starts
-                        int SoftwareLength = softwareName.length();
-                        if (SoftwareLength >= 100) {
-                            softwareName = softwareName.substring(0, 99);
-                        }
-                        ins = new CompInstSoftwareId(runId, assetId, softwareName, installDate);
-                        CompInstSoftware cis = new CompInstSoftware(ins);
-                        installedSwList.add(cis);
-                    } // 2nd if loop ends
-                } // 1st if loop ends
-            } // for loop ends
-
+            if (isWindows) {
+                for (int i = 0; i < appResult.size(); i++) { // for loop starts
+                    if (appResult.get(i).getVariable().toString().trim().equals("4")) { // 1st if loop starts
+                        String softwareName = softwareResult.get(i).getVariable().toString().trim();
+                        Date installDate = getDate(dateResult.get(i).getVariable().toString().trim(), isWindows);
+                        if (softwareName != null && softwareName.trim().length() != 0) { // 2nd if loop starts
+                            int SoftwareLength = softwareName.length();
+                            if (SoftwareLength >= 100) {
+                                softwareName = softwareName.substring(0, 99);
+                            }
+                            ins = new CompInstSoftwareId(runId, assetId, softwareName, installDate);
+                            CompInstSoftware cis = new CompInstSoftware(ins);
+                            installedSwList.add(cis);
+                        } // 2nd if loop ends
+                    } // 1st if loop ends
+                } // for loop ends
+            }
+            if (isLinux) {
+                for (int i = 0; i < appResult.size(); i++) { // for loop starts
+                    if (appResult.get(i).getVariable().toString().trim().equals("4")) { // 1st if loop starts
+                        String softwareName = softwareResult.get(i).getVariable().toString().trim();
+                        Date installDate = getDate(dateResult.get(i).getVariable().toString().trim(), isWindows);
+                        if (softwareName != null && softwareName.trim().length() != 0) { // 2nd if loop starts
+                            int SoftwareLength = softwareName.length();
+                            if (SoftwareLength >= 100) {
+                                softwareName = softwareName.substring(0, 99);
+                            }
+                            ins = new CompInstSoftwareId(runId, assetId, softwareName, installDate);
+                            CompInstSoftware cis = new CompInstSoftware(ins);
+                            installedSwList.add(cis);
+                        } // 2nd if loop ends
+                    } // 1st if loop ends
+                } // for
+            }
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -888,7 +910,7 @@ public class ComputerMeter implements GQSNMPMeter {
         HashSet<CompConnDevice> connectedDevices = new HashSet<CompConnDevice>();
 
         CompConnDevice connDevice = null;
-        int runId = id.getRunId();
+        Long runId = id.getRunId();
         String assetId = id.getAssetId();
         CompConnDeviceId compConnDeviceId = null;
         String ip[] = new String[result.size()];
@@ -942,7 +964,7 @@ public class ComputerMeter implements GQSNMPMeter {
             List<VariableBinding> sysRunNameResult, List<VariableBinding> cpuShareResult,
             List<VariableBinding> memShareResult, CPNId id) {
 
-        int runId = id.getRunId();
+        Long runId = id.getRunId();
         String assetId = id.getAssetId();
         int processSize = sysRunNameResult.size();
         ArrayList<CompProcess> processList = new ArrayList<CompProcess>(processSize);

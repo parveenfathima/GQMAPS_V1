@@ -32,7 +32,7 @@ public class StorageMeter implements GQSNMPMeter {
         long storageStartTime = System.currentTimeMillis();
 
         CPNId id = null;
-        int runId = 0;
+        Long runId = 0L;
 
         // variables that are used to get the NSRG snapshot
         String assetId = null;
@@ -126,7 +126,7 @@ public class StorageMeter implements GQSNMPMeter {
         GQMeterData gqMeterObject = new GQMeterData(gqErrorInfo, storageObj);
         long storageEndTime = System.currentTimeMillis();
         MeterUtils.storageMeterTime = MeterUtils.storageMeterTime + (storageEndTime - storageStartTime);
-        System.out.println(" [GQMETER] Time taken by the storage meter is : " + (storageEndTime - storageStartTime));
+        // System.out.println(" [GQMETER] Time taken by the storage meter is : " + (storageEndTime - storageStartTime));
         return gqMeterObject;
     }
 
