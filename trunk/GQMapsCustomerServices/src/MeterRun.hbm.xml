@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<!-- Generated Jul 10, 2013 12:02:17 PM by Hibernate Tools 3.4.0.CR1 -->
+<!-- Generated Aug 1, 2013 4:22:41 PM by Hibernate Tools 3.4.0.CR1 -->
 <hibernate-mapping>
     <class name="com.gq.meter.object.MeterRun" table="meter_run" catalog="gqmaps">
-        <id name="runId" type="java.lang.Integer">
+        <id name="runId" type="java.lang.Long">
             <column name="run_id" />
             <generator class="identity" />
         </id>
@@ -23,5 +23,6 @@
         <property name="runTimeMs" type="long">
             <column name="run_time_ms" not-null="true" />
         </property>
+        
     </class>
 </hibernate-mapping>
