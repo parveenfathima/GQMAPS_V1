@@ -26,7 +26,6 @@ public class DevCtlg implements java.io.Serializable {
     private Integer ram;
     private Integer diskGb;
     private Integer monthlyRent;
-    private String compType;
     private Set assets = new HashSet(0);
 
     public DevCtlg() {
@@ -45,7 +44,7 @@ public class DevCtlg implements java.io.Serializable {
 
     public DevCtlg(String ctlgId, String protocolId, String descr, short idleThreshold, short loadThreshold,
             double idleWatt, double loadWatt, Double enPerMinLoad, Double enPerMinIdle, Double servrCost,
-            Integer noOfCore, Double cpu, Integer ram, Integer diskGb, Integer monthlyRent, String compType, Set assets) {
+            Integer noOfCore, Double cpu, Integer ram, Integer diskGb, Integer monthlyRent, Set assets) {
         this.ctlgId = ctlgId;
         this.protocolId = protocolId;
         this.descr = descr;
@@ -61,7 +60,6 @@ public class DevCtlg implements java.io.Serializable {
         this.ram = ram;
         this.diskGb = diskGb;
         this.monthlyRent = monthlyRent;
-        this.compType = compType;
         this.assets = assets;
     }
 
@@ -183,14 +181,6 @@ public class DevCtlg implements java.io.Serializable {
 
     public void setMonthlyRent(Integer monthlyRent) {
         this.monthlyRent = monthlyRent;
-    }
-
-    public String getCompType() {
-        return this.compType;
-    }
-
-    public void setCompType(String compType) {
-        this.compType = compType;
     }
 
     public Set getAssets() {
