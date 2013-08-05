@@ -3,13 +3,14 @@
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <!-- Generated Aug 1, 2013 4:22:41 PM by Hibernate Tools 3.4.0.CR1 -->
 <hibernate-mapping>
-    <class name="com.gq.meter.object.SrvrAppType" table="srvr_app_type" catalog="gqmaps">
-        <id name="srvrAppId" type="short">
-            <column name="srvr_app_id" />
+    <class name="com.gq.meter.object.CompType" table="comp_type" catalog="gqmaps">
+        <id name="typeId" type="string">
+            <column name="type_id" length="20" />
             <generator class="assigned" />
         </id>
         <property name="descr" type="string">
-            <column name="descr" length="60" not-null="true" />
+            <column name="descr" length="30" not-null="true" />
         </property>
-     </class>
+        
+    </class>
 </hibernate-mapping>

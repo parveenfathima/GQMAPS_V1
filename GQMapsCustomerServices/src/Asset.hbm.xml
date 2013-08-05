@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<!-- Generated Jul 4, 2013 12:37:16 PM by Hibernate Tools 3.4.0.CR1 -->
+<!-- Generated Aug 1, 2013 4:56:28 PM by Hibernate Tools 3.4.0.CR1 -->
 <hibernate-mapping>
     <class name="com.gq.meter.object.Asset" table="asset" catalog="gqmaps">
         <id name="assetId" type="string">
@@ -26,20 +26,34 @@
         <property name="ctlgId" type="string">
             <column name="ctlg_id" length="20" />
         </property>
-        <property name="srvrAppId" type="string">
-            <column name="srvr_app_id" length="20" />
+        <property name="srvrAppId" type="java.lang.Short">
+            <column name="srvr_app_id" />
         </property>
         <property name="assetUsg" type="string">
-            <column name="asset_usg" length="45" />
+            <column name="asset_usg" length="50" />
         </property>
-        <property name="assetStrength" type="java.lang.Byte">
-            <column name="asset_strength" />
+        <property name="impLvl" type="java.lang.Byte">
+            <column name="imp_lvl" />
         </property>
         <property name="ownership" type="string">
             <column name="ownership" length="6" />
         </property>
-        <property name="area" type="string">
-            <column name="area" length="2" />
+        <property name="dcEnt" type="string">
+            <column name="dc_ent" length="2" />
+        </property>
+        <property name="active" type="java.lang.Character">
+            <column name="active" length="1">
+                <comment>asset is active or it has moved or decommissioned(if users choose these assets in dashboard and click on decommiosn the asset active set to n and these
+                assets should not consider for any furtyer calculation)</comment>
+            </column>
+        </property>
+        <property name="inactiveDttm" type="timestamp">
+            <column name="inactive_dttm" length="19">
+                <comment>if assets are made inactive then capture date</comment>
+            </column>
+        </property>
+        <property name="typeId" type="string">
+            <column name="type_id" length="20" />
         </property>
     </class>
 </hibernate-mapping>

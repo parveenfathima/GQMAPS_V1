@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<!-- Generated Jul 10, 2013 3:36:20 PM by Hibernate Tools 3.4.0.CR1 -->
+<!-- Generated Aug 1, 2013 4:22:41 PM by Hibernate Tools 3.4.0.CR1 -->
 <hibernate-mapping>
     <class name="com.gq.meter.object.DevCtlg" table="dev_ctlg" catalog="gqmaps">
         <id name="ctlgId" type="string">
@@ -27,7 +27,7 @@
             <column name="load_watt" precision="22" scale="0" not-null="true" />
         </property>
         <property name="enPerMinLoad" type="java.lang.Double">
-            <column name="en_per_min_load" precision="22" scale="0">
+            <column name="en_per_min_load" precision="22" scale="0" not-null="true">
                 <comment>energy consumption per minute - related only for switch and printer..( it is static value calculated by running the switch and with wysine data)</comment>
             </column>
         </property>
@@ -56,14 +56,6 @@
         <property name="monthlyRent" type="java.lang.Integer">
             <column name="monthly_rent" />
         </property>
-        <property name="idlePctg" type="java.lang.Short">
-            <column name="idle_pctg" />
-        </property>
-        <property name="fullPctg" type="java.lang.Short">
-            <column name="full_pctg" />
-        </property>
-        <property name="fullWatt" type="java.lang.Double">
-            <column name="full_watt" precision="22" scale="0" />
-        </property>
+        
     </class>
 </hibernate-mapping>
