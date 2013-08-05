@@ -58,10 +58,10 @@ public class MeterUtils {
         Asset assetObj = null;
         try {
 
-            String appId = "app_id";
-            String assetUsg = "assetUsg";
-            Byte assetStrength = 1;
-            String ctlgId = "ctlg_id";
+            int appId = 1;
+            String assetUsg = null;
+            int assetStrength = 1;
+            String ctlgId = null;
 
             // ASSET
             String sysName = null; // string
@@ -70,6 +70,7 @@ public class MeterUtils {
             String sysLocation = null; // string
             String assetId = null; // unique identifier about the asset
             String protocolId = null;
+            String ipAddr = null;
 
             String oidString = "1.3.6.1.2.1.1";
             String temp;
@@ -110,13 +111,16 @@ public class MeterUtils {
                 if (sysLength >= 45) {
                     sysLocation = sysLocation.substring(0, 44);
                 }
+
             }
             else {
                 errorList.add("Root OID : 1.3.6.1.2.1.1" + " " + MeterConstants.STANDARD_SYSTEM_ATTRIBUTES_ERROR);
             }
+            ipAddr = ipAddress;
 
-            assetObj = new Asset(assetId, protocolId, sysName, sysDescr, sysContact, sysLocation, appId, assetUsg,
-                    assetStrength, ctlgId);
+            assetObj = new Asset(assetId, protocolId, sysName, sysDescr, ipAddr, sysContact, sysLocation);
+            // System.out.println(assetId + "\n" + protocolId + "\n" + sysName + "\n" + sysDescr + "\n" + ipAddr + "\n"
+            // + sysContact + "\n" + sysLocation);
         }
         catch (Exception e) {
             errorList.add(ipAddress + " " + e.getMessage());
@@ -142,7 +146,7 @@ public class MeterUtils {
 
         if (result == null || result.isEmpty()) {
             // may be the device is serving snmp but not version 2 , so lets try version 1
-            System.out.println(" [GQMETER] SNMP Version2 is failed for this device,trying for version1 now");
+            // System.out.println(" [GQMETER] SNMP Version2 is failed for this device,trying for version1 now");
             snmpVersion = MeterConstants.SNMP_VERSION_1;
 
             target = makeTarget(currIp, communityString, snmpVersion); // needs to be done only once.
@@ -150,16 +154,15 @@ public class MeterUtils {
 
             if (result == null || result.isEmpty()) {
                 // may be the device is not serving snmp at all. so lets get out or throw io exception
-                System.out
-                        .println(" [GQMETER] SNMP Version2 && version1 are failed, The asset is not configure with SNMP ");
+                // System.out.println(" [GQMETER] SNMP Version2 && version1 are failed, The asset is not configure with SNMP ");
                 long snmpEndTime = System.currentTimeMillis();
 
                 snmpUnknownTime = snmpUnknownTime + (snmpEndTime - snmpStartTime);// Time taken to find snmp is not
                                                                                   // configured
                 assetDetails.put("snmpUnKnownIp", currIp);
 
-                System.out.println(" [GQMETER] ### SNMP is not configured in this device ### : "
-                        + (snmpEndTime - snmpStartTime));
+                // System.out.println(" [GQMETER] ### SNMP is not configured in this device ### : "
+                // + (snmpEndTime - snmpStartTime));
                 return assetDetails; // if snmp is configured & the SNMP_CHECK_OCTET doesn't exist then return null;
             }// 2nd if ends
         }// 1st if ends
@@ -172,8 +175,8 @@ public class MeterUtils {
         snmpKnownTime = snmpKnownTime + (snmpEndTime - snmpStartTime); // Time taken to find snmp is configured
         assetDetails.put("snmpKnownIp", currIp);
 
-        System.out.println(" [GQMETER] *** Time taken to find isSnmpConfigured or not : "
-                + (snmpEndTime - snmpStartTime));
+        // System.out.println(" [GQMETER] *** Time taken to find isSnmpConfigured or not : "
+        // + (snmpEndTime - snmpStartTime));
         return assetDetails;
     }
 
