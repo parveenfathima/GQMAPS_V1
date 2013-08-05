@@ -83,10 +83,6 @@ public final class ITAssetDiscoverer {
             for (Entry<String, String> entry : communityIPMap.entrySet()) {
                 ipAddress = entry.getKey();
                 communityString = entry.getValue();
-
-                System.out.println("********************************************************************");
-                System.out.println(" [GQMETER] CommunityString : " + communityString + " - Ipaddress : " + ipAddress);
-
                 snmpDetails = MeterUtils.isSnmpConfigured(communityString, ipAddress);
                 if (snmpDetails != null && snmpDetails.size() != 0) {
                     snmpVersion = snmpDetails.get("snmpVersion");
@@ -278,11 +274,13 @@ public final class ITAssetDiscoverer {
                                         }
                                         // This condition used to check the lowerboundip and ipupperboundip as same
                                         else if (MeterUtils.ipComparator.compare(ipLowerbound, ipUpperbound) == 0) {
-                                            System.out.println(" [GQMETER] IP lower bound : " + ipLowerbound
-                                                    + "IP upper bound : " + ipUpperbound
-                                                    + " \nBoth Ip's should be same.....");
-                                            System.out.println(" [GQMETER] Process Terminated Now.....");
-                                            System.exit(0);
+                                            // System.out.println(" [GQMETER] IP lower bound : " + ipLowerbound
+                                            // + " IP upper bound : " + ipUpperbound
+                                            // + " \n [GQMETER] Both Ip's should be same.....");
+                                            // communityIPMap.put(ipLowerbound, communityString);
+                                            // System.out.println(" [GQMETER] Process Terminated Now.....");
+                                            // System.exit(0);
+                                            communityIPMap.put(ipLowerbound, communityString);
                                         }
                                         else {
                                             System.out.println(" [GQMETER] IP lower bound : " + ipLowerbound
@@ -418,24 +416,14 @@ public final class ITAssetDiscoverer {
         gqmResponse.setVersion("1");
         gqmResponse.setGqmid(gqmid);
 
-        System.out.println("::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::");
-        // The end time of the meter execution
-
-        System.out.println(" [GQMETER] Total number of assets taken after processing the inputfile : "
+        System.out.println(" [GQMETER] Total number of assets(ip address) in input file : "
                 + gqmResponse.getAssetScanned());
-        System.out.println(" [GQMETER] Total time taken to know snmp is installed on the devices : "
-                + MeterUtils.snmpKnownTime);
-        System.out.println(" [GQMETER] Total time taken to know snmp is not installed on the devices : "
-                + MeterUtils.snmpUnknownTime);
-        System.out.println(" [GQMETER] The list of snmp configured devices : " + this.getSnmpKnownIPList().toString());
-        System.out.println(" [GQMETER] The list of no snmp configured devices : "
-                + this.getSnmpUnknownIPList().toString());
-        System.out.println(" [GQMETER] Total number of Valid IP addresses found in given input file : "
-                + communityIPMap.size());
+        System.out.println(" [GQMETER] List of snmp configured devices : " + this.getSnmpKnownIPList().toString());
+        System.out.println(" [GQMETER] SNMP not configured on : " + this.getSnmpUnknownIPList().toString());
         System.out.println(" [GQMETER] SNMP walk succeeded count is : " + this.getSnmpKnownIPList().size());
-        System.out.println(" [GQMETER] Total time taken for all COMPUTER meters : " + MeterUtils.compMeterTime);
-        System.out.println(" [GQMETER] Total time taken for all PRINTER meters : " + MeterUtils.printMeterTime);
-        System.out.println(" [GQMETER] Total time taken for all NSRG meters : " + MeterUtils.nsrgMeterTime);
+        // System.out.println(" [GQMETER] Total time taken for all COMPUTER meters : " + MeterUtils.compMeterTime);
+        // System.out.println(" [GQMETER] Total time taken for all PRINTER meters : " + MeterUtils.printMeterTime);
+        // System.out.println(" [GQMETER] Total time taken for all NSRG meters : " + MeterUtils.nsrgMeterTime);
         System.out.println(" [GQMETER] TOTAL duration taken for meter execution : " + (endTime - startTime));
         System.out.println(" [GQMETER] ended successfully ....");
         // Sending the generated json output to the server
