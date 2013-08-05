@@ -1,5 +1,7 @@
 package com.gq.meter.util;
 
+import java.util.HashMap;
+
 public class MeterConstants {
 
     public static final String STATUS_PASS = "pass";
@@ -69,5 +71,6 @@ public class MeterConstants {
     public static final String STORAGE_PROTOCOL = "storage";
 
     public static String PROTOCOL_ID = "it";
+    public static HashMap<String, String> linuxOSFreshMap = new HashMap<String, String>();
 
 } // class ends
