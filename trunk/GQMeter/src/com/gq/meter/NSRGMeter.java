@@ -37,7 +37,7 @@ public class NSRGMeter implements GQSNMPMeter {
         long NSRGstartTime = System.currentTimeMillis();
         Snmp snmp = null;
 
-        int runId = 0;
+        Long runId = 0L;
         String assetId = null; // unique identifier about the asset
         CPNId id = null;
 
@@ -193,7 +193,7 @@ public class NSRGMeter implements GQSNMPMeter {
 
         long NSRGendTime = System.currentTimeMillis();
         MeterUtils.nsrgMeterTime = MeterUtils.nsrgMeterTime + (NSRGendTime - NSRGstartTime);
-        System.out.println(" [GQMETER] Time taken by the nsrg meter is : " + (NSRGendTime - NSRGstartTime));
+        // System.out.println(" [GQMETER] Time taken by the nsrg meter is : " + (NSRGendTime - NSRGstartTime));
         return gqMeterObject;
     }
 
@@ -294,7 +294,7 @@ public class NSRGMeter implements GQSNMPMeter {
      */
     private HashSet<NSRGConnDevice> ConnectedDevicesCalc(List<VariableBinding> result, OID rootOid, CPNId id) {
 
-        int runId = id.getRunId();
+        Long runId = id.getRunId();
         String assetId = id.getAssetId();
 
         HashSet<NSRGConnDevice> connectedDevices = new HashSet<NSRGConnDevice>();
