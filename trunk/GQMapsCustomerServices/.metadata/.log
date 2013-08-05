@@ -1,0 +1,51 @@
+!SESSION 2013-02-11 14:44:35.868 -----------------------------------------------
+eclipse.buildId=M20110909-1335
+java.version=1.6.0_29
+java.vendor=Sun Microsystems Inc.
+BootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=en_US
+Framework arguments:  -product org.eclipse.epp.package.jee.product
+Command-line arguments:  -os win32 -ws win32 -arch x86_64 -product org.eclipse.epp.package.jee.product
+
+!ENTRY org.eclipse.ecf.provider.filetransfer 4 0 2013-02-11 15:23:02.878
+!MESSAGE org.eclipse.core.runtime.Status[plugin=org.eclipse.ecf.provider.filetransfer;code=4;message=hardClose;severity4;exception=java.net.SocketException: Connection reset;children=[]]
+!STACK 0
+java.net.SocketException: Connection reset
+	at java.net.SocketInputStream.read(Unknown Source)
+	at java.io.BufferedInputStream.fill(Unknown Source)
+	at java.io.BufferedInputStream.read1(Unknown Source)
+	at java.io.BufferedInputStream.read(Unknown Source)
+	at org.apache.commons.httpclient.ChunkedInputStream.read(ChunkedInputStream.java:182)
+	at org.apache.commons.httpclient.ChunkedInputStream.read(ChunkedInputStream.java:196)
+	at org.apache.commons.httpclient.ChunkedInputStream.exhaustInputStream(ChunkedInputStream.java:369)
+	at org.apache.commons.httpclient.ChunkedInputStream.close(ChunkedInputStream.java:346)
+	at java.io.FilterInputStream.close(Unknown Source)
+	at org.apache.commons.httpclient.AutoCloseInputStream.notifyWatcher(AutoCloseInputStream.java:194)
+	at org.apache.commons.httpclient.AutoCloseInputStream.close(AutoCloseInputStream.java:158)
+	at java.util.zip.InflaterInputStream.close(Unknown Source)
+	at java.util.zip.GZIPInputStream.close(Unknown Source)
+	at org.eclipse.ecf.provider.filetransfer.retrieve.AbstractRetrieveFileTransfer$1.performFileTransfer(AbstractRetrieveFileTransfer.java:185)
+	at org.eclipse.ecf.filetransfer.FileTransferJob.run(FileTransferJob.java:73)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:54)
+
+!ENTRY org.eclipse.equinox.p2.engine 4 4 2013-02-11 15:23:51.069
+!MESSAGE An error occurred while collecting items to be installed
+!SUBENTRY 1 org.eclipse.equinox.p2.engine 4 0 2013-02-11 15:23:51.069
+!MESSAGE session context was:(profile=epp.package.jee, phase=org.eclipse.equinox.internal.p2.engine.phases.Collect, operand=, action=).
+!SUBENTRY 1 org.eclipse.equinox.p2.transport.ecf 4 1002 2013-02-11 15:23:51.069
+!MESSAGE Unable to read repository at http://subclipse.tigris.org/update_1.8.x/plugins/org.tigris.subversion.subclipse.doc_1.3.0.jar.
+!STACK 0
+java.net.SocketException: Connection reset
+	at java.net.SocketInputStream.read(Unknown Source)
+	at java.io.BufferedInputStream.fill(Unknown Source)
+	at java.io.BufferedInputStream.read1(Unknown Source)
+	at java.io.BufferedInputStream.read(Unknown Source)
+	at org.apache.commons.httpclient.ChunkedInputStream.read(ChunkedInputStream.java:182)
+	at java.io.FilterInputStream.read(Unknown Source)
+	at org.apache.commons.httpclient.AutoCloseInputStream.read(AutoCloseInputStream.java:108)
+	at java.util.zip.InflaterInputStream.fill(Unknown Source)
+	at java.util.zip.InflaterInputStream.read(Unknown Source)
+	at java.util.zip.GZIPInputStream.read(Unknown Source)
+	at java.io.FilterInputStream.read(Unknown Source)
+	at org.eclipse.ecf.provider.filetransfer.retrieve.AbstractRetrieveFileTransfer$1.performFileTransfer(AbstractRetrieveFileTransfer.java:172)
+	at org.eclipse.ecf.filetransfer.FileTransferJob.run(FileTransferJob.java:73)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:54)
