@@ -9,7 +9,7 @@ import java.util.Date;
  */
 public class ClientData implements java.io.Serializable {
 
-    private Integer runId;
+    private Long runId;
     private String meterId;
     private String data;
     private Date creDttm;
@@ -24,7 +24,7 @@ public class ClientData implements java.io.Serializable {
         this.creDttm = creDttm;
     }
 
-    public ClientData(Integer runId, String meterId, String data, Date creDttm, String comment) {
+    public ClientData(Long runId, String meterId, String data, Date creDttm, String comment) {
         this.runId = runId;
         this.meterId = meterId;
         this.data = data;
@@ -32,11 +32,11 @@ public class ClientData implements java.io.Serializable {
         this.comment = comment;
     }
 
-    public Integer getRunId() {
-        return this.runId;
+    public Long getRunId() {
+        return runId;
     }
 
-    public void setRunId(Integer runId) {
+    public void setRunId(Long runId) {
         this.runId = runId;
     }
 
