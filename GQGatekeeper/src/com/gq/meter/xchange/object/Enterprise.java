@@ -15,7 +15,6 @@ public class Enterprise implements java.io.Serializable {
     private String EName;
     private String phone;
     private String email;
-    private char active;
     private String userId;
     private String passwd;
     private Short secQtn1;
@@ -49,16 +48,15 @@ public class Enterprise implements java.io.Serializable {
         this.storeFwd = storeFwd;
     }
 
-    public Enterprise(Character enterpriseId, char blCd, String EName, String phone, String email, char active,
-            String userId, String passwd, Short secQtn1, String ans1, Short secQtn2, String ans2, Date creDttm,
-            char storeFwd, String fwdUrl, Integer noOfEmpl, Integer dcSqft, Character regCmplt, Double dcUsePctg,
-            Integer dcTemp, String comments) {
+    public Enterprise(Character enterpriseId, char blCd, String EName, String phone, String email, String userId,
+            String passwd, Short secQtn1, String ans1, Short secQtn2, String ans2, Date creDttm, char storeFwd,
+            String fwdUrl, Integer noOfEmpl, Integer dcSqft, Character regCmplt, Double dcUsePctg, Integer dcTemp,
+            String comments) {
         this.enterpriseId = enterpriseId;
         this.blCd = blCd;
         this.EName = EName;
         this.phone = phone;
         this.email = email;
-        this.active = active;
         this.userId = userId;
         this.passwd = passwd;
         this.secQtn1 = secQtn1;
@@ -178,14 +176,6 @@ public class Enterprise implements java.io.Serializable {
 
     public void setCreDttm(Date creDttm) {
         this.creDttm = creDttm;
-    }
-
-    public char getActive() {
-        return active;
-    }
-
-    public void setActive(char active) {
-        this.active = active;
     }
 
     public char getStoreFwd() {
