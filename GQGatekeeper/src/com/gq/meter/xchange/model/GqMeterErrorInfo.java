@@ -10,7 +10,7 @@ import com.gq.meter.xchange.util.HibernateUtil;
 
 public class GqMeterErrorInfo {
 
-    public static void insertErrorInfo(List<GQErrorInformation> gqerrList, int runId) {
+    public static void insertErrorInfo(List<GQErrorInformation> gqerrList, Long runId) {
         Session session = null;
 
         try {
