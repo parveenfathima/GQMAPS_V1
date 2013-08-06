@@ -16,7 +16,7 @@ import com.gq.meter.xchange.util.HibernateUtil;
  */
 public class ClientDataModel {
 
-    public void saveClientData(int runId, String meterId, String data, Date failedDate, String comments) {
+    public void saveClientData(Long runId, String meterId, String data, Date failedDate, String comments) {
         Session session = null;
         try {
             session = HibernateUtil.getSessionFactory().getCurrentSession();
