@@ -211,7 +211,7 @@ public class GateKeeperFilter {
             GQGateKeeperConstants.logger.debug("Meter Run Details are:" + meterId + "\n" + recordDT + "\n" + scanned
                     + "\n" + discovered + "\n" + runTimeMs);
             meterRun = new MeterRun(meterId, recordDT, scanned, discovered, runTimeMs);
-            Integer runid = (Integer) session.save(meterRun);
+            Long runid = (Long) session.save(meterRun);
             session.getTransaction().commit();
 
             gqmResponse.setRunid(runid);
@@ -277,6 +277,7 @@ public class GateKeeperFilter {
                 if (session.isOpen()) {
                     session.flush();
                     session.close();
+
                 }
             }
             catch (Exception e) {
