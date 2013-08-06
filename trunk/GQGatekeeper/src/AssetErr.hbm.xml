@@ -8,7 +8,7 @@
             <column name="sid" />
             <generator class="increment" />
         </id>
-        <property name="runId" type="int">
+        <property name="runId" type="long">
             <column name="run_id" not-null="true" />
         </property>
         <property name="sysDesc" type="string">

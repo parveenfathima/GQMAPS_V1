@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated Jul 26, 2013 10:19:06 AM by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+    <class name="com.gq.meter.xchange.object.ChartType" table="chart_type" catalog="gqexchange">
+        <id name="ctId" type="string">
+            <column name="ct_id" length="20" />
+            <generator class="assigned" />
+        </id>
+        <property name="descr" type="string">
+            <column name="descr" length="45" />
+        </property>
+        <set name="taskAssts" table="task_asst" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="ct_id" length="20" />
+            </key>
+            <one-to-many class="com.gq.meter.xchange.object.TaskAsst" />
+        </set>
+    </class>
+</hibernate-mapping>

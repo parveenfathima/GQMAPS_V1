@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated Jul 26, 2013 10:19:06 AM by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+    <class name="com.gq.meter.object.Goal" table="goal" catalog="gqexchange">
+        <id name="goalId" type="string">
+            <column name="goal_id" length="10" />
+            <generator class="assigned" />
+        </id>
+        <property name="descr" type="string">
+            <column name="descr" length="45" not-null="true" />
+        </property>
+        <property name="perfNotes" type="string">
+            <column name="perf_notes" length="500">
+                <comment>if choosed server are decommsioned , plese deactivate the same in asset edition screen</comment>
+            </column>
+        </property>
+        <property name="timeBound" type="char">
+            <column name="time_bound" length="1" not-null="true">
+                <comment>1) goals having time limits are marked with yes for eg: pue , 2) condition is checked when displaying the dynamic task screen</comment>
+            </column>
+        </property>
+        <property name="img" type="binary">
+            <column name="img">
+                <comment>image to e displayed in task screen</comment>
+            </column>
+        </property>
+        <one-to-one name="goalInput" class="GoalInput"></one-to-one>
+        <set name="goalSnpshts" table="goal_snpsht" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="goal_id" length="10" not-null="true" />
+            </key>
+            <one-to-many class="GoalSnpsht" />
+        </set>
+    </class>
+</hibernate-mapping>

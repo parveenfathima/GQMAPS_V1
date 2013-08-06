@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated Jul 26, 2013 10:19:06 AM by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+    <class name="com.gq.meter.object.TaskTmplt" table="task_tmplt" catalog="gqexchange">
+        <composite-id name="id" class="TaskTmpltId">
+            <key-property name="taskId" type="byte">
+                <column name="task_id" />
+            </key-property>
+            <key-property name="goalId" type="string">
+                <column name="goal_id" length="10" />
+            </key-property>
+        </composite-id>
+        <many-to-one name="taskAsst" class="TaskAsst" fetch="select">
+            <column name="ts_id" />
+        </many-to-one>
+        <property name="descr" type="string">
+            <column name="descr" length="200" not-null="true" />
+        </property>
+        <property name="tooltip" type="string">
+            <column name="tooltip" length="100" />
+        </property>
+        <set name="taskChklsts" table="task_chklst" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="goal_id" />
+                <column name="task_id" length="10" not-null="true" />
+            </key>
+            <one-to-many class="TaskChklst" />
+        </set>
+    </class>
+</hibernate-mapping>

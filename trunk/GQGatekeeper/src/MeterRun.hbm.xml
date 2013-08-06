@@ -4,7 +4,7 @@
 <!-- Generated Mar 1, 2013 12:57:44 PM by Hibernate Tools 3.4.0.CR1 -->
 <hibernate-mapping>
     <class name="com.gq.meter.xchange.object.MeterRun" table="meter_run" catalog="gqexchange">
-        <id name="runId" type="java.lang.Integer">
+        <id name="runId" type="long">
             <column name="run_id" />
             <generator class="increment" />
         </id>

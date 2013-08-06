@@ -4,7 +4,7 @@
 <!-- Generated May 2, 2013 12:01:38 PM by Hibernate Tools 3.4.0.CR1 -->
 <hibernate-mapping>
     <class name="com.gq.meter.xchange.object.ClientData" table="client_data" catalog="gqexchange">
-        <id name="runId" type="java.lang.Integer">
+        <id name="runId" type="long">
             <column name="run_id" />
             <generator class="identity" />
         </id>
