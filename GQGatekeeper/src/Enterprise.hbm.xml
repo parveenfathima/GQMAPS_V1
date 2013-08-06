@@ -47,9 +47,6 @@
         <property name="storeFwd" type="char">
             <column name="store_fwd" length="1" not-null="true" />
         </property>
-        <property name="active" type="char">
-            <column name="active" length="1" not-null="true" />
-        </property>
         <property name="fwdUrl" type="string">
             <column name="fwd_url" length="200" />
         </property>

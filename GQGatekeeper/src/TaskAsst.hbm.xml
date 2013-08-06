@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated Jul 26, 2013 10:19:06 AM by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+    <class name="com.gq.meter.xchange.object.TaskAsst" table="task_asst" catalog="gqexchange">
+        <id name="tsId" type="byte">
+            <column name="ts_id" />
+            <generator class="assigned" />
+        </id>
+        <many-to-one name="chartType" class="ChartType" fetch="select">
+            <column name="ct_id" length="20" />
+        </many-to-one>
+        <property name="descr" type="string">
+            <column name="descr" length="60" not-null="true" />
+        </property>
+        <property name="tsql" type="string">
+            <column name="tsql" length="65535" not-null="true">
+                <comment>query</comment>
+            </column>
+        </property>
+        <property name="dynamic" type="java.lang.Character">
+            <column name="dynamic" length="1">
+                <comment>dynamic or static data(executing the query based on input given by user dynamically or static data)</comment>
+            </column>
+        </property>
+        <property name="colHdr" type="string">
+            <column name="col_hdr" length="150">
+                <comment>column header for google chart in plain english text</comment>
+            </column>
+        </property>
+        <property name="relatdDb" type="char">
+            <column name="relatd_db" length="1" not-null="true">
+                <comment>the query should run against gqmaps or gqexchnage?</comment>
+            </column>
+        </property>
+        <property name="posId" type="string">
+        <column name="pos_id" length="45"/>
+        </property>
+        <set name="taskTmplts" table="task_tmplt" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="ts_id" />
+            </key>
+            <one-to-many class="TaskTmplt" />
+        </set>
+    </class>
+</hibernate-mapping>
