@@ -17,6 +17,9 @@
         <property name="descr" type="string">
             <column name="descr" length="200" />
         </property>
+        <property name="ipAddr" type="string">
+            <column name="ip_addr" length="15"/>
+        </property>
         <property name="contact" type="string">
             <column name="contact" length="45" />
         </property>
@@ -36,7 +39,7 @@
             <column name="imp_lvl" />
         </property>
         <property name="ownership" type="string">
-            <column name="ownership" length="6" />
+            <column name="ownership" length="6"/>
         </property>
         <property name="dcEnt" type="string">
             <column name="dc_ent" length="2" />
