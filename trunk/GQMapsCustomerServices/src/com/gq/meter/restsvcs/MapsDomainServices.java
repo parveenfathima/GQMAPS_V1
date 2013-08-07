@@ -22,5 +22,6 @@ public class MapsDomainServices {
         MapsDomainBean mapsDomainResult = mapsDomainModel.getAllMapsDomainDetails();
         // Returning all the enterprises in JSON format
         return MapsDomainServiceConstant.gson.toJson(mapsDomainResult);
+        // return mapsDomainResult;
     }
 }
