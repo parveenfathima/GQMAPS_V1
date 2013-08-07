@@ -15,6 +15,7 @@ public class Asset implements java.io.Serializable {
     private String name;
     private String descr;
     private String contact;
+    private String ipAddr;
     private String location;
     private String ctlgId;
     private Short srvrAppId;
@@ -29,15 +30,16 @@ public class Asset implements java.io.Serializable {
     public Asset() {
     }
 
-    public Asset(String assetId, String protocolId, String name, String descr, String contact, String location,
-            String ctlgId, Short srvrAppId, String assetUsg, Byte impLvl, String ownership, String dcEnt,
-            Character active, Date inactiveDttm, String typeId) {
+    public Asset(String assetId, String protocolId, String name, String descr, String contact, String ipAddr,
+            String location, String ctlgId, Short srvrAppId, String assetUsg, Byte impLvl, String ownership,
+            String dcEnt, Character active, Date inactiveDttm, String typeId) {
         super();
         this.assetId = assetId;
         this.protocolId = protocolId;
         this.name = name;
         this.descr = descr;
         this.contact = contact;
+        this.ipAddr = ipAddr;
         this.location = location;
         this.ctlgId = ctlgId;
         this.srvrAppId = srvrAppId;
@@ -88,6 +90,14 @@ public class Asset implements java.io.Serializable {
 
     public void setContact(String contact) {
         this.contact = contact;
+    }
+
+    public String getIpAddr() {
+        return ipAddr;
+    }
+
+    public void setIpAddr(String ipAddr) {
+        this.ipAddr = ipAddr;
     }
 
     public String getLocation() {
@@ -169,5 +179,4 @@ public class Asset implements java.io.Serializable {
     public void setTypeId(String typeId) {
         this.typeId = typeId;
     }
-
 }

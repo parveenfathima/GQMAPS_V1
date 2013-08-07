@@ -8,21 +8,21 @@ package com.gq.meter.object;
  */
 public class DevCtlg implements java.io.Serializable {
 
-    private String ctlgId = null;
-    private String protocolId = null;
-    private String descr = null;
-    private short idleThreshold = 0;
-    private short loadThreshold = 0;
-    private double idleWatt = 0.0;
-    private double loadWatt = 0.0;
-    private Double enPerMinLoad = 0.0;
-    private Double enPerMinIdle = 0.0;
-    private Double servrCost = 0.0;
-    private Integer noOfCore = 0;
-    private Double cpu = 0.0;
-    private Integer ram = 0;
-    private Integer diskGb = 0;
-    private Integer monthlyRent = 0;
+    private String ctlgId;
+    private String protocolId;
+    private String descr;
+    private short idleThreshold;
+    private short loadThreshold;
+    private double idleWatt;
+    private double loadWatt;
+    private Double enPerMinLoad;
+    private Double enPerMinIdle;
+    private Double servrCost;
+    private Integer noOfCore;
+    private Double cpu;
+    private Integer ram;
+    private Integer diskGb;
+    private Integer monthlyRent;
 
     public DevCtlg() {
     }
@@ -80,7 +80,6 @@ public class DevCtlg implements java.io.Serializable {
 
     public void setDescr(String descr) {
         this.descr = descr;
-        System.out.println("Description:" + descr);
     }
 
     public short getIdleThreshold() {
@@ -120,11 +119,7 @@ public class DevCtlg implements java.io.Serializable {
     }
 
     public void setEnPerMinLoad(Double enPerMinLoad) {
-
-        if (enPerMinLoad != null) {
-            this.enPerMinLoad = enPerMinLoad;
-        }
-
+        this.enPerMinLoad = enPerMinLoad;
     }
 
     public Double getEnPerMinIdle() {
@@ -132,9 +127,7 @@ public class DevCtlg implements java.io.Serializable {
     }
 
     public void setEnPerMinIdle(Double enPerMinIdle) {
-        if (enPerMinIdle != null) {
-            this.enPerMinIdle = enPerMinIdle;
-        }
+        this.enPerMinIdle = enPerMinIdle;
     }
 
     public Double getServrCost() {
@@ -142,9 +135,7 @@ public class DevCtlg implements java.io.Serializable {
     }
 
     public void setServrCost(Double servrCost) {
-        if (servrCost != null) {
-            this.servrCost = servrCost;
-        }
+        this.servrCost = servrCost;
     }
 
     public Integer getNoOfCore() {
@@ -152,9 +143,7 @@ public class DevCtlg implements java.io.Serializable {
     }
 
     public void setNoOfCore(Integer noOfCore) {
-        if (noOfCore != null) {
-            this.noOfCore = noOfCore;
-        }
+        this.noOfCore = noOfCore;
     }
 
     public Double getCpu() {
@@ -162,9 +151,7 @@ public class DevCtlg implements java.io.Serializable {
     }
 
     public void setCpu(Double cpu) {
-        if (cpu != null) {
-            this.cpu = cpu;
-        }
+        this.cpu = cpu;
     }
 
     public Integer getRam() {
@@ -172,9 +159,7 @@ public class DevCtlg implements java.io.Serializable {
     }
 
     public void setRam(Integer ram) {
-        if (ram != null) {
-            this.ram = ram;
-        }
+        this.ram = ram;
     }
 
     public Integer getDiskGb() {
@@ -182,9 +167,7 @@ public class DevCtlg implements java.io.Serializable {
     }
 
     public void setDiskGb(Integer diskGb) {
-        if (diskGb != null) {
-            this.diskGb = diskGb;
-        }
+        this.diskGb = diskGb;
     }
 
     public Integer getMonthlyRent() {
@@ -192,9 +175,7 @@ public class DevCtlg implements java.io.Serializable {
     }
 
     public void setMonthlyRent(Integer monthlyRent) {
-        if (monthlyRent != null) {
-            this.monthlyRent = monthlyRent;
-        }
+        this.monthlyRent = monthlyRent;
     }
 
 }
