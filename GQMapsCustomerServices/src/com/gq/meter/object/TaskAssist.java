@@ -1,5 +1,7 @@
 package com.gq.meter.object;
 
+import java.util.List;
+
 /**
  * 
  */
@@ -8,7 +10,7 @@ package com.gq.meter.object;
  * @author GQ
  * 
  */
-public class TaskAsset {
+public class TaskAssist {
     public int taskId;
     public String descr;
     public String sql;
@@ -17,13 +19,15 @@ public class TaskAsset {
     public String[] columnHeader;
     public String relatedDb;
     public String positionId;
+    private List<Data> data;
+    private CharSequence chartData;
 
-    public TaskAsset() {
+    public TaskAssist() {
 
     }
 
-    public TaskAsset(int taskId, String descr, String sql, String dynamic, String chartType, String[] columnHeader,
-            String relatedDb, String positionId) {
+    public TaskAssist(int taskId, String descr, String sql, String dynamic, String chartType, String[] columnHeader,
+            String relatedDb, String positionId, List<Data> data, CharSequence chartData) {
         this.taskId = taskId;
         this.descr = descr;
         this.sql = sql;
@@ -32,6 +36,8 @@ public class TaskAsset {
         this.columnHeader = columnHeader;
         this.relatedDb = relatedDb;
         this.positionId = positionId;
+        this.data = data;
+        this.setChartData(chartData);
     }
 
     /**
@@ -145,6 +151,28 @@ public class TaskAsset {
      */
     public void setRelatedDb(String relatedDb) {
         this.relatedDb = relatedDb;
+    }
+
+    /**
+     * @return the data
+     */
+    public List<Data> getData() {
+        return data;
+    }
+
+    /**
+     * @param data the data to set
+     */
+    public void setData(List<Data> data) {
+        this.data = data;
+    }
+
+    public CharSequence getChartData() {
+        return chartData;
+    }
+
+    public void setChartData(CharSequence chartData2) {
+        this.chartData = chartData2;
     }
 
 }
