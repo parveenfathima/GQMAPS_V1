@@ -73,9 +73,6 @@
                 <comment>registration completed</comment>
             </column>
         </property>
-        <property name="active" type="char">
-            <column name="active" length="1" not-null="true" />
-        </property>
         <property name="comments" type="string">
             <column name="comments" length="200" />
         </property>

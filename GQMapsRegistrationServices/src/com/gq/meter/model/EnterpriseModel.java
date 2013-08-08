@@ -188,7 +188,6 @@ public class EnterpriseModel {
             oldEntObject.setDcUsePctg(entObject.getDcUsePctg());
             oldEntObject.setDcTemp(entObject.getDcTemp());
             oldEntObject.setRegCmplt(entObject.getRegCmplt());
-            oldEntObject.setActive(entObject.getActive());
 
             session.getTransaction().commit();
         }
