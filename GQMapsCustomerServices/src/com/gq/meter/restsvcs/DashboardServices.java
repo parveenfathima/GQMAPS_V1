@@ -3,8 +3,11 @@ package com.gq.meter.restsvcs;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.ws.rs.GET;
@@ -13,15 +16,20 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import net.sf.resultsetmapper.ReflectionResultSetMapper;
-import net.sf.resultsetmapper.ResultSetMapper;
-
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.visualization.datasource.base.TypeMismatchException;
+import com.google.visualization.datasource.datatable.ColumnDescription;
+import com.google.visualization.datasource.datatable.DataTable;
+import com.google.visualization.datasource.datatable.value.ValueType;
+import com.google.visualization.datasource.render.JsonRenderer;
 import com.gq.meter.object.Data;
-import com.gq.meter.object.TaskAsset;
+import com.gq.meter.object.TaskAssist;
+import com.ibm.icu.util.GregorianCalendar;
+import com.ibm.icu.util.TimeZone;
 import com.mysql.jdbc.PreparedStatement;
 import com.mysql.jdbc.Statement;
 
@@ -33,7 +41,7 @@ public class DashboardServices {
     @Path("/getdashboard")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getDashboardServices() throws ClassNotFoundException, SQLException {
+    public Response getDashboardServices() throws ClassNotFoundException, SQLException, TypeMismatchException {
 
         String dbURL = "jdbc:mysql://192.168.1.95:3306/gqexchange";
         String username = "gqmaps";
@@ -42,43 +50,52 @@ public class DashboardServices {
         // String dbURL = "jdbc:mysql://localhost:3306/gqexchange";
         // String username = "root";
         // String password = "root";
-        // String dbURL1 = "jdbc:mysql://192.168.1.95:3306/gqmaps";
+        // String dbURL1 = "jdbc:mysql://localhost:3306/gqmaps";
         Connection dbCon = null;
         Connection dbCon1 = null;
         Statement stmt = null;
         ResultSet rs = null;
-        String finalresult = "";
         int taskId = 0;
         String descr = "";
         String sql = "";
         String chartType = "";
         String[] columnHeader = null;
         String positionId = "";
-        String xaxis;
-        String yaxis;
         String dynamic = null;
         String relatedDb = null;
-        TaskAsset taskAsset = new TaskAsset(taskId, descr, sql, dynamic, chartType, columnHeader, relatedDb, positionId);
-        String result = "";
+        List<Data> data = null;
+        String str = null;
+        double val = 0;
+        Date dt = null;
+        String chartData = null;
+        TaskAssist taskAssist = new TaskAssist(taskId, descr, sql, dynamic, chartType, columnHeader, relatedDb,
+                positionId, data, chartData);
         PreparedStatement pstmt = null;
         String alist = "";
+        String result = "";
         ResultSet entpResultset;
-        String blist = null;
-        JSONObject json = new JSONObject();
-        List<TaskAsset> sqllist = new ArrayList<TaskAsset>();
-        List<Data> datalist = new ArrayList<Data>();
-        ResultSetMapper<TaskAsset> resultSetMapper = new ReflectionResultSetMapper<TaskAsset>(TaskAsset.class);
+        List<TaskAssist> sqllist = new ArrayList<TaskAssist>();
+        DataTable linedata = new DataTable();
+        DataTable bardata = new DataTable();
+        GregorianCalendar calendar = new GregorianCalendar();
+        calendar.setTimeZone(TimeZone.getTimeZone("GMT"));
+
+        CharSequence renderchart = null;
+        TaskAssist jsonArrayList;
+
         try {
             // getting database connection to MySQL server
             Class.forName("com.mysql.jdbc.Driver");
             dbCon = DriverManager.getConnection(dbURL, username, password);
             dbCon1 = DriverManager.getConnection(dbURL1, username, password);
-            String currentSql = "select * from task_asst";
+            String currentSql = "select * from task_asst WHERE pos_id IS NOT NULL;";
             // getting PreparedStatment to execute query
             stmt = (Statement) dbCon.prepareStatement(currentSql);
             // Resultset returned by query
             rs = stmt.executeQuery(currentSql);
             while (rs.next()) {
+                List<Data> datalist = new ArrayList<Data>();
+
                 System.out.println("inside  while");
                 taskId = rs.getInt("ts_id");
                 descr = rs.getString("descr");
@@ -87,11 +104,11 @@ public class DashboardServices {
                 // String ctId = rs.getString("ct_id");
                 String chartquery = "select ct_Id,descr from chart_type where ct_id=?";
                 System.out.println("ct-id");
-                taskAsset.setChartType(rs.getString("ct_id"));
-                System.out.println("ct-id" + taskAsset.setChartType(rs.getString("ct_id")));
+                taskAssist.setChartType(rs.getString("ct_id"));
+                System.out.println("ct-id" + taskAssist.setChartType(rs.getString("ct_id")));
                 // stmt = (Statement) dbCon.prepareStatement(chartquery);
                 pstmt = (PreparedStatement) dbCon.prepareStatement(chartquery);
-                pstmt.setString(1, taskAsset.setChartType(rs.getString("ct_id")));
+                pstmt.setString(1, taskAssist.setChartType(rs.getString("ct_id")));
                 ResultSet chrttype = pstmt.executeQuery();
                 while (chrttype.next()) {
                     chartType = chrttype.getString("ct_id");
@@ -114,15 +131,14 @@ public class DashboardServices {
                 positionId = rs.getString("pos_id");
                 System.out.println("tsid\t" + taskId + "descr" + descr + "tsql" + sql + "colheader" + columnHeader
                         + "posid" + positionId);
-                // TaskAsset sqldetails = new TaskAsset(taskId, descr, sql, dynamic, chartType, columnHeader, relateDb,
-                // positionId);
-                TaskAsset obj = new TaskAsset();
+                TaskAssist obj = new TaskAssist();
 
                 obj.setTaskId(taskId);
                 obj.setDescr(descr);
-                obj.setSql(sql);
-                obj.setDynamic(dynamic);
+                // obj.setSql(sql);
+                // obj.setDynamic(dynamic);
                 obj.setChartType(chartType);
+
                 if (colHeader != null) {
                     obj.setColumnHeader(colHeader);
                 }
@@ -133,40 +149,132 @@ public class DashboardServices {
 
                 obj.setRelatedDb(relatedDb);
                 obj.setPositionId(positionId);
-                // if (relatedDb.equalsIgnoreCase("m")) {
-                // System.out.println("maps::::::::::");
-                //
-                // String entpquery = sql;
-                // System.out.println("query is \t" + entpquery);
-                // stmt = (Statement) dbCon1.prepareStatement(entpquery);
-                // // Resultset returned by query
-                // entpResultset = stmt.executeQuery(entpquery);
-                // }
-                // else {
-                // System.out.println("inside else");
-                // String entpquery = sql;
-                // System.out.println("query is \t" + entpquery);
-                // stmt = (Statement) dbCon.prepareStatement(entpquery);
-                // // Resultset returned by query
-                // entpResultset = stmt.executeQuery(entpquery);
-                // }
-                //
-                // while (entpResultset.next()) {
-                // System.out.println("inside second ");
-                // Data data = new Data();
-                // data.setName(entpResultset.getString(0));
-                // data.setValue(entpResultset.getLong(0));
-                // datalist.add(data);
-                //
-                // }
+                // sqllist.add(obj);
+
+                if (relatedDb.equalsIgnoreCase("m")) {
+                    System.out.println("maps::::::::::");
+
+                    String entpquery = sql;
+                    System.out.println("query is \t" + entpquery);
+                    stmt = (Statement) dbCon1.prepareStatement(entpquery);
+                    // Resultset returned by query
+                    entpResultset = stmt.executeQuery(entpquery);
+                }
+                else {
+                    System.out.println("inside else");
+                    String entpquery = sql;
+                    stmt = (Statement) dbCon.prepareStatement(entpquery);
+                    // Resultset returned by query
+                    entpResultset = stmt.executeQuery(entpquery);
+                }
+
+                // find col count c =2;
+                ResultSetMetaData rsmd = entpResultset.getMetaData();
+                int count = rsmd.getColumnCount();
+                List<Data> cDataList = new ArrayList<Data>();
+                System.out.println("cout value is ::" + count);
+                while (entpResultset.next()) {
+
+                    System.out.println("result \t");
+                    Data datavalue = new Data();
+                    Data cData = new Data();
+                    for (int i = 1; i <= count; i++) {
+
+                        int type = rsmd.getColumnType(i);
+
+                        if (type == Types.VARCHAR || type == Types.CHAR) {
+                            // str = datavalue.setName(entpResultset.getString(i));
+                            cData.setName(entpResultset.getString(i));
+                            System.out.println("inside if" + cData.setName(entpResultset.getString(i)));
+                        }
+                        else if (type == Types.TIMESTAMP) {
+                            // dt = datavalue.setDate(entpResultset.getTimestamp(i));
+                            cData.setDate(entpResultset.getTimestamp(i));
+                            System.out.println("inside else if date" + dt);
+                        }
+                        else {
+                            // val = datavalue.setValue(entpResultset.getDouble(i));
+                            cData.setValue(entpResultset.getDouble(i));
+                            System.out.println("inside else" + cData.setValue(entpResultset.getDouble(i)));
+                        }
+
+                    }
+                    cDataList.add(cData);
+                    // chart typr data convertion to be added<to-do>
+                    DataTable chartdata = new DataTable();
+
+                    if (chartType.equals("bar") || chartType.equals("pie")) {
+                        ArrayList<ColumnDescription> colum = new ArrayList<ColumnDescription>();
+
+                        System.out.println("inside bar or  pie");
+
+                        colum.add(new ColumnDescription(colHeader[0], ValueType.TEXT, colHeader[0]));
+                        colum.add(new ColumnDescription(colHeader[1], ValueType.NUMBER, colHeader[1]));
+                        System.out.println("clo1" + colHeader[0] + "col2" + colHeader[1]);
+                        chartdata.addColumns(colum);
+                        for (int i = 0; i < cDataList.size(); i++) {
+                            chartdata.addRowFromValues(cDataList.get(i).getName(), cDataList.get(i).getValue());
+
+                            System.out.println("\ndata1\t" + cDataList.get(i).getName() + "\tcdata2\t"
+                                    + cDataList.get(i).getValue());
+                        }
+                        // json.put("chart data", JsonRenderer.renderDataTable(chartdata, true, true));
+                    }
+                    else if (chartType.equals("line")) {
+                        ArrayList<ColumnDescription> colum = new ArrayList<ColumnDescription>();
+
+                        System.out.println("inside line");
+                        // DataTable chartdata = new DataTable();
+
+                        colum.add(new ColumnDescription(colHeader[0], ValueType.DATETIME, colHeader[0]));
+                        colum.add(new ColumnDescription(colHeader[1], ValueType.NUMBER, colHeader[1]));
+                        chartdata.addColumns(colum);
+                        String other = dt.toString();
+                        int year = Integer.parseInt(other.substring(0, 4));
+                        int month = Integer.parseInt(other.substring(5, 7));
+                        int date = Integer.parseInt(other.substring(8, 10));
+                        int hours = Integer.parseInt(other.substring(11, 13));
+                        int minutes = Integer.parseInt(other.substring(14, 16));
+                        int seconds = Integer.parseInt(other.substring(17, 19));
+                        System.out.println("year\t" + year + "month\t" + month + "date\t" + date + "hours\t" + hours
+                                + "minutes\t" + minutes + "seconds\t" + seconds);
+                        calendar.set(year, month, date, hours, minutes, seconds);
+                        for (int i = 0; i <= cDataList.size(); i++) {
+                            chartdata.addRowFromValues(cDataList.get(i).getName(), cDataList.get(i).getValue());
+                        }
+                        // datavalue.setChartData(JsonRenderer.renderDataTable(chartdata, true, true));
+
+                    }
+                    renderchart = JsonRenderer.renderDataTable(chartdata, true, true);
+                    System.out.println("renderchart\t:::" + renderchart);
+                    obj.setChartData(renderchart);
+
+                    // json.put("chart data", JsonRenderer.renderDataTable(chartdata, true, true));
+
+                    // }
+                    datalist.add(datavalue);
+
+                }// end of while
+
+                obj.setData(datalist);
                 sqllist.add(obj);
+                // json.put("finallist", sqllist);
 
             }
-            alist = gson.toJson(sqllist);
-            blist = gson.toJson(datalist);
 
-            System.out.println("final result is \t" + sqllist.size());
+            JSONArray chartArray = new JSONArray();
+            for (int i = 0; i < sqllist.size(); i++) {
+                // jsonArrayList = sqllist.get(i);
+                JSONObject json = new JSONObject();
+                json.put("charttype", sqllist.get(i).getChartType());
+                json.put("divId", sqllist.get(i).getPositionId());
+                json.put("data", sqllist.get(i).getChartData());
+                chartArray.put(json);
 
+                // alist = gson.toJson(sqllist);
+
+            }
+            result = chartArray.toString();
         }
 
         catch (SQLException ex) {
@@ -175,10 +283,11 @@ public class DashboardServices {
 
         finally {
             // close connection ,stmt and resultset here
-            // dbCon1.close();
+            dbCon.close();
+            dbCon1.close();
             System.out.println("connection state:\t" + dbCon.isClosed());
         }
-        return Response.ok().entity(alist).build();
+        return Response.ok().entity(result).build();
 
     }
 }
