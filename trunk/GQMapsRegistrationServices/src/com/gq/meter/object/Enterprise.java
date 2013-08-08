@@ -31,7 +31,6 @@ public class Enterprise implements java.io.Serializable {
     private Integer dcUsePctg;
     private Integer dcTemp;
     private char regCmplt;
-    private char active;
     private String comments;
     private Date creDttm;
 
@@ -41,8 +40,7 @@ public class Enterprise implements java.io.Serializable {
     public Enterprise(Short sid, String enterpriseId, String blCd, String eName, String phone, String email,
             String userId, String passwd, Short secQtn1, String ans1, Short secQtn2, String ans2, char storeFwd,
             String fwdUrl, Integer noOfEmpl, Integer entSqft, Integer entAssetCount, Integer dcSqft,
-            Integer dcAssetCount, Integer dcUsePctg, Integer dcTemp, char regCmplt, char active, String comments,
-            Date creDttm) {
+            Integer dcAssetCount, Integer dcUsePctg, Integer dcTemp, char regCmplt, String comments, Date creDttm) {
         this.sid = sid;
         this.enterpriseId = enterpriseId;
         this.blCd = blCd;
@@ -65,7 +63,6 @@ public class Enterprise implements java.io.Serializable {
         this.dcUsePctg = dcUsePctg;
         this.dcTemp = dcTemp;
         this.regCmplt = regCmplt;
-        this.active = active;
         this.comments = comments;
         this.creDttm = creDttm;
     }
@@ -164,14 +161,6 @@ public class Enterprise implements java.io.Serializable {
 
     public void setCreDttm(Date creDttm) {
         this.creDttm = creDttm;
-    }
-
-    public char getActive() {
-        return active;
-    }
-
-    public void setActive(char active) {
-        this.active = active;
     }
 
     public char getStoreFwd() {
