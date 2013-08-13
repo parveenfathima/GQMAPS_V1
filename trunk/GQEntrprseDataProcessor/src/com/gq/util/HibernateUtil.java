@@ -1,25 +1,33 @@
 package com.gq.util;
 
+import java.util.HashMap;
+
 import org.hibernate.SessionFactory;
 
 import org.hibernate.cfg.AnnotationConfiguration;
+import org.hibernate.cfg.Configuration;
+
+import com.sun.org.apache.bcel.internal.generic.GETSTATIC;
 
 public class HibernateUtil {
 
-    private static final SessionFactory sessionFactory = buildSessionFactory();
+    public SessionFactory sessionFactory;
 
-    private static SessionFactory buildSessionFactory() {
-        try {
-            // Create the SessionFactory from hibernate.cfg.xml
-            return new AnnotationConfiguration().configure().buildSessionFactory();
-        }
-        catch (Throwable ex) {
-            System.err.println("GQEntrprseDataProcessor : Initial SessionFactory creation failed." + ex);
-            throw new ExceptionInInitializerError(ex);
-        }
+    public static HashMap<String, SessionFactory> SessionFactoryListMap = new HashMap<String, SessionFactory>();
+
+    static {
+        SessionFactory infiSessionFactory = null, apsSessionFactory = null, talkSessionFactory = null;
+        SessionFactoryListMap.put("infi", infiSessionFactory);
+        SessionFactoryListMap.put("aps", apsSessionFactory);
+        SessionFactoryListMap.put("talk", talkSessionFactory);
     }
 
-    public static SessionFactory getSessionFactory() {
+    public SessionFactory dynamicSessionFactory(String url) {
+        SessionFactory sessionFactory = null;
+        Configuration configuration = new Configuration();
+        configuration.configure();
+        configuration.setProperty("hibernate.connection.url", url);
+        sessionFactory = configuration.buildSessionFactory();
         return sessionFactory;
     }
 }
