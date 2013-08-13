@@ -3,7 +3,7 @@
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <!-- Generated Feb 18, 2013 3:22:08 PM by Hibernate Tools 3.4.0.CR1 -->
 <hibernate-mapping>
-    <class name="com.gq.meter.object.CompAssets" table="comp_assets" catalog="gqmaps">
+    <class name="com.gq.meter.object.CompAssets" table="comp_assets">
         <id name="assetId" type="string">
             <column name="asset_id" length="30" />
             <generator class="assigned" />

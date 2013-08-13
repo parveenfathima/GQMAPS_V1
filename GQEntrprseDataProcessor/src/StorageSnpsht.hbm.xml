@@ -3,9 +3,9 @@
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <!-- Generated Apr 5, 2013 12:30:28 PM by Hibernate Tools 3.4.0.CR1 -->
 <hibernate-mapping>
-    <class name="com.gq.meter.object.StorageSnpsht" table="storage_snpsht" catalog="gqmaps">
+    <class name="com.gq.meter.object.StorageSnpsht" table="storage_snpsht">
         <composite-id name="id" class="com.gq.meter.object.CPNId">
-            <key-property name="runId" type="int">
+            <key-property name="runId" type="long">
                 <column name="run_id" />
             </key-property>
             <key-property name="assetId" type="string">

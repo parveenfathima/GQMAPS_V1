@@ -3,7 +3,7 @@
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <!-- Generated Feb 18, 2013 3:27:49 PM by Hibernate Tools 3.4.0.CR1 -->
 <hibernate-mapping>
-    <class name="com.gq.meter.object.OsType" table="os_type" catalog="gqmaps">
+    <class name="com.gq.meter.object.OsType" table="os_type">
         <id name="osId" type="string">
             <column name="os_id" length="20" />
             <generator class="assigned" />

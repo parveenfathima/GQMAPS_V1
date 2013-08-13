@@ -3,8 +3,8 @@
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <!-- Generated Feb 20, 2013 11:28:15 AM by Hibernate Tools 3.4.0.CR1 -->
 <hibernate-mapping>
-    <class name="com.gq.meter.object.MeterRun" table="meter_run" catalog="gqmaps">
-        <id name="runId" type="java.lang.Integer">
+    <class name="com.gq.meter.object.MeterRun" table="meter_run">
+        <id name="runId" type="long">
             <column name="run_id" />
             <generator class="assigned" />
         </id>
