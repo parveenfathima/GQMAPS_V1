@@ -6,9 +6,9 @@
 	<session-factory>
 		<property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
 		
-		<property name="hibernate.connection.url">jdbc:mysql://192.168.1.95:3306/gqmaps?autoReconnect=true</property> 
+		  <!-- <property name="hibernate.connection.url">jdbc:mysql://192.168.1.95:3306/gqmtalk?autoReconnect=true</property> --> 
 		<property name="hibernate.connection.username">gqmaps</property>
-		<property name="hibernate.connection.password">Ch1ca803ear$</property> 
+		<property name="hibernate.connection.password">Ch1ca803ear$</property>  
 		
 		<!-- <property name="hibernate.connection.url">jdbc:mysql://localhost:3306/gqmaps?autoReconnect=true</property> 
         <property name="hibernate.connection.username">root</property>
@@ -25,7 +25,6 @@
 
 		<!-- Mapping files -->
 		<mapping resource="Asset.hbm.xml" />
-		<mapping resource="CompAssets.hbm.xml" />
 		<mapping resource="CompConnDevice.hbm.xml" />
 		<mapping resource="CompInstSoftware.hbm.xml" />
 		<mapping resource="CompProcess.hbm.xml" />
@@ -36,10 +35,14 @@
 		<mapping resource="PrinterConnDevice.hbm.xml" />
 		<mapping resource="NSRGSnapshot.hbm.xml" />
 		<mapping resource="NSRGConnDevice.hbm.xml" />
-		<mapping resource="Meter.hbm.xml" />
 		<mapping resource="StorageSnpsht.hbm.xml" />
-
-
+        <mapping resource="AssetImp.hbm.xml" />
+        <mapping resource="CompType.hbm.xml" />
+        <mapping resource="DevCtlg.hbm.xml" />
+        <mapping resource="Power.hbm.xml" />
+        <mapping resource="Protocol.hbm.xml" />
+        <mapping resource="SrvrAppType.hbm.xml" />
+        <mapping resource="SysProfile.hbm.xml" />
 	</session-factory>
 </hibernate-configuration>
 

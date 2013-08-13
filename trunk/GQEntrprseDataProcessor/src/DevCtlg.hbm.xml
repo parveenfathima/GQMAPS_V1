@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<!-- Generated May 2, 2013 5:33:59 PM by Hibernate Tools 3.4.0.CR1 -->
+<!-- Generated Jul 26, 2013 4:15:56 PM by Hibernate Tools 3.4.0.CR1 -->
 <hibernate-mapping>
-    <class name="com.gq.meter.object.DevCtlg" table="dev_ctlg" catalog="gqmaps">
+    <class name="com.gq.meter.object.DevCtlg" table="dev_ctlg">
         <id name="ctlgId" type="string">
             <column name="ctlg_id" length="20" />
             <generator class="assigned" />
@@ -14,11 +14,11 @@
         <property name="descr" type="string">
             <column name="descr" length="40" not-null="true" />
         </property>
-        <property name="idlePctg" type="short">
-            <column name="idle_pctg" not-null="true" />
+        <property name="idleThreshold" type="short">
+            <column name="idle_threshold" not-null="true" />
         </property>
-        <property name="loadPctg" type="short">
-            <column name="load_pctg" not-null="true" />
+        <property name="loadThreshold" type="short">
+            <column name="load_threshold" not-null="true" />
         </property>
         <property name="idleWatt" type="double">
             <column name="idle_watt" precision="22" scale="0" not-null="true" />
@@ -26,11 +26,15 @@
         <property name="loadWatt" type="double">
             <column name="load_watt" precision="22" scale="0" not-null="true" />
         </property>
-        <property name="fullPctg" type="java.lang.Short">
-            <column name="full_pctg" />
+        <property name="enPerMinLoad" type="java.lang.Double">
+            <column name="en_per_min_load" precision="22" scale="0">
+                <comment>energy consumption per minute - related only for switch and printer..( it is static value calculated by running the switch and with wysine data)</comment>
+            </column>
         </property>
-        <property name="fullWatt" type="java.lang.Double">
-            <column name="full_watt" precision="22" scale="0" />
+        <property name="enPerMinIdle" type="java.lang.Double">
+            <column name="en_per_min_idle" precision="22" scale="0">
+                <comment>related only to printer</comment>
+            </column>
         </property>
         <property name="servrCost" type="java.lang.Double">
             <column name="servr_cost" precision="22" scale="0">
@@ -52,12 +56,12 @@
         <property name="monthlyRent" type="java.lang.Integer">
             <column name="monthly_rent" />
         </property>
-        <property name="enPerMinLoad" type="java.lang.Double">
-            <column name="en_per_min_load" precision="22" scale="0"></column>
-        </property>
-        <property name="enPerMinIdle" type="java.lang.Double">
-            <column name="en_per_min_idle" precision="22" scale="0"></column>
-        </property>
         
+        <set name="assets" table="asset" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="ctlg_id" length="20" />
+            </key>
+            <one-to-many class="com.gq.meter.object.Asset" />
+        </set>
     </class>
 </hibernate-mapping>

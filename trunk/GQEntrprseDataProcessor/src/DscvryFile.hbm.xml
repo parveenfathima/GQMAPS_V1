@@ -3,7 +3,7 @@
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <!-- Generated Apr 10, 2013 12:24:47 PM by Hibernate Tools 3.4.0.CR1 -->
 <hibernate-mapping>
-    <class name="com.gq.meter.object.DscvryFile" table="dscvry_file" catalog="gqmaps">
+    <class name="com.gq.meter.object.DscvryFile" table="dscvry_file">
         <id name="sid" type="java.lang.Byte">
             <column name="sid" />
             <generator class="identity" />

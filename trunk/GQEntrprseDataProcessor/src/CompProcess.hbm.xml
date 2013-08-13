@@ -3,9 +3,9 @@
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <!-- Generated Feb 21, 2013 2:37:27 PM by Hibernate Tools 3.4.0.CR1 -->
 <hibernate-mapping>
-    <class name="com.gq.meter.object.CompProcess" table="comp_proc" catalog="gqmaps">
+    <class name="com.gq.meter.object.CompProcess" table="comp_proc">
         <composite-id name="id" class="com.gq.meter.object.CompProcessId">
-            <key-property name="runId" type="int">
+            <key-property name="runId" type="long">
                 <column name="run_id" />
             </key-property>
             <key-property name="assetId" type="string">
