@@ -14,6 +14,7 @@ public class UpdateAssetModel {
             session.beginTransaction();
             System.out.println("Started");
             System.out.println(assetObject.getAssetId());
+
             Asset oldAssetObject = (Asset) session.load(Asset.class, assetObject.getAssetId());
 
             oldAssetObject.setAssetId(assetObject.getAssetId());
