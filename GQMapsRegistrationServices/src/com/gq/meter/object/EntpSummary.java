@@ -10,9 +10,9 @@ import java.util.Date;
  * 
  */
 public class EntpSummary implements java.io.Serializable {
-    
-    //enterprise object members
-    
+
+    // enterprise object members
+
     private Short sid;
     private String enterpriseId;
     private String blCd;
@@ -35,291 +35,227 @@ public class EntpSummary implements java.io.Serializable {
     private Integer dcUsePctg;
     private Integer dcTemp;
     private char regCmplt;
-    private char active;
     private String comments;
     private Date creDttm;
-    
-    //enterprise meter object members
-    
+
+    // enterprise meter object members
+
     private long mCount;
-    
-    //gate keeper object members
-    
-    private Date expDttm;    
+
+    // gate keeper object members
+
+    private Date expDttm;
 
     public EntpSummary() {
 
     }
-    
-    public Short getSid()
-	{
-		return sid;
-	}
 
-	public void setSid(Short sid)
-	{
-		this.sid = sid;
-	}
+    public Short getSid() {
+        return sid;
+    }
 
-	public String getEnterpriseId()
-	{
-		return enterpriseId;
-	}
+    public void setSid(Short sid) {
+        this.sid = sid;
+    }
 
-	public void setEnterpriseId(String enterpriseId)
-	{
-		this.enterpriseId = enterpriseId;
-	}
+    public String getEnterpriseId() {
+        return enterpriseId;
+    }
 
-	public String getBlCd()
-	{
-		return blCd;
-	}
+    public void setEnterpriseId(String enterpriseId) {
+        this.enterpriseId = enterpriseId;
+    }
 
-	public void setBlCd(String blCd)
-	{
-		this.blCd = blCd;
-	}
+    public String getBlCd() {
+        return blCd;
+    }
 
-	public String geteName()
-	{
-		return eName;
-	}
+    public void setBlCd(String blCd) {
+        this.blCd = blCd;
+    }
 
-	public void seteName(String eName)
-	{
-		this.eName = eName;
-	}
+    public String geteName() {
+        return eName;
+    }
 
-	public String getPhone()
-	{
-		return phone;
-	}
+    public void seteName(String eName) {
+        this.eName = eName;
+    }
 
-	public void setPhone(String phone)
-	{
-		this.phone = phone;
-	}
+    public String getPhone() {
+        return phone;
+    }
 
-	public String getEmail()
-	{
-		return email;
-	}
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
 
-	public void setEmail(String email)
-	{
-		this.email = email;
-	}
+    public String getEmail() {
+        return email;
+    }
 
-	public String getUserId()
-	{
-		return userId;
-	}
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
-	public void setUserId(String userId)
-	{
-		this.userId = userId;
-	}
+    public String getUserId() {
+        return userId;
+    }
 
-	public String getPasswd()
-	{
-		return passwd;
-	}
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
 
-	public void setPasswd(String passwd)
-	{
-		this.passwd = passwd;
-	}
+    public String getPasswd() {
+        return passwd;
+    }
 
-	public Short getSecQtn1()
-	{
-		return secQtn1;
-	}
+    public void setPasswd(String passwd) {
+        this.passwd = passwd;
+    }
 
-	public void setSecQtn1(Short secQtn1)
-	{
-		this.secQtn1 = secQtn1;
-	}
+    public Short getSecQtn1() {
+        return secQtn1;
+    }
 
-	public String getAns1()
-	{
-		return ans1;
-	}
+    public void setSecQtn1(Short secQtn1) {
+        this.secQtn1 = secQtn1;
+    }
 
-	public void setAns1(String ans1)
-	{
-		this.ans1 = ans1;
-	}
+    public String getAns1() {
+        return ans1;
+    }
 
-	public Short getSecQtn2()
-	{
-		return secQtn2;
-	}
+    public void setAns1(String ans1) {
+        this.ans1 = ans1;
+    }
 
-	public void setSecQtn2(Short secQtn2)
-	{
-		this.secQtn2 = secQtn2;
-	}
+    public Short getSecQtn2() {
+        return secQtn2;
+    }
 
-	public String getAns2()
-	{
-		return ans2;
-	}
+    public void setSecQtn2(Short secQtn2) {
+        this.secQtn2 = secQtn2;
+    }
 
-	public void setAns2(String ans2)
-	{
-		this.ans2 = ans2;
-	}
+    public String getAns2() {
+        return ans2;
+    }
 
-	public char getStoreFwd()
-	{
-		return storeFwd;
-	}
+    public void setAns2(String ans2) {
+        this.ans2 = ans2;
+    }
 
-	public void setStoreFwd(char storeFwd)
-	{
-		this.storeFwd = storeFwd;
-	}
+    public char getStoreFwd() {
+        return storeFwd;
+    }
 
-	public String getFwdUrl()
-	{
-		return fwdUrl;
-	}
+    public void setStoreFwd(char storeFwd) {
+        this.storeFwd = storeFwd;
+    }
 
-	public void setFwdUrl(String fwdUrl)
-	{
-		this.fwdUrl = fwdUrl;
-	}
+    public String getFwdUrl() {
+        return fwdUrl;
+    }
 
-	public Integer getNoOfEmpl()
-	{
-		return noOfEmpl;
-	}
+    public void setFwdUrl(String fwdUrl) {
+        this.fwdUrl = fwdUrl;
+    }
 
-	public void setNoOfEmpl(Integer noOfEmpl)
-	{
-		this.noOfEmpl = noOfEmpl;
-	}
+    public Integer getNoOfEmpl() {
+        return noOfEmpl;
+    }
 
-	public Integer getEntSqft()
-	{
-		return entSqft;
-	}
+    public void setNoOfEmpl(Integer noOfEmpl) {
+        this.noOfEmpl = noOfEmpl;
+    }
 
-	public void setEntSqft(Integer entSqft)
-	{
-		this.entSqft = entSqft;
-	}
+    public Integer getEntSqft() {
+        return entSqft;
+    }
 
-	public Integer getEntAssetCount()
-	{
-		return entAssetCount;
-	}
+    public void setEntSqft(Integer entSqft) {
+        this.entSqft = entSqft;
+    }
 
-	public void setEntAssetCount(Integer entAssetCount)
-	{
-		this.entAssetCount = entAssetCount;
-	}
+    public Integer getEntAssetCount() {
+        return entAssetCount;
+    }
 
-	public Integer getDcSqft()
-	{
-		return dcSqft;
-	}
+    public void setEntAssetCount(Integer entAssetCount) {
+        this.entAssetCount = entAssetCount;
+    }
 
-	public void setDcSqft(Integer dcSqft)
-	{
-		this.dcSqft = dcSqft;
-	}
+    public Integer getDcSqft() {
+        return dcSqft;
+    }
 
-	public Integer getDcAssetCount()
-	{
-		return dcAssetCount;
-	}
+    public void setDcSqft(Integer dcSqft) {
+        this.dcSqft = dcSqft;
+    }
 
-	public void setDcAssetCount(Integer dcAssetCount)
-	{
-		this.dcAssetCount = dcAssetCount;
-	}
+    public Integer getDcAssetCount() {
+        return dcAssetCount;
+    }
 
-	public Integer getDcUsePctg()
-	{
-		return dcUsePctg;
-	}
+    public void setDcAssetCount(Integer dcAssetCount) {
+        this.dcAssetCount = dcAssetCount;
+    }
 
-	public void setDcUsePctg(Integer dcUsePctg)
-	{
-		this.dcUsePctg = dcUsePctg;
-	}
+    public Integer getDcUsePctg() {
+        return dcUsePctg;
+    }
 
-	public Integer getDcTemp()
-	{
-		return dcTemp;
-	}
+    public void setDcUsePctg(Integer dcUsePctg) {
+        this.dcUsePctg = dcUsePctg;
+    }
 
-	public void setDcTemp(Integer dcTemp)
-	{
-		this.dcTemp = dcTemp;
-	}
+    public Integer getDcTemp() {
+        return dcTemp;
+    }
 
-	public char getRegCmplt()
-	{
-		return regCmplt;
-	}
+    public void setDcTemp(Integer dcTemp) {
+        this.dcTemp = dcTemp;
+    }
 
-	public void setRegCmplt(char regCmplt)
-	{
-		this.regCmplt = regCmplt;
-	}
+    public char getRegCmplt() {
+        return regCmplt;
+    }
 
-	public char getActive()
-	{
-		return active;
-	}
+    public void setRegCmplt(char regCmplt) {
+        this.regCmplt = regCmplt;
+    }
 
-	public void setActive(char active)
-	{
-		this.active = active;
-	}
+    public String getComments() {
+        return comments;
+    }
 
-	public String getComments()
-	{
-		return comments;
-	}
+    public void setComments(String comments) {
+        this.comments = comments;
+    }
 
-	public void setComments(String comments)
-	{
-		this.comments = comments;
-	}
+    public Date getCreDttm() {
+        return creDttm;
+    }
 
-	public Date getCreDttm()
-	{
-		return creDttm;
-	}
+    public void setCreDttm(Date creDttm) {
+        this.creDttm = creDttm;
+    }
 
-	public void setCreDttm(Date creDttm)
-	{
-		this.creDttm = creDttm;
-	}
+    public Date getExpDttm() {
+        return expDttm;
+    }
 
-	public Date getExpDttm()
-	{
-		return expDttm;
-	}
+    public void setExpDttm(Date list) {
+        this.expDttm = list;
+    }
 
-	public void setExpDttm(Date expDttm)
-	{
-		this.expDttm = expDttm;
-	}
+    public long getmCount() {
+        return mCount;
+    }
 
-	public long getmCount()
-	{
-		return mCount;
-	}
-
-	public void setmCount(long mCount)
-	{
-		this.mCount = mCount;
-	}
-
+    public void setmCount(long mCount) {
+        this.mCount = mCount;
+    }
 
 }
