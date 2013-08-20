@@ -22,6 +22,7 @@ public class TaskAssist {
     private List<Data> data;
     private CharSequence chartData;
     private double plainData;
+    private String plain;
     private String lineData;
 
     public TaskAssist() {
@@ -30,7 +31,7 @@ public class TaskAssist {
 
     public TaskAssist(int taskId, String descr, String sql, String dynamic, String chartType, String[] columnHeader,
             String relatedDb, String positionId, List<Data> data, CharSequence chartData, double plainData,
-            String lineData) {
+            String lineData, String plain) {
         this.taskId = taskId;
         this.descr = descr;
         this.sql = sql;
@@ -42,7 +43,9 @@ public class TaskAssist {
         this.data = data;
         this.chartData = chartData;
         this.plainData = plainData;
-        this.setLineData(lineData);
+        this.lineData = lineData;
+        this.plain = plain;
+
     }
 
     /**
@@ -194,6 +197,20 @@ public class TaskAssist {
 
     public void setLineData(String lineData) {
         this.lineData = lineData;
+    }
+
+    /**
+     * @return the plain
+     */
+    public String getPlain() {
+        return plain;
+    }
+
+    /**
+     * @param plain the plain to set
+     */
+    public void setPlain(String plain) {
+        this.plain = plain;
     }
 
 }

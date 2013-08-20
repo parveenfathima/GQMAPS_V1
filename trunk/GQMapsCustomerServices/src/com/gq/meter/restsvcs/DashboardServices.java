@@ -54,7 +54,7 @@ public class DashboardServices {
         String dbURL1 = "jdbc:mysql://192.168.1.95:3306/gqmaps";
         // String dbURL = "jdbc:mysql://localhost:3306/gqexchange";
         // String username = "root";
-        // String password = "root";
+        // String password = "itech";
         // String dbURL1 = "jdbc:mysql://localhost:3306/gqmaps";
         Connection dbCon = null;
         Connection dbCon1 = null;
@@ -159,76 +159,77 @@ public class DashboardServices {
                 obj.setPositionId(positionId);
                 // sqllist.add(obj);
                 System.out.println("Dynamic value:" + dynamic);
-                // if (dynamic.equals("y")) {
-                // String entpquery = sql;
-                //
-                // System.out.println("dynamic queryis :\t" + entpquery + "entpid is::::\t" + entpId);
-                // dynamicChar = entpquery.replace("__filter", "?");
-                // String finalString = dynamicChar.replaceAll("[']", "");
-                // System.out.println("after replace:::::\t" + finalString);
-                //
-                // if (relatedDb.equalsIgnoreCase("m")) {
-                // // System.out.println("maps::::::::::");
-                //
-                // // System.out.println("query is \t" + entpquery);
-                // // stmt = (Statement) dbCon1.prepareStatement(entpquery);
-                // // // Resultset returned by query
-                // // entpResultset = stmt.executeQuery(entpquery);
-                //
-                // pstmt = (PreparedStatement) dbCon1.prepareStatement(finalString);
-                // System.out.println("before setstring:::");
-                // pstmt.setString(1, entpId);
-                // System.out.println("after setstring" + pstmt);
-                // entpResultset = pstmt.executeQuery();
-                // }
-                // else {
-                // // System.out.println("inside else");
-                // System.out.println("dynamic queryis exchange :\t" + entpquery + "entpid is::::\t" + entpId);
-                // pstmt = (PreparedStatement) dbCon.prepareStatement(finalString);
-                // System.out.println("before setstring:::");
-                // pstmt.setString(1, entpId);
-                // System.out.println("after setstring" + pstmt);
-                // entpResultset = pstmt.executeQuery();
-                // }
-                //
-                // }
-                // else {
-                if (relatedDb.equalsIgnoreCase("m")) {
-                    System.out.println("inside non dynamic if::::::::::");
-
+                if (dynamic.equals("y")) {
                     String entpquery = sql;
-                    // System.out.println("query is \t" + entpquery);
-                    stmt = (Statement) dbCon1.prepareStatement(entpquery);
-                    // Resultset returned by query
-                    entpResultset = stmt.executeQuery(entpquery);
+
+                    System.out.println("dynamic queryis :\t" + entpquery + "entpid is::::\t" + entpId);
+                    dynamicChar = entpquery.replace("__filter", "?");
+                    String finalString = dynamicChar.replaceAll("[']", "");
+                    String resultString = finalString.replaceAll("[\"]", "'");
+                    System.out.println("after replace:::::\t" + resultString);
+
+                    if (relatedDb.equalsIgnoreCase("m")) {
+                        // System.out.println("maps::::::::::");
+
+                        // System.out.println("query is \t" + entpquery);
+                        // stmt = (Statement) dbCon1.prepareStatement(entpquery);
+                        // // Resultset returned by query
+                        // entpResultset = stmt.executeQuery(entpquery);
+
+                        pstmt = (PreparedStatement) dbCon1.prepareStatement(resultString);
+                        System.out.println("before setstring:::");
+                        pstmt.setString(1, entpId);
+                        System.out.println("after setstring" + pstmt);
+                        entpResultset = pstmt.executeQuery();
+                    }
+                    else {
+                        // System.out.println("inside else");
+                        System.out.println("dynamic queryis exchange :\t" + entpquery + "entpid is::::\t" + entpId);
+                        pstmt = (PreparedStatement) dbCon.prepareStatement(resultString);
+                        System.out.println("before setstring:::");
+                        pstmt.setString(1, entpId);
+                        System.out.println("after setstring" + pstmt);
+                        entpResultset = pstmt.executeQuery();
+                    }
+
                 }
                 else {
-                    System.out.println("inside non dynamic else::::::::::");
-                    String entpquery = sql;
-                    stmt = (Statement) dbCon.prepareStatement(entpquery);
-                    // Resultset returned by query
-                    entpResultset = stmt.executeQuery(entpquery);
-                    // if (dynamic.equals("y")) {
-                    // System.out.println("dynamic queryis :\t" + entpquery + "entpid is::::\t" + entpId);
-                    // dynamicChar = entpquery.replace("__filter", "?");
-                    // String finalString = dynamicChar.replaceAll("[-+.^:']", "");
-                    // System.out.println("after replace:::::\t" + finalString);
-                    // pstmt = (PreparedStatement) dbCon1.prepareStatement(finalString);
-                    // System.out.println("before setstring:::");
-                    // pstmt.setString(1, entpId);
-                    // System.out.println("after setstring" + pstmt);
-                    // entpResultset = pstmt.executeQuery();
-                    // }
-                    // else {
-                    // System.out.println("after constructed" + pstmt);
-                    // stmt = (Statement) dbCon.prepareStatement(entpquery);
-                    // System.out.println("pstmt" + pstmt);
-                    // // Resultset returned by query
-                    // entpResultset = stmt.executeQuery(entpquery);
-                    // System.out.println("query executed");
-                    // }
+                    if (relatedDb.equalsIgnoreCase("m")) {
+                        System.out.println("inside non dynamic if::::::::::");
+
+                        String entpquery = sql;
+                        // System.out.println("query is \t" + entpquery);
+                        stmt = (Statement) dbCon1.prepareStatement(entpquery);
+                        // Resultset returned by query
+                        entpResultset = stmt.executeQuery(entpquery);
+                    }
+                    else {
+                        System.out.println("inside non dynamic else::::::::::");
+                        String entpquery = sql;
+                        stmt = (Statement) dbCon.prepareStatement(entpquery);
+                        // Resultset returned by query
+                        entpResultset = stmt.executeQuery(entpquery);
+                        // if (dynamic.equals("y")) {
+                        // System.out.println("dynamic queryis :\t" + entpquery + "entpid is::::\t" + entpId);
+                        // dynamicChar = entpquery.replace("__filter", "?");
+                        // String finalString = dynamicChar.replaceAll("[-+.^:']", "");
+                        // System.out.println("after replace:::::\t" + finalString);
+                        // pstmt = (PreparedStatement) dbCon1.prepareStatement(finalString);
+                        // System.out.println("before setstring:::");
+                        // pstmt.setString(1, entpId);
+                        // System.out.println("after setstring" + pstmt);
+                        // entpResultset = pstmt.executeQuery();
+                        // }
+                        // else {
+                        // System.out.println("after constructed" + pstmt);
+                        // stmt = (Statement) dbCon.prepareStatement(entpquery);
+                        // System.out.println("pstmt" + pstmt);
+                        // // Resultset returned by query
+                        // entpResultset = stmt.executeQuery(entpquery);
+                        // System.out.println("query executed");
+                        // }
+                    }
                 }
-                // }
                 // find col count c =2;
                 ResultSetMetaData rsmd = entpResultset.getMetaData();
                 int count = rsmd.getColumnCount();
