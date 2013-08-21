@@ -83,7 +83,7 @@ public final class ITAssetDiscoverer {
             for (Entry<String, String> entry : communityIPMap.entrySet()) {
                 ipAddress = entry.getKey();
                 communityString = entry.getValue();
-                snmpDetails = MeterUtils.isSnmpConfigured(communityString, ipAddress);
+                snmpDetails = new MeterUtils().isSnmpConfigured(communityString, ipAddress);
                 if (snmpDetails != null && snmpDetails.size() != 0) {
                     snmpVersion = snmpDetails.get("snmpVersion");
                     assetDesc = snmpDetails.get("assetDesc");
@@ -93,7 +93,6 @@ public final class ITAssetDiscoverer {
                         snmpKnownIPList.add(snmpKnownIp);
                         this.setSnmpKnownIPList(snmpKnownIPList);
                         mProtocol = MeterUtils.getAssetType(communityString, ipAddress, snmpVersion);
-
                         if (!mProtocol.equals(MeterProtocols.UNKNOWN)) {
                             assetObject = MeterUtils.getAssetObject(mProtocol, communityString, ipAddress, snmpVersion,
                                     switches.get(mProtocol));
@@ -137,6 +136,7 @@ public final class ITAssetDiscoverer {
             gqmResponse.setAssetDiscovered((short) snmpKnownIPList.size());
             gqmResponse.setErrorInformationList(gqerrorInfoList); // Added the errors to the GQMResponse
         }
+
         return pdList;
     }
 
@@ -219,7 +219,7 @@ public final class ITAssetDiscoverer {
                                                 || switchValueName.contains(MeterConstants.PROCESS)
                                                 || switchValueName.contains(MeterConstants.INSTALLED_SOFTWARE)) {
 
-                                            MeterUtils.manageSwitches(line, switches);
+                                            new MeterUtils().manageSwitches(line, switches);
                                         }// 4th if ends
                                         else {
                                             System.out.println(" [GQMETER] Invalid Switch Value..");
@@ -393,9 +393,9 @@ public final class ITAssetDiscoverer {
 
         // The start time of the meter execution
         long startTime = System.currentTimeMillis();
-        MeterUtils.compMeterTime = 0;
-        MeterUtils.printMeterTime = 0;
-        MeterUtils.nsrgMeterTime = 0;
+        new MeterUtils().compMeterTime = 0;
+        new MeterUtils().printMeterTime = 0;
+        new MeterUtils().nsrgMeterTime = 0;
 
         List<ProtocolData> assetsList = null;
 
@@ -403,6 +403,7 @@ public final class ITAssetDiscoverer {
         if (communityIPMap.size() > 0) {
             assetsList = findassets(communityIPMap);
             gqmResponse.addToAssetInformationList(assetsList);
+
         }
         else {
             System.out.println("Process Terminated.....");
