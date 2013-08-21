@@ -12,6 +12,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.Map.Entry;
 
 import org.snmp4j.CommunityTarget;
 import org.snmp4j.Snmp;
@@ -172,7 +173,7 @@ public class ComputerMeter implements GQSNMPMeter {
                     if (result != null && !result.isEmpty()) {
                         temp = oidString + ".3.0";
                         tempStr = MeterUtils.getSNMPValue(temp, result);
-                        upTime = MeterUtils.upTimeCalc(tempStr);
+                        upTime = new MeterUtils().upTimeCalc(tempStr);
                     }
 
                     // The following oid's is used to get no. of users and processes
@@ -422,7 +423,7 @@ public class ComputerMeter implements GQSNMPMeter {
         }
         GQMeterData gqMeterObject = new GQMeterData(gqErrorInfo, compObject);
         long computerendTime = System.currentTimeMillis();
-        MeterUtils.compMeterTime = MeterUtils.compMeterTime + (computerendTime - computerstartTime);
+        new MeterUtils().compMeterTime = new MeterUtils().compMeterTime + (computerendTime - computerstartTime);
         // System.out.println(" [GQMETER] Time taken by the computer meter is : " + (computerendTime -
         // computerstartTime));
         return gqMeterObject;
@@ -567,9 +568,7 @@ public class ComputerMeter implements GQSNMPMeter {
                                     networkMap.get(ethernet[i] + "InBytes").add(Long.parseLong(networkInStr));
                                 }
                             }
-                            else {
-                                errorList.add(MeterConstants.NO_VALUE + networkInStr);
-                            }
+
                         }
                         else if (networkOutOid != null && vbs.getOid().toString().trim().equals(networkOutOid)) {
                             networkOutStr = vbs.getVariable().toString();
@@ -586,9 +585,7 @@ public class ComputerMeter implements GQSNMPMeter {
                                     networkMap.get(ethernet[i] + "OutBytes").add(Long.parseLong(networkOutStr));
                                 }
                             }
-                            else {
-                                errorList.add(MeterConstants.NO_VALUE + networkOutStr);
-                            }
+
                         }
                         else if (vbs.getOid().toString().trim().equals(macOid)) {
                             if (macOidMap.get(ethernet[i]) == null || macOidMap.get(ethernet[i]).size() == 0
@@ -826,24 +823,43 @@ public class ComputerMeter implements GQSNMPMeter {
                     } // 1st if loop ends
                 } // for loop ends
             }
+
             if (isLinux) {
+
                 for (int i = 0; i < appResult.size(); i++) { // for loop starts
-                    if (appResult.get(i).getVariable().toString().trim().equals("4")) { // 1st if loop starts
+                    if (appResult.get(i).getVariable().toString().trim().equals("4")) {
+
                         String softwareName = softwareResult.get(i).getVariable().toString().trim();
-                        Date installDate = getDate(dateResult.get(i).getVariable().toString().trim(), isWindows);
-                        if (softwareName != null && softwareName.trim().length() != 0) { // 2nd if loop starts
-                            int SoftwareLength = softwareName.length();
-                            if (SoftwareLength >= 100) {
-                                softwareName = softwareName.substring(0, 99);
+                        Date installDate = getDate(dateResult.get(i).getVariable().toString().trim(), isLinux);
+
+                        String[] softwareNameTokens = softwareName.split("-");
+                        String finalSoftwareName = "";
+                        for (int count = 0; count < softwareNameTokens.length; count++) {
+                            if ((softwareNameTokens[count].charAt(0) >= 65 && softwareNameTokens[count].charAt(0) <= 91)
+                                    || (softwareNameTokens[count].charAt(0) >= 97 && softwareNameTokens[count]
+                                            .charAt(0) <= 123)) {
+                                finalSoftwareName += softwareNameTokens[count] + "-";
+
                             }
-                            ins = new CompInstSoftwareId(runId, assetId, softwareName, installDate);
-                            CompInstSoftware cis = new CompInstSoftware(ins);
-                            installedSwList.add(cis);
-                        } // 2nd if loop ends
-                    } // 1st if loop ends
-                } // for
+                        }
+                        finalSoftwareName = finalSoftwareName.substring(0, finalSoftwareName.lastIndexOf("-"));
+
+                        if (!MeterConstants.InstSwMap.containsKey(finalSoftwareName)) {
+                            // System.out.println(finalSoftwareName);
+                            if (softwareName != null && softwareName.trim().length() != 0) { // 2nd if loop starts
+                                int SoftwareLength = softwareName.length();
+                                if (SoftwareLength >= 100) {
+                                    softwareName = softwareName.substring(0, 99);
+                                }
+                                ins = new CompInstSoftwareId(runId, assetId, softwareName, installDate);
+                                CompInstSoftware cis = new CompInstSoftware(ins);
+                                installedSwList.add(cis);
+                            }// 2nd if loop ends
+                        } // 1st if loop ends
+                    }
+                }// for
             }
-        }
+        }// try ends
         catch (Exception e) {
             e.printStackTrace();
         }

@@ -32,9 +32,7 @@ public class PrinterMeter implements GQSNMPMeter {
     static HashMap<Integer, String> printerAuxStatusMap = new HashMap<Integer, String>();
 
     List<String> errorList = new LinkedList<String>();
-
     static {
-        // Predefined printer status map
         printerStatusMap.put(1, "Other");
         printerStatusMap.put(2, "Unknown");
         printerStatusMap.put(3, "Idle");
@@ -60,11 +58,12 @@ public class PrinterMeter implements GQSNMPMeter {
         printerAuxStatusMap.put(41, "Temporary print engine failure");
         printerAuxStatusMap.put(49, "A Communication or critical Firmware Error");
         printerAuxStatusMap.put(100, "Tray Empty");
+
     }
 
-    @Override
     public GQMeterData implement(String communityString, String ipAddress, String snmpVersion,
             LinkedList<String> toggleSwitches) {
+        // Predefined printer status map
 
         long printerStartTime = System.currentTimeMillis();
         Snmp snmp = null;
@@ -72,7 +71,7 @@ public class PrinterMeter implements GQSNMPMeter {
         String assetId = null; // unique identifier about the asset
         CPNId id = null;
 
-        // variables that are used to get the NSRG snapshot
+        // variables that are used to get the printer snapshot
         String sysIP = null;
         int prntrStatus = 0;
         int auxStatus = 0;
@@ -146,7 +145,7 @@ public class PrinterMeter implements GQSNMPMeter {
                     if (result != null && !result.isEmpty()) {
                         temp = oidString + ".3.0";
                         tempStr = MeterUtils.getSNMPValue(temp, result);
-                        upTime = MeterUtils.upTimeCalc(tempStr);
+                        upTime = new MeterUtils().upTimeCalc(tempStr);
                     }
 
                     // The below oid's is used to determine color printer
@@ -269,7 +268,7 @@ public class PrinterMeter implements GQSNMPMeter {
 
         GQMeterData gqMeterObject = new GQMeterData(gqErrorInfo, printerObject);
         long printerEndTime = System.currentTimeMillis();
-        MeterUtils.printMeterTime = MeterUtils.printMeterTime + (printerEndTime - printerStartTime);
+        new MeterUtils().printMeterTime = new MeterUtils().printMeterTime + (printerEndTime - printerStartTime);
         // System.out.println(" [GQMETER] Time taken by the printer meter is : " + (printerEndTime - printerStartTime));
         return gqMeterObject;
     }
