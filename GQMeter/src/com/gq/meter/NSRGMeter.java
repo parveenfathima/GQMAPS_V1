@@ -110,7 +110,7 @@ public class NSRGMeter implements GQSNMPMeter {
 
                         temp = oidString + ".3.0";
                         tempStr = MeterUtils.getSNMPValue(temp, result);
-                        upTime = MeterUtils.upTimeCalc(tempStr);
+                        upTime = new MeterUtils().upTimeCalc(tempStr);
                     }
 
                     oidString = "1.3.6.1.2.1.2.1";
@@ -192,7 +192,7 @@ public class NSRGMeter implements GQSNMPMeter {
         GQMeterData gqMeterObject = new GQMeterData(gqErrorInfo, nsrg);
 
         long NSRGendTime = System.currentTimeMillis();
-        MeterUtils.nsrgMeterTime = MeterUtils.nsrgMeterTime + (NSRGendTime - NSRGstartTime);
+        new MeterUtils().nsrgMeterTime = new MeterUtils().nsrgMeterTime + (NSRGendTime - NSRGstartTime);
         // System.out.println(" [GQMETER] Time taken by the nsrg meter is : " + (NSRGendTime - NSRGstartTime));
         return gqMeterObject;
     }

@@ -34,14 +34,13 @@ public class StorageMeter implements GQSNMPMeter {
         CPNId id = null;
         Long runId = 0L;
 
-        // variables that are used to get the NSRG snapshot
+        // variables that are used to get the storage snapshot
         String assetId = null;
         long upTime = 0; // seconds
         long totalDiskSpace = 0; // bytes
         long usedDiskSpace = 0; // bytes
         short numberOfController = 0;
         short numberOfDisks = 0;
-        short numberOfSAS = 0;
         long IOPS = 0;
         String ConnectorProtocol = null;
         String extras = null; // anything device specific but to be discussed v2
@@ -98,7 +97,7 @@ public class StorageMeter implements GQSNMPMeter {
             if (result != null && !result.isEmpty()) {
                 temp = oidString + ".3.0";
                 tempStr = MeterUtils.getSNMPValue(temp, result);
-                upTime = MeterUtils.upTimeCalc(tempStr);
+                upTime = new MeterUtils().upTimeCalc(tempStr);
             }
 
             oidString = "1.3.6.1.4.1.";
@@ -125,7 +124,7 @@ public class StorageMeter implements GQSNMPMeter {
         }
         GQMeterData gqMeterObject = new GQMeterData(gqErrorInfo, storageObj);
         long storageEndTime = System.currentTimeMillis();
-        MeterUtils.storageMeterTime = MeterUtils.storageMeterTime + (storageEndTime - storageStartTime);
+        new MeterUtils().storageMeterTime = new MeterUtils().storageMeterTime + (storageEndTime - storageStartTime);
         // System.out.println(" [GQMETER] Time taken by the storage meter is : " + (storageEndTime - storageStartTime));
         return gqMeterObject;
     }
