@@ -38,18 +38,12 @@ import com.gq.meter.bo.ITAssetDiscoverer;
 import com.gq.meter.object.Asset;
 
 public class MeterUtils {
-    public static int count = 0;
-    public static int computer_Switch_Count = 0;
-    public static int printer_Switch_Count = 0;
-    public static int nsrg_Switch_Count = 0;
-    public static int storage_Switch_Count = 0;
-    public static long snmpKnownTime = 0;
-    public static long snmpUnknownTime = 0;
-    public static long compMeterTime = 0;
-    public static long printMeterTime = 0;
-    public static long nsrgMeterTime = 0;
-    public static long storageMeterTime = 0;
-    public static final String restURL = "http://gqexchange.com:8080/GQGatekeeper/";
+
+    public long compMeterTime = 0;
+    public long printMeterTime = 0;
+    public long nsrgMeterTime = 0;
+    public long storageMeterTime = 0;
+    public static final String restURL = "http://cloud.gqexchange.com:8080/GQGatekeeper/";
 
     // public static final String restURL = "http://localhost:8080/GQGatekeeper/";
 
@@ -57,11 +51,6 @@ public class MeterUtils {
             List<String> errorList) {
         Asset assetObj = null;
         try {
-
-            int appId = 1;
-            String assetUsg = null;
-            int assetStrength = 1;
-            String ctlgId = null;
 
             // ASSET
             String sysName = null; // string
@@ -133,8 +122,11 @@ public class MeterUtils {
      * @param currIp
      * @return
      */
-    public static HashMap<String, String> isSnmpConfigured(String communityString, String currIp) {
+    public HashMap<String, String> isSnmpConfigured(String communityString, String currIp) {
         long snmpStartTime = System.currentTimeMillis();
+
+        long snmpKnownTime = 0;
+        long snmpUnknownTime = 0;
 
         String oidString = MeterConstants.SNMP_CHECK_OCTET;
         String snmpVersion = MeterConstants.SNMP_VERSION_2;
@@ -143,10 +135,8 @@ public class MeterUtils {
         CommunityTarget target = MeterUtils.makeTarget(currIp, communityString, snmpVersion);
         OID rootOID = new OID(oidString);
         List<VariableBinding> result = walk(rootOID, target);
-
         if (result == null || result.isEmpty()) {
             // may be the device is serving snmp but not version 2 , so lets try version 1
-            // System.out.println(" [GQMETER] SNMP Version2 is failed for this device,trying for version1 now");
             snmpVersion = MeterConstants.SNMP_VERSION_1;
 
             target = makeTarget(currIp, communityString, snmpVersion); // needs to be done only once.
@@ -154,9 +144,7 @@ public class MeterUtils {
 
             if (result == null || result.isEmpty()) {
                 // may be the device is not serving snmp at all. so lets get out or throw io exception
-                // System.out.println(" [GQMETER] SNMP Version2 && version1 are failed, The asset is not configure with SNMP ");
                 long snmpEndTime = System.currentTimeMillis();
-
                 snmpUnknownTime = snmpUnknownTime + (snmpEndTime - snmpStartTime);// Time taken to find snmp is not
                                                                                   // configured
                 assetDetails.put("snmpUnKnownIp", currIp);
@@ -204,7 +192,7 @@ public class MeterUtils {
             mProtocol = MeterProtocols.NSRG;
 
             if (result == null || result.size() == 0 || result.isEmpty()) {
-                oidString = MeterConstants.SNMP_CHECK_COMPUTER_OCTET; // Computer
+                oidString = MeterConstants.SNMP_CHECK_COMPUTER_OCTET;// computer
                 rootOID = new OID(oidString);
                 result = walk(rootOID, target);
                 mProtocol = MeterProtocols.COMPUTER;
@@ -393,7 +381,6 @@ public class MeterUtils {
         requestPDU.add(new VariableBinding(rootOID));
         requestPDU.setType(PDU.GETNEXT);
         requestPDU.setMaxRepetitions(5);
-
         try {
             TransportMapping<?> transport = new DefaultUdpTransportMapping();
             Snmp snmp = new Snmp(transport);
@@ -407,9 +394,9 @@ public class MeterUtils {
 
                 ResponseEvent respEvt = snmp.send(requestPDU, target);
                 PDU responsePDU = respEvt.getResponse();
-
                 if (responsePDU != null) {
                     Vector<?> vbs = responsePDU.getVariableBindings();
+
                     if (vbs != null && vbs.size() > 0) {
                         for (int i = 0; i < vbs.size(); i++) {
                             // vb sanity check
@@ -479,7 +466,7 @@ public class MeterUtils {
      * @param time
      * @return
      */
-    public static long upTimeCalc(String time) {
+    public long upTimeCalc(String time) {
         String dayString = null;
         String[] upTimeArray = null;
         String timeString = null;
@@ -531,9 +518,12 @@ public class MeterUtils {
      * @param assetSwitches
      * @return
      */
-    public static HashMap<MeterProtocols, LinkedList<String>> manageSwitches(String line,
+    public HashMap<MeterProtocols, LinkedList<String>> manageSwitches(String line,
             HashMap<MeterProtocols, LinkedList<String>> assetSwitches) {
-
+        int computer_Switch_Count = 0;
+        int printer_Switch_Count = 0;
+        int nsrg_Switch_Count = 0;
+        int storage_Switch_Count = 0;
         if (line.toLowerCase().startsWith(MeterConstants.COMPUTER_SWITCHS)) {
             computer_Switch_Count++;
             if (computer_Switch_Count == 1) {
