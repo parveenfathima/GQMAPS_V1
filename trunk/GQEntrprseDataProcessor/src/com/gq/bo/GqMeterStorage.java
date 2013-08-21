@@ -8,6 +8,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 
 import com.gq.meter.GQMeterResponse;
+import com.gq.meter.assist.ProtocolData;
 import com.gq.meter.object.Asset;
 import com.gq.meter.object.CPNId;
 import com.gq.meter.object.Storage;
@@ -26,15 +27,17 @@ public class GqMeterStorage {
         try {
             // This step will read hibernate.cfg.xml and prepare hibernate for use
             GQEDPConstants.logger.debug("Start a process to read a HIBERNATE xml file in GQMeterStorage ");
-            String url = "jdbc:mysql://192.168.1.95:3306/gqm" + enterpriseId + "?autoReconnect=true";
-            if (HibernateUtil.SessionFactoryListMap.containsKey(enterpriseId)) {
-                if (HibernateUtil.SessionFactoryListMap.get(enterpriseId) == null) {
-                    sessionFactory = new HibernateUtil().dynamicSessionFactory(url);
-                    HibernateUtil.SessionFactoryListMap.put(enterpriseId, sessionFactory);
-                }
-                else {
-                    sessionFactory = HibernateUtil.SessionFactoryListMap.get(enterpriseId);
-                }
+            String dbInstanceName = "gqm" + enterpriseId;
+
+            String url = "jdbc:mysql://192.168.1.95:3306/" + dbInstanceName + "?autoReconnect=true";
+            // This step will read hibernate.cfg.xml and prepare hibernate for use
+
+            if (HibernateUtil.SessionFactoryListMap.containsKey(dbInstanceName)) {
+                sessionFactory = HibernateUtil.SessionFactoryListMap.get(dbInstanceName);
+            }
+            else {
+                sessionFactory = new HibernateUtil().dynamicSessionFactory(url);
+                HibernateUtil.SessionFactoryListMap.put(dbInstanceName, sessionFactory);
             }
             session = sessionFactory.getCurrentSession();
             session.beginTransaction();
@@ -42,7 +45,6 @@ public class GqMeterStorage {
 
             CPNId cid = storage.getId();
             String assetId = cid.getAssetId();
-
             cid.setRunId(runId);
 
             // inserting asset
@@ -51,6 +53,7 @@ public class GqMeterStorage {
             Query query = session.createQuery(hql);
             query.setParameter("ASSET_ID", assetId);
             List<?> result = query.list();
+            GQEDPConstants.logger.debug("Asset Id:" + assetId + "\nResult Size:" + result.size());
             GQEDPConstants.logger.debug("To check a condition for Asset Query Result in GQMeterStorage");
 
             if (result.size() == 0) {

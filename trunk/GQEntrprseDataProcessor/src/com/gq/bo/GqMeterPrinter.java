@@ -27,16 +27,17 @@ public class GqMeterPrinter {
         try {
             // This step will read hibernate.cfg.xml and prepare hibernate for use
             GQEDPConstants.logger.debug("Start a process to read a HIBERNATE xml file in GQMeterPrinter ");
-            String url = "jdbc:mysql://192.168.1.95:3306/gqm" + enterpriseId + "?autoReconnect=true";
+            String dbInstanceName = "gqm" + enterpriseId;
 
-            if (HibernateUtil.SessionFactoryListMap.containsKey(enterpriseId)) {
-                if (HibernateUtil.SessionFactoryListMap.get(enterpriseId) == null) {
-                    sessionFactory = new HibernateUtil().dynamicSessionFactory(url);
-                    HibernateUtil.SessionFactoryListMap.put(enterpriseId, sessionFactory);
-                }
-                else {
-                    sessionFactory = HibernateUtil.SessionFactoryListMap.get(enterpriseId);
-                }
+            String url = "jdbc:mysql://192.168.1.95:3306/" + dbInstanceName + "?autoReconnect=true";
+            // This step will read hibernate.cfg.xml and prepare hibernate for use
+
+            if (HibernateUtil.SessionFactoryListMap.containsKey(dbInstanceName)) {
+                sessionFactory = HibernateUtil.SessionFactoryListMap.get(dbInstanceName);
+            }
+            else {
+                sessionFactory = new HibernateUtil().dynamicSessionFactory(url);
+                HibernateUtil.SessionFactoryListMap.put(dbInstanceName, sessionFactory);
             }
             session = sessionFactory.getCurrentSession();
             session.beginTransaction();
@@ -53,6 +54,7 @@ public class GqMeterPrinter {
             Query query = session.createQuery(hql);
             query.setParameter("ASSET_ID", assetId);
             List<?> result = query.list();
+            GQEDPConstants.logger.debug("Asset Id:" + assetId + "\nResult Size:" + result.size());
             GQEDPConstants.logger.debug("To check a condition for Asset Query Result in GQMeterPrinter");
 
             if (result.size() == 0) {
