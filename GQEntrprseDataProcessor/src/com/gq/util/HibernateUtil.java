@@ -15,13 +15,6 @@ public class HibernateUtil {
 
     public static HashMap<String, SessionFactory> SessionFactoryListMap = new HashMap<String, SessionFactory>();
 
-    static {
-        SessionFactory infiSessionFactory = null, apsSessionFactory = null, talkSessionFactory = null;
-        SessionFactoryListMap.put("infi", infiSessionFactory);
-        SessionFactoryListMap.put("aps", apsSessionFactory);
-        SessionFactoryListMap.put("talk", talkSessionFactory);
-    }
-
     public SessionFactory dynamicSessionFactory(String url) {
         SessionFactory sessionFactory = null;
         Configuration configuration = new Configuration();
