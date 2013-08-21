@@ -47,31 +47,24 @@ public class GqEDPFilter {
         System.out.println(" Total Asset Scanned : " + scanned);
 
         List<ProtocolData> pdList = gqmResponse.getAssetInformationList();
-        GQEDPConstants.logger.debug(pdList.get(0));
         Session session = null;
         MeterRun meterRun = null;
         SessionFactory sessionFactory = null;
-        String protocolId = "protocolid";
-        String descr = "descr";
-        String address = "address";
-        String phone = "phone";
-        char storeFwd = 'Y';
-        String fwdUrl = "fwdUrl";
-        Date creDttm = new Date();
+
         try {
 
             GQEDPConstants.logger.debug("Start to read a hibernate file for GQEDPFilter");
-            String url = "jdbc:mysql://192.168.1.95:3306/gqm" + enterpriseId + "?autoReconnect=true";
+            String dbInstanceName = "gqm" + enterpriseId;
+
+            String url = "jdbc:mysql://192.168.1.95:3306/" + dbInstanceName + "?autoReconnect=true";
             // This step will read hibernate.cfg.xml and prepare hibernate for use
 
-            if (HibernateUtil.SessionFactoryListMap.containsKey(enterpriseId)) {
-                if (HibernateUtil.SessionFactoryListMap.get(enterpriseId) == null) {
-                    sessionFactory = new HibernateUtil().dynamicSessionFactory(url);
-                    HibernateUtil.SessionFactoryListMap.put(enterpriseId, sessionFactory);
-                }
-                else {
-                    sessionFactory = HibernateUtil.SessionFactoryListMap.get(enterpriseId);
-                }
+            if (HibernateUtil.SessionFactoryListMap.containsKey(dbInstanceName)) {
+                sessionFactory = HibernateUtil.SessionFactoryListMap.get(dbInstanceName);
+            }
+            else {
+                sessionFactory = new HibernateUtil().dynamicSessionFactory(url);
+                HibernateUtil.SessionFactoryListMap.put(dbInstanceName, sessionFactory);
             }
             session = sessionFactory.getCurrentSession();
             session.beginTransaction();
