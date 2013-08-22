@@ -35,21 +35,6 @@
         <property name="assetUsg" type="string">
             <column name="asset_usg" length="50" />
         </property>
-        <property name="imp_level" type="java.lang.Byte">
-            <column name="imp_lvl" />
-        </property>
-        <property name="ownership" type="string">
-            <column name="ownership" length="6" />
-        </property>
-        <property name="dcEnt" type="string">
-            <column name="dc_ent" length="2" />
-        </property>
-        <property name="active" type="java.lang.Character">
-            <column name="active" length="1">
-                <comment>asset is active or it has moved or decommissioned(if users choose these assets in dashboard and click on decommiosn the asset active set to n and these
-                assets should not consider for any furtyer calculation)</comment>
-            </column>
-        </property>
         <property name="inactiveDttm" type="timestamp">
             <column name="inactive_dttm" length="19">
                 <comment>if assets are made inactive then capture date</comment>
