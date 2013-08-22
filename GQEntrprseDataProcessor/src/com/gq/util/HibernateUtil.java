@@ -1,13 +1,8 @@
 package com.gq.util;
 
 import java.util.HashMap;
-
 import org.hibernate.SessionFactory;
-
-import org.hibernate.cfg.AnnotationConfiguration;
 import org.hibernate.cfg.Configuration;
-
-import com.sun.org.apache.bcel.internal.generic.GETSTATIC;
 
 public class HibernateUtil {
 
