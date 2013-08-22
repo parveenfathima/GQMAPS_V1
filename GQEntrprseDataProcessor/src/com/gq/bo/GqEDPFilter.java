@@ -61,6 +61,10 @@ public class GqEDPFilter {
 
             if (HibernateUtil.SessionFactoryListMap.containsKey(dbInstanceName)) {
                 sessionFactory = HibernateUtil.SessionFactoryListMap.get(dbInstanceName);
+                if (sessionFactory == null) {
+                    sessionFactory = new HibernateUtil().dynamicSessionFactory(url);
+                    HibernateUtil.SessionFactoryListMap.put(dbInstanceName, sessionFactory);
+                }
             }
             else {
                 sessionFactory = new HibernateUtil().dynamicSessionFactory(url);
