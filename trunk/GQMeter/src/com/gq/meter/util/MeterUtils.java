@@ -107,7 +107,15 @@ public class MeterUtils {
             }
             ipAddr = ipAddress;
 
-            assetObj = new Asset(assetId, protocolId, sysName, sysDescr, ipAddr, sysContact, sysLocation);
+            // assetObj = new Asset(assetId, protocolId, sysName, sysDescr, ipAddr, sysContact, sysLocation);
+            assetObj = new Asset();
+            assetObj.setAssetId(assetId);
+            assetObj.setProtocolId(protocolId);
+            assetObj.setName(sysName);
+            assetObj.setDescr(sysDescr);
+            assetObj.setIpAddr(ipAddr);
+            assetObj.setContact(sysContact);
+            assetObj.setLocation(sysLocation);
             // System.out.println(assetId + "\n" + protocolId + "\n" + sysName + "\n" + sysDescr + "\n" + ipAddr + "\n"
             // + sysContact + "\n" + sysLocation);
         }
