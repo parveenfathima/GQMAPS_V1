@@ -179,7 +179,17 @@ public final class ITAssetDiscoverer {
                         line = line.trim();
 
                         if (line.length() == 0 || line.startsWith("#")) {
-                            continue;
+                            if (line.contains(MeterConstants.COMPUTER_SWITCHS)
+                                    || line.contains(MeterConstants.PRINTER_SWITCHS)
+                                    || line.contains(MeterConstants.NSRG_SWITCHS)
+                                    || line.contains(MeterConstants.STORAGE_SWITCHS)) {
+                                System.out.println(" [GQMETER] Invalid Input File...");
+                                System.out.println(" [GQMETER] Process Terminated Now...");
+                                System.exit(0);
+                            }
+                            else {
+                                continue;
+                            }
                         }
                         // line starts with $ for meterid
                         if (line.startsWith("$")) {
@@ -249,7 +259,6 @@ public final class ITAssetDiscoverer {
                         } // else if ends
                         else {
                             sToken = new StringTokenizer(line, " ");
-
                             if (sToken.countTokens() == 2 || sToken.countTokens() == 3) {
                                 communityString = sToken.nextToken().trim();
                                 ipLowerbound = sToken.nextToken().trim();
