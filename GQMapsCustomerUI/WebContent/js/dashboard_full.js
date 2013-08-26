@@ -157,3 +157,10 @@ function goToAssetEdit()
 		window.location.href = "asset_edit.html";
 	});
 }
+
+
+
+function gotoAssetList()
+{
+	window.location.href = "asset_list.html";
+}
