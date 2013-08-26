@@ -14,86 +14,132 @@ import org.json.JSONObject;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
-import com.gq.meter.object.Asset;
+import com.gq.meter.object.*;
 import com.gq.ui.object.DomainData;
 
 public class AssetData {
-	Client client = Client.create();
-	WebResource webResourceDomain = client
-			.resource("http://localhost:8080/GQMapsCustomerServices/gqm-gqedp/mapsDomainServices/getMapsDomainData");
 
-	String domainDataStr = webResourceDomain.get(String.class);
 
 	public AssetData() {
-	}
-
-	public List<DomainData> getCatalogList(String protocol) throws NoSuchElementException,
-			ParseException 
-	{
-			List<DomainData> domainDataListDB = new ArrayList<DomainData>();
-			domainDataListDB = getDomainDataList();
-
-			List<DomainData> catalogListDB = new ArrayList<DomainData>();
-			
-				for(int i = 0; i < domainDataListDB.size(); i++)
-				{	
-					if(domainDataListDB.get(i).getType().equals(protocol))
-					{
-						DomainData domainData = new DomainData();
-						domainData.setId(domainDataListDB.get(i).getId());
-						domainData.setDesc(domainDataListDB.get(i).getDesc());
-						domainData.setType(domainDataListDB.get(i).getType());
-						catalogListDB.add(domainData);
-					}
-				}
-			
-			for(int cc=0; cc<catalogListDB.size(); cc++)
-			{
-				System.out.println("Catalog for " + protocol + ": "+ catalogListDB.get(cc).toString());
-			}
-			
-			return catalogListDB;
-	}
-
-	public List<DomainData> getServerTypeList() throws NoSuchElementException,
-			ParseException {
 		
-		List<DomainData> srvrTypeList = new ArrayList<DomainData>();
-		JSONObject jsnobject = new JSONObject(domainDataStr);
+	}
+	
+	// catalog list generation from the total domain data
+	public List<DomainData> getCatalogList(String protocol)
+			throws NoSuchElementException, ParseException {
 		
-		JSONArray jsonSrvrArray = jsnobject.getJSONArray("srvrAppType");
-
-		// adding server type details to the domain data object
-		for (int j = 0; j < jsonSrvrArray.length(); j++) {
-
-			DomainData srvr = new DomainData();
-
-			if (jsonSrvrArray.getJSONObject(j).has("srvrAppId")) {
-				srvr.setId(jsonSrvrArray.getJSONObject(j)
-						.getString("srvrAppId"));
-			}
-
-			if (jsonSrvrArray.getJSONObject(j).has("descr")) {
-				srvr.setDesc(jsonSrvrArray.getJSONObject(j).getString("descr"));
-			}
-
-			srvr.setType("srvr");
+		List<DomainData> domainDataListDB = new ArrayList<DomainData>();
+		domainDataListDB = getDomainDataList();
+		
+		System.out.println("inside getCatalogList  " + domainDataListDB.size());
+		
+		List<DomainData> catalogListDB = new ArrayList<DomainData>();
+		
 			
-			srvrTypeList.add(srvr);
+		for (int i = 0; i < domainDataListDB.size(); i++) {
+			if (domainDataListDB.get(i).getType().equals("ctlg") && domainDataListDB.get(i).getProtocol().equals(protocol)) {
+				DomainData domainData = new DomainData();
+				domainData.setId(domainDataListDB.get(i).getId());
+				domainData.setDesc(domainDataListDB.get(i).getDesc());
+				domainData.setType(domainDataListDB.get(i).getType());
+				if(protocol.equals("computer"))
+					domainData.setProtocol(domainDataListDB.get(i).getProtocol());
+				catalogListDB.add(domainData);
+			}
 		}
 
-		return srvrTypeList;
-
+		return catalogListDB;
 	}
-
+	
+	// server app type list generation from the total domain data
+	public List<DomainData> getSrvrAppType()
+			throws NoSuchElementException, ParseException {
+		
+		List<DomainData> domainDataListDB = new ArrayList<DomainData>();
+		domainDataListDB = getDomainDataList();
+		
+		System.out.println("inside getSrvrAppType  " + domainDataListDB.size());
+		
+		List<DomainData> srvrAppListDB = new ArrayList<DomainData>();
+		
+			
+		for (int i = 0; i < domainDataListDB.size(); i++) {
+			if (domainDataListDB.get(i).getType().equals("srvr")) {
+				DomainData domainData = new DomainData();
+				domainData.setId(domainDataListDB.get(i).getId());
+				domainData.setDesc(domainDataListDB.get(i).getDesc());
+				domainData.setType(domainDataListDB.get(i).getType());
+				srvrAppListDB.add(domainData);
+			}
+		}
+		System.out.println("\n Returning srvrAppListDB");
+		return srvrAppListDB;
+	}
+	
+	// asset importance level list generation from the total domain data
+	public List<DomainData> getAssetImpLevel()
+			throws NoSuchElementException, ParseException {
+		
+		List<DomainData> domainDataListDB = new ArrayList<DomainData>();
+		domainDataListDB = getDomainDataList();
+		
+		System.out.println("inside getAssetImpLevel  " + domainDataListDB.size());
+		
+		List<DomainData> assetImpLevelListDB = new ArrayList<DomainData>();
+		
+			
+		for (int i = 0; i < domainDataListDB.size(); i++) {
+			if (domainDataListDB.get(i).getType().equals("impl")) {
+				DomainData domainData = new DomainData();
+				domainData.setId(domainDataListDB.get(i).getId());
+				domainData.setDesc(domainDataListDB.get(i).getDesc());
+				domainData.setType(domainDataListDB.get(i).getType());
+				assetImpLevelListDB.add(domainData);
+			}
+		}
+		System.out.println("\n Returning asset importance level list");
+		return assetImpLevelListDB;
+	}
+	
+	// asset importance level list generation from the total domain data
+	public List<DomainData> getCompType()
+			throws NoSuchElementException, ParseException {
+		
+		List<DomainData> domainDataListDB = new ArrayList<DomainData>();
+		domainDataListDB = getDomainDataList();
+		
+		List<DomainData> compTypeListDB = new ArrayList<DomainData>();
+			
+		for (int i = 0; i < domainDataListDB.size(); i++) {
+			if (domainDataListDB.get(i).getType().equals("comp")) {
+				DomainData domainData = new DomainData();
+				domainData.setId(domainDataListDB.get(i).getId());
+				domainData.setDesc(domainDataListDB.get(i).getDesc());
+				domainData.setType(domainDataListDB.get(i).getType());
+				compTypeListDB.add(domainData);
+			}
+		}
+		System.out.println("\n Returning computer type list");
+		return compTypeListDB;
+	}	
+	
+	// all masters required for the asset config screen from the service
 	public List<DomainData> getDomainDataList() throws NoSuchElementException,
 			ParseException {
+
+		Client client = Client.create();
+
+		WebResource webResourceDomain = client
+				.resource("http://localhost:8080/GQMapsCustomerServices/gqm-gqedp/mapsDomainServices/getMapsDomainData");
+
+		String domainDataStr = webResourceDomain.get(String.class);
+
+		JSONObject jsnobject = new JSONObject(domainDataStr);
 
 		System.out.println("\nDomainData String: " + domainDataStr);
 
 		List<DomainData> domainDataListDB = new ArrayList<DomainData>();
-
-		JSONObject jsnobject = new JSONObject(domainDataStr);
+		
 
 		JSONArray jsonCtlgArray = jsnobject.getJSONArray("devCtlgResult");
 		System.out.println("Catalog length: " + jsonCtlgArray.length());
@@ -103,26 +149,19 @@ public class AssetData {
 
 			DomainData ctlg = new DomainData();
 
-			if (jsonCtlgArray.getJSONObject(i).has("ctlgId")) 				
+			if (jsonCtlgArray.getJSONObject(i).has("ctlgId"))
 				ctlg.setId(jsonCtlgArray.getJSONObject(i).getString("ctlgId"));
-				else if(jsonCtlgArray.getJSONObject(i).has("protocolId") && jsonCtlgArray.getJSONObject(i).getString("protocolId").equals("computer"))
-					ctlg.setId("default_computer");
-				else if(jsonCtlgArray.getJSONObject(i).has("protocolId") && jsonCtlgArray.getJSONObject(i).getString("protocolId").equals("printer"))
-					ctlg.setId("default_printer");
-				else if(jsonCtlgArray.getJSONObject(i).has("protocolId") && jsonCtlgArray.getJSONObject(i).getString("protocolId").equals("nsrg"))
-					ctlg.setId("default_nsrg");
 
-				if (jsonCtlgArray.getJSONObject(i).has("descr")) {
-					ctlg.setDesc(jsonCtlgArray.getJSONObject(i).getString(
-							"descr"));
-
-					
-				}
-				ctlg.setType("ctlg");
-				domainDataListDB.add(ctlg);
-			}
+			if (jsonCtlgArray.getJSONObject(i).has("descr"))
+				ctlg.setDesc(jsonCtlgArray.getJSONObject(i).getString("descr"));
+			
+			if(jsonCtlgArray.getJSONObject(i).has("protocolId"))
+				ctlg.setProtocol(jsonCtlgArray.getJSONObject(i).getString("protocolId"));
+				
+			ctlg.setType("ctlg");
+			domainDataListDB.add(ctlg);
 		}
-		JSONObject jsnobject = new JSONObject(domainDataStr);
+
 		JSONArray jsonSrvrArray = jsnobject.getJSONArray("srvrAppType");
 		System.out.println("Server length: " + jsonSrvrArray.length());
 
@@ -131,10 +170,9 @@ public class AssetData {
 
 			DomainData srvr = new DomainData();
 
-			if (jsonSrvrArray.getJSONObject(j).has("srvrAppId")) {
+			if (jsonSrvrArray.getJSONObject(j).has("srvrAppId"))
 				srvr.setId(jsonSrvrArray.getJSONObject(j)
 						.getString("srvrAppId"));
-			}
 
 			if (jsonSrvrArray.getJSONObject(j).has("descr")) {
 				srvr.setDesc(jsonSrvrArray.getJSONObject(j).getString("descr"));
@@ -195,8 +233,11 @@ public class AssetData {
 	public List<Asset> getAssetList() throws NoSuchElementException,
 			ParseException {
 
+		Client client = Client.create();
+
 		WebResource webResourceAsset = client
 				.resource("http://localhost:8080/GQMapsCustomerServices/gqm-gqedp/getAssetServices/getAssetData");
+
 		ClientResponse response = webResourceAsset.accept("application/json")
 				.get(ClientResponse.class);
 
@@ -211,6 +252,7 @@ public class AssetData {
 		for (int i = 0; i < jsonAssetArray.length(); i++) {
 
 			Asset a = new Asset();
+			
 
 			if (jsonAssetArray.getJSONObject(i).has("assetId")) {
 				a.setAssetId(jsonAssetArray.getJSONObject(i).getString(
@@ -227,15 +269,17 @@ public class AssetData {
 						.charAt(0));
 			}
 
-			if (jsonAssetArray.getJSONObject(i).has("ctlgId")) 
+			if (jsonAssetArray.getJSONObject(i).has("ctlgId"))
 				a.setCtlgId(jsonAssetArray.getJSONObject(i).getString("ctlgId"));
-			else if(jsonAssetArray.getJSONObject(i).getString("protocolId").equals("computer"))
+			else if (jsonAssetArray.getJSONObject(i).getString("protocolId")
+					.equals("computer"))
 				a.setCtlgId("default_computer");
-			else if(jsonAssetArray.getJSONObject(i).getString("protocolId").equals("printer"))
+			else if (jsonAssetArray.getJSONObject(i).getString("protocolId")
+					.equals("printer"))
 				a.setCtlgId("default_printer");
-			else if(jsonAssetArray.getJSONObject(i).getString("protocolId").equals("nsrg"))
+			else if (jsonAssetArray.getJSONObject(i).getString("protocolId")
+					.equals("nsrg"))
 				a.setCtlgId("default_nsrg");
-			
 
 			if (jsonAssetArray.getJSONObject(i).has("name")) {
 				a.setName(jsonAssetArray.getJSONObject(i).getString("name"));
@@ -302,6 +346,8 @@ public class AssetData {
 			if (jsonAssetArray.getJSONObject(i).has("typeId")) {
 				a.setTypeId(jsonAssetArray.getJSONObject(i).getString("typeId"));
 			}
+			else
+				a.setTypeId("server");
 
 			assetListDB.add(a);
 		}
