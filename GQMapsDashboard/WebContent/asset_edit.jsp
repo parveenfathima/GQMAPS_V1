@@ -49,15 +49,32 @@
 		domainDataListDB = assetData.getDomainDataList();
 		System.out.println("Total Domain Data: " + domainDataListDB.size());	
 		
-		//computer catalog list
+		//computer catalog domain list
 		List<DomainData> compCatalogListDB = new ArrayList<DomainData>();
 		compCatalogListDB = assetData.getCatalogList("computer");
 		
+		//printer catalog domain list
 		List<DomainData> printerCatalogListDB = new ArrayList<DomainData>();
-		printerCatalogListDB = assetData.getCatalogList("printer");
+		printerCatalogListDB = assetData.getCatalogList("printer");		
 		
+		//nsrg catalog domain list
 		List<DomainData> nsrgCatalogListDB = new ArrayList<DomainData>();
-		nsrgCatalogListDB = assetData.getCatalogList("nsrg");			
+		nsrgCatalogListDB = assetData.getCatalogList("nsrg");		
+		
+		//server app domain list
+		List<DomainData> srvrAppListDB = new ArrayList<DomainData>();
+		srvrAppListDB = assetData.getSrvrAppType();
+		
+		//asset importance domain list
+		List<DomainData> assetImpLevelListDB = new ArrayList<DomainData>();
+		assetImpLevelListDB = assetData.getAssetImpLevel();
+		
+		//computer type list
+		List<DomainData> compTypeListDB = new ArrayList<DomainData>();
+		compTypeListDB = assetData.getCompType();
+		
+ /* 		for(int srvr = 0; srvr<compTypeListDB.size(); srvr++)
+		System.out.println("\n " + compTypeListDB.get(srvr).getId() + " >>>>>>>> " + compTypeListDB.get(srvr).getDesc()); */
 		
 		
 	%>
@@ -66,7 +83,7 @@
 	<table id="tblComputerList" border="1">
 		<tr bgcolor="green" style="color: white;">
 			<th>S.#</th>
-			<th>Status</th>
+			<th style="width: 50px;">Asset Active</th>
 			<th>Asset ID</th>
 			<th>IP Address</th>
 			<th>Catalog</th>
@@ -75,6 +92,7 @@
 			<th>Asset Importance</th>
 			<th>Ownership</th>
 			<th>Location</th>
+			<th>Comp. Type</th>			
 		</tr>
 		<%
 			for (i = 0; i < assetListDB.size(); i++) {
@@ -83,8 +101,7 @@
 		<tr>
 			<td><%=j = j + 1%></td>
 			<td>
-				<select name="cmbStatus" +<%=i%> id="cmbStatus" +<%=i%>
-					name="cmbStatus" +<%=i%> style="width: 50px">
+				<select name="cmbStatus" +<%=i%> id="cmbStatus" +<%=i%> >
 						<%
 							for (int status = 0; status < aryStatus.length; status++) 
 							{
@@ -108,14 +125,74 @@
 			<td><%=assetListDB.get(i).getAssetId()%></td>
 			<td><%=assetListDB.get(i).getIpAddr()%></td>
 			<td>
-
+				<select name="cmbCatalog" +<%=i%> id="cmbCatalog" +<%=i%> style="width: 150px">
+						<%
+							for (int catalog = 0; catalog < compCatalogListDB.size(); catalog++) 
+							{
+								if (assetListDB.get(i).getCtlgId()==compCatalogListDB.get(catalog).getId()) 
+					 			{
+						%> 	
+									<option value="<%=compCatalogListDB.get(catalog).getId()%>" selected = "selected"><%=compCatalogListDB.get(catalog).getDesc()%></option>
+			 			<%
+			 					}
+			 					else
+			 					{
+			 					%>
+			 						<option value="<%=compCatalogListDB.get(catalog).getId()%>"><%=compCatalogListDB.get(catalog).getDesc()%></option>
+			 					<%
+			 					}
+							}
+						%>
+				</select> 
 			
 			</td>
-			<td><%=assetListDB.get(i).getSrvrAppId()%></td>
-			<td><%=assetListDB.get(i).getAssetUsg()%></td>
-			<td><%=assetListDB.get(i).getImpLvl()%></td>
 			<td>
-				<select name="cmbOwnership"+<%=i%> id="cmbOwnership"+<%=i%> style="width: 50px">
+				<select name="cmbSrvrApp"+<%=i%> id="cmbSrvrApp"+<%=i%> style="width: 100px;">
+						<%
+							for (int srvr = 0; srvr < srvrAppListDB.size(); srvr++) 
+							{
+								if (assetListDB.get(i).getSrvrAppId() == Byte.parseByte(srvrAppListDB.get(srvr).getId()))
+					 			{
+						%> 	
+									<option value="<%=srvrAppListDB.get(srvr).getId()%>" selected = "selected"><%=srvrAppListDB.get(srvr).getDesc()%></option>
+			 			<%
+			 					}
+			 					else
+			 					{
+			 			%>
+			 						<option value="<%=srvrAppListDB.get(srvr).getId()%>" ><%=srvrAppListDB.get(srvr).getDesc()%></option>
+			 			<%
+			 					}
+							}
+						%>
+				</select> 			
+			
+			</td>
+			<td><%=assetListDB.get(i).getAssetUsg()%></td>
+			<td>
+				<select name="cmbImpLevel"+<%=i%> id="cmbImpLevel"+<%=i%> style="width: 100px;">
+						<%
+							for (int impl = 0; impl < assetImpLevelListDB.size(); impl++) 
+							{
+								if ((byte)assetListDB.get(i).getImpLvl() == Byte.valueOf(assetImpLevelListDB.get(impl).getId()))
+					 			{
+						%> 	
+									<option value="<%=assetImpLevelListDB.get(impl).getId()%>" selected = "selected"><%=assetImpLevelListDB.get(impl).getDesc()%></option>
+			 			<%
+			 					}
+			 					else
+			 					{
+					 			System.out.println("\n" + assetListDB.get(i).getSrvrAppId() + "   if  " + assetImpLevelListDB.get(impl).getId());			 					
+			 			%>
+			 						<option value="<%=assetImpLevelListDB.get(impl).getId()%>" ><%=assetImpLevelListDB.get(impl).getDesc()%></option>
+			 			<%
+			 					}
+							}
+						%>
+				</select> 				
+			</td>
+			<td>
+				<select name="cmbOwnership"+<%=i%> id="cmbOwnership"+<%=i%> >
 						<%
 							for (int ownership = 0; ownership < aryOwnership.length; ownership++) 
 							{
@@ -137,7 +214,7 @@
 
 			</td>
 			<td>
-				<select name="cmbLocation" +<%=i%> id="cmbLocation" +<%=i%> style="width: 50px">
+				<select name="cmbLocation" +<%=i%> id="cmbLocation" +<%=i%> >
 						<%
 							for (int loc = 0; loc < aryLocation.length; loc++) 
 							{
@@ -157,6 +234,28 @@
 						%>
 				</select> 
 			</td>
+			<td>
+				<select name="cmbCompType"+<%=i%> id="cmbCompType"+<%=i%> >
+						<%
+							for (int comp = 0; comp < compTypeListDB.size(); comp++) 
+							{
+							System.out.println("\n "  + assetListDB.get(i).getTypeId() + "  "  + compTypeListDB.get(comp).getId() );
+								if (assetListDB.get(i).getTypeId().equals(compTypeListDB.get(comp).getId()))
+					 			{
+						%> 	
+									<option value="<%=compTypeListDB.get(comp).getId()%>" selected = "selected"><%=compTypeListDB.get(comp).getDesc()%></option>
+			 			<%
+			 					}
+			 					else
+			 					{
+			 			%>
+			 						<option value="<%=compTypeListDB.get(comp).getId()%>" ><%=compTypeListDB.get(comp).getDesc()%></option>
+			 			<%
+			 					}
+							}
+						%>
+				</select> 
+			</td>
 		</tr>
 		<%
 			}
@@ -168,9 +267,9 @@
 	<table id="tblPrinterList" border="1">
 		<tr bgcolor="green" style="color: white;">
 			<th>S.#</th>
-			<th>Status</th>
+			<th style="width: 50px;">Asset Active</th>
 			<th>Asset ID</th>
-			<th>IP Address</th>
+			<th style="width: 120px;">IP Address</th>
 			<th>Catalog</th>
 			<th>Asset Usage</th>
 			<th>Asset Importance</th>
@@ -184,8 +283,7 @@
 		<tr>
 			<td><%=k = k + 1%></td>
 		<td>
-				<select name="cmbStatus" +<%=i%> id="cmbStatus" +<%=i%>
-					name="cmbStatus" +<%=i%> style="width: 50px">
+				<select name="cmbStatus" +<%=i%> id="cmbStatus" +<%=i%> >
 						<%
 							for (int status = 0; status < aryStatus.length; status++) 
 							{
@@ -215,13 +313,51 @@
 			<td><%=assetListDB.get(i).getAssetId()%></td>
 			<td><%=assetListDB.get(i).getIpAddr()%></td>
 			<td>
-	
+					<select name="cmbCatalog" +<%=i%> id="cmbCatalog" +<%=i%> >
+						<%
+							for (int catalog = 0; catalog < printerCatalogListDB.size(); catalog++) 
+							{
+								if (assetListDB.get(i).getCtlgId()==printerCatalogListDB.get(catalog).getId()) 
+					 			{
+						%> 	
+									<option value="<%=printerCatalogListDB.get(catalog).getId()%>" selected = "selected"><%=printerCatalogListDB.get(catalog).getDesc()%></option>
+			 			<%
+			 					}
+			 					else
+			 					{
+			 					%>
+			 						<option value="<%=printerCatalogListDB.get(catalog).getId()%>"><%=printerCatalogListDB.get(catalog).getDesc()%></option>
+			 					<%
+			 					}
+							}
+						%>
+				</select> 
 			</td>
 			<td><%=assetListDB.get(i).getAssetUsg()%></td>
-			<td><%=assetListDB.get(i).getImpLvl()%></td>
 			<td>
-				<select name="cmbOwnership"+<%=i%> id="cmbOwnership"+<%=i%>
-					name="cmbOwnership"+<%=i%> style="width: 50px">
+				<select name="cmbImpLevel"+<%=i%> id="cmbImpLevel"+<%=i%> >
+						<%
+							for (int impl = 0; impl < assetImpLevelListDB.size(); impl++) 
+							{
+								if ((byte)assetListDB.get(i).getImpLvl() == Byte.valueOf(assetImpLevelListDB.get(impl).getId()))
+					 			{
+						%> 	
+									<option value="<%=assetImpLevelListDB.get(impl).getId()%>" selected = "selected"><%=assetImpLevelListDB.get(impl).getDesc()%></option>
+			 			<%
+			 					}
+			 					else
+			 					{
+					 			System.out.println("\n" + assetListDB.get(i).getSrvrAppId() + "   if  " + assetImpLevelListDB.get(impl).getId());			 					
+			 			%>
+			 						<option value="<%=assetImpLevelListDB.get(impl).getId()%>" ><%=assetImpLevelListDB.get(impl).getDesc()%></option>
+			 			<%
+			 					}
+							}
+						%>
+				</select> 
+			</td>
+			<td>
+				<select name="cmbOwnership"+<%=i%> id="cmbOwnership"+<%=i%> >
 						<%
 							for (int ownership = 0; ownership < aryOwnership.length; ownership++) 
 							{
@@ -243,7 +379,7 @@
 
 			</td>
 			<td>
-				<select name="cmbLocation" +<%=i%> id="cmbLocation" +<%=i%> style="width: 50px">
+				<select name="cmbLocation" +<%=i%> id="cmbLocation" +<%=i%> >
 						<%
 							for (int loc = 0; loc < aryLocation.length; loc++) 
 							{
@@ -276,8 +412,8 @@
 	<table id="tblNsrg" border="1">
 		<tr bgcolor="green" style="color: white;">
 			<th>S.#</th>
-			<th>Status</th>
-			<th>Asset ID</th>
+			<th style="width: 50px;">Asset Active</th>
+			<th style="width: 120px;">Asset ID</th>
 			<th>IP Address</th>
 			<th>Catalog</th>
 			<th>Ownership</th>
@@ -290,8 +426,7 @@
 		<tr>
 			<td><%=l = l + 1%></td>
 			<td>
-				<select name="cmbStatus" +<%=i%> id="cmbStatus" +<%=i%>
-					name="cmbStatus" +<%=i%> style="width: 50px">
+				<select name="cmbStatus" +<%=i%> id="cmbStatus" +<%=i%>>
 						<%
 							for (int status = 0; status < aryStatus.length; status++) 
 							{
@@ -321,7 +456,25 @@
 			<td><%=assetListDB.get(i).getAssetId()%></td>
 			<td><%=assetListDB.get(i).getIpAddr()%></td>
 			<td>
-		
+				<select name="cmbCatalog" +<%=i%> id="cmbCatalog" +<%=i%> >
+						<%
+							for (int catalog = 0; catalog < nsrgCatalogListDB.size(); catalog++) 
+							{
+								if (assetListDB.get(i).getCtlgId()==nsrgCatalogListDB.get(catalog).getId()) 
+					 			{
+						%> 	
+									<option value="<%=nsrgCatalogListDB.get(catalog).getId()%>" selected = "selected"><%=nsrgCatalogListDB.get(catalog).getDesc()%></option>
+			 			<%
+			 					}
+			 					else
+			 					{
+			 					%>
+			 						<option value="<%=nsrgCatalogListDB.get(catalog).getId()%>"><%=nsrgCatalogListDB.get(catalog).getDesc()%></option>
+			 					<%
+			 					}
+							}
+						%>
+				</select> 		
 			</td>
 			<td>
 					<select name="cmbOwnership"+<%=i%> id="cmbOwnership"+<%=i%>
@@ -346,7 +499,7 @@
 				</select> 
 			</td>
 			<td>
-				<select name="cmbLocation" +<%=i%> id="cmbLocation" +<%=i%> style="width: 50px">
+				<select name="cmbLocation" +<%=i%> id="cmbLocation" +<%=i%> >
 						<%
 							for (int loc = 0; loc < aryLocation.length; loc++) 
 							{
