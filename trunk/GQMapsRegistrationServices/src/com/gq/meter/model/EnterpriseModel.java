@@ -281,7 +281,7 @@ public class EnterpriseModel {
             Transport transport = generateMailMessage.getTransport("smtp");
             MimeMessage message = new MimeMessage(generateMailMessage);
             // message.setSentDate(new java.util.Date());
-            message.setSubject("you are Registered Sucessfully");
+            message.setSubject("Thank You For Registering With GQMaps");
             message.setFrom(new InternetAddress(USER));
             message.setRecipient(Message.RecipientType.TO, new InternetAddress(tomail));
             message.setRecipient(Message.RecipientType.CC, new InternetAddress("support@gquotient.com"));
@@ -289,7 +289,7 @@ public class EnterpriseModel {
             MimeMultipart multipart = new MimeMultipart("related");
 
             BodyPart messageBodyPart = new MimeBodyPart();
-            String sb = "Dear Customer,<br><br> <p>Thank  you for registering for the gqmaps application.Your first step towards successfully managing and monitoring your IT infrastructure </p><p>Your registration process will be complete after manual verification of a few details by a GQuotient expert.</p><p>You will be contacted shortly at the number you have registered with to complete the process within the next 48 business hours.</p><p>Please do not reply to this mail.</p><p>If you are not contacted within the above time interval, please contact technical support at support@gquotient.com<br>Regards,<br><br>GQMaps Support.";
+            String sb = "Dear Customer,<br><br> <p>Thank  you for registering for the gqmaps application.Your first step towards successfully managing and monitoring your IT infrastructure. </p><p>Your registration process will be complete after manual verification of a few details by a GQuotient expert.</p><p>You will be contacted shortly at the number you have registered with to complete the process within the next 48 business hours.</p><p>If you are not contacted within the above time interval, please contact technical support at support@gquotient.com<p>Please do not reply to this mail.</p><br>Regards,<br><br>GQMaps Support.";
             messageBodyPart.setContent(sb, "text/html");
             multipart.addBodyPart(messageBodyPart);
             message.setContent(multipart);
@@ -363,7 +363,7 @@ public class EnterpriseModel {
             Transport transport = generateMailMessage.getTransport("smtp");
             MimeMessage message = new MimeMessage(generateMailMessage);
             // message.setSentDate(new java.util.Date());
-            message.setSubject("you are Registered Sucessfully");
+            message.setSubject("Welcome to GQMaps");
             message.setFrom(new InternetAddress(USER));
             message.setRecipient(Message.RecipientType.TO, new InternetAddress(tomail));
             message.setRecipient(Message.RecipientType.CC, new InternetAddress("support@gquotient.com"));
@@ -371,11 +371,11 @@ public class EnterpriseModel {
             MimeMultipart multipart = new MimeMultipart("related");
 
             BodyPart messageBodyPart = new MimeBodyPart();
-            String sb = "Dear Customer,<br><br><p>We are very pleased to welcome you to use the GQMaps application.The application can be accessed via http://<<192.168.1.95>>:8080/gqmaps</p> <br><br>User Id: "
+            String sb = "Dear Customer,<br><p>We are very pleased to welcome you to use the GQMaps application.The application can be accessed via http://www.gqexchange.com:8080/gqmaps</p> <br>User Id: "
                     + uName
                     + "<br>Password: "
                     + passwd
-                    + "<br><br><p>Please change your password upon first login.Please do not reply to this mail.</p><p>If you have any difficulties accessing the application, technical support can be reached via support@gquotient.com</p><br>Regards,<br>GQMaps Support.";
+                    + "<br><br><p>Please change your password upon first login.</p><p>If you have any difficulties accessing the application, technical support can be reached via support@gquotient.com</p><p>Please do not reply to this mail.<br>Regards,<br>GQMaps Support.";
             messageBodyPart.setContent(sb, "text/html");
             multipart.addBodyPart(messageBodyPart);
             message.setContent(multipart);
