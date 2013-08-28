@@ -7,7 +7,6 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
@@ -51,7 +50,11 @@ public class DashboardServices {
         String dbURL = "jdbc:mysql://192.168.1.95:3306/gqexchange";
         String username = "gqmaps";
         String password = "Ch1ca803ear$";
-        String dbURL1 = "jdbc:mysql://192.168.1.95:3306/gqmaps";
+        String dbURL1 = "jdbc:mysql://192.168.1.95:3306/gqm" + entpId;
+        // String dbUrl = "jdbc:mysql://192.168.1.95:3306/gqm" + entpId
+        // + "?user=gqmaps&password=Ch1ca803ear$&noAccessToProcedureBodies=true";
+
+        // System.out.println("procedure url is\t" + dbUrl);
         // String dbURL = "jdbc:mysql://localhost:3306/gqexchange";
         // String username = "root";
         // String password = "itech";
@@ -69,9 +72,6 @@ public class DashboardServices {
         String dynamic = null;
         String relatedDb = null;
         List<Data> data = null;
-        String str = null;
-        double val = 0;
-        Date dt = null;
         String chartData = "";
         double plainData = 0;
         String lineData = "";
@@ -79,29 +79,26 @@ public class DashboardServices {
         TaskAssist taskAssist = new TaskAssist(taskId, descr, sql, dynamic, chartType, columnHeader, relatedDb,
                 positionId, data, chartData, plainData, lineData, plain);
         PreparedStatement pstmt = null;
-        String alist = "";
         String result = "";
         ResultSet entpResultset;
         List<TaskAssist> sqllist = new ArrayList<TaskAssist>();
-        DataTable linedata = new DataTable();
-        DataTable bardata = new DataTable();
-
+        List<TaskAssist> goalArray = new ArrayList<TaskAssist>();
         CharSequence renderchart = null;
-        TaskAssist jsonArrayList;
         String dynamicChar = "";
         try {
             // getting database connection to MySQL server
             Class.forName("com.mysql.jdbc.Driver");
             dbCon = DriverManager.getConnection(dbURL, username, password);
             dbCon1 = DriverManager.getConnection(dbURL1, username, password);
+            // dbCon2 = DriverManager.getConnection(dbUrl);
             CustomerServiceConstant.logger.info("Executing the ");
-            String currentSql = "select * from task_asst WHERE pos_id IS NOT NULL;";
+            // String currentSql = "select * from task_asst WHERE pos_id IS NOT NULL;";
+            String currentSql = " select * from task_asst WHERE pos_id Like 'div_%' and tsql not Like 'call%';";
             // getting PreparedStatment to execute query
             stmt = (Statement) dbCon.prepareStatement(currentSql);
             // Resultset returned by query
             rs = stmt.executeQuery(currentSql);
             while (rs.next()) {
-                JSONArray chartArray = new JSONArray();
 
                 // System.out.println("inside  while");
                 taskId = rs.getInt("ts_id");
@@ -157,7 +154,6 @@ public class DashboardServices {
 
                 obj.setRelatedDb(relatedDb);
                 obj.setPositionId(positionId);
-                // sqllist.add(obj);
                 System.out.println("Dynamic value:" + dynamic);
                 if (dynamic.equals("y")) {
                     String entpquery = sql;
@@ -168,7 +164,7 @@ public class DashboardServices {
                     String resultString = finalString.replaceAll("[\"]", "'");
                     System.out.println("after replace:::::\t" + resultString);
 
-                    if (relatedDb.equalsIgnoreCase("m")) {
+                    if (!relatedDb.equalsIgnoreCase("e")) {
                         // System.out.println("maps::::::::::");
 
                         // System.out.println("query is \t" + entpquery);
@@ -194,7 +190,7 @@ public class DashboardServices {
 
                 }
                 else {
-                    if (relatedDb.equalsIgnoreCase("m")) {
+                    if (!relatedDb.equalsIgnoreCase("e")) {
                         System.out.println("inside non dynamic if::::::::::");
 
                         String entpquery = sql;
@@ -292,6 +288,7 @@ public class DashboardServices {
 
                 // chart typr data convertion to be added<to-do>
                 if (chartType.equals("bar") || chartType.equals("pie")) {
+                    System.out.println("rows size bar" + cDataList.size());
                     for (int i = 0; i < cDataList.size(); i++) {
                         chartdata.addRowFromValues(cDataList.get(i).getName(), cDataList.get(i).getValue());
                     }
@@ -303,6 +300,7 @@ public class DashboardServices {
                 else if (chartType.equals("line")) {
                     GregorianCalendar calendar = new GregorianCalendar();
                     calendar.setTimeZone(TimeZone.getTimeZone("GMT"));
+                    System.out.println("rows size line" + cDataList.size());
                     for (int i = 0; i < cDataList.size(); i++) {
                         String other = cDataList.get(i).getName();
                         int year = Integer.parseInt(other.substring(0, 4));
@@ -369,7 +367,27 @@ public class DashboardServices {
 
                 sqllist.add(obj);
             }
-
+            String goalSql = "select goal_id,descr from goal";
+            Statement goalStmt = (Statement) dbCon.createStatement();
+            ResultSet goalset = goalStmt.executeQuery(goalSql);
+            TaskAssist goalData = new TaskAssist();
+            while (goalset.next()) {
+                String goal_id = goalset.getString("goal_id");
+                goalData.setPlain(goal_id);
+                String goaldescr = goalset.getString("descr");
+                goalData.setDescr(goaldescr);
+                goalArray.add(goalData);
+            }
+            JSONArray goalJsonArray = new JSONArray();
+            JSONObject goalTitle = new JSONObject();
+            for (int i = 0; i < goalArray.size(); i++) {
+                JSONObject assetJson = new JSONObject();
+                assetJson.put("goalId", goalArray.get(i).getPlain());
+                assetJson.put("goalDescr", goalArray.get(i).getDescr());
+                goalJsonArray.put(assetJson);
+            }
+            goalTitle.put("goalData", goalJsonArray);
+            JSONObject chartTitle = new JSONObject();
             JSONArray chartArray = new JSONArray();
             for (int i = 0; i < sqllist.size(); i++) {
                 System.out.println("plaiin sqllist data:::\t" + sqllist.get(i).getPlainData());
@@ -397,6 +415,9 @@ public class DashboardServices {
                 // System.out.println("chart type in last for" + json.get("charttype") + "linedata inside json::::\t"
                 // + sqllist.get(i).getLineData());
                 // }
+                else if ((sqllist.get(i).getChartData().equals(null)) || sqllist.get(i).getChartData().equals("")) {
+                    json.put("data", "nodata");
+                }
                 else {
                     json.put("data", sqllist.get(i).getChartData());
                     System.out.println("chart type in last for" + json.get("charttype") + "chartdata inside json:::\t"
@@ -406,7 +427,11 @@ public class DashboardServices {
                 // alist = gson.toJson(sqllist);
 
             }
-            result = chartArray.toString();
+            chartTitle.put("chartData", chartArray);
+            JSONArray finalResult = new JSONArray();
+            finalResult.put(chartTitle);
+            finalResult.put(goalTitle);
+            result = finalResult.toString();
         }
 
         catch (SQLException ex) {
