@@ -10,6 +10,7 @@ public class DevCtlg implements java.io.Serializable {
 
     private String ctlgId;
     private String protocolId;
+    private String typeId;
     private String descr;
     private short idleThreshold;
     private short loadThreshold;
@@ -27,10 +28,11 @@ public class DevCtlg implements java.io.Serializable {
     public DevCtlg() {
     }
 
-    public DevCtlg(String ctlgId, String protocolId, String descr, short idleThreshold, short loadThreshold,
-            double idleWatt, double loadWatt) {
+    public DevCtlg(String ctlgId, String protocolId, String typeId, String descr, short idleThreshold,
+            short loadThreshold, double idleWatt, double loadWatt) {
         this.ctlgId = ctlgId;
         this.protocolId = protocolId;
+        this.typeId = typeId;
         this.descr = descr;
         this.idleThreshold = idleThreshold;
         this.loadThreshold = loadThreshold;
@@ -38,11 +40,12 @@ public class DevCtlg implements java.io.Serializable {
         this.loadWatt = loadWatt;
     }
 
-    public DevCtlg(String ctlgId, String protocolId, String descr, short idleThreshold, short loadThreshold,
-            double idleWatt, double loadWatt, Double enPerMinLoad, Double enPerMinIdle, Double servrCost,
-            Integer noOfCore, Double cpu, Integer ram, Integer diskGb, Integer monthlyRent) {
+    public DevCtlg(String ctlgId, String protocolId, String typeId, String descr, short idleThreshold,
+            short loadThreshold, double idleWatt, double loadWatt, Double enPerMinLoad, Double enPerMinIdle,
+            Double servrCost, Integer noOfCore, Double cpu, Integer ram, Integer diskGb, Integer monthlyRent) {
         this.ctlgId = ctlgId;
         this.protocolId = protocolId;
+        this.typeId = typeId;
         this.descr = descr;
         this.idleThreshold = idleThreshold;
         this.loadThreshold = loadThreshold;
@@ -72,6 +75,14 @@ public class DevCtlg implements java.io.Serializable {
 
     public void setProtocolId(String protocolId) {
         this.protocolId = protocolId;
+    }
+
+    public String getTypeId() {
+        return typeId;
+    }
+
+    public void setTypeId(String typeId) {
+        this.typeId = typeId;
     }
 
     public String getDescr() {
