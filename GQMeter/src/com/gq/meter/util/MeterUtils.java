@@ -528,113 +528,111 @@ public class MeterUtils {
      */
     public HashMap<MeterProtocols, LinkedList<String>> manageSwitches(String line,
             HashMap<MeterProtocols, LinkedList<String>> assetSwitches) {
-        int computer_Switch_Count = 0;
-        int printer_Switch_Count = 0;
-        int nsrg_Switch_Count = 0;
-        int storage_Switch_Count = 0;
+
         if (line.toLowerCase().startsWith(MeterConstants.COMPUTER_SWITCHS)) {
-            computer_Switch_Count++;
-            if (computer_Switch_Count == 1) {
-                line = line.replace(MeterConstants.COMPUTER_SWITCHS, "").trim();
-                LinkedList<String> compSwitchList = null;
-                if (line.equals(MeterConstants.FULL_DETAILS)) {
-                    compSwitchList = new LinkedList<String>();
-                    compSwitchList.add(MeterConstants.FULL_DETAILS);
-                    assetSwitches.put(MeterProtocols.COMPUTER, compSwitchList);
-                }
-                else {
-                    compSwitchList = new LinkedList<String>();
-                    for (String switches : line.split("\\|")) {
-                        if (switches.equals("snap_shot") || switches.equals("conn_devices")
-                                || switches.equals("process") || switches.equals("inst_sw")) {
-                            compSwitchList.add(switches);
-                        }
-                        else {
-                            System.out.println(" [GQMETER] --Invalid Switch Value--");
-                            System.out.println(" [GQMETER] Process terminated Now....");
-                            System.exit(0);
-                        }
-                    }
-                    assetSwitches.put(MeterProtocols.COMPUTER, compSwitchList);
-                }
+
+            line = line.replace(MeterConstants.COMPUTER_SWITCHS, "").trim();
+            LinkedList<String> compSwitchList = null;
+            if (line.equals(MeterConstants.FULL_DETAILS)) {
+                compSwitchList = new LinkedList<String>();
+                compSwitchList.add(MeterConstants.FULL_DETAILS);
+                assetSwitches.put(MeterProtocols.COMPUTER, compSwitchList);
             }
             else {
-                System.out
-                        .println(" [GQMETER] Multiple Identical " + MeterConstants.COMPUTER_PROTOCOL + " Switches...");
-                System.exit(0);
+                compSwitchList = new LinkedList<String>();
+                for (String switches : line.split("\\|")) {
+                    if (switches.equals("snap_shot") || switches.equals("conn_devices") || switches.equals("process")
+                            || switches.equals("inst_sw")) {
+                        compSwitchList.add(switches);
+                    }
+                    else {
+                        System.out.println(" [GQMETER] --Invalid Switch Value--");
+                        System.out.println(" [GQMETER] Process terminated Now....");
+                        System.exit(0);
+                    }
+                }
+                assetSwitches.put(MeterProtocols.COMPUTER, compSwitchList);
             }
 
         }
         else if (line.toLowerCase().startsWith(MeterConstants.PRINTER_SWITCHS)) {
-            printer_Switch_Count++;
-            if (printer_Switch_Count == 1) {
-                line = line.replace(MeterConstants.PRINTER_SWITCHS, "").trim();
-                LinkedList<String> printerSwitchList = null;
 
-                if (line.contains(MeterConstants.FULL_DETAILS)) {
-                    printerSwitchList = new LinkedList<String>();
-                    printerSwitchList.add(MeterConstants.FULL_DETAILS);
-                    assetSwitches.put(MeterProtocols.PRINTER, printerSwitchList);
-                }
-                else {
-                    printerSwitchList = new LinkedList<String>();
-                    for (String switches : line.split("\\|")) {
+            line = line.replace(MeterConstants.PRINTER_SWITCHS, "").trim();
+            LinkedList<String> printerSwitchList = null;
+
+            if (line.contains(MeterConstants.FULL_DETAILS)) {
+                printerSwitchList = new LinkedList<String>();
+                printerSwitchList.add(MeterConstants.FULL_DETAILS);
+                assetSwitches.put(MeterProtocols.PRINTER, printerSwitchList);
+            }
+            else {
+                printerSwitchList = new LinkedList<String>();
+                for (String switches : line.split("\\|")) {
+                    if (switches.equals("snap_shot") || switches.equals("conn_devices") || switches.equals("process")
+                            || switches.equals("inst_sw")) {
                         printerSwitchList.add(switches);
                     }
-                    assetSwitches.put(MeterProtocols.PRINTER, printerSwitchList);
+                    else {
+                        System.out.println(" [GQMETER] --Invalid Switch Value--");
+                        System.out.println(" [GQMETER] Process terminated Now....");
+                        System.exit(0);
+                    }
                 }
+                assetSwitches.put(MeterProtocols.PRINTER, printerSwitchList);
             }
-            else {
-                System.out.println(" [GQMETER] Multiple Identical " + MeterConstants.PRINTER_PROTOCOL + " Switches...");
-                System.exit(0);
-            }
+
         }
         else if (line.toLowerCase().startsWith(MeterConstants.NSRG_SWITCHS)) {
-            nsrg_Switch_Count++;
-            if (nsrg_Switch_Count == 1) {
-                line = line.replace(MeterConstants.NSRG_SWITCHS, "").trim();
-                LinkedList<String> isrSwitchList = null;
 
-                if (line.contains(MeterConstants.FULL_DETAILS)) {
-                    isrSwitchList = new LinkedList<String>();
-                    isrSwitchList.add(MeterConstants.FULL_DETAILS);
-                    assetSwitches.put(MeterProtocols.NSRG, isrSwitchList);
-                }
-                else {
-                    isrSwitchList = new LinkedList<String>();
-                    for (String switches : line.split("\\|")) {
-                        isrSwitchList.add(switches);
-                    }
-                    assetSwitches.put(MeterProtocols.NSRG, isrSwitchList);
-                }
+            line = line.replace(MeterConstants.NSRG_SWITCHS, "").trim();
+            LinkedList<String> isrSwitchList = null;
+
+            if (line.contains(MeterConstants.FULL_DETAILS)) {
+                isrSwitchList = new LinkedList<String>();
+                isrSwitchList.add(MeterConstants.FULL_DETAILS);
+                assetSwitches.put(MeterProtocols.NSRG, isrSwitchList);
             }
             else {
-                System.out.println(" [GQMETER] Multiple Identical " + MeterConstants.NSRG_PROTOCOL + " Switches...");
-                System.exit(0);
+                isrSwitchList = new LinkedList<String>();
+                for (String switches : line.split("\\|")) {
+                    if (switches.equals("snap_shot") || switches.equals("conn_devices") || switches.equals("process")
+                            || switches.equals("inst_sw")) {
+                        isrSwitchList.add(switches);
+                    }
+                    else {
+                        System.out.println(" [GQMETER] --Invalid Switch Value--");
+                        System.out.println(" [GQMETER] Process terminated Now....");
+                        System.exit(0);
+                    }
+                }
+                assetSwitches.put(MeterProtocols.NSRG, isrSwitchList);
             }
+
         }
         else if (line.toLowerCase().startsWith(MeterConstants.STORAGE_SWITCHS)) {
-            storage_Switch_Count++;
-            if (storage_Switch_Count == 1) {
-                line = line.replace(MeterConstants.STORAGE_SWITCHS, "").trim();
-                LinkedList<String> isrSwitchList = null;
 
-                if (line.contains(MeterConstants.FULL_DETAILS)) {
-                    isrSwitchList = new LinkedList<String>();
-                    isrSwitchList.add(MeterConstants.FULL_DETAILS);
-                    assetSwitches.put(MeterProtocols.STORAGE, isrSwitchList);
-                }
-                else {
-                    isrSwitchList = new LinkedList<String>();
-                    for (String switches : line.split("\\|")) {
-                        isrSwitchList.add(switches);
-                    }
-                    assetSwitches.put(MeterProtocols.STORAGE, isrSwitchList);
-                }
+            line = line.replace(MeterConstants.STORAGE_SWITCHS, "").trim();
+            LinkedList<String> isrSwitchList = null;
+
+            if (line.contains(MeterConstants.FULL_DETAILS)) {
+                isrSwitchList = new LinkedList<String>();
+                isrSwitchList.add(MeterConstants.FULL_DETAILS);
+                assetSwitches.put(MeterProtocols.STORAGE, isrSwitchList);
             }
             else {
-                System.out.println(" [GQMETER] Multiple Identical " + MeterConstants.STORAGE_PROTOCOL + " Switches...");
-                System.exit(0);
+                isrSwitchList = new LinkedList<String>();
+                for (String switches : line.split("\\|")) {
+                    if (switches.equals("snap_shot") || switches.equals("conn_devices") || switches.equals("process")
+                            || switches.equals("inst_sw")) {
+                        isrSwitchList.add(switches);
+                    }
+                    else {
+                        System.out.println(" [GQMETER] --Invalid Switch Value--");
+                        System.out.println(" [GQMETER] Process terminated Now....");
+                        System.exit(0);
+                    }
+                }
+                assetSwitches.put(MeterProtocols.STORAGE, isrSwitchList);
             }
 
         }
