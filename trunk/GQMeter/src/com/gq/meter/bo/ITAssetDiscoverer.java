@@ -42,11 +42,10 @@ public final class ITAssetDiscoverer {
     private List<String> errorList = null;
     private GQErrorInformation gqErrInfo = null;
     private List<GQErrorInformation> gqerrorInfoList = null;
-    private static String gqmid = null;
+    private String gqmid = null;
     private Pattern pattern;
     private Matcher matcher;
-    private int meter_Count = 0;
-
+    private int valid_input = 0;
     private Gson gson = new GsonBuilder().create();
     // public Gson gson = new GsonBuilder().setPrettyPrinting().create();
     private GQMeterResponse gqmResponse = null;
@@ -174,16 +173,44 @@ public final class ITAssetDiscoverer {
                     }// if ends
 
                     String assetLines[] = inputAssets.trim().replace("\t", " ").split("\n");
+                    for (String line : assetLines) {
 
+                        if ((line.contains(MeterConstants.METER_ID) || line.contains(MeterConstants.COMPUTER_SWITCHS)
+                                || line.contains(MeterConstants.PRINTER_SWITCHS)
+                                || line.contains(MeterConstants.NSRG_SWITCHS) || line
+                                .contains(MeterConstants.STORAGE_SWITCHS))) {
+                            valid_input++;
+                        }
+                    }
+                    // Check the default lines present or not.
+                    if (valid_input != 5) {
+                        System.out.println(" [GQMETER] Check Input File");
+                        System.out.println(" [GQMETER] Process Terminated Now..");
+                        System.exit(0);
+
+                    }
+                    // Read the input file
                     for (String line : assetLines) {
                         line = line.trim();
-
+                        // line starts with # for Ignore things
                         if (line.length() == 0 || line.startsWith("#")) {
+                            // Check if whether line contains specified switches names
                             if (line.contains(MeterConstants.COMPUTER_SWITCHS)
                                     || line.contains(MeterConstants.PRINTER_SWITCHS)
                                     || line.contains(MeterConstants.NSRG_SWITCHS)
                                     || line.contains(MeterConstants.STORAGE_SWITCHS)) {
                                 System.out.println(" [GQMETER] Invalid Input File...");
+                                System.out.println(" [GQMETER] Process Terminated Now...");
+                                System.exit(0);
+                            }
+                            // Check if whether line contains specified protocol names
+                            else if (line.startsWith(MeterConstants.COMPUTER_PROTOCOL, 1)
+                                    || line.startsWith(MeterConstants.PRINTER_PROTOCOL, 1)
+                                    || line.startsWith(MeterConstants.NSRG_PROTOCOL, 1)
+                                    || line.startsWith(MeterConstants.STORAGE_PROTOCOL, 1)
+                                    || line.startsWith("meterid")) {
+                                System.out.println(" [GQMETER] Invalid Input File...");
+                                System.out.println(" [GQMETER] Line:" + line);
                                 System.out.println(" [GQMETER] Process Terminated Now...");
                                 System.exit(0);
                             }
@@ -193,22 +220,44 @@ public final class ITAssetDiscoverer {
                         }
                         // line starts with $ for meterid
                         if (line.startsWith("$")) {
-                            meter_Count++;
-                            if (meter_Count == 1) {
-                                if (line.toLowerCase().startsWith(MeterConstants.METER_ID)) {
-                                    gqmid = line.replace(MeterConstants.METER_ID, "").trim();
-                                    // This Condition used to check meter id value is empty or not
-                                    if (gqmid.isEmpty()) {
-                                        System.out.println(" [GQMETER] Meter Id is empty");
-                                        System.out.println(" [GQMETER] ..............Check Meter Id .............");
-                                        System.exit(0);
-                                    }
-                                    isValid(gqmid);
-                                }
-                            }
-                            else {
-                                System.out.println(" [GQMETER] Please Check Multiple Meter ID's are Given...");
+                            String meterName = line.substring(0, line.indexOf(" "));
+                            String meterValueName = line.replace(meterName, "").trim();
+                            if (line.contains(MeterConstants.COMPUTER_SWITCHS)
+                                    || line.contains(MeterConstants.PRINTER_SWITCHS)
+                                    || line.contains(MeterConstants.NSRG_SWITCHS)
+                                    || line.contains(MeterConstants.STORAGE_SWITCHS)) {
+                                System.out.println(" [GQMETER] Invalid Input File...");
+                                System.out.println(" [GQMETER] Process Terminated Now...");
                                 System.exit(0);
+                            }
+                            // Check if whether line contains specified protocol names
+                            else if (line.startsWith(MeterConstants.COMPUTER_PROTOCOL)
+                                    || line.startsWith(MeterConstants.PRINTER_PROTOCOL)
+                                    || line.startsWith(MeterConstants.NSRG_PROTOCOL)
+                                    || line.startsWith(MeterConstants.STORAGE_PROTOCOL)) {
+                                System.out.println(" [GQMETER] Invalid Input File...");
+                                System.out.println(" [GQMETER] Line:" + line);
+                                System.out.println(" [GQMETER] Process Terminated Now...");
+                                System.exit(0);
+                            }
+                            else if (meterValueName.contains(MeterConstants.COMPUTER_PROTOCOL)
+                                    || meterValueName.contains(MeterConstants.PRINTER_PROTOCOL)
+                                    || meterValueName.contains(MeterConstants.NSRG_PROTOCOL)
+                                    || meterValueName.contains(MeterConstants.STORAGE_PROTOCOL)) {
+                                System.out.println(" [GQMETER] Invalid Input File...");
+                                System.out.println(" [GQMETER] Line:" + line);
+                                System.out.println(" [GQMETER] Process Terminated Now...");
+                                System.exit(0);
+                            }
+                            if (line.toLowerCase().startsWith(MeterConstants.METER_ID)) {
+                                gqmid = line.replace(MeterConstants.METER_ID, "").trim();
+                                // This Condition used to check meter id value is empty or not
+                                if (gqmid.isEmpty()) {
+                                    System.out.println(" [GQMETER] Meter Id is empty");
+                                    System.out.println(" [GQMETER] ..............Check Meter Id .............");
+                                    System.exit(0);
+                                }
+                                isValid(gqmid);
                             }
                         }
                         // line starts with @ for switches
@@ -219,24 +268,28 @@ public final class ITAssetDiscoverer {
                                     line = line.toLowerCase();
                                     String switchName = line.substring(0, line.indexOf(" "));
                                     String switchValueName = line.replace(switchName, "").trim();
+                                    // Check if whether valid switches and values or not
                                     if (switchName.equals(MeterConstants.COMPUTER_SWITCHS)
                                             || switchName.equals(MeterConstants.PRINTER_SWITCHS)
                                             || switchName.equals(MeterConstants.NSRG_SWITCHS)
                                             || switchName.equals(MeterConstants.STORAGE_SWITCHS)) {
-                                        if (switchValueName.contains(MeterConstants.FULL_DETAILS)
-                                                || switchValueName.contains(MeterConstants.CONNECTED_DEVICES)
-                                                || switchValueName.contains(MeterConstants.SNAPSHOT)
-                                                || switchValueName.contains(MeterConstants.PROCESS)
-                                                || switchValueName.contains(MeterConstants.INSTALLED_SOFTWARE)) {
+                                        if (switchValueName.equals(MeterConstants.FULL_DETAILS)
+                                                || switchValueName.equals(MeterConstants.CONNECTED_DEVICES)
+                                                || switchValueName.equals(MeterConstants.SNAPSHOT)
+                                                || switchValueName.equals(MeterConstants.PROCESS)
+                                                || switchValueName.equals(MeterConstants.INSTALLED_SOFTWARE)) {
 
                                             new MeterUtils().manageSwitches(line, switches);
                                         }// 4th if ends
+                                         // else part for Invalid Switch value
                                         else {
                                             System.out.println(" [GQMETER] Invalid Switch Value..");
+                                            System.out.println(" [GQMETER] Line:" + line);
                                             System.out.println(" [GQMETER] Process terminated Now....");
                                             System.exit(0);
                                         }
                                     }// 3rd if ends
+                                     // else part for Invalid switch name
                                     else {
                                         System.out.println(" [GQMETER] ---Invalid Switch Name---");
                                         System.out.println(" [GQMETER] " + line);
@@ -244,13 +297,14 @@ public final class ITAssetDiscoverer {
                                         System.exit(0);
                                     }
                                 }// 2nd if ends
+                                 // else part for empty switch value
                                 else {
                                     System.out.println(" [GQMETER] Check Switch Value is empty....");
                                     System.out.println(" [GQMETER] Process should be stopped now.....");
                                     System.exit(0);
                                 }
                             }// 1st if ends
-
+                             // else part for empty meter id
                             else {
                                 System.out.println(" [GQMETER] Check Meter Id...");
                                 System.out.println(" [GQMETER] Process stopped........");
@@ -259,10 +313,38 @@ public final class ITAssetDiscoverer {
                         } // else if ends
                         else {
                             sToken = new StringTokenizer(line, " ");
+
                             if (sToken.countTokens() == 2 || sToken.countTokens() == 3) {
                                 communityString = sToken.nextToken().trim();
                                 ipLowerbound = sToken.nextToken().trim();
-
+                                // Check if whether community string was equal to protocol names or not
+                                if (communityString.equals("meterid")
+                                        || communityString.equals(MeterConstants.COMPUTER_PROTOCOL)
+                                        || communityString.equals(MeterConstants.PRINTER_PROTOCOL)
+                                        || communityString.equals(MeterConstants.NSRG_PROTOCOL)
+                                        || communityString.equals(MeterConstants.STORAGE_PROTOCOL)) {
+                                    System.out.println(" [GQMETER] Invalid Input File..");
+                                    System.out.println(" [GQMETER] Process Terminated Now..");
+                                    System.exit(0);
+                                }
+                                if (communityString.contains("meterid")
+                                        || communityString.contains(MeterConstants.COMPUTER_PROTOCOL)
+                                        || communityString.contains(MeterConstants.PRINTER_PROTOCOL)
+                                        || communityString.contains(MeterConstants.NSRG_PROTOCOL)
+                                        || communityString.contains(MeterConstants.STORAGE_PROTOCOL)) {
+                                    System.out.println(" [GQMETER] Invalid Input File..");
+                                    System.out.println(" [GQMETER] Process Terminated Now..");
+                                    System.exit(0);
+                                }
+                                if (ipLowerbound.equals("meterid")
+                                        || ipLowerbound.equals(MeterConstants.COMPUTER_PROTOCOL)
+                                        || ipLowerbound.equals(MeterConstants.PRINTER_PROTOCOL)
+                                        || ipLowerbound.equals(MeterConstants.NSRG_PROTOCOL)
+                                        || ipLowerbound.equals(MeterConstants.STORAGE_PROTOCOL)) {
+                                    System.out.println(" [GQMETER] Invalid Input File..");
+                                    System.out.println(" [GQMETER] Process Terminated Now..");
+                                    System.exit(0);
+                                }
                                 if (sToken.hasMoreTokens()) {
                                     ipUpperbound = sToken.nextToken().trim();
                                     if (isIPAddressValid(ipLowerbound) && isIPAddressValid(ipUpperbound)) {
@@ -272,9 +354,7 @@ public final class ITAssetDiscoverer {
                                         if (MeterUtils.ipComparator.compare(ipLowerbound, ipUpperbound) == -1) {
                                             communityIPMap.put(ipLowerbound, communityString);
 
-                                            // Here we iterate the ip range and find & add those intermediate ips to
-                                            // the
-                                            // map
+                                            // Here we iterate the ip range and find & add those intermediate ips to map
                                             while (!(ipLowerbound = MeterUtils.nextIpAddress(ipLowerbound))
                                                     .equals(ipUpperbound)) {
                                                 communityIPMap.put(ipLowerbound, communityString);
@@ -283,35 +363,30 @@ public final class ITAssetDiscoverer {
                                         }
                                         // This condition used to check the lowerboundip and ipupperboundip as same
                                         else if (MeterUtils.ipComparator.compare(ipLowerbound, ipUpperbound) == 0) {
-                                            // System.out.println(" [GQMETER] IP lower bound : " + ipLowerbound
-                                            // + " IP upper bound : " + ipUpperbound
-                                            // + " \n [GQMETER] Both Ip's should be same.....");
-                                            // communityIPMap.put(ipLowerbound, communityString);
-                                            // System.out.println(" [GQMETER] Process Terminated Now.....");
-                                            // System.exit(0);
                                             communityIPMap.put(ipLowerbound, communityString);
                                         }
+                                        // else part for Invalid IP range
                                         else {
                                             System.out.println(" [GQMETER] IP lower bound : " + ipLowerbound
                                                     + "IP upper bound : " + ipUpperbound + " -  : Invalid ip range");
                                             System.exit(0);
-                                            /*
-                                             * errorList = new LinkedList<String>(); errorList.add(sToken +
-                                             * " -  : Invalid ip range"); gqErrInfo = new
-                                             * GQErrorInformation("Invalid asset ip range", errorList);
-                                             * gqerrorInfoList.add(gqErrInfo);
-                                             */
                                         }
                                     }
+                                    // else part for Invalid Upperbound and Lowerbound
                                     else if (isIPAddressValid(ipLowerbound)) {
                                         System.out.println(" [GQMETER] INVALID UPPERBOUNDIP:" + ipUpperbound);
                                         communityIPMap.put(ipLowerbound, communityString);
                                     }
-                                    else {
+                                    else if (isIPAddressValid(ipUpperbound)) {
                                         System.out.println(" [GQMETER] INVALID LOWERBOUNDIP:" + ipLowerbound);
                                         communityIPMap.put(ipUpperbound, communityString);
                                     }
+                                    else {
+                                        System.out.println(" [GQMETER] INVALID UPPERBOUNDIP AND LOWERBOUNDIP:");
+                                        System.out.println(" [GQMETER] " + ipLowerbound + "   " + ipUpperbound);
+                                    }
                                 }// if ends
+                                 // if line contains Lowerbound only
                                 else {
                                     if (isIPAddressValid(ipLowerbound)) {
                                         communityIPMap.put(ipLowerbound, communityString);
@@ -322,14 +397,16 @@ public final class ITAssetDiscoverer {
                                     }
                                 }
                             }// if ends
+                             // Missing community string or Ipaddress
                             else {
                                 System.out.println(" [GQMETER] INVALID : entry -" + line);
                                 System.out.println(" [GQMETER] Usage : COMMUNITY_STRING IP_LOWER_BOUND IP_UPPER_BOUND");
-                                System.exit(1);
+                                // System.exit(1);
                             }
                         }// else ends
                     }// for loop ends
                 }// if ends
+                 // else part for asset file missing
                 else {
                     System.out.println(" [GQMETER] Exception occured : Unable to locate the input file");
                     System.exit(1);
@@ -415,7 +492,7 @@ public final class ITAssetDiscoverer {
 
         }
         else {
-            System.out.println("Process Terminated.....");
+            System.out.println(" [GQMETER] Process Terminated.....");
             System.exit(0);
         }
 
