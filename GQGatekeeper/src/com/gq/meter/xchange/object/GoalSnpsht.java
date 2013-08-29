@@ -1,4 +1,5 @@
 package com.gq.meter.xchange.object;
+
 // default package
 // Generated Jul 26, 2013 10:19:05 AM by Hibernate Tools 3.4.0.CR1
 
@@ -11,6 +12,7 @@ public class GoalSnpsht implements java.io.Serializable {
 
     private int snpshtId;
     private Goal goal;
+    private String enterpriseId;
     private Date startDate;
     private Date endDate;
     private String notes;
@@ -27,10 +29,11 @@ public class GoalSnpsht implements java.io.Serializable {
         this.startDate = startDate;
     }
 
-    public GoalSnpsht(int snpshtId, Goal goal, Date startDate, Date endDate, String notes, Integer costBenefit,
-            String preResult, String postResult) {
+    public GoalSnpsht(int snpshtId, Goal goal, String enterpriseId, Date startDate, Date endDate, String notes,
+            Integer costBenefit, String preResult, String postResult) {
         this.snpshtId = snpshtId;
         this.goal = goal;
+        this.enterpriseId = enterpriseId;
         this.startDate = startDate;
         this.endDate = endDate;
         this.notes = notes;
@@ -53,6 +56,14 @@ public class GoalSnpsht implements java.io.Serializable {
 
     public void setGoal(Goal goal) {
         this.goal = goal;
+    }
+
+    public String getEnterpriseId() {
+        return enterpriseId;
+    }
+
+    public void setEnterpriseId(String enterpriseId) {
+        this.enterpriseId = enterpriseId;
     }
 
     public Date getStartDate() {
