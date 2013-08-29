@@ -3,8 +3,10 @@ package com.gq.meter.util;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
+
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -34,7 +36,6 @@ import com.gq.meter.GQMeterData;
 import com.gq.meter.NSRGMeter;
 import com.gq.meter.PrinterMeter;
 import com.gq.meter.StorageMeter;
-import com.gq.meter.bo.ITAssetDiscoverer;
 import com.gq.meter.object.Asset;
 
 public class MeterUtils {
@@ -46,7 +47,6 @@ public class MeterUtils {
     public static final String restURL = "http://cloud.gqexchange.com:8080/GQGatekeeper/";
 
     // public static final String restURL = "http://localhost:8080/GQGatekeeper/";
-
     public static Asset sysBasicInfo(String communityString, String ipAddress, String snmpVersion,
             List<String> errorList) {
         Asset assetObj = null;
@@ -100,14 +100,11 @@ public class MeterUtils {
                 if (sysLength >= 45) {
                     sysLocation = sysLocation.substring(0, 44);
                 }
-
             }
             else {
                 errorList.add("Root OID : 1.3.6.1.2.1.1" + " " + MeterConstants.STANDARD_SYSTEM_ATTRIBUTES_ERROR);
             }
             ipAddr = ipAddress;
-
-            // assetObj = new Asset(assetId, protocolId, sysName, sysDescr, ipAddr, sysContact, sysLocation);
             assetObj = new Asset();
             assetObj.setAssetId(assetId);
             assetObj.setProtocolId(protocolId);
@@ -116,8 +113,6 @@ public class MeterUtils {
             assetObj.setIpAddr(ipAddr);
             assetObj.setContact(sysContact);
             assetObj.setLocation(sysLocation);
-            // System.out.println(assetId + "\n" + protocolId + "\n" + sysName + "\n" + sysDescr + "\n" + ipAddr + "\n"
-            // + sysContact + "\n" + sysLocation);
         }
         catch (Exception e) {
             errorList.add(ipAddress + " " + e.getMessage());
@@ -156,9 +151,6 @@ public class MeterUtils {
                 snmpUnknownTime = snmpUnknownTime + (snmpEndTime - snmpStartTime);// Time taken to find snmp is not
                                                                                   // configured
                 assetDetails.put("snmpUnKnownIp", currIp);
-
-                // System.out.println(" [GQMETER] ### SNMP is not configured in this device ### : "
-                // + (snmpEndTime - snmpStartTime));
                 return assetDetails; // if snmp is configured & the SNMP_CHECK_OCTET doesn't exist then return null;
             }// 2nd if ends
         }// 1st if ends
@@ -170,9 +162,6 @@ public class MeterUtils {
 
         snmpKnownTime = snmpKnownTime + (snmpEndTime - snmpStartTime); // Time taken to find snmp is configured
         assetDetails.put("snmpKnownIp", currIp);
-
-        // System.out.println(" [GQMETER] *** Time taken to find isSnmpConfigured or not : "
-        // + (snmpEndTime - snmpStartTime));
         return assetDetails;
     }
 
@@ -187,7 +176,6 @@ public class MeterUtils {
         String oidString = MeterConstants.SNMP_CHECK_PRINTER_OCTET; // Printer
         MeterProtocols mProtocol = null;
         // call diff walks
-
         OID rootOID = new OID(oidString);
 
         List<VariableBinding> result = walk(rootOID, target);
@@ -208,11 +196,6 @@ public class MeterUtils {
                 if (result == null || result.size() == 0 || result.isEmpty()) {
                     mProtocol = MeterProtocols.STORAGE;
                 }
-
-                // if (result == null || result.size() == 0 || result.isEmpty()) {
-                // mProtocol = MeterProtocols.UNKNOWN;
-                // return mProtocol;
-                // }
             }
         }
         return mProtocol;
@@ -248,14 +231,6 @@ public class MeterUtils {
                 && (MeterConstants.PROTOCOL_ID.equals("it") || MeterConstants.PROTOCOL_ID.equals("storage"))) {
             assetObject = new StorageMeter().implement(communityString, currIp, snmpVersion, switchList);
         }
-        /*
-         * switch (protocol) {
-         * 
-         * case PRINTER: assetObject = new PrinterMeter().implement(communityString, currIp, snmpVersion); break; case
-         * ISR: assetObject = new NSRGMeter().implement(communityString, currIp, snmpVersion); break; case COMPUTER:
-         * assetObject = new ComputerMeter().implement(communityString, currIp, snmpVersion); break; }
-         */
-
         return assetObject;
     }
 
@@ -270,8 +245,6 @@ public class MeterUtils {
 
         try {
             InetAddress inet = InetAddress.getByName(ipAddress);
-            // System.out.println("Sending Ping Request to " + ipAddress);
-
             boolean status = inet.isReachable(5000); // Timeout = 5000 milli seconds
 
             if (status) {
@@ -298,7 +271,6 @@ public class MeterUtils {
     public static final String nextIpAddress(final String input) {
         final String[] tokens = input.split("\\.");
         if (tokens.length != 4) throw new IllegalArgumentException();
-
         for (int i = tokens.length - 1; i >= 0; i--) {
             final int item = Integer.parseInt(tokens[i]);
             if (item < 255) {
@@ -309,7 +281,6 @@ public class MeterUtils {
                 break;
             }
         }// for loop ends
-
         return new StringBuilder().append(tokens[0]).append('.').append(tokens[1]).append('.').append(tokens[2])
                 .append('.').append(tokens[3]).toString();
     }// nextIpAddress ends
@@ -322,19 +293,13 @@ public class MeterUtils {
     public LinkedList<String> getIpAddressesInInclusiveRange(String ipAddrLowerBound, String ipAddrUpperBound) {
 
         LinkedList<String> ipList = new LinkedList<String>();
-
         ipList.add(ipAddrLowerBound);
-
         String currIp = ipAddrLowerBound;
-
         while (!(currIp = nextIpAddress(currIp)).equals(ipAddrUpperBound)) {
             ipList.add(currIp);
         }
-
         ipList.add(ipAddrUpperBound);
-
         return ipList;
-
     } // getIpAddressesInInclusiveRange ends
 
     /**
@@ -393,18 +358,13 @@ public class MeterUtils {
             TransportMapping<?> transport = new DefaultUdpTransportMapping();
             Snmp snmp = new Snmp(transport);
             transport.listen();
-
             boolean finished = false;
-
             while (!finished) {
-
                 VariableBinding vb = null;
-
                 ResponseEvent respEvt = snmp.send(requestPDU, target);
                 PDU responsePDU = respEvt.getResponse();
                 if (responsePDU != null) {
                     Vector<?> vbs = responsePDU.getVariableBindings();
-
                     if (vbs != null && vbs.size() > 0) {
                         for (int i = 0; i < vbs.size(); i++) {
                             // vb sanity check
@@ -433,7 +393,6 @@ public class MeterUtils {
                         }
                     }
                 }
-
                 if (!finished) {
                     if (responsePDU == null) {
                         finished = true;
@@ -482,7 +441,6 @@ public class MeterUtils {
         long hourSec = 0L;
         long minSec = 0L;
         long seconds = 0L;
-
         if (time.contains(",")) {
             upTimeArray = time.split(",");
         }
@@ -493,7 +451,6 @@ public class MeterUtils {
         else {
             timeString = time.trim();
         }
-
         if (dayString != null) {
             if (dayString.split(" ")[1].toString().trim().equals("day")) {
                 long day = Long.parseLong(dayString.replace("day", "").trim());
@@ -530,7 +487,6 @@ public class MeterUtils {
             HashMap<MeterProtocols, LinkedList<String>> assetSwitches) {
 
         if (line.toLowerCase().startsWith(MeterConstants.COMPUTER_SWITCHS)) {
-
             line = line.replace(MeterConstants.COMPUTER_SWITCHS, "").trim();
             LinkedList<String> compSwitchList = null;
             if (line.equals(MeterConstants.FULL_DETAILS)) {
@@ -553,13 +509,10 @@ public class MeterUtils {
                 }
                 assetSwitches.put(MeterProtocols.COMPUTER, compSwitchList);
             }
-
         }
         else if (line.toLowerCase().startsWith(MeterConstants.PRINTER_SWITCHS)) {
-
             line = line.replace(MeterConstants.PRINTER_SWITCHS, "").trim();
             LinkedList<String> printerSwitchList = null;
-
             if (line.contains(MeterConstants.FULL_DETAILS)) {
                 printerSwitchList = new LinkedList<String>();
                 printerSwitchList.add(MeterConstants.FULL_DETAILS);
@@ -580,13 +533,10 @@ public class MeterUtils {
                 }
                 assetSwitches.put(MeterProtocols.PRINTER, printerSwitchList);
             }
-
         }
         else if (line.toLowerCase().startsWith(MeterConstants.NSRG_SWITCHS)) {
-
             line = line.replace(MeterConstants.NSRG_SWITCHS, "").trim();
             LinkedList<String> isrSwitchList = null;
-
             if (line.contains(MeterConstants.FULL_DETAILS)) {
                 isrSwitchList = new LinkedList<String>();
                 isrSwitchList.add(MeterConstants.FULL_DETAILS);
@@ -607,13 +557,10 @@ public class MeterUtils {
                 }
                 assetSwitches.put(MeterProtocols.NSRG, isrSwitchList);
             }
-
         }
         else if (line.toLowerCase().startsWith(MeterConstants.STORAGE_SWITCHS)) {
-
             line = line.replace(MeterConstants.STORAGE_SWITCHS, "").trim();
             LinkedList<String> isrSwitchList = null;
-
             if (line.contains(MeterConstants.FULL_DETAILS)) {
                 isrSwitchList = new LinkedList<String>();
                 isrSwitchList.add(MeterConstants.FULL_DETAILS);
@@ -634,7 +581,6 @@ public class MeterUtils {
                 }
                 assetSwitches.put(MeterProtocols.STORAGE, isrSwitchList);
             }
-
         }
         return assetSwitches;
     }
