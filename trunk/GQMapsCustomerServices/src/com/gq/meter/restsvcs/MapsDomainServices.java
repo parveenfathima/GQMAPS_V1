@@ -7,7 +7,7 @@ import javax.ws.rs.core.MediaType;
 
 import com.gq.meter.model.MapsDomainModel;
 import com.gq.meter.object.MapsDomainBean;
-import com.gq.meter.util.MapsDomainServiceConstant;
+import com.gq.meter.util.CustomerServiceConstant;
 
 @Path("/mapsDomainServices")
 public class MapsDomainServices {
@@ -16,12 +16,12 @@ public class MapsDomainServices {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public String getAllCatalogDetails() {
-        MapsDomainServiceConstant.logger
-                .info("Generating all the Maps Domain service list from GQEntrprseDataProcessor");
+        CustomerServiceConstant.logger
+                .info(" [MAPSDOMAINSERVICES]  Generating all the Maps Domain service list from GQEntrprseDataProcessor");
         MapsDomainModel mapsDomainModel = new MapsDomainModel();
         MapsDomainBean mapsDomainResult = mapsDomainModel.getAllMapsDomainDetails();
         // Returning all the enterprises in JSON format
-        return MapsDomainServiceConstant.gson.toJson(mapsDomainResult);
+        return CustomerServiceConstant.gson.toJson(mapsDomainResult);
         // return mapsDomainResult;
     }
 }

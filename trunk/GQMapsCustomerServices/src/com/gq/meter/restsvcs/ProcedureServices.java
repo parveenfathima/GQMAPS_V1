@@ -24,6 +24,7 @@ import com.mysql.jdbc.CallableStatement;
  * 
  */
 @Path("/procedure")
+// no generic code as of now have to write in future
 public class ProcedureServices {
     @Path("/getproc")
     @GET

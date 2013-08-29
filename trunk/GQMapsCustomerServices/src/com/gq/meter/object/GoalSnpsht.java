@@ -12,6 +12,7 @@ import java.sql.Timestamp;
 public class GoalSnpsht {
 
     private int snpshtId;
+    private String entpId;
     private String goalId;
     private String taskId;
     private String userNotes;
@@ -26,9 +27,10 @@ public class GoalSnpsht {
 
     }
 
-    public GoalSnpsht(int snpshtId, String goalId, String taskId, String userNotes, String costBenifit,
+    public GoalSnpsht(int snpshtId, String entpId, String goalId, String taskId, String userNotes, String costBenifit,
             String sysNotes, String notes, String plainData, Timestamp startDate, Timestamp endDate) {
         this.snpshtId = snpshtId;
+        this.entpId = entpId;
         this.goalId = goalId;
         this.taskId = taskId;
         this.userNotes = userNotes;
@@ -52,6 +54,20 @@ public class GoalSnpsht {
      */
     public void setGoalId(String goalId) {
         this.goalId = goalId;
+    }
+
+    /**
+     * @return the entpId
+     */
+    public String getEntpId() {
+        return entpId;
+    }
+
+    /**
+     * @param entpId the entpId to set
+     */
+    public void setEntpId(String entpId) {
+        this.entpId = entpId;
     }
 
     /**
@@ -181,7 +197,7 @@ public class GoalSnpsht {
     }
 
     public String toString() {
-        return ("objects Are:" + this.snpshtId + "\t" + this.goalId + "\t" + this.taskId + "\t" + this.userNotes + "\t" + this.costBenefit);
+        return ("objects Are:" + this.entpId + "\t" + this.goalId + "\t" + this.taskId + "\t" + this.userNotes + "\t" + this.costBenefit);
 
     }
 }
