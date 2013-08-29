@@ -1,7 +1,6 @@
 package com.gq.meter.restsvcs;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -22,7 +21,6 @@ import org.json.JSONObject;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.visualization.datasource.base.TypeMismatchException;
 import com.google.visualization.datasource.datatable.ColumnDescription;
 import com.google.visualization.datasource.datatable.DataTable;
 import com.google.visualization.datasource.datatable.value.ValueType;
@@ -30,6 +28,7 @@ import com.google.visualization.datasource.render.JsonRenderer;
 import com.gq.meter.object.Data;
 import com.gq.meter.object.TaskAssist;
 import com.gq.meter.util.CustomerServiceConstant;
+import com.gq.meter.util.SqlUtil;
 import com.ibm.icu.util.GregorianCalendar;
 import com.ibm.icu.util.TimeZone;
 import com.mysql.jdbc.PreparedStatement;
@@ -44,23 +43,9 @@ public class DashboardServices {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response getDashboardServices(@QueryParam("entpId") String entpId) throws ClassNotFoundException,
-            SQLException, TypeMismatchException {
-
-        String dbURL = "jdbc:mysql://192.168.1.95:3306/gqexchange";
-        String username = "gqmaps";
-        String password = "Ch1ca803ear$";
-        String dbURL1 = "jdbc:mysql://192.168.1.95:3306/gqm" + entpId;
-        // String dbUrl = "jdbc:mysql://192.168.1.95:3306/gqm" + entpId
-        // + "?user=gqmaps&password=Ch1ca803ear$&noAccessToProcedureBodies=true";
-
-        // System.out.println("procedure url is\t" + dbUrl);
-        // String dbURL = "jdbc:mysql://localhost:3306/gqexchange";
-        // String username = "root";
-        // String password = "itech";
-        // String dbURL1 = "jdbc:mysql://localhost:3306/gqmaps";
-        Connection dbCon = null;
-        Connection dbCon1 = null;
+    public Response getDashboardServices(@QueryParam("entpId") String entpId) {
+        Connection dbExchange = null;
+        Connection dbCustomer = null;
         Statement stmt = null;
         ResultSet rs = null;
         int taskId = 0;
@@ -69,16 +54,16 @@ public class DashboardServices {
         String chartType = "";
         String[] columnHeader = null;
         String positionId = "";
-        String dynamic = null;
+        String dynamicInput = null;
         String relatedDb = null;
         List<Data> data = null;
         String chartData = "";
         double plainData = 0;
         String lineData = "";
         String plain = "";
-        TaskAssist taskAssist = new TaskAssist(taskId, descr, sql, dynamic, chartType, columnHeader, relatedDb,
+        TaskAssist taskAssist = new TaskAssist(taskId, descr, sql, dynamicInput, chartType, columnHeader, relatedDb,
                 positionId, data, chartData, plainData, lineData, plain);
-        PreparedStatement pstmt = null;
+        PreparedStatement prepareStmt = null;
         String result = "";
         ResultSet entpResultset;
         List<TaskAssist> sqllist = new ArrayList<TaskAssist>();
@@ -86,41 +71,40 @@ public class DashboardServices {
         String dynamicChar = "";
         try {
             // getting database connection to MySQL server
-            Class.forName("com.mysql.jdbc.Driver");
-            dbCon = DriverManager.getConnection(dbURL, username, password);
-            dbCon1 = DriverManager.getConnection(dbURL1, username, password);
+            dbExchange = SqlUtil.getExchangeConnection();
+            dbCustomer = SqlUtil.getCustomerConnection(entpId);
             CustomerServiceConstant.logger
                     .info("[DASHBOARDSERVICES]  DataBase Connectivity established Sucessfully for GQEXCHANGE and Enterprise DataBase gqm"
                             + entpId);
             // dbCon2 = DriverManager.getConnection(dbUrl);
             // String currentSql = "select * from task_asst WHERE pos_id IS NOT NULL;";
-            String currentSql = " select * from task_asst WHERE pos_id Like 'div_%' and tsql not Like 'call%';";
+            String taskAssistSql = " select * from task_asst WHERE pos_id Like 'div_%' and tsql not Like 'call%';";
             // getting PreparedStatment to execute query
-            stmt = (Statement) dbCon.prepareStatement(currentSql);
+            stmt = (Statement) dbExchange.prepareStatement(taskAssistSql);
             // Resultset returned by query
-            rs = stmt.executeQuery(currentSql);
+            rs = stmt.executeQuery(taskAssistSql);
             CustomerServiceConstant.logger
                     .info("[DASHBOARDSERVICES]  Query sucessfully Executed from the TaskAsst Table");
             while (rs.next()) {
                 taskId = rs.getInt("ts_id");
                 descr = rs.getString("descr");
                 sql = rs.getString("tsql");
-                dynamic = rs.getString("dynamic");
+                dynamicInput = rs.getString("dynamic");
                 // String ctId = rs.getString("ct_id");
-                String chartquery = "select ct_Id,descr from chart_type where ct_id=?";
+                String chartTypeQuery = "select ct_Id,descr from chart_type where ct_id=?";
                 taskAssist.setChartType(rs.getString("ct_id"));
                 // System.out.println("ct-id" + taskAssist.setChartType(rs.getString("ct_id")));
-                // stmt = (Statement) dbCon.prepareStatement(chartquery);
-                pstmt = (PreparedStatement) dbCon.prepareStatement(chartquery);
-                pstmt.setString(1, taskAssist.setChartType(rs.getString("ct_id")));
-                ResultSet chrttype = pstmt.executeQuery();
+                // stmt = (Statement) dbExchange.prepareStatement(chartquery);
+                prepareStmt = (PreparedStatement) dbExchange.prepareStatement(chartTypeQuery);
+                prepareStmt.setString(1, taskAssist.setChartType(rs.getString("ct_id")));
+                ResultSet chartTypeSet = prepareStmt.executeQuery();
                 CustomerServiceConstant.logger
                         .info("[DASHBOARDSERVICES]  Query sucessfully Executed from the ChartType Table to get the Chart Type and Descr");
-                while (chrttype.next()) {
-                    chartType = chrttype.getString("ct_id");
-                    String descr1 = chrttype.getString("descr");
+                while (chartTypeSet.next()) {
+                    chartType = chartTypeSet.getString("ct_id");
+                    String descrp = chartTypeSet.getString("descr");
                     CustomerServiceConstant.logger.info("[DASHBOARDSERVICES]  ChartType \t" + chartType + "Descr\t"
-                            + descr1);
+                            + descrp);
                 }
                 String[] colHeader = null;
                 if (rs.getString("col_hdr") != null && rs.getString("col_hdr").trim() != "") {
@@ -134,27 +118,27 @@ public class DashboardServices {
                 }
                 relatedDb = rs.getString("relatd_db");
                 positionId = rs.getString("pos_id");
-                TaskAssist obj = new TaskAssist();
-                obj.setTaskId(taskId);
-                obj.setDescr(descr);
+                TaskAssist taskAssistObj = new TaskAssist();
+                taskAssistObj.setTaskId(taskId);
+                taskAssistObj.setDescr(descr);
                 // obj.setSql(sql);
                 // obj.setDynamic(dynamic);
-                obj.setChartType(chartType);
+                taskAssistObj.setChartType(chartType);
                 if (colHeader != null) {
-                    obj.setColumnHeader(colHeader);
+                    taskAssistObj.setColumnHeader(colHeader);
                 }
                 else {
-                    obj.setColumnHeader(colHeader);
+                    taskAssistObj.setColumnHeader(colHeader);
                 }
-                obj.setRelatedDb(relatedDb);
-                obj.setPositionId(positionId);
-                if (dynamic.equals("y")) {
+                taskAssistObj.setRelatedDb(relatedDb);
+                taskAssistObj.setPositionId(positionId);
+                if (dynamicInput.equals("y")) {
                     String entpquery = sql;
                     CustomerServiceConstant.logger
                             .info("[DASHBOARDSERVICES]  Query Which has a dependency of Dynamic Value");
                     dynamicChar = entpquery.replace("__filter", "?");
-                    String finalString = dynamicChar.replaceAll("[']", "");
-                    String resultString = finalString.replaceAll("[\"]", "'");
+                    String fillerString = dynamicChar.replaceAll("[']", "");
+                    String resultString = fillerString.replaceAll("[\"]", "'");
                     if (!relatedDb.equalsIgnoreCase("e")) {
                         // System.out.println("maps::::::::::");
 
@@ -164,18 +148,18 @@ public class DashboardServices {
                         // entpResultset = stmt.executeQuery(entpquery);
                         CustomerServiceConstant.logger
                                 .info("[DASHBOARDSERVICES]  Query is Executing for the Enterprise");
-                        pstmt = (PreparedStatement) dbCon1.prepareStatement(resultString);
-                        pstmt.setString(1, entpId);
-                        entpResultset = pstmt.executeQuery();
+                        prepareStmt = (PreparedStatement) dbCustomer.prepareStatement(resultString);
+                        prepareStmt.setString(1, entpId);
+                        entpResultset = prepareStmt.executeQuery();
                         CustomerServiceConstant.logger
                                 .info("[DASHBOARDSERVICES]  Query sucessfully Executed for the enterprise" + entpId);
                     }
                     else {
                         CustomerServiceConstant.logger
                                 .info("[DASHBOARDSERVICES]  Query is ready to execute for the exchange with dynamic value");
-                        pstmt = (PreparedStatement) dbCon.prepareStatement(resultString);
-                        pstmt.setString(1, entpId);
-                        entpResultset = pstmt.executeQuery();
+                        prepareStmt = (PreparedStatement) dbExchange.prepareStatement(resultString);
+                        prepareStmt.setString(1, entpId);
+                        entpResultset = prepareStmt.executeQuery();
                         CustomerServiceConstant.logger
                                 .info("[DASHBOARDSERVICES]  Query sucessfully Executed for the enterprise with Dynamic value");
                     }
@@ -187,7 +171,7 @@ public class DashboardServices {
                                 .info("[DASHBOARDSERVICES]  Query is Executing with no Dynamic Value for the enterprise"
                                         + entpId);
                         String entpquery = sql;
-                        stmt = (Statement) dbCon1.prepareStatement(entpquery);
+                        stmt = (Statement) dbCustomer.prepareStatement(entpquery);
                         // Resultset returned by query
                         entpResultset = stmt.executeQuery(entpquery);
                         CustomerServiceConstant.logger
@@ -198,7 +182,7 @@ public class DashboardServices {
                         CustomerServiceConstant.logger
                                 .info("[DASHBOARDSERVICES]  Query will be Executing with no Dynamic Value for Exchange");
                         String entpquery = sql;
-                        stmt = (Statement) dbCon.prepareStatement(entpquery);
+                        stmt = (Statement) dbExchange.prepareStatement(entpquery);
                         // Resultset returned by query
                         entpResultset = stmt.executeQuery(entpquery);
                         CustomerServiceConstant.logger
@@ -216,7 +200,7 @@ public class DashboardServices {
                         // }
                         // else {
                         // System.out.println("after constructed" + pstmt);
-                        // stmt = (Statement) dbCon.prepareStatement(entpquery);
+                        // stmt = (Statement) dbExchange.prepareStatement(entpquery);
                         // System.out.println("pstmt" + pstmt);
                         // // Resultset returned by query
                         // entpResultset = stmt.executeQuery(entpquery);
@@ -225,36 +209,36 @@ public class DashboardServices {
                     }
                 }
                 // find col count c =2;
-                ResultSetMetaData rsmd = entpResultset.getMetaData();
-                int count = rsmd.getColumnCount();
+                ResultSetMetaData rsMetaData = entpResultset.getMetaData();
+                int metaDataColumnCount = rsMetaData.getColumnCount();
 
                 DataTable chartdata = new DataTable();
 
                 if (chartType.equals("bar") || chartType.equals("pie")) {
-                    ArrayList<ColumnDescription> colum = new ArrayList<ColumnDescription>();
+                    ArrayList<ColumnDescription> pieBarColumn = new ArrayList<ColumnDescription>();
                     CustomerServiceConstant.logger
                             .info("[DASHBOARDSERVICES]  Column Header is set for the BAR/PIE charts");
-                    colum.add(new ColumnDescription(colHeader[0], ValueType.TEXT, colHeader[0]));
-                    colum.add(new ColumnDescription(colHeader[1], ValueType.NUMBER, colHeader[1]));
-                    chartdata.addColumns(colum);
+                    pieBarColumn.add(new ColumnDescription(colHeader[0], ValueType.TEXT, colHeader[0]));
+                    pieBarColumn.add(new ColumnDescription(colHeader[1], ValueType.NUMBER, colHeader[1]));
+                    chartdata.addColumns(pieBarColumn);
                 }
                 else if (chartType.equals("line")) {
-                    ArrayList<ColumnDescription> colum = new ArrayList<ColumnDescription>();
+                    ArrayList<ColumnDescription> lineColumn = new ArrayList<ColumnDescription>();
                     CustomerServiceConstant.logger.info("[DASHBOARDSERVICES]  column Header is set for the Line chart");
                     // System.out.println("inside line");
                     // DataTable chartdata = new DataTable();
 
-                    colum.add(new ColumnDescription(colHeader[0], ValueType.DATETIME, colHeader[0]));
-                    colum.add(new ColumnDescription(colHeader[1], ValueType.NUMBER, colHeader[1]));
-                    chartdata.addColumns(colum);
+                    lineColumn.add(new ColumnDescription(colHeader[0], ValueType.DATETIME, colHeader[0]));
+                    lineColumn.add(new ColumnDescription(colHeader[1], ValueType.NUMBER, colHeader[1]));
+                    chartdata.addColumns(lineColumn);
                 }
                 List<Data> cDataList = new ArrayList<Data>();
 
                 while (entpResultset.next()) {
                     CustomerServiceConstant.logger.info("[DASHBOARDSERVICES]  Query is Executed for dynamic columns");
                     Data cData = new Data();
-                    for (int i = 1; i <= count; i++) {
-                        int type = rsmd.getColumnType(i);
+                    for (int i = 1; i <= metaDataColumnCount; i++) {
+                        int type = rsMetaData.getColumnType(i);
                         if (type == Types.VARCHAR || type == Types.CHAR) {
                             // str = datavalue.setName(entpResultset.getString(i));
                             cData.setName(entpResultset.getString(i));
@@ -332,30 +316,30 @@ public class DashboardServices {
                 CustomerServiceConstant.logger
                         .info("[DASHBOARDSERVICES]  ROWS and COLUMNS are Added to the objects in the Arrow Format");
                 renderchart = JsonRenderer.renderDataTable(chartdata, true, true);
-                obj.setChartData(renderchart);
+                taskAssistObj.setChartData(renderchart);
                 if (chartType.equals("plain")) {
                     CustomerServiceConstant.logger
                             .info("[DASHBOARDSERVICES] Dynamic column values which Are in the Form of Plain Text");
                     if (cDataList.size() > 0) {
                         if (cDataList.get(0).getName() != null && cDataList.get(0).getName() != " ") {
-                            obj.setPlain(cDataList.get(0).getName());
+                            taskAssistObj.setPlain(cDataList.get(0).getName());
                         }
                         else if (cDataList.get(0).getValue() != 0) {
-                            obj.setPlainData(cDataList.get(0).getValue());
+                            taskAssistObj.setPlainData(cDataList.get(0).getValue());
                         }
                     }
                     else {
-                        obj.setPlainData(0);
+                        taskAssistObj.setPlainData(0);
                     }
                 }
                 CustomerServiceConstant.logger
                         .info("[DASHBOARDSERVICES]  Objects are constructed and Adde to the list");
-                sqllist.add(obj);
+                sqllist.add(taskAssistObj);
             }
 
             CustomerServiceConstant.logger.info("[DASHBOARDSERVICES]  Goal JSON is Ready t Return to the User");
             JSONObject chartTitle = new JSONObject();
-            JSONArray chartArray = new JSONArray();
+            JSONArray chartDataArray = new JSONArray();
             for (int i = 0; i < sqllist.size(); i++) {
                 // jsonArrayList = sqllist.get(i);
                 JSONObject json = new JSONObject();
@@ -380,7 +364,7 @@ public class DashboardServices {
                 else {
                     json.put("data", sqllist.get(i).getChartData());
                 }
-                chartArray.put(json);
+                chartDataArray.put(json);
             }
             CustomerServiceConstant.logger
                     .info("[DASHBOARDSERVICES]  Complete JSON is Constructed for the Dashboard Data");
@@ -389,20 +373,30 @@ public class DashboardServices {
             finalResult.put(chartTitle);
             CustomerServiceConstant.logger
                     .info("[DASHBOARDSERVICES]  DashBoard sucessfully Executed By executing all the Dependencies");
-            result = chartArray.toString();
+            result = chartDataArray.toString();
         }
 
         catch (SQLException ex) {
             CustomerServiceConstant.logger
                     .error("[DASHBOARDSERVICES]  Execption Occured while Executing the DashBoard services" + ex);
         }
+        catch (Exception e) {
+            CustomerServiceConstant.logger.info("[DASHBOARDSERVICES]  Exception Occured in the Connection" + e);
+        }
 
         finally {
             // close connection ,stmt and resultset here
-            dbCon.close();
-            dbCon1.close();
+            try {
+                dbExchange.close();
+                dbCustomer.close();
+            }
+            catch (SQLException e) {
+                CustomerServiceConstant.logger
+                        .info("[DASHBOARDSERVICES]  Exception Occured while closing the Connection" + e);
+            }
+
             CustomerServiceConstant.logger.info("[DASHBOARDSERVICES]  Closing the DataBase Connection");
-            // System.out.println("connection state:\t" + dbCon.isClosed());
+            // System.out.println("connection state:\t" + dbExchange.isClosed());
         }
         return Response.ok().entity(result).build();
     }
