@@ -81,7 +81,6 @@ public class StorageMeter implements GQSNMPMeter {
                 String assetIdVal = MeterUtils.getSNMPValue(temp, result);
                 assetId = assetIdVal;
                 assetObj.setAssetId(assetId);
-
             }
             else {
                 errorList.add(assetId + " Root OID : 1.3.6.1.2.1.1.5.0" + " " + MeterConstants.ASSET_ID_ERROR);
@@ -89,7 +88,6 @@ public class StorageMeter implements GQSNMPMeter {
 
             // ASSET ID , RUN ID STARTS HERE.
             id = new CPNId(runId, assetId);
-
             oidString = "1.3.6.1.2.1.1";
             rootOID = new OID(oidString);
 
@@ -107,8 +105,7 @@ public class StorageMeter implements GQSNMPMeter {
             usedDiskSpace = usedHardDiskCalc(result, rootOID);
             numberOfController = controllerCalc(result, rootOID);
             numberOfDisks = individualHardDiskCalc(result, rootOID);
-
-        }
+        }// try ends
         catch (Exception e) {
             errorList.add(ipAddress + " " + e.getMessage());
         }
@@ -125,7 +122,6 @@ public class StorageMeter implements GQSNMPMeter {
         GQMeterData gqMeterObject = new GQMeterData(gqErrorInfo, storageObj);
         long storageEndTime = System.currentTimeMillis();
         new MeterUtils().storageMeterTime = new MeterUtils().storageMeterTime + (storageEndTime - storageStartTime);
-        // System.out.println(" [GQMETER] Time taken by the storage meter is : " + (storageEndTime - storageStartTime));
         return gqMeterObject;
     }
 
@@ -144,7 +140,6 @@ public class StorageMeter implements GQSNMPMeter {
                 }
             } // 1st if loop ends
         } // for loop ends
-
         return totalHardDiskSpace;
     }
 
@@ -163,7 +158,6 @@ public class StorageMeter implements GQSNMPMeter {
                 }
             } // 1st if loop ends
         } // for loop ends
-
         return UsedHardDiskSpace;
     }
 

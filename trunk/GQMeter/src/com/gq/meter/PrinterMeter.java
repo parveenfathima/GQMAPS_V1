@@ -32,6 +32,7 @@ public class PrinterMeter implements GQSNMPMeter {
     static HashMap<Integer, String> printerAuxStatusMap = new HashMap<Integer, String>();
 
     List<String> errorList = new LinkedList<String>();
+    // Predefined printer status map
     static {
         printerStatusMap.put(1, "Other");
         printerStatusMap.put(2, "Unknown");
@@ -58,12 +59,10 @@ public class PrinterMeter implements GQSNMPMeter {
         printerAuxStatusMap.put(41, "Temporary print engine failure");
         printerAuxStatusMap.put(49, "A Communication or critical Firmware Error");
         printerAuxStatusMap.put(100, "Tray Empty");
-
     }
 
     public GQMeterData implement(String communityString, String ipAddress, String snmpVersion,
             LinkedList<String> toggleSwitches) {
-        // Predefined printer status map
 
         long printerStartTime = System.currentTimeMillis();
         Snmp snmp = null;
@@ -132,7 +131,6 @@ public class PrinterMeter implements GQSNMPMeter {
 
             // ASSET ID , RUN ID STARTS HERE.
             id = new CPNId(runId, assetId);
-
             for (String element : toggleSwitches) { // main for loop starts
                 if (element.equalsIgnoreCase(MeterConstants.FULL_DETAILS)
                         || element.equalsIgnoreCase(MeterConstants.SNAPSHOT)) { // if loop starts
@@ -197,7 +195,6 @@ public class PrinterMeter implements GQSNMPMeter {
                         else {
                             tonerStatus = "High";
                         }
-
                     }
                     else {
                         errorList.add(assetId + " Root OID : 1.3.6.1.2.1.43.11.1.1" + " "
@@ -246,10 +243,9 @@ public class PrinterMeter implements GQSNMPMeter {
                         errorList.add(assetId + " Root OID : 1.3.6.1.2.1.6.13.1.1" + " "
                                 + "Unable to get port number and ip address of connected devices");
                     }
-
                 } // 1st if loop ends
             }// main for loop ends
-        }
+        }// try ends
         catch (Exception e) {
             errorList.add(ipAddress + " " + e.getMessage());
         }
@@ -269,7 +265,6 @@ public class PrinterMeter implements GQSNMPMeter {
         GQMeterData gqMeterObject = new GQMeterData(gqErrorInfo, printerObject);
         long printerEndTime = System.currentTimeMillis();
         new MeterUtils().printMeterTime = new MeterUtils().printMeterTime + (printerEndTime - printerStartTime);
-        // System.out.println(" [GQMETER] Time taken by the printer meter is : " + (printerEndTime - printerStartTime));
         return gqMeterObject;
     }
 
@@ -375,7 +370,6 @@ public class PrinterMeter implements GQSNMPMeter {
                     errorList.add(MeterConstants.NO_VALUE + " " + remainingUsageDouble);
                 }
             } // else if loop ends
-
         } // for loop ends
         double finalTonerPercentageCalc = (remainingUsageDouble / totalValueDouble) * 100;
         DecimalFormat df = new DecimalFormat("#0.00");
@@ -428,21 +422,6 @@ public class PrinterMeter implements GQSNMPMeter {
                     errorList.add(MeterConstants.NO_VALUE + printer_Status);
                 }
             } // if loop ends
-            /*
-             * else if (operationalStateOid != null && !operationalStateOid.trim().isEmpty() &&
-             * vb.getOid().trim().toString().equals(operationalStateOid)) { // else if loop starts String
-             * operationalStateValueStr = vb.getVariable().toString().trim();
-             * 
-             * if (!operationalStateValueStr.trim().isEmpty() && operationalStateValueStr != null) { int
-             * operationalStateValue = Integer.parseInt(operationalStateValueStr); // check in the predefined map
-             * whether the map has the value if (printerOperationalStateMap.containsKey(operationalStateValue)) {
-             * operationalStatus = operationalStateValue + " " + "-" + " " +
-             * printerOperationalStateMap.get(operationalStateValue); } else { operationalStatus = operationalStateValue
-             * + " " + "-" + " " + N_A; } } else { errorList.add(MeterConstants.NO_VALUE + operationalStatus); }
-             * 
-             * }
-             */// else if loop ends
-
             else if (auxStatusOid != null && !auxStatusOid.trim().isEmpty()
                     && vb.getOid().toString().equals(auxStatusOid)) { // else if loop starts
                 String auxStatusValueStr = vb.getVariable().toString().trim();
@@ -472,7 +451,6 @@ public class PrinterMeter implements GQSNMPMeter {
         } // for loop ends
           // return the status of the printer with printerStatus and AuxStatus
         HashMap<String, Integer> printerStatus = new HashMap<String, Integer>();
-
         printerStatus.put(printerStatusKey, prntrStatus); // printerStatus
         printerStatus.put(auxStatusKey, auxStatus); // AuxStatus
         return printerStatus;
@@ -495,11 +473,9 @@ public class PrinterMeter implements GQSNMPMeter {
             if (vb.getVariable().toString().trim().equals("6")) {
                 lastchar = String.valueOf(vb.getOid().last());
                 assetOid = rootId + ".6" + "." + lastchar;
-
             }
             if (assetOid != null && vb.getOid().toString().trim().equals(assetOid)) {
                 assetStr = vb.getVariable().toString().trim().replaceAll(":", "");
-
             }
         } // for loop ends
         return assetStr;
@@ -526,7 +502,6 @@ public class PrinterMeter implements GQSNMPMeter {
             String expectedStr = vb.getVariable().toString();
             if (expectedStr != null && vb.getOid().toString().contains(expectedStr)
                     && expectedStr.equalsIgnoreCase("5")) { // 1st if loop starts
-
                 String targetOID = vb.getOid().toString();
                 String[] preFinalOID = targetOID.toString().split("\\.");
                 String one = preFinalOID[15];
@@ -543,7 +518,6 @@ public class PrinterMeter implements GQSNMPMeter {
                         connectedDevices.add(connDevice);
                     }
                 } // 2nd if loop ends
-
             } // 1st if loop ends
         } // for loop ends
         return connectedDevices;

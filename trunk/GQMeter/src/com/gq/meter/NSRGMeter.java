@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+
 import org.snmp4j.CommunityTarget;
 import org.snmp4j.Snmp;
 import org.snmp4j.smi.OID;
@@ -18,8 +19,8 @@ import com.gq.meter.object.NSRG;
 import com.gq.meter.object.NSRGConnDevice;
 import com.gq.meter.object.NSRGConnDeviceId;
 import com.gq.meter.object.NSRGSnapshot;
+
 import com.gq.meter.util.MeterConstants;
-import com.gq.meter.util.MeterProtocols;
 import com.gq.meter.util.MeterUtils;
 
 /**
@@ -40,7 +41,6 @@ public class NSRGMeter implements GQSNMPMeter {
         Long runId = 0L;
         String assetId = null; // unique identifier about the asset
         CPNId id = null;
-
         // variables that are used to get the NSRG snapshot
         String sysIP = null; // string
         long upTime = 0; // seconds
@@ -94,11 +94,9 @@ public class NSRGMeter implements GQSNMPMeter {
 
             // ASSET ID , RUN ID STARTS HERE.
             id = new CPNId(runId, assetId);
-
             for (String element : toggleSwitches) { // main for loop starts
                 if (element.equalsIgnoreCase(MeterConstants.FULL_DETAILS)
                         || element.equalsIgnoreCase(MeterConstants.SNAPSHOT)) { // main if loop starts
-
                     sysIP = ipAddress;
 
                     // The following oid's is used to get number of ports
@@ -126,8 +124,8 @@ public class NSRGMeter implements GQSNMPMeter {
                         errorList.add(assetId + " Root OID : 1.3.6.1.2.1.1" + " "
                                 + "Unable to determine number of ports");
                     }
-                    // The following oid's is used to get number of active ports
 
+                    // The following oid's is used to get number of active ports
                     oidString = "1.3.6.1.2.1.2.2.1.7";
                     rootOID = new OID(oidString);
                     result = MeterUtils.walk(rootOID, target);
@@ -140,8 +138,8 @@ public class NSRGMeter implements GQSNMPMeter {
                         errorList.add(assetId + " Root OID : 1.3.6.1.2.1.2.2.1.7" + " "
                                 + "Unable to determine total number of active ports");
                     }
-                    // The following oid's is used to get the network in and out bytes
 
+                    // The following oid's is used to get the network in and out bytes
                     oidString = ".1.3.6.1.2.1.2.2.1";
                     rootOID = new OID(oidString);
                     result = MeterUtils.walk(rootOID, target);
@@ -158,8 +156,8 @@ public class NSRGMeter implements GQSNMPMeter {
                                 + "Unable to get network bandwidth details");
                     }
                 } // main if loop ends
-                  // The following oid's is used to get the devices that are connected to NSRG.
 
+                // The following oid's is used to get the devices that are connected to NSRG.
                 if (element.equalsIgnoreCase(MeterConstants.FULL_DETAILS)
                         || element.equalsIgnoreCase(MeterConstants.CONNECTED_DEVICES)) {// 1st if loop starts
                     oidString = ".1.3.6.1.2.1.4.22.1.4";
@@ -175,7 +173,7 @@ public class NSRGMeter implements GQSNMPMeter {
                     }
                 } // 1st if loop ends
             }// main for loop ends
-        }
+        }// try ends
         catch (Exception e) {
             errorList.add(ipAddress + " " + e.getMessage());
         }
@@ -193,7 +191,6 @@ public class NSRGMeter implements GQSNMPMeter {
 
         long NSRGendTime = System.currentTimeMillis();
         new MeterUtils().nsrgMeterTime = new MeterUtils().nsrgMeterTime + (NSRGendTime - NSRGstartTime);
-        // System.out.println(" [GQMETER] Time taken by the nsrg meter is : " + (NSRGendTime - NSRGstartTime));
         return gqMeterObject;
     }
 
@@ -281,7 +278,6 @@ public class NSRGMeter implements GQSNMPMeter {
             } // else if loop ends
         } // for loop ends
         return switchNetworkMap;
-
     } // network bytes calculation for switch gets over.
 
     /**
@@ -312,7 +308,6 @@ public class NSRGMeter implements GQSNMPMeter {
                     nsrgConnDevice = new NSRGConnDevice(nsrgConnDeviceId);
                     connectedDevices.add(nsrgConnDevice);
                 }
-
             } // if loop ends
         } // for loop ends
         return connectedDevices;
