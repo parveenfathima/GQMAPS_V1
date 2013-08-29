@@ -2088,5 +2088,5 @@ public class MeterConstants {
         InstSwMap.put("zlib1g", "compression library - runtime");
         InstSwMap.put("zlib-devel", "Header files and libraries for Zlib development.");
         InstSwMap.put("zsh", "A powerful interactive shell");
-    }
+    }// static ends
 } // class ends
