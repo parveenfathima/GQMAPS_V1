@@ -6,6 +6,7 @@ import org.hibernate.Session;
 
 import com.gq.meter.GQErrorInformation;
 import com.gq.meter.object.AssetErr;
+import com.gq.meter.xchange.util.GQGateKeeperConstants;
 import com.gq.meter.xchange.util.HibernateUtil;
 
 public class GqMeterErrorInfo {
@@ -17,9 +18,10 @@ public class GqMeterErrorInfo {
             // This step will read hibernate.cfg.xml and prepare hibernate for use
             session = HibernateUtil.getSessionFactory().getCurrentSession();
             session.beginTransaction();
-
+            GQGateKeeperConstants.logger.debug("From GQMeterError Info");
             for (GQErrorInformation errInfo : gqerrList) {
                 for (String error : errInfo.getErrorList()) {
+                    GQGateKeeperConstants.logger.debug("To store the error in AssetError Table");
                     AssetErr assetErr = new AssetErr(runId, errInfo.getAssetDescr(), error);
                     session.save(assetErr);
                 }
