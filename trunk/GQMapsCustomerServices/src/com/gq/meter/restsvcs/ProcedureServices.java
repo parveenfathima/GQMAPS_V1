@@ -14,9 +14,11 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import com.gq.meter.util.CustomerServiceConstant;
 import com.mysql.jdbc.CallableStatement;
 
 /**
@@ -30,36 +32,33 @@ public class ProcedureServices {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response getProcedure() throws ClassNotFoundException {
-        String dbURL = "jdbc:mysql://192.168.1.95:3306/gqmaps?user=gqmaps&password=Ch1ca803ear$&noAccessToProcedureBodies=true";
+    public Response getProcedure(@QueryParam("entpId") String entpId) throws ClassNotFoundException {
+        String dbURL = "jdbc:mysql://192.168.1.95:3306/gqm" + entpId
+                + "?user=gqmaps&password=Ch1ca803ear$&noAccessToProcedureBodies=true";
         // String dbURL = "jdbc:mysql://192.168.1.95:3306/gqmaps";
-        String username = "gqmaps";
-        String password = "Ch1ca803ear$";
-        Connection dbCon = null;
-        Connection dbCon1 = null;
+        Connection dbCustomer = null;
         Statement stmt = null;
         ResultSet rs = null;
         CallableStatement pstmt = null;
-        double out = 0;
+        double output = 0;
         String result = null;
         try {
             // getting database connection to MySQL server
             Class.forName("com.mysql.jdbc.Driver");
-            dbCon = DriverManager.getConnection(dbURL);
-            String sql = "call calc_pue(?,?)";
-            pstmt = (CallableStatement) dbCon.prepareCall(sql);
-
+            dbCustomer = DriverManager.getConnection(dbURL);
+            String sql = "{call calc_pue(?,?)}";
+            pstmt = (CallableStatement) dbCustomer.prepareCall(sql);
             pstmt.setString(1, "all");
             pstmt.setString(2, "@it");
             System.out.println("pstmt" + pstmt);
             pstmt.execute();
             pstmt.registerOutParameter(2, Types.DOUBLE);
-            out = pstmt.getDouble(2);
-            System.out.println("outsize" + out);
-            result = Double.toString(out);
+            output = pstmt.getDouble(2);
+            System.out.println("outsize" + output);
+            result = Double.toString(output);
         }
         catch (SQLException e) {
-            System.err.println("SQLException: " + e.getMessage());
+            CustomerServiceConstant.logger.info("[PROCEDURESERVICES]  Exception Occured during the Connection" + e);
         }
         return Response.ok(result).build();
 

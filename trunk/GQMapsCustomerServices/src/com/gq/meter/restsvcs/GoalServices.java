@@ -1,7 +1,6 @@
 package com.gq.meter.restsvcs;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -20,7 +19,6 @@ import javax.ws.rs.core.Response;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import com.google.visualization.datasource.base.TypeMismatchException;
 import com.google.visualization.datasource.datatable.ColumnDescription;
 import com.google.visualization.datasource.datatable.DataTable;
 import com.google.visualization.datasource.datatable.value.ValueType;
@@ -30,6 +28,7 @@ import com.gq.meter.object.Data;
 import com.gq.meter.object.Goal;
 import com.gq.meter.object.GoalSnpsht;
 import com.gq.meter.util.CustomerServiceConstant;
+import com.gq.meter.util.SqlUtil;
 import com.ibm.icu.util.GregorianCalendar;
 import com.ibm.icu.util.TimeZone;
 import com.mysql.jdbc.PreparedStatement;
@@ -41,23 +40,13 @@ public class GoalServices {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response getGoals(@QueryParam("goalId") String goalId, @QueryParam("entpId") String entpId)
-            throws SQLException, ClassNotFoundException, TypeMismatchException {
-        String dbURL = "jdbc:mysql://192.168.1.95:3306/gqexchange";
-        String username = "gqmaps";
-        String password = "Ch1ca803ear$";
-        String dbURL1 = "jdbc:mysql://192.168.1.95:3306/gqm" + entpId;
-        // public use
-        // String dbURL = "jdbc:mysql://182.72.206.38:3306/gqexchange";
-        // String username = "gqmaps";
-        // String password = "Ch1ca803ear$";
-        // String dbURL1 = "jdbc:mysql://182.72.206.38:3306/gqmaps";
-        Connection dbCon = null;
-        Connection dbCon1 = null;
+    public Response getGoals(@QueryParam("goalId") String goalId, @QueryParam("entpId") String entpId) {
+        Connection dbExchange = null;
+        Connection dbCustomer = null;
         Statement stmt = null;
         ResultSet rs = null;
         ResultSet entpResultset = null;
-        PreparedStatement pstmt;
+        PreparedStatement prepareStmt;
         String goal_Id = "";
         String descr = "";
         String timeBound = "";
@@ -65,14 +54,13 @@ public class GoalServices {
         int tsId = 0;
         String toolTip = "";
         String tsql = "";
-        String dynamic = "";
+        String dynamicInput = "";
         String ctId = "";
-        String sql = "";
+        String masterGoalSql = "";
         String chartType = "";
         String[] columnHeader = null;
         String relatedDb = "";
         String positionId = "";
-        List<Data> data = null;
         String chartData = "";
         double plainData = 0;
         String plain = "";
@@ -84,60 +72,60 @@ public class GoalServices {
         double serverCost = 0;
         int monthlyRent = 0;
         Goal goal = new Goal(goal_Id, taskId, chartData, plainData, plain, chartType, positionId, descr);
-        List<Goal> sqlList = new ArrayList<Goal>();
+        List<Goal> goalList = new ArrayList<Goal>();
         List<AssetData> assetArray = new ArrayList<AssetData>();
         List<GoalSnpsht> goalArray = new ArrayList<GoalSnpsht>();
         try {
-            Class.forName("com.mysql.jdbc.Driver");
-            dbCon = DriverManager.getConnection(dbURL, username, password);
-            dbCon1 = DriverManager.getConnection(dbURL1, username, password);
-            sql = "select goal_id,descr,time_bound from goal where goal_id=?;";
-            pstmt = (PreparedStatement) dbCon.prepareStatement(sql);
-            pstmt.setString(1, goalId);
-            rs = pstmt.executeQuery();
+            dbExchange = SqlUtil.getExchangeConnection();
+            dbCustomer = SqlUtil.getCustomerConnection(entpId);
+            masterGoalSql = "select goal_id,descr,time_bound from goal where goal_id=?;";
+            prepareStmt = (PreparedStatement) dbExchange.prepareStatement(masterGoalSql);
+            prepareStmt.setString(1, goalId);
+            rs = prepareStmt.executeQuery();
             CustomerServiceConstant.logger.info("[GOALSERVICES]  Query Executed for the Goal Table");
             while (rs.next()) {
                 goal_Id = rs.getString("goal_id");
                 descr = rs.getString("descr");
                 timeBound = rs.getString("time_bound");
-                String tmpltSql = "select * from task_tmplt where goal_id=? and ts_id is not null;";
-                pstmt = (PreparedStatement) dbCon.prepareStatement(tmpltSql);
-                pstmt.setString(1, goal_Id);
-                ResultSet tmpltSet = pstmt.executeQuery();
-                CustomerServiceConstant.logger.info("[GOALSERVICES]  Query Executed for the T askTmpltTable");
-                while (tmpltSet.next()) {
-                    goal_Id = tmpltSet.getString("goal_id");
-                    taskId = tmpltSet.getInt("task_id");
-                    descr = tmpltSet.getString("descr");
-                    tsId = tmpltSet.getInt("ts_id");
-                    if (tmpltSet.getString("tooltip") != null && tmpltSet.getString("tooltip").trim() != "") {
-                        toolTip = tmpltSet.getString("tooltip");
+                String goalTmpltSql = "select * from task_tmplt where goal_id=? and ts_id is not null;";
+                prepareStmt = (PreparedStatement) dbExchange.prepareStatement(goalTmpltSql);
+                prepareStmt.setString(1, goal_Id);
+                ResultSet goalTmpltSet = prepareStmt.executeQuery();
+                CustomerServiceConstant.logger.info("[GOALSERVICES]  Query Executed for the TaskTmpltTable");
+                while (goalTmpltSet.next()) {
+                    goal_Id = goalTmpltSet.getString("goal_id");
+                    taskId = goalTmpltSet.getInt("task_id");
+                    descr = goalTmpltSet.getString("descr");
+                    tsId = goalTmpltSet.getInt("ts_id");
+                    if (goalTmpltSet.getString("tooltip") != null && goalTmpltSet.getString("tooltip").trim() != "") {
+                        toolTip = goalTmpltSet.getString("tooltip");
                     }
                     else {
                         toolTip = "NA";
                     }
-                    Goal obj = new Goal();
-                    obj.setGoal_Id(goal_Id);
-                    obj.setTaskId(taskId);
-                    obj.setDescr(descr);
-                    toolTip = tmpltSet.getString("tooltip");
-                    String goalSql = "select * from task_asst where ts_id=?;";
-                    pstmt = (PreparedStatement) dbCon.prepareStatement(goalSql);
-                    pstmt.setInt(1, tsId);
-                    ResultSet goalSet = pstmt.executeQuery();
+                    Goal goalObj = new Goal();
+                    goalObj.setGoal_Id(goal_Id);
+                    goalObj.setTaskId(taskId);
+                    goalObj.setDescr(descr);
+                    toolTip = goalTmpltSet.getString("tooltip");
+                    String goalTaskAsstSql = "select * from task_asst where ts_id=?;";
+                    prepareStmt = (PreparedStatement) dbExchange.prepareStatement(goalTaskAsstSql);
+                    prepareStmt.setInt(1, tsId);
+                    ResultSet goalTaskAsstSet = prepareStmt.executeQuery();
                     CustomerServiceConstant.logger.info("[GOALSERVICES]  Query Executed for the TaskAsst Table for "
                             + goal_Id + " Goal");
-                    while (goalSet.next()) {
-                        tsId = goalSet.getInt("ts_id");
-                        descr = goalSet.getString("descr");
-                        tsql = goalSet.getString("tsql");
-                        dynamic = goalSet.getString("dynamic");
-                        ctId = goalSet.getString("ct_id");
-                        relatedDb = goalSet.getString("relatd_db");
+                    while (goalTaskAsstSet.next()) {
+                        tsId = goalTaskAsstSet.getInt("ts_id");
+                        descr = goalTaskAsstSet.getString("descr");
+                        tsql = goalTaskAsstSet.getString("tsql");
+                        dynamicInput = goalTaskAsstSet.getString("dynamic");
+                        ctId = goalTaskAsstSet.getString("ct_id");
+                        relatedDb = goalTaskAsstSet.getString("relatd_db");
                         String colHeader[] = null;
-                        if (goalSet.getString("col_hdr") != null && goalSet.getString("col_hdr").trim() != "") {
-                            if ((goalSet.getString("col_hdr").split(",").length) >= 2) {
-                                colHeader = goalSet.getString("col_hdr").split(",");
+                        if (goalTaskAsstSet.getString("col_hdr") != null
+                                && goalTaskAsstSet.getString("col_hdr").trim() != "") {
+                            if ((goalTaskAsstSet.getString("col_hdr").split(",").length) >= 2) {
+                                colHeader = goalTaskAsstSet.getString("col_hdr").split(",");
                             }
                             else {
                                 colHeader[0] = "NA";
@@ -145,19 +133,19 @@ public class GoalServices {
                             }
                         }
                         String chartquery = "select ct_Id,descr from chart_type where ct_id=? and ct_Id is not null;";
-                        goal.setChartType(goalSet.getString("ct_id"));
-                        pstmt = (PreparedStatement) dbCon.prepareStatement(chartquery);
-                        pstmt.setString(1, goal.setChartType(goalSet.getString("ct_id")));
-                        ResultSet chrttype = pstmt.executeQuery();
+                        goal.setChartType(goalTaskAsstSet.getString("ct_id"));
+                        prepareStmt = (PreparedStatement) dbExchange.prepareStatement(chartquery);
+                        prepareStmt.setString(1, goal.setChartType(goalTaskAsstSet.getString("ct_id")));
+                        ResultSet taskAsstChartType = prepareStmt.executeQuery();
                         CustomerServiceConstant.logger.info("[GOALSERVICES]  Query Executed for the chart Table");
-                        while (chrttype.next()) {
-                            chartType = chrttype.getString("ct_id");
-                            String descr1 = chrttype.getString("descr");
+                        while (taskAsstChartType.next()) {
+                            chartType = taskAsstChartType.getString("ct_id");
+                            String descrp = taskAsstChartType.getString("descr");
                         }
-                        positionId = goalSet.getString("pos_id");
-                        obj.setPositionId(positionId);
-                        obj.setChartType(chartType);
-                        if (dynamic.equals("y")) {
+                        positionId = goalTaskAsstSet.getString("pos_id");
+                        goalObj.setPositionId(positionId);
+                        goalObj.setChartType(chartType);
+                        if (dynamicInput.equals("y")) {
                             String entpquery = tsql;
                             dynamicChar = entpquery.replace("__filter", "?");
                             String finalString = dynamicChar.replaceAll("[']", "");
@@ -167,16 +155,16 @@ public class GoalServices {
                                 CustomerServiceConstant.logger
                                         .info("[GOALSERVICES]  Query with Dynamic value executing for Enterprise"
                                                 + entpId);
-                                pstmt = (PreparedStatement) dbCon1.prepareStatement(resultString);
-                                pstmt.setString(1, entpId);
-                                entpResultset = pstmt.executeQuery();
+                                prepareStmt = (PreparedStatement) dbCustomer.prepareStatement(resultString);
+                                prepareStmt.setString(1, entpId);
+                                entpResultset = prepareStmt.executeQuery();
                             }
                             else {
                                 CustomerServiceConstant.logger
                                         .info("[GOALSERVICES]   Query with Dynamic value executing for Exchange");
-                                pstmt = (PreparedStatement) dbCon.prepareStatement(resultString);
-                                pstmt.setString(1, entpId);
-                                entpResultset = pstmt.executeQuery();
+                                prepareStmt = (PreparedStatement) dbExchange.prepareStatement(resultString);
+                                prepareStmt.setString(1, entpId);
+                                entpResultset = prepareStmt.executeQuery();
                             }
                         }
                         else {
@@ -185,7 +173,7 @@ public class GoalServices {
                                         .info("[GOALSERVICES]   Query For non Dynamic value executing for Enterprise"
                                                 + entpId);
                                 String entpquery = tsql;
-                                stmt = (Statement) dbCon1.prepareStatement(entpquery);
+                                stmt = (Statement) dbCustomer.prepareStatement(entpquery);
                                 // Resultset returned by query
                                 entpResultset = stmt.executeQuery(entpquery);
                             }
@@ -193,35 +181,35 @@ public class GoalServices {
                                 CustomerServiceConstant.logger
                                         .info("[GOALSERVICES]   Query for non Dynamic value executing for Exchange");
                                 String entpquery = tsql;
-                                stmt = (Statement) dbCon.prepareStatement(entpquery);
+                                stmt = (Statement) dbExchange.prepareStatement(entpquery);
                                 // Resultset returned by query
                                 entpResultset = stmt.executeQuery(entpquery);
                             }
                         }
-                        ResultSetMetaData rsmd = entpResultset.getMetaData();
-                        int count = rsmd.getColumnCount();
+                        ResultSetMetaData rsMetaData = entpResultset.getMetaData();
+                        int metaDataColumnCount = rsMetaData.getColumnCount();
                         DataTable chartdata = new DataTable();
                         if (chartType.equals("bar") || chartType.equals("pie")) {
-                            ArrayList<ColumnDescription> colum = new ArrayList<ColumnDescription>();
+                            ArrayList<ColumnDescription> pieBarColumn = new ArrayList<ColumnDescription>();
                             CustomerServiceConstant.logger
                                     .info("[GOALSERVICES]  Columns are being set for BAR/PIE charts");
-                            colum.add(new ColumnDescription(colHeader[0], ValueType.TEXT, colHeader[0]));
-                            colum.add(new ColumnDescription(colHeader[1], ValueType.NUMBER, colHeader[1]));
-                            chartdata.addColumns(colum);
+                            pieBarColumn.add(new ColumnDescription(colHeader[0], ValueType.TEXT, colHeader[0]));
+                            pieBarColumn.add(new ColumnDescription(colHeader[1], ValueType.NUMBER, colHeader[1]));
+                            chartdata.addColumns(pieBarColumn);
                         }
                         else if (chartType.equals("line")) {
-                            ArrayList<ColumnDescription> colum = new ArrayList<ColumnDescription>();
+                            ArrayList<ColumnDescription> lineColumn = new ArrayList<ColumnDescription>();
                             CustomerServiceConstant.logger
                                     .info("[GOALSERVICES]  Columns are being set for Annotated TimeLine charts");
-                            colum.add(new ColumnDescription(colHeader[0], ValueType.DATETIME, colHeader[0]));
-                            colum.add(new ColumnDescription(colHeader[1], ValueType.NUMBER, colHeader[1]));
-                            chartdata.addColumns(colum);
+                            lineColumn.add(new ColumnDescription(colHeader[0], ValueType.DATETIME, colHeader[0]));
+                            lineColumn.add(new ColumnDescription(colHeader[1], ValueType.NUMBER, colHeader[1]));
+                            chartdata.addColumns(lineColumn);
                         }
                         List<Data> cDataList = new ArrayList<Data>();
                         while (entpResultset.next()) {
                             Data cData = new Data();
-                            for (int i = 1; i <= count; i++) {
-                                int type = rsmd.getColumnType(i);
+                            for (int i = 1; i <= metaDataColumnCount; i++) {
+                                int type = rsMetaData.getColumnType(i);
                                 if (type == Types.VARCHAR || type == Types.CHAR) {
                                     cData.setName(entpResultset.getString(i));
                                 }
@@ -262,54 +250,54 @@ public class GoalServices {
                         }
                         CustomerServiceConstant.logger.info("[GOALSERVICES]  ArrowFormat data's are being constructed");
                         renderchart = JsonRenderer.renderDataTable(chartdata, true, true);
-                        obj.setChartData(renderchart);
+                        goalObj.setChartData(renderchart);
                         if (chartType.equals("plain")) {
                             CustomerServiceConstant.logger
                                     .info("[GOALSERVICES]  Dynamic Data Rows with are Plain Text");
                             if (cDataList.size() > 0) {
                                 if (cDataList.get(0).getName() != null && cDataList.get(0).getName() != " ") {
-                                    obj.setPlain(cDataList.get(0).getName());
+                                    goalObj.setPlain(cDataList.get(0).getName());
                                 }
                                 else if (cDataList.get(0).getValue() != 0) {
-                                    obj.setPlainData(cDataList.get(0).getValue());
+                                    goalObj.setPlainData(cDataList.get(0).getValue());
                                 }
                             }
                             else {
-                                obj.setPlainData(0);
+                                goalObj.setPlainData(0);
                             }
                         }
                         CustomerServiceConstant.logger
                                 .info("[GOALSERVICES]  All the Constructed Objects are added to list");
-                        sqlList.add(obj);
+                        goalList.add(goalObj);
                     }
                 }
             }
             String assetSql = "select a.asset_id,a.ip_addr,b.servr_cost,b.monthly_rent from asset a, dev_ctlg b where a.ctlg_id = b.ctlg_id;";
-            stmt = (Statement) dbCon1.prepareStatement(assetSql);
+            stmt = (Statement) dbCustomer.prepareStatement(assetSql);
             ResultSet assetSet = stmt.executeQuery(assetSql);
             CustomerServiceConstant.logger.info("[GOALSERVICES]  Query Sucessfully Executed for the Asset");
             while (assetSet.next()) {
-                AssetData asset = new AssetData();
+                AssetData assetObject = new AssetData();
                 asset_Id = assetSet.getString("asset_id");
-                asset.setAsset_Id(asset_Id);
-                System.out.println("getdata" + asset.getAsset_Id());
+                assetObject.setAsset_Id(asset_Id);
+                System.out.println("getdata" + assetObject.getAsset_Id());
                 if (assetSet.getString("ip_addr") != null && assetSet.getString("ip_addr").trim() != "") {
                     ipAddr = assetSet.getString("ip_addr");
                 }
                 else {
                     ipAddr = "NA";
                 }
-                asset.setIpAddr(ipAddr);
+                assetObject.setIpAddr(ipAddr);
                 serverCost = assetSet.getDouble("servr_cost");
-                asset.setServerCost(serverCost);
+                assetObject.setServerCost(serverCost);
                 if (assetSet.getInt("monthly_rent") != 0) {
                     monthlyRent = assetSet.getInt("monthly_rent");
                 }
                 else {
                     monthlyRent = 0;
                 }
-                asset.setMonthlyRent(monthlyRent);
-                assetArray.add(asset);
+                assetObject.setMonthlyRent(monthlyRent);
+                assetArray.add(assetObject);
             }
             JSONArray assetJsonArray = new JSONArray();
             JSONObject assetTitle = new JSONObject();
@@ -322,9 +310,9 @@ public class GoalServices {
                 assetJsonArray.put(assetJson);
             }
             CustomerServiceConstant.logger.info("[GOALSERVICES]  Asset JSON is Constructed");
-            String queryCheck = "select snpsht_id as SnapshotId, start_date as StartDate, end_date as EndDate, notes as Notes,cost_benefit as RealizedBenefit from goal_snpsht;";
-            Statement checkStmt = (Statement) dbCon.createStatement();
-            ResultSet chkSet = checkStmt.executeQuery(queryCheck);
+            String goalSnpshtQuery = "select snpsht_id as SnapshotId, start_date as StartDate, end_date as EndDate, notes as Notes,cost_benefit as RealizedBenefit from goal_snpsht;";
+            stmt = (Statement) dbExchange.createStatement();
+            ResultSet chkSet = stmt.executeQuery(goalSnpshtQuery);
             CustomerServiceConstant.logger.info("[GOALSERVICES] Query Sucessfully Executed for the Goal Snapshot");
             while (chkSet.next()) {
                 GoalSnpsht goalSnpsht = new GoalSnpsht();
@@ -349,50 +337,60 @@ public class GoalServices {
             goalTitle.put("GoalSnapshotData", goalJsonArray);
             CustomerServiceConstant.logger.info("[GOALSERVICES]  Goal JSON Constructed");
             assetTitle.put("AssetData", assetJsonArray);
-            JSONArray chartArray = new JSONArray();
-            JSONObject chartTitle = new JSONObject();
-            for (int i = 0; i < sqlList.size(); i++) {
+            JSONArray chartDataArray = new JSONArray();
+            JSONObject chartDataTitle = new JSONObject();
+            for (int i = 0; i < goalList.size(); i++) {
                 JSONObject json = new JSONObject();
-                json.put("charttype", sqlList.get(i).getChartType());
-                json.put("divId", sqlList.get(i).getPositionId());
-                json.put("taskId", sqlList.get(i).getTaskId());
-                json.put("descr", sqlList.get(i).getDescr());
-                if (sqlList.get(i).getChartType().equals("plain")) {
-                    if (sqlList.get(i).getPlain() != null && sqlList.get(i).getPlain() != " ") {
-                        json.put("data", sqlList.get(i).getPlain());
+                json.put("charttype", goalList.get(i).getChartType());
+                json.put("divId", goalList.get(i).getPositionId());
+                json.put("taskId", goalList.get(i).getTaskId());
+                json.put("descr", goalList.get(i).getDescr());
+                if (goalList.get(i).getChartType().equals("plain")) {
+                    if (goalList.get(i).getPlain() != null && goalList.get(i).getPlain() != " ") {
+                        json.put("data", goalList.get(i).getPlain());
                     }
-                    else if (sqlList.get(i).getPlainData() != 0) {
-                        json.put("data", sqlList.get(i).getPlainData());
+                    else if (goalList.get(i).getPlainData() != 0) {
+                        json.put("data", goalList.get(i).getPlainData());
                     }
                 }
-                else if ((sqlList.get(i).getChartType().equals(null))) {
+                else if ((goalList.get(i).getChartType().equals(null))) {
                     json.put("data", "nodata");
                 }
-                else if (sqlList.get(i).getChartType().equals("line")) {
-                    json.put("data", sqlList.get(i).getChartData());
+                else if (goalList.get(i).getChartType().equals("line")) {
+                    json.put("data", goalList.get(i).getChartData());
                     System.out.println("chart type in last for" + json.get("charttype") + "linedata inside json::::\t"
-                            + sqlList.get(i).getChartData());
+                            + goalList.get(i).getChartData());
                 }
                 else {
-                    json.put("Data", sqlList.get(i).getChartData());
+                    json.put("Data", goalList.get(i).getChartData());
                 }
-                chartArray.put(json);
+                chartDataArray.put(json);
             }
             CustomerServiceConstant.logger.info("[GOALSERVICES]  Final JSon is Constructed");
-            chartTitle.put("ChartData", chartArray);
+            chartDataTitle.put("ChartData", chartDataArray);
             JSONArray finalResult = new JSONArray();
-            finalResult.put(chartTitle);
+            finalResult.put(chartDataTitle);
             finalResult.put(assetTitle);
             finalResult.put(goalTitle);
             result = finalResult.toString();
         }
         catch (SQLException ex) {
-            CustomerServiceConstant.logger.error("[GOALSERVICES]  Execption Occured while Executing Goal Services");
+            CustomerServiceConstant.logger
+                    .error("[GOALSERVICES]  Execption Occured while Executing Goal Services" + ex);
+        }
+        catch (Exception e) {
+            CustomerServiceConstant.logger.error("[GOALSERVICES]  Execption Occured " + e);
         }
         finally {
-            // close connection ,stmt and resultset here
-            dbCon.close();
-            dbCon1.close();
+            // close connection
+            try {
+                dbExchange.close();
+                dbCustomer.close();
+            }
+            catch (SQLException e) {
+                CustomerServiceConstant.logger.error("[GOALSERVICES]  Execption Occured while closing session" + e);
+            }
+
             CustomerServiceConstant.logger.info("[GOALSERVICES]  Session Closed sucessfully");
         }
         CustomerServiceConstant.logger.info("[GOALSERVICES]  GOAL Services Executed Sucessfully");
