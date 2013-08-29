@@ -3,7 +3,7 @@
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <!-- Generated Jul 26, 2013 10:19:06 AM by Hibernate Tools 3.4.0.CR1 -->
 <hibernate-mapping>
-    <class name="com.gq.meter.object.GoalSnpsht" table="goal_snpsht" catalog="gqexchange">
+    <class name="com.gq.meter.xchange.object.GoalSnpsht" table="goal_snpsht" catalog="gqexchange">
         <id name="snpshtId" type="int">
             <column name="snpsht_id" />
             <generator class="assigned" />
@@ -11,6 +11,9 @@
         <many-to-one name="goal" class="Goal" fetch="select">
             <column name="goal_id" length="10" not-null="true" />
         </many-to-one>
+        <property name="enterpriseId" type="string">
+        <column name="enterprise_id" length="10" not-null="true"/>
+        </property>
         <property name="startDate" type="timestamp">
             <column name="start_date" length="19" not-null="true" />
         </property>
