@@ -3,7 +3,7 @@
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <!-- Generated Jul 26, 2013 10:19:06 AM by Hibernate Tools 3.4.0.CR1 -->
 <hibernate-mapping>
-    <class name="com.gq.meter.object.Goal" table="goal" catalog="gqexchange">
+    <class name="com.gq.meter.xchange.object.Goal" table="goal" catalog="gqexchange">
         <id name="goalId" type="string">
             <column name="goal_id" length="10" />
             <generator class="assigned" />
