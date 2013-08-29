@@ -24,20 +24,17 @@ public class GQEDPConstants {
 
     static {
         logger.info("Inside create logger method");
-
         GQEDPConstants.logger.info("initializing gqmaps EntrprseDataProcessor logger..."); // ???? !!!!!!
         String logFile = logFilePrefix + logFileName;
         try {
             fileappender = new org.apache.log4j.DailyRollingFileAppender(new PatternLayout(
                     "  %-15C{1} | %d{MMM dd HH:mm} | %5p | %m%n"), logFile, LOG_FILE_NAME_DATE_PATTERN);
-
         }
         catch (IOException e) {
             e.printStackTrace();
             GQEDPConstants.logger.error("************ Unable to create LOG file handle for file  " + logFile + " at "
                     + new Date() + ". TERMINATING server ??.... ************"); // ???? !!!!!!
         }
-
         logger.addAppender(fileappender);
         logger.info("after create logger method");
     }
