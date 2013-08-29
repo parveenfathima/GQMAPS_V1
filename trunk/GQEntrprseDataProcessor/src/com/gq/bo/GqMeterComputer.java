@@ -7,8 +7,6 @@ import java.util.List;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.cfg.AnnotationConfiguration;
-import org.hibernate.cfg.Configuration;
 
 import com.gq.meter.GQMeterResponse;
 import com.gq.meter.object.Asset;
@@ -29,18 +27,13 @@ public class GqMeterComputer {
 
         String meterId = gqmResponse.getGqmid();
         String enterpriseId = meterId.split("_")[0];
-        GQEDPConstants.logger.info(meterId + " Data is ready to save in the computer asset ");
-
         Session session = null;
         SessionFactory sessionFactory = null;
         try {
-            // This step will read hibernate.cfg.xml and prepare hibernate for use
             GQEDPConstants.logger.debug("Start a process to read a HIBERNATE xml file in GQMeterComputer ");
             String dbInstanceName = "gqm" + enterpriseId;
-
             String url = "jdbc:mysql://192.168.1.95:3306/" + dbInstanceName + "?autoReconnect=true";
             // This step will read hibernate.cfg.xml and prepare hibernate for use
-
             if (HibernateUtil.SessionFactoryListMap.containsKey(dbInstanceName)) {
                 sessionFactory = HibernateUtil.SessionFactoryListMap.get(dbInstanceName);
                 if (sessionFactory == null) {
@@ -54,14 +47,12 @@ public class GqMeterComputer {
             }
             session = sessionFactory.getCurrentSession();
             session.beginTransaction();
-
             GQEDPConstants.logger.info(" Session successfully started for GQMeterComputer");
 
             CPNId cid = computer.getId();
             String assetId = cid.getAssetId();
             cid.setRunId(runId);
             computer.setId(cid);
-
             // inserting asset
             GQEDPConstants.logger.debug("Create a Query to inserting a values to asset table in GQMeterComputer");
             String hql = "FROM Asset WHERE assetId = :ASSET_ID";
@@ -70,7 +61,6 @@ public class GqMeterComputer {
             List<?> result = query.list();
             GQEDPConstants.logger.debug("Asset Id:" + assetId + "\nResult Size:" + result.size());
             GQEDPConstants.logger.debug("To check a condition for Asset Query Result");
-
             if (result.size() == 0) {
                 try {
                     Asset assetObj = computer.getAssetObj();
@@ -84,19 +74,16 @@ public class GqMeterComputer {
 
             // ostype
             String osname = computer.getOsTypeObj().getOsId();
-
             String oshql = "FROM OsType WHERE osId = :OS_Id";
             Query osQuery = session.createQuery(oshql);
             osQuery.setParameter("OS_Id", osname);
             List<?> osresult = osQuery.list();
-
             try {
                 if (osresult.size() == 0) {
                     OsType os = computer.getOsTypeObj();
                     session.save(os);
                     GQEDPConstants.logger.info(meterId + " Computer Data successfully saved in the OS table ");
                 }
-
             }
             catch (Exception e) {
                 GQEDPConstants.logger.error(meterId + " Computer Data failed to save in the OS table ", e);
@@ -114,12 +101,11 @@ public class GqMeterComputer {
                     GQEDPConstants.logger.error(meterId + " Data failed to save in the Computer Snapshot table ", e);
                 }
             }
+
             // computer installed software
             if (computer.getCompInstSwList() != null) {
                 ArrayList<CompInstSoftware> compInstSoftwareList = computer.getCompInstSwList();
-
                 try {
-
                     for (CompInstSoftware compInsSoftware : compInstSoftwareList) {
                         compInsSoftware.getId().setRunId(runId);
                         session.merge(compInsSoftware);
@@ -131,38 +117,31 @@ public class GqMeterComputer {
                     GQEDPConstants.logger.error(meterId
                             + " Data failed to save in the Computer Installed software table ", e);
                 }
-
             }
 
             // computer process list
             if (computer.getCompProcList() != null) {
                 ArrayList<CompProcess> compProcessList = computer.getCompProcList();
-
                 try {
-
                     for (CompProcess compProcess : compProcessList) {
                         compProcess.getId().setRunId(runId);
                         session.merge(compProcess);
                     }
-
                     GQEDPConstants.logger.info(meterId + " Data successfully saved in the Computer process table ");
                 }
                 catch (Exception e) {
                     GQEDPConstants.logger.error(meterId + " Data failed to save in the Computer process table ", e);
                 }
-
             }
 
             // connected device
             if (computer.getCompConnDeviceSet() != null) {
                 HashSet<CompConnDevice> compConnnectedDevice = computer.getCompConnDeviceSet();
-
                 try {
                     for (CompConnDevice compConnDevice : compConnnectedDevice) {
                         compConnDevice.getId().setRunId(runId);
                         session.merge(compConnDevice);
                     }// for ends
-
                     GQEDPConstants.logger.info(meterId
                             + " Data successfully saved in the Computer Connected devices table ");
                 }
@@ -170,11 +149,9 @@ public class GqMeterComputer {
                     GQEDPConstants.logger.error(meterId
                             + " Data failed to save in the Computer Connected devices table ", e);
                 }
-
             }
             // Actual insertion will happen at this step
             session.getTransaction().commit();
-
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -182,7 +159,6 @@ public class GqMeterComputer {
         finally {
             try {
                 if (session.isOpen()) {
-                    // sessionFactory.close();
                     session.flush();
                     session.close();
                     session.clear();

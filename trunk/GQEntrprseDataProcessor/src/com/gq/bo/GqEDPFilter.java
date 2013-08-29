@@ -2,26 +2,22 @@ package com.gq.bo;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
-import org.apache.log4j.Logger;
-import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.cfg.AnnotationConfiguration;
 import org.hibernate.SessionFactory;
-import org.hibernate.cfg.Configuration;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.gq.meter.GQMeterData;
+
 import com.gq.meter.GQMeterResponse;
 import com.gq.meter.assist.ProtocolData;
-import com.gq.meter.object.CompSnapshot;
+
 import com.gq.meter.object.Computer;
 import com.gq.meter.object.MeterRun;
 import com.gq.meter.object.NSRG;
 import com.gq.meter.object.Printer;
 import com.gq.meter.object.Storage;
+
 import com.gq.util.GQEDPConstants;
 import com.gq.util.HibernateUtil;
 
@@ -42,23 +38,18 @@ public class GqEDPFilter {
         short scanned = gqmResponse.getAssetScanned();
         short discovered = gqmResponse.getAssetDiscovered();
         long runTimeMs = gqmResponse.getRunTimeMiliSeconds();
-
         System.out.println(" MeterID : " + meterId);
         System.out.println(" Total Asset Scanned : " + scanned);
-
         List<ProtocolData> pdList = gqmResponse.getAssetInformationList();
         Session session = null;
         MeterRun meterRun = null;
         SessionFactory sessionFactory = null;
 
         try {
-
             GQEDPConstants.logger.debug("Start to read a hibernate file for GQEDPFilter");
             String dbInstanceName = "gqm" + enterpriseId;
-
             String url = "jdbc:mysql://192.168.1.95:3306/" + dbInstanceName + "?autoReconnect=true";
             // This step will read hibernate.cfg.xml and prepare hibernate for use
-
             if (HibernateUtil.SessionFactoryListMap.containsKey(dbInstanceName)) {
                 sessionFactory = HibernateUtil.SessionFactoryListMap.get(dbInstanceName);
                 if (sessionFactory == null) {
@@ -90,7 +81,6 @@ public class GqEDPFilter {
         finally {
             try {
                 if (session.isOpen()) {
-                    // sessionFactory.close();
                     session.flush();
                     session.close();
                     session.clear();
