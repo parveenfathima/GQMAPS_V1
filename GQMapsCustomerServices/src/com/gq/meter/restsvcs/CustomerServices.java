@@ -28,10 +28,13 @@ public class CustomerServices {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public String getAllCustomerServiceDetails() {
-        CustomerServiceConstant.logger.info("Generating all the customer service list from GQEntrprseDataProcessor");
+        CustomerServiceConstant.logger
+                .info("[CUSTOMERSERVICES]  Generating all the customer service list from GQEntrprseDataProcessor");
         CustomerServiceModel customerServiceModel = new CustomerServiceModel();
         AllCustomerServices customerServiceResult = customerServiceModel.getAllCustomerServiceDetails();
         // Returning all the enterprises in JSON format
+        CustomerServiceConstant.logger
+                .info("[CUSTOMERSERVICES] Sucessfully Data Received from GQEntrprseDataProcessor");
         return CustomerServiceConstant.gson.toJson(customerServiceResult);
     }
 
@@ -39,11 +42,13 @@ public class CustomerServices {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public String getAssetCount() {
-        CustomerServiceConstant.logger.info("Generating all the customer service list from GQEntrprseDataProcessor");
+        CustomerServiceConstant.logger
+                .info("[CUSTOMERSERVICES]  Generating all the customer service list from GQEntrprseDataProcessor");
         AssetModel asset = new AssetModel();
         List<Asset> assetresult = asset.getAssetCount();
         // Returning all the enterprises in JSON format
-        CustomerServiceConstant.logger.info("Number of asset Id in asset" + assetresult);
+        CustomerServiceConstant.logger
+                .info("[CUSTOMERSERVICES] Sucessfully Data Received from GQEntrprseDataProcessor For AssetCount");
         return CustomerServiceConstant.gson.toJson(assetresult);
     }
 
@@ -51,11 +56,13 @@ public class CustomerServices {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public String getEntpProtocolCount() {
-        CustomerServiceConstant.logger.info("Generating all the customer service list from GQEntrprseDataProcessor");
+        CustomerServiceConstant.logger
+                .info("[CUSTOMERSERVICES]  Generating all the customer service list from GQEntrprseDataProcessor");
         AssetModel asset = new AssetModel();
         List<ProtocolCount> protocolresult = asset.getEntpProtocolCount();
         // Returning all the enterprises in JSON format
-        CustomerServiceConstant.logger.info("Number of asset Id in asset" + protocolresult);
+        CustomerServiceConstant.logger
+                .info("[CUSTOMERSERVICES] Sucessfully Data Received from GQEntrprseDataProcessor For Protocol Count");
         return CustomerServiceConstant.gson.toJson(protocolresult);
     }
 
@@ -63,12 +70,14 @@ public class CustomerServices {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public String mostConsumedAssets() {
-        CustomerServiceConstant.logger.info("Generating all the customer service list from GQEntrprseDataProcessor");
+        CustomerServiceConstant.logger
+                .info("[CUSTOMERSERVICES]  Generating all the customer service list from GQEntrprseDataProcessor");
         AssetLoadModel mostAsset = new AssetLoadModel();
 
         List<AssetLoad> assetresult = mostAsset.mostConsumedAssets();
         // Returning all the enterprises in JSON format
-        CustomerServiceConstant.logger.info("Number of asset Id in asset" + assetresult);
+        CustomerServiceConstant.logger
+                .info("[CUSTOMERSERVICES] Sucessfully Data Received from GQEntrprseDataProcessor For Most Consumed Asseets");
         return CustomerServiceConstant.gson.toJson(assetresult);
     }
 
@@ -76,11 +85,13 @@ public class CustomerServices {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public String leastConsumedAssets() {
-        CustomerServiceConstant.logger.info("Generating all the customer service list from GQEntrprseDataProcessor");
+        CustomerServiceConstant.logger
+                .info("[CUSTOMERSERVICES]  Generating all the customer service list from GQEntrprseDataProcessor");
         AssetLoadModel leastAsset = new AssetLoadModel();
         List<AssetLoad> assetresult = leastAsset.leastConsumedAssets();
         // Returning all the enterprises in JSON format
-        CustomerServiceConstant.logger.info("Number of asset Id in asset" + assetresult);
+        CustomerServiceConstant.logger
+                .info("[CUSTOMERSERVICES] Sucessfully Data Received from GQEntrprseDataProcessor For Least Consumed Assets");
         return CustomerServiceConstant.gson.toJson(assetresult);
     }
 

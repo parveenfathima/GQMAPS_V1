@@ -25,15 +25,15 @@ public class AssetModel {
         try {
             session = HibernateUtil.getSessionFactory().getCurrentSession();
             session.beginTransaction();
-
             String hql = "select count(assetId) FROM Asset";
             Query query = session.createQuery(hql);
             List<Asset> assetresult = query.list();
-            CustomerServiceConstant.logger.info("Number of asset Id in asset from database" + assetresult);
+            CustomerServiceConstant.logger.info("[ASSETMODEL]   Asset Count sucessfully Executed");
             return assetresult;
         }
         catch (Exception e) {
-            CustomerServiceConstant.logger.error("Exception occured while getting the asset count", e);
+            CustomerServiceConstant.logger
+                    .error("[ASSETLOADMODEL]  Exception occured while getting the asset count", e);
             return null;
         }
         finally {
@@ -61,8 +61,8 @@ public class AssetModel {
             // List<ProtocolCount> assetResult = query.list();
 
             List<Object[]> queryresult = query.list();
-            CustomerServiceConstant.logger.info("Fetching protocolId and its count in asset from database"
-                    + queryresult);
+            CustomerServiceConstant.logger
+                    .info("[ASSETMODEL]  Getting the ProtocolCount and ProtocolId is sucessfully Executed");
             List<ProtocolCount> protocolresult = new ArrayList<ProtocolCount>();
             for (Object[] list : queryresult) {
                 ProtocolCount assetlist = new ProtocolCount();
@@ -70,11 +70,12 @@ public class AssetModel {
                 assetlist.setPcount((Long) list[1]);
                 protocolresult.add(assetlist);
             }
-
+            CustomerServiceConstant.logger.info("[ASSETMODEL]   Protocol Count is sucessfully returned");
             return protocolresult;
         }
         catch (Exception e) {
-            CustomerServiceConstant.logger.error("Exception occured while getting the asset count", e);
+            CustomerServiceConstant.logger.error(
+                    "[ASSETLOADMODEL]  Exception occured while getting the protocol count", e);
             return null;
         }
         finally {

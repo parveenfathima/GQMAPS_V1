@@ -7,7 +7,6 @@ import org.hibernate.Session;
 
 import com.gq.meter.object.AllCustomerServices;
 import com.gq.meter.object.DevCtlg;
-import com.gq.meter.object.OsType;
 import com.gq.meter.object.Protocol;
 import com.gq.meter.object.SrvrAppType;
 import com.gq.meter.util.CustomerServiceConstant;
@@ -29,23 +28,24 @@ public class CustomerServiceModel {
             String protocol = "FROM Protocol";
             Query protocolQuery = session.createQuery(protocol);
             List<Protocol> protocolResult = protocolQuery.list();
-            // CustomerServiceConstant.logger.info("protocolResult : " + protocolResult);
+            CustomerServiceConstant.logger.info("[CUSTOMERSERVICEMODEL]  protocolResult : " + protocolResult);
 
             String srvrAppType = "FROM SrvrAppType";
             Query srvrAppTypeQuery = session.createQuery(srvrAppType);
             List<SrvrAppType> srvrAppTypeResult = srvrAppTypeQuery.list();
-            // CustomerServiceConstant.logger.info("srvrAppTypeResult : " + srvrAppTypeResult);
+            CustomerServiceConstant.logger.info("[CUSTOMERSERVICEMODEL]  srvrAppTypeResult : " + srvrAppTypeResult);
 
             String deviceCatalog = "FROM DeviceCatalog";
             Query deviceCatalogQuery = session.createQuery(deviceCatalog);
             List<DevCtlg> deviceCatalogResult = deviceCatalogQuery.list();
-            // CustomerServiceConstant.logger.info("deviceCatalogResult : " + deviceCatalogResult);
+            CustomerServiceConstant.logger.info("[CUSTOMERSERVICEMODEL]  deviceCatalogResult : " + deviceCatalogResult);
 
             allCustomerServices = new AllCustomerServices(protocolResult, srvrAppTypeResult, deviceCatalogResult);
 
         }
         catch (Exception e) {
-            CustomerServiceConstant.logger.error("Exception occured while fetching the CustomerServiceDetails ", e);
+            CustomerServiceConstant.logger.error(
+                    "[CUSTOMERSERVICEMODEL]  Exception occured while fetching the CustomerServiceDetails ", e);
         }
         finally {
             try {
@@ -58,6 +58,7 @@ public class CustomerServiceModel {
                 e.printStackTrace();
             }
         }
+        CustomerServiceConstant.logger.info("[CUSTOMERSERVICEMODEL]  Sucessfully returned the CusomerDetails");
         return allCustomerServices;
     }
 }

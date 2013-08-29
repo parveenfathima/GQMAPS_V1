@@ -27,8 +27,8 @@ public class AssetLoadModel {
             session.beginTransaction();
             String hql1 = "SELECT value From SysProfile where keyy = 'COMPUTE_DURATION'";
             Query query1 = session.createQuery(hql1);
+            CustomerServiceConstant.logger.info("[ASSETLOADMODEL]   AssetLoad is executing the query");
             Collection<? extends String> keyresult = query1.list();
-            System.out.println("val after " + keyresult);
             // converting list to string
             ArrayList<String> list1 = new ArrayList<String>();
             list1.addAll(keyresult);
@@ -37,11 +37,6 @@ public class AssetLoadModel {
                 listString += s + "\t";
             }
             String val = listString;
-            // String hql =
-            // "SELECT c.id.assetId, a.name, AVG(c.cpuLoad) FROM CompSnpsht c, Asset a , MeterRun m WHERE c.id.assetId = a.assetId AND m.recDttm BETWEEN SUBDATE(curdate(), '"
-            // + keyresult
-            // + "') AND curdate() AND m.runId = c.id.runId GROUP BY c.id.assetId ORDER BY AVG(c.cpuLoad) DESC LIMIT 5";
-
             String hql = "SELECT c.id.assetId, a.name, AVG(c.cpuLoad) FROM CompSnpsht c, Asset a , MeterRun m WHERE c.id.assetId = a.assetId AND m.recDttm BETWEEN SUBDATE(curdate(), '"
                     + val
                     + "') AND curdate() AND m.runId = c.id.runId GROUP BY c.id.assetId ORDER BY AVG(c.cpuLoad) DESC LIMIT 5";
@@ -49,7 +44,7 @@ public class AssetLoadModel {
             System.out.println("keyresult value" + keyresult);
             // query.setParameter("NAME", keyresult.get(0).getKeyy());
             List<Object[]> assetResult = query.list();
-            CustomerServiceConstant.logger.info("Maximum Asset Load" + assetResult);
+            CustomerServiceConstant.logger.info("[ASSETLOADMODEL]   Maximum AssetLoad");
             List<AssetLoad> assetLoad = new ArrayList<AssetLoad>();
 
             for (Object[] list : assetResult) {
@@ -66,15 +61,17 @@ public class AssetLoadModel {
                     a.setLoadAvg(((AssetLoad) assetLoad.get(i)).getLoadAvg());
                     finalAssetLoad.add(a);
                 }
+                CustomerServiceConstant.logger.info("[ASSETLOADMODEL]   AssetLoad For Top 5 Assets is more than 5");
                 return finalAssetLoad;
             }
             else {
+                CustomerServiceConstant.logger.info("[ASSETLOADMODEL]   AssetLoad For Top 5 Assets is less than 5");
                 return assetLoad;
             }
-
         }
         catch (Exception e) {
-            CustomerServiceConstant.logger.error("Exception occured while getting the Maximum Asset Load", e);
+            CustomerServiceConstant.logger.error(
+                    "[ASSETLOADMODEL]  Exception occured while getting the Maximum Asset Load", e);
             return null;
         }
         finally {
@@ -108,11 +105,6 @@ public class AssetLoadModel {
                 listString += s + "\t";
             }
             String val = listString;
-            // String hql =
-            // "SELECT c.id.assetId, a.name, AVG(c.cpuLoad) FROM CompSnpsht c, Asset a , MeterRun m WHERE c.id.assetId = a.assetId AND m.recDttm BETWEEN SUBDATE(curdate(), '"
-            // + keyresult
-            // + "') AND curdate() AND m.runId = c.id.runId GROUP BY c.id.assetId ORDER BY AVG(c.cpuLoad) DESC LIMIT 5";
-
             String hql = "SELECT c.id.assetId, a.name, AVG(c.cpuLoad) FROM CompSnpsht c, Asset a , MeterRun m WHERE c.id.assetId = a.assetId AND m.recDttm BETWEEN SUBDATE(curdate(), '"
                     + val
                     + "') AND curdate() AND m.runId = c.id.runId GROUP BY c.id.assetId ORDER BY AVG(c.cpuLoad) ASC LIMIT 5";
@@ -120,9 +112,9 @@ public class AssetLoadModel {
             System.out.println("keyresult value" + keyresult);
             // query.setParameter("NAME", keyresult.get(0).getKeyy());
             List<Object[]> assetResult = query.list();
-            CustomerServiceConstant.logger.info("Maximum Asset Load" + assetResult);
+            CustomerServiceConstant.logger
+                    .info("[ASSETLOADMODEL]   AssetLoad For Least 5 Assets is Sucessfully Executed");
             List<AssetLoad> assetLoad = new ArrayList<AssetLoad>();
-
             for (Object[] list : assetResult) {
                 AssetLoad asstLoad = new AssetLoad((String) list[0], (String) list[1], (Double) list[2]);
                 assetLoad.add(asstLoad);
@@ -137,15 +129,17 @@ public class AssetLoadModel {
                     a.setLoadAvg(((AssetLoad) assetLoad.get(i)).getLoadAvg());
                     finalAssetLoad.add(a);
                 }
+                CustomerServiceConstant.logger.info("[ASSETLOADMODEL]   AssetLoad For Least 5 Assets is more than 5");
                 return finalAssetLoad;
             }
             else {
+                CustomerServiceConstant.logger.info("[ASSETLOADMODEL]   AssetLoad For Top 5 Assets is less than 5");
                 return assetLoad;
             }
-
         }
         catch (Exception e) {
-            CustomerServiceConstant.logger.error("Exception occured while getting the Maximum Asset Load", e);
+            CustomerServiceConstant.logger.error(
+                    "[ASSETLOADMODEL]  Exception occured while getting the Maximum Asset Load", e);
             return null;
         }
         finally {

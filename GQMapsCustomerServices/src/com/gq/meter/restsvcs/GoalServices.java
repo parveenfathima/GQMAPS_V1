@@ -29,6 +29,7 @@ import com.gq.meter.object.AssetData;
 import com.gq.meter.object.Data;
 import com.gq.meter.object.Goal;
 import com.gq.meter.object.GoalSnpsht;
+import com.gq.meter.util.CustomerServiceConstant;
 import com.ibm.icu.util.GregorianCalendar;
 import com.ibm.icu.util.TimeZone;
 import com.mysql.jdbc.PreparedStatement;
@@ -94,6 +95,7 @@ public class GoalServices {
             pstmt = (PreparedStatement) dbCon.prepareStatement(sql);
             pstmt.setString(1, goalId);
             rs = pstmt.executeQuery();
+            CustomerServiceConstant.logger.info("[GOALSERVICES]  Query Executed for the Goal Table");
             while (rs.next()) {
                 goal_Id = rs.getString("goal_id");
                 descr = rs.getString("descr");
@@ -102,6 +104,7 @@ public class GoalServices {
                 pstmt = (PreparedStatement) dbCon.prepareStatement(tmpltSql);
                 pstmt.setString(1, goal_Id);
                 ResultSet tmpltSet = pstmt.executeQuery();
+                CustomerServiceConstant.logger.info("[GOALSERVICES]  Query Executed for the T askTmpltTable");
                 while (tmpltSet.next()) {
                     goal_Id = tmpltSet.getString("goal_id");
                     taskId = tmpltSet.getInt("task_id");
@@ -122,6 +125,8 @@ public class GoalServices {
                     pstmt = (PreparedStatement) dbCon.prepareStatement(goalSql);
                     pstmt.setInt(1, tsId);
                     ResultSet goalSet = pstmt.executeQuery();
+                    CustomerServiceConstant.logger.info("[GOALSERVICES]  Query Executed for the TaskAsst Table for "
+                            + goal_Id + " Goal");
                     while (goalSet.next()) {
                         tsId = goalSet.getInt("ts_id");
                         descr = goalSet.getString("descr");
@@ -144,6 +149,7 @@ public class GoalServices {
                         pstmt = (PreparedStatement) dbCon.prepareStatement(chartquery);
                         pstmt.setString(1, goal.setChartType(goalSet.getString("ct_id")));
                         ResultSet chrttype = pstmt.executeQuery();
+                        CustomerServiceConstant.logger.info("[GOALSERVICES]  Query Executed for the chart Table");
                         while (chrttype.next()) {
                             chartType = chrttype.getString("ct_id");
                             String descr1 = chrttype.getString("descr");
@@ -156,12 +162,18 @@ public class GoalServices {
                             dynamicChar = entpquery.replace("__filter", "?");
                             String finalString = dynamicChar.replaceAll("[']", "");
                             String resultString = finalString.replaceAll("[\"]", "'");
+                            CustomerServiceConstant.logger.info("[GOALSERVICES] Dynamic Filter Value replaced");
                             if (!relatedDb.equalsIgnoreCase("e")) {
+                                CustomerServiceConstant.logger
+                                        .info("[GOALSERVICES]  Query with Dynamic value executing for Enterprise"
+                                                + entpId);
                                 pstmt = (PreparedStatement) dbCon1.prepareStatement(resultString);
                                 pstmt.setString(1, entpId);
                                 entpResultset = pstmt.executeQuery();
                             }
                             else {
+                                CustomerServiceConstant.logger
+                                        .info("[GOALSERVICES]   Query with Dynamic value executing for Exchange");
                                 pstmt = (PreparedStatement) dbCon.prepareStatement(resultString);
                                 pstmt.setString(1, entpId);
                                 entpResultset = pstmt.executeQuery();
@@ -169,12 +181,17 @@ public class GoalServices {
                         }
                         else {
                             if (!relatedDb.equalsIgnoreCase("e")) {
+                                CustomerServiceConstant.logger
+                                        .info("[GOALSERVICES]   Query For non Dynamic value executing for Enterprise"
+                                                + entpId);
                                 String entpquery = tsql;
                                 stmt = (Statement) dbCon1.prepareStatement(entpquery);
                                 // Resultset returned by query
                                 entpResultset = stmt.executeQuery(entpquery);
                             }
                             else {
+                                CustomerServiceConstant.logger
+                                        .info("[GOALSERVICES]   Query for non Dynamic value executing for Exchange");
                                 String entpquery = tsql;
                                 stmt = (Statement) dbCon.prepareStatement(entpquery);
                                 // Resultset returned by query
@@ -186,12 +203,16 @@ public class GoalServices {
                         DataTable chartdata = new DataTable();
                         if (chartType.equals("bar") || chartType.equals("pie")) {
                             ArrayList<ColumnDescription> colum = new ArrayList<ColumnDescription>();
+                            CustomerServiceConstant.logger
+                                    .info("[GOALSERVICES]  Columns are being set for BAR/PIE charts");
                             colum.add(new ColumnDescription(colHeader[0], ValueType.TEXT, colHeader[0]));
                             colum.add(new ColumnDescription(colHeader[1], ValueType.NUMBER, colHeader[1]));
                             chartdata.addColumns(colum);
                         }
                         else if (chartType.equals("line")) {
                             ArrayList<ColumnDescription> colum = new ArrayList<ColumnDescription>();
+                            CustomerServiceConstant.logger
+                                    .info("[GOALSERVICES]  Columns are being set for Annotated TimeLine charts");
                             colum.add(new ColumnDescription(colHeader[0], ValueType.DATETIME, colHeader[0]));
                             colum.add(new ColumnDescription(colHeader[1], ValueType.NUMBER, colHeader[1]));
                             chartdata.addColumns(colum);
@@ -211,14 +232,20 @@ public class GoalServices {
                                     cData.setValue(entpResultset.getDouble(i));
                                 }
                             }
+                            CustomerServiceConstant.logger
+                                    .info("[GOALSERVICES]  Dynamic Column data's are added to the List ");
                             cDataList.add(cData);
                         }
                         if (chartType.equals("bar") || chartType.equals("pie")) {
+                            CustomerServiceConstant.logger
+                                    .info("[GOALSERVICES]  Rows are being set for BAR/PIE charts");
                             for (int i = 0; i < cDataList.size(); i++) {
                                 chartdata.addRowFromValues(cDataList.get(i).getName(), cDataList.get(i).getValue());
                             }
                         }
                         else if (chartType.equals("line")) {
+                            CustomerServiceConstant.logger
+                                    .info("[GOALSERVICES]  Rows are being set for AnnotatedTimeLine charts");
                             GregorianCalendar calendar = new GregorianCalendar();
                             calendar.setTimeZone(TimeZone.getTimeZone("GMT"));
                             for (int i = 0; i < cDataList.size(); i++) {
@@ -233,9 +260,12 @@ public class GoalServices {
                                 chartdata.addRowFromValues(calendar, cDataList.get(i).getValue());
                             }
                         }
+                        CustomerServiceConstant.logger.info("[GOALSERVICES]  ArrowFormat data's are being constructed");
                         renderchart = JsonRenderer.renderDataTable(chartdata, true, true);
                         obj.setChartData(renderchart);
                         if (chartType.equals("plain")) {
+                            CustomerServiceConstant.logger
+                                    .info("[GOALSERVICES]  Dynamic Data Rows with are Plain Text");
                             if (cDataList.size() > 0) {
                                 if (cDataList.get(0).getName() != null && cDataList.get(0).getName() != " ") {
                                     obj.setPlain(cDataList.get(0).getName());
@@ -248,6 +278,8 @@ public class GoalServices {
                                 obj.setPlainData(0);
                             }
                         }
+                        CustomerServiceConstant.logger
+                                .info("[GOALSERVICES]  All the Constructed Objects are added to list");
                         sqlList.add(obj);
                     }
                 }
@@ -255,6 +287,7 @@ public class GoalServices {
             String assetSql = "select a.asset_id,a.ip_addr,b.servr_cost,b.monthly_rent from asset a, dev_ctlg b where a.ctlg_id = b.ctlg_id;";
             stmt = (Statement) dbCon1.prepareStatement(assetSql);
             ResultSet assetSet = stmt.executeQuery(assetSql);
+            CustomerServiceConstant.logger.info("[GOALSERVICES]  Query Sucessfully Executed for the Asset");
             while (assetSet.next()) {
                 AssetData asset = new AssetData();
                 asset_Id = assetSet.getString("asset_id");
@@ -288,24 +321,19 @@ public class GoalServices {
                 assetJson.put("MonthlyRent", assetArray.get(i).getMonthlyRent());
                 assetJsonArray.put(assetJson);
             }
+            CustomerServiceConstant.logger.info("[GOALSERVICES]  Asset JSON is Constructed");
             String queryCheck = "select snpsht_id as SnapshotId, start_date as StartDate, end_date as EndDate, notes as Notes,cost_benefit as RealizedBenefit from goal_snpsht;";
             Statement checkStmt = (Statement) dbCon.createStatement();
             ResultSet chkSet = checkStmt.executeQuery(queryCheck);
-            GoalSnpsht emptycells = new GoalSnpsht();
-
-            if (chkSet.getRow() < 0) {
-                emptycells.setPlainData("No Records to display At This Time");
-            }
-            else {
-                while (chkSet.next()) {
-                    GoalSnpsht goalSnpsht = new GoalSnpsht();
-                    goalSnpsht.setSnpshtId(chkSet.getInt("snpsht_id"));
-                    goalSnpsht.setStartDate(chkSet.getTimestamp("start_date"));
-                    goalSnpsht.setEndDate(chkSet.getTimestamp("end_date"));
-                    goalSnpsht.setNotes(chkSet.getString("notes"));
-                    goalSnpsht.setCostBenefit(chkSet.getString("cost_benefit"));
-                    goalArray.add(goalSnpsht);
-                }
+            CustomerServiceConstant.logger.info("[GOALSERVICES] Query Sucessfully Executed for the Goal Snapshot");
+            while (chkSet.next()) {
+                GoalSnpsht goalSnpsht = new GoalSnpsht();
+                goalSnpsht.setSnpshtId(chkSet.getInt("SnapshotId"));
+                goalSnpsht.setStartDate(chkSet.getTimestamp("StartDate"));
+                goalSnpsht.setEndDate(chkSet.getTimestamp("EndDate"));
+                goalSnpsht.setNotes(chkSet.getString("Notes"));
+                goalSnpsht.setCostBenefit(chkSet.getString("RealizedBenefit"));
+                goalArray.add(goalSnpsht);
             }
             JSONArray goalJsonArray = new JSONArray();
             JSONObject goalTitle = new JSONObject();
@@ -319,6 +347,7 @@ public class GoalServices {
                 goalJsonArray.put(goalJson);
             }
             goalTitle.put("GoalSnapshotData", goalJsonArray);
+            CustomerServiceConstant.logger.info("[GOALSERVICES]  Goal JSON Constructed");
             assetTitle.put("AssetData", assetJsonArray);
             JSONArray chartArray = new JSONArray();
             JSONObject chartTitle = new JSONObject();
@@ -339,32 +368,34 @@ public class GoalServices {
                 else if ((sqlList.get(i).getChartType().equals(null))) {
                     json.put("data", "nodata");
                 }
-                // else if (sqllist.get(i).getChartType().equals("line")) {
-                // json.put("data", sqllist.get(i).getLineData());
-                // System.out.println("chart type in last for" + json.get("charttype") + "linedata inside json::::\t"
-                // + sqllist.get(i).getLineData());
-                // }
+                else if (sqlList.get(i).getChartType().equals("line")) {
+                    json.put("data", sqlList.get(i).getChartData());
+                    System.out.println("chart type in last for" + json.get("charttype") + "linedata inside json::::\t"
+                            + sqlList.get(i).getChartData());
+                }
                 else {
                     json.put("Data", sqlList.get(i).getChartData());
                 }
                 chartArray.put(json);
             }
+            CustomerServiceConstant.logger.info("[GOALSERVICES]  Final JSon is Constructed");
             chartTitle.put("ChartData", chartArray);
             JSONArray finalResult = new JSONArray();
             finalResult.put(chartTitle);
             finalResult.put(assetTitle);
             finalResult.put(goalTitle);
             result = finalResult.toString();
-
         }
         catch (SQLException ex) {
-            System.out.println("exception occured" + ex);
+            CustomerServiceConstant.logger.error("[GOALSERVICES]  Execption Occured while Executing Goal Services");
         }
         finally {
             // close connection ,stmt and resultset here
             dbCon.close();
             dbCon1.close();
+            CustomerServiceConstant.logger.info("[GOALSERVICES]  Session Closed sucessfully");
         }
+        CustomerServiceConstant.logger.info("[GOALSERVICES]  GOAL Services Executed Sucessfully");
         return Response.ok().entity(result).build();
     }
 }
