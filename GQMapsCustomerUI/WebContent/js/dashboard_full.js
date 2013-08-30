@@ -17,11 +17,11 @@ var barChartOptions = {'title':'',
 // Ajax call to get all the dashboard services
 $(document).ready(function() 
 {
-	alert($.jStorage.get("jsEntpId"));
+	
+	//alert($.jStorage.get("jsEntpId"));
 	$("#entpName").text("Customer Dashboard for " + $.jStorage.get("jsEName"));
 	vType = "GET";						
 	
-	//var vUrl = $.jStorage.get("jsDBUrl") + "DashboardServices/getdashboard?entpId=maps";	
 	var vUrl = $.jStorage.get("jsDBUrl") + "DashboardServices/getdashboard?entpId=" + $.jStorage.get("jsEntpId");
 
 	$.ajax
@@ -34,11 +34,10 @@ $(document).ready(function()
 		success:function(json)
 		{		
 
-			//alert(json);
+			alert("inside success");			
 
-			//alert(json[0]);			
-
-			$.each(json, function(i, v){
+			$.each(json, function(i, v)
+			{
 				if(json[i]["charttype"] === "pie")
 					showPieChart(json[i]["data"], json[i]["divId"]);
 				else if(json[i]["charttype"] === "bar")
@@ -46,17 +45,19 @@ $(document).ready(function()
 				else if(json[i]["charttype"] === "line")
 					showLineChart(json[i]["data"], json[i]["divId"]);					
 				else if(json[i]["charttype"] === "plain")
-					showPlainText(json[i]["data"], json[i]["divId"]);	
-			});	 	
+				{
+					if(json[i]["divId"] === "div_expiryAlert")
+						showAlerts(json[i]["data"], json[i]["divId"]);
+					else
+						showPlainText(json[i]["data"], json[i]["divId"]);
+				}
+			});	 	                           
+			
 			
 		},
 		error:function(json)
 		{
-			alert("Error from loading google charts: " + json.status + " " + json.responseText);	
-				
-			var obj = eval('(' + json.responseText + ')');
-			
-			alert(obj);
+			alert("inside error");			
 			
 			$.each(obj, function(i, v){
 				if(obj[i]["charttype"] === "pie")
@@ -64,12 +65,21 @@ $(document).ready(function()
 				else if(obj[i]["charttype"] === "bar") 
 					showBarChart(obj[i]["data"], obj[i]["divId"]);
 				else if(obj[i]["charttype"] === "line")
-					showLineChart(obj[i]["data"], obj[i]["divId"]);					
+					showLineChart(obj[i]["data"], obj[i]["divId"]);										 
 				else if(obj[i]["charttype"] === "plain")
-					showPlainText(obj[i]["data"], obj[i]["divId"]);	
+				{
+					if(obj[i]["divId"] === "div_expiryAlert")
+						showAlerts(obj[i]["data"], obj[i]["divId"]);
+					else
+						showPlainText(obj[i]["data"], obj[i]["divId"]);	 
+				}
 			});	 
 		}	 
-	});	
+	});	//end of ajax
+	
+	getPUE();
+	
+	
 });
 
 //function to diplay bar chart in the specified div location
@@ -141,6 +151,11 @@ function showLineChart(lineData, divId)
 //function to display text in the specified div location
 function showPlainText(plainText, divID)
 {
+		$("#" + divID).text(plainText);
+}
+
+function showAlerts(plainText, divID)
+{
 	if(plainText <=0)
 		$("#" + divID).text("Meter expired, contact support!");
 	else if(plainText >= 1 && plainText <= 10)
@@ -158,9 +173,35 @@ function goToAssetEdit()
 	});
 }
 
-
-
 function gotoAssetList()
 {
 	window.location.href = "asset_list.html";
+}
+
+function gotoGoal()
+{
+	window.location.href = "goal.html";
+}
+
+function getPUE()
+{
+	var vUrl = "http://localhost:8080/GQMapsCustomerServices/gqm-gqedp/procedure/getproc?entpId=" + $.jStorage.get("jsEntpId");
+
+	$.ajax
+	({
+		type:vType,
+		contentType: "application/json",
+		url:vUrl,
+		async:false,
+		dataType: "json",
+		success:function(json)
+		{		
+			alert("inside PUE success");				
+		},
+		error:function(json)
+		{
+			alert("inside PUE error");			
+ 
+		}	 
+	});	//end of ajax	
 }
