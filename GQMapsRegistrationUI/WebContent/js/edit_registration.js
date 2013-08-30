@@ -214,7 +214,7 @@ function updateEntp(dbEntp)
 	{
 		var vType = "PUT";
 	//	var vUrl = "http://localhost:8080/GQMapsRegistrationServices/gqm-gk/enterprise/updateRegistration";		
-var vUrl = $.jStorage.get("jsUrl") + "enterprise/updateRegistration";
+		var vUrl = $.jStorage.get("jsUrl") + "enterprise/updateRegistration";
 		
 		if(formEntp.getUrl() === "")	formEntp.setUrl(" ");
 		if(formEntp.getESqft()  === "") formEntp.setESqft("0");
@@ -370,11 +370,11 @@ function addEntpMeter(dbEntp)
 	{	
 		getGeoLocation(vAddress);	
 		
-		validateMeterId(vMId);
+		validateMeterId(vMId, vEId);
 		
 		if(gMeterId === 1)
 		{
-			alert("Enter a unique meter ID!");
+			alert("Enter unique meter ID!");
 			$("#txtMeterID").select();
 			gMeterId = 0;
 			return false;
@@ -568,7 +568,8 @@ function listEnterprise()
 						$.each(json, function(i,n)
 						{				
 									
-							arrEntp[i] = new enterprise($.trim(n["sid"]), $.trim(n["enterpriseId"]), $.trim(n["eName"]), $.trim(n["userId"]), $.trim(n["passwd"]), $.trim(n["storeFwd"]), $.trim(n["fwdUrl"]), $.trim(n["noOfEmpl"]), $.trim(n["entSqft"]), $.trim(n["entAssetCount"]), $.trim(n["dcSqft"]), $.trim(n["dcAssetCount"]), $.trim(n["dcUsePctg"]), $.trim(n["dcTemp"]), $.trim(n["comments"]), $.trim(n["regCmplt"]), $.trim(n["mCount"]), $.trim(n["expDttm"]));	
+						
+							arrEntp[i] = new enterprise($.trim(n["sid"]), $.trim(n["enterpriseId"]), $.trim(n["eName"]), $.trim(n["userId"]), $.trim(n["passwd"]), $.trim(n["storeFwd"]), $.trim(n["fwdUrl"]), $.trim(n["noOfEmpl"]), $.trim(n["entSqft"]), $.trim(n["entAssetCount"]), $.trim(n["dcSqft"]), $.trim(n["dcAssetCount"]), $.trim(n["dcUsePctg"]), $.trim(n["dcTemp"]), $.trim(n["comments"]), $.trim(n["regCmplt"]), $.trim(n["mCount"]), n["expDttm"]);	
 							
 							if(arrEntp[i].getRegStatus() === 'n')
 								vEntpList += '<tr style="height:25px; color: #FF0000">';
@@ -824,6 +825,7 @@ enterprise.prototype.getExpDate = function()
 
 enterprise.prototype.setExpDate = function(expDate)
 {
+	
 	this.expDate = expDate;
 }
 
@@ -843,11 +845,11 @@ function convertToTwoDigit(no)
 }
 
 //check for unique meter id 
-function validateMeterId(meterId)
+function validateMeterId(meterId, eid)
 {
 	  var vType = "GET";
 	  //var vUrl = "http://localhost:8080/GQMapsRegistrationServices/gqm-gk/enterpriseMeters/getEntMeters";	
-	  var vUrl = $.jStorage.get("jsUrl") + "enterpriseMeters/getEntMeters";	
+	  var vUrl = $.jStorage.get("jsUrl") + "enterpriseMeters/getEntMeters?entpId="+eid;	
 	  
 	  $.ajax
 	  ({
@@ -860,11 +862,13 @@ function validateMeterId(meterId)
 		  {				
 				$.each(json, function(i,n)
 				{
+					//alert("db: " + n["meterId"] + "current: "  + meterId);
 					if(n["meterId"] === meterId)
 					{
 						gMeterId = 1;
 					}
 				});	
+				
 		  },
 		  error:function(json)
 		  {

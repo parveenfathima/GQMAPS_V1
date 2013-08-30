@@ -24,13 +24,6 @@ function userLogin()
 		alert("Enter Password");
 		$('#pwdPassword').focus();
 	} 
-	else if ((user === 'admin') && (pwd === 'admin')) 
-	{
-		isValid = 1;
-		$.jStorage.set("jsUserID", user);
-		$.jStorage.set("jsPwd", pwd);
-		window.location.href = "edit_registration.html";
-	} 
 	else 
 	{
 		var vUrl = $.jStorage.get("jsUrl") + "enterprise/getRegistration";
@@ -52,7 +45,7 @@ function userLogin()
 				{
 					$.each(json, function(i,n)
 					{								
-						if( user === $.trim(n["userId"]) && pwd === $.trim(n["passwd"]))
+						if( user === "admin" && user === $.trim(n["userId"]) && pwd === $.trim(n["passwd"]))
 						{
 							isValid = 1;
 							$.jStorage.set("jsUserId", user);
@@ -64,12 +57,9 @@ function userLogin()
 					  
 					});		
 					
-					if(isValid === 1)
+					if(isValid === 1 && vFwdStore === "C" || vFwdStore === "c")
 					{		
-						if(vFwdStore === "C" || vFwdStore === "c")
-							window.location.href = "dashboard_full.html";	
-						else
-							window.location.href = "dashboard_forward.html";
+							window.location.href = "edit_registration.html";	
 					}
 					else
 					{
