@@ -1,9 +1,7 @@
 $(document).ready(function() 
 {
-	//$.jStorage.set("jsUrl", "http://192.168.1.95:8080/GQMapsRegistrationServices/gqm-gk/");
-	//$.jStorage.set("jsDBUrl", "http://192.168.1.95:8080/GQMapsCustomerServices/gqm-gqedp/");
-	$.jStorage.set("jsUrl", "http://localhost:8080/GQMapsRegistrationServices/gqm-gk/");
-	$.jStorage.set("jsDBUrl", "http://localhost:8080/GQMapsCustomerServices/gqm-gqedp/");
+	$.jStorage.set("jsUrl", "http://192.168.1.95:8080/GQMapsRegistrationServices/gqm-gk/");
+	$.jStorage.set("jsDBUrl", "http://192.168.1.95:8080/GQMapsCustomerServices/gqm-gqedp/");
 });
 
 function logout()
@@ -17,9 +15,12 @@ function logout()
 asset_edit.html services
 
 http://localhost:8080/GQMapsCustomerServices/gqm-gqedp/mapsDomainServices/getMapsDomainData
-http://localhost:8080/GQMapsCustomerServices/gqm-gqedp/getAssetServices/getAssetData
+http://localhost:8080/GQMapsCustomerServices/gqm-gqedp/getAssetServices/getAssetData // to be replaced
+http://localhost:8080/GQMapsCustomerServices/gqm-gqedp/AssetEditServices/getAssetData
 
-http://localhost:8080/GQMapsCustomerServices1/gqm-gqedp/updateAssetServices/updateAssetData
+http://localhost:8080/GQMapsCustomerServices1/gqm-gqedp/updateAssetServices/updateAssetData // to be replaced
+
+http://localhost:8080/GQMapsCustomerServices1/gqm-gqedp/AssetEditServices/updateAssetData
 {
             "assetId": "C-8c89a539be66",
             "name": "GQCHNSW01",
@@ -75,9 +76,13 @@ dashboard_full.html services
 http://localhost:8080/GQMapsCustomerServices/gqm-gqedp/DashboardServices/getdashboard
 =================================================================================================================================================================					
 				
+goal.html
+
+http://localhost:8080/GQMapsCustomerServices/gqm-gqedp/goalServices/goal?goalId=pue&entpId=servion	//get			
+http://localhost:8080/GQMapsCustomerServices/gqm-gqedp/goalSnapshot/goal?flag=final  //put
+http://localhost:8080/GQMapsCustomerServices/gqm-gqedp/DashboardServices/getdashboard?entpId=talk  //get g & tasks
+
 				
-				
-				
-				
-				
+http://localhost:8080/GQMapsCustomerServices/gqm-gqedp/procedure/getproc	
+
 				*/

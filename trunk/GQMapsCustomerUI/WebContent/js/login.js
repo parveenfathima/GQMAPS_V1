@@ -45,7 +45,7 @@ function userLogin()
 				{
 					$.each(json, function(i,n)
 					{								
-						if( user === $.trim(n["userId"]) && pwd === $.trim(n["passwd"]))
+						if( user != "admin" && user === $.trim(n["userId"]) && pwd === $.trim(n["passwd"]))
 						{
 							isValid = 1;
 							$.jStorage.set("jsUserId", user);
@@ -57,11 +57,11 @@ function userLogin()
 					  
 					});		
 					
-					if(isValid === 1)
+					if(isValid === 1 && vFwdStore === "C" || vFwdStore === "c")
 					{		
-						
+	
 						window.location.href = "dashboard_full.html";	
-						
+		
 					}
 					else
 					{
@@ -79,7 +79,7 @@ function userLogin()
 			error : function(json) 
 			{
 				//alert("Invalid User Credentials" + json.status + " " + json.responseText);
-				alert("Error: Loading user credentials!");
+				alert("Error: Invalid user credentials!");
 			}
 		});
 	}
