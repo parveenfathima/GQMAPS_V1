@@ -57,7 +57,11 @@ $(document).ready(function()
 		},
 		error:function(json)
 		{
-			alert("inside error");			
+			//alert("inside error");	
+			
+			//alert("Error from loading google charts: " + json.status + " " + json.responseText);	
+				
+			var obj = eval('(' + json.responseText + ')');	
 			
 			$.each(obj, function(i, v){
 				if(obj[i]["charttype"] === "pie")
