@@ -132,8 +132,7 @@ public class PrinterMeter implements GQSNMPMeter {
             // ASSET ID , RUN ID STARTS HERE.
             id = new CPNId(runId, assetId);
             for (String element : toggleSwitches) { // main for loop starts
-                if (element.equalsIgnoreCase(MeterConstants.FULL_DETAILS)
-                        || element.equalsIgnoreCase(MeterConstants.SNAPSHOT)) { // if loop starts
+                if ( element.equalsIgnoreCase(MeterConstants.SNAPSHOT)) { // if loop starts
                     sysIP = ipAddress;
 
                     oidString = "1.3.6.1.2.1.1";
@@ -230,8 +229,7 @@ public class PrinterMeter implements GQSNMPMeter {
                 } // if loop ends
 
                 // the following oid's is used to get the ip and port no of devices that is connected.
-                if (element.equalsIgnoreCase(MeterConstants.FULL_DETAILS)
-                        || element.equalsIgnoreCase(MeterConstants.CONNECTED_DEVICES)) { // 1st if loop starts
+                if ( element.equalsIgnoreCase(MeterConstants.CONNECTED_DEVICES)) { // 1st if loop starts
 
                     if (result != null && !result.isEmpty()) {
                         oidString = ".1.3.6.1.2.1.6.13.1.1";

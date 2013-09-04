@@ -148,8 +148,7 @@ public class ComputerMeter implements GQSNMPMeter {
             // ASSET ID , RUN ID STARTS HERE.
             id = new CPNId(runId, assetId);
             for (String element : toggleSwitches) { // main for loop starts here
-                if (element.equalsIgnoreCase(MeterConstants.FULL_DETAILS)
-                        || element.equalsIgnoreCase(MeterConstants.SNAPSHOT)) { // main if loop starts here
+                if (element.equalsIgnoreCase(MeterConstants.SNAPSHOT)) { // main if loop starts here
                     sysIP = ipAddress;
                     oidString = "1.3.6.1.2.1.1";
                     rootOID = new OID(oidString);
@@ -317,8 +316,7 @@ public class ComputerMeter implements GQSNMPMeter {
                 } // main if loop ends here
 
                 // the following oid's is used to get the installed software list
-                if (element.equalsIgnoreCase(MeterConstants.FULL_DETAILS)
-                        || element.equalsIgnoreCase(MeterConstants.INSTALLED_SOFTWARE)) { // 1st if loop starts
+                if (element.equalsIgnoreCase(MeterConstants.INSTALLED_SOFTWARE)) { // 1st if loop starts
 
                     oidString = ".1.3.6.1.2.1.25.6.3.1.4";
                     rootOID = new OID(oidString);
@@ -344,8 +342,7 @@ public class ComputerMeter implements GQSNMPMeter {
                 } // 1st if loop ends.
 
                 // the following oid's is used to get the IP and port number for the devices that is connected.
-                if (element.equalsIgnoreCase(MeterConstants.FULL_DETAILS)
-                        || element.equalsIgnoreCase(MeterConstants.CONNECTED_DEVICES)) { // 1st if loop starts
+                if ( element.equalsIgnoreCase(MeterConstants.CONNECTED_DEVICES)) { // 1st if loop starts
 
                     if (result != null && !result.isEmpty()) {
                         oidString = ".1.3.6.1.2.1.6.13.1.4";
@@ -363,8 +360,7 @@ public class ComputerMeter implements GQSNMPMeter {
                 } // 1st if loop ends
 
                 // The following OID is used to get the System run name, CPU and memory share for a particular process .
-                if (element.equalsIgnoreCase(MeterConstants.FULL_DETAILS)
-                        || element.equalsIgnoreCase(MeterConstants.PROCESS)) { // 1st if loop starts
+                if (element.equalsIgnoreCase(MeterConstants.PROCESS)) { // 1st if loop starts
                     if (result != null && !result.isEmpty()) { // 2nd if loop starts
                         oidString = ".1.3.6.1.2.1.25.4.2.1.2";
                         rootOID = new OID(oidString);
