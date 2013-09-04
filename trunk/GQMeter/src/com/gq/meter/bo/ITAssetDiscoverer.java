@@ -1,13 +1,16 @@
 package com.gq.meter.bo;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.StringTokenizer;
 import java.util.regex.Matcher;
@@ -37,6 +40,7 @@ import com.sun.jersey.api.representation.Form;
 
 /**
  * @author chandru.p
+ * @change	parveen , rathish , sriram
  * 
  */
 public final class ITAssetDiscoverer {
@@ -147,213 +151,233 @@ public final class ITAssetDiscoverer {
      */
     private HashMap<String, String> readInput(String inputFilePath) {
 
-        InputStream assetFileStream = null;
-        String communityString = null;
-        String ipUpperbound = null;
-        String ipLowerbound = null;
-        String inputAssets;
-        String headerAssetsPart = null;
-        String snmpAssetsPart = null;
-        StringTokenizer sToken = null;
         File assetsInputFile = null;
-        String switchName = null;
-        int headerLineCount = 0;
-        HashMap<String, Integer> headerMap = new HashMap<String, Integer>();
-        HashMap<String, String> switchMap = new HashMap<String, String>();
+        String meterId = null;
         HashMap<String, String> communityIPMap = new HashMap<String, String>();
         gqerrorInfoList = new LinkedList<GQErrorInformation>();
         gqmResponse.setGqmid("GQMeterResponse");
 
-        switchMap.put(MeterConstants.METER_ID, "METERID");
-        switchMap.put(MeterConstants.COMPUTER_SWITCHS, "COMPUTER");
-        switchMap.put(MeterConstants.PRINTER_SWITCHS, "PRINTER");
-        switchMap.put(MeterConstants.NSRG_SWITCHS, "NSRG");
-        switchMap.put(MeterConstants.STORAGE_SWITCHS, "STORAGE");
+        if ( inputFilePath == null || inputFilePath.trim().length() == 0) {
+            System.out.println(" [GQMETER] Not a valid input file argument");
+            System.exit(1);
+        }
 
-        if (null != inputFilePath && inputFilePath.trim().length() != 0) {
-            try {
-                assetsInputFile = new File(inputFilePath);
+        try {
+            assetsInputFile = new File(inputFilePath);
 
-                if (assetsInputFile.exists() && assetsInputFile.isFile()) {
+            if ( ! assetsInputFile.exists() || ! assetsInputFile.isFile()) {
+                System.out.println(" [GQMETER] Unable to locate the input file");
+                System.exit(1);
+            }
 
-                    assetFileStream = new FileInputStream(assetsInputFile);
-                    inputAssets = MeterUtils.read(assetFileStream);
+            BufferedReader br = new BufferedReader(new FileReader(inputFilePath));
+            
+            String line = null;
+            boolean headerFound = false;
+            int headerLinesCount = 0;
+    		Map<String,Integer> switchOcc = new HashMap<String,Integer>(); // integer value has no significance. just using it for map features
 
-                    if (inputAssets == null || inputAssets.trim().length() == 0) {
-                        System.out.println(" [GQMETER] *** The asset file is empty ***");
-                        System.exit(1);
-                    }// if ends
+            // process the header section
+            while ( (line=br.readLine()) != null ) {
+            	 
+            	line = line.trim();
+            	
+                if (line.startsWith("#") || line.length() == 0) {
+                    continue;
+                }
 
-                    if (!inputAssets.contains("$$")) {
-                        System.out.println(" [GQMETER] No valid delimeter on Input Assets Section..");
-                        System.out.println(" [GQMETER] Check Input File..");
+            	if ( line.equals("$$")) {	// header line found
+            		headerFound = true;	
+            		break;
+            	} 
+            	// do the header processing
+            	// now we expect only 5 lines with key value pairs , nothing if count is more than 5 we complain and get out
+            	++headerLinesCount;
+            	
+            	// split the line to key value
+            	String headerToken[] = line.split("\\s+");
+            	
+            	// lines must contain only 2 tokens
+            	if ( headerToken.length != 2  ) {
+                    System.out.println(" [GQMETER] Invalid header line ; wrong # of tokens ; line : "+ line);
+                    System.exit(0);
+            	}
+            	
+            	String keyy = headerToken[0].toLowerCase();
+            	
+            	// key can be one among the 5 keys only 
+            	if ( keyy.equals(MeterConstants.METER_ID ) ) {
+            		Pattern p = Pattern.compile("[^a-zA-Z0-9]");
+            		if ( p.matcher(headerToken[1]).find() ) {
+                        System.out.println(" [GQMETER] Meter has special char , Process Terminating Now ..");
                         System.exit(0);
-                    }// if ends
+            		}
+            		meterId =  headerToken[1];
+           		}
+            	else if ( keyy.equals(MeterConstants.COMPUTER_SWITCH)  || keyy.equals(MeterConstants.STORAGE_SWITCH) ) {
+            		Map<String,Integer> tokenOcc = new HashMap<String,Integer>();
+            		
+            		// complain if the line starts or ends with a | symbol
+            		if ( (headerToken[1].charAt(0) == '|') || ( headerToken[1].charAt(headerToken[1].length()-1) == '|') ) {
+                        System.out.println(" [GQMETER] Switches cannot start or end with | chars , Process Terminating Now ..");
+                        System.exit(0);
+            		}
 
-                    // To split the input file into 2 parts for validation depends on delimeter $$
-                    headerAssetsPart = inputAssets.substring(0, inputAssets.indexOf("$$"));
-                    snmpAssetsPart = inputAssets.substring(inputAssets.indexOf("$$") + 2, inputAssets.length());
-                    String headerAssetLines[] = headerAssetsPart.trim().replace("\t", " ").split("\n");
-                    String snmpAssetLines[] = snmpAssetsPart.trim().replace("\t", " ").split("\n");
+            		String switchToken[] = headerToken[1].split("\\|");
+                    System.out.println(" -- num tokens  .."+ switchToken.length);
+                         		
+                    for (String token : switchToken) {
+                    	token = token.toLowerCase();
+                        System.out.println(" -- curr token  .."+ token );
 
-                    // Validation code for Header Section
-                    for (String line : headerAssetLines) {
-                        line = line.trim().toLowerCase();
-                        if (line.startsWith("#") || line.trim().length() == 0) {
-                            continue;
+                    	if ( token.equals(MeterConstants.INSTALLED_SOFTWARE) || token.equals(MeterConstants.CONNECTED_DEVICES) || 
+                    			token.equals(MeterConstants.PROCESS) || token.equals(MeterConstants.SNAPSHOT)	) {
+                    		// good token
+                    		if ( tokenOcc.containsKey(token) ) {
+                                System.out.println(" [GQMETER] Computer/Storage switch duplicates found , Process Terminating Now ..");
+                                System.exit(0);
+                    		}
+                    		tokenOcc.put(token, 0); // value doesnt matter , may be a list is enough for this - ss sep 4 , 2013
+                    	}
+                    	else {
+                            System.out.println(" [GQMETER] Computer/Storage switch has invalid entry , Process Terminating Now ..");
+                            System.exit(0);
+                    	}
+                    }               		
+            	} // comp switch proc ends
+            	else if ( keyy.equals(MeterConstants.PRINTER_SWITCH) || keyy.equals(MeterConstants.NSRG_SWITCH) ) {
+            		
+            		// complain if the line starts or ends with a | symbol
+            		if ( (headerToken[1].charAt(0) == '|') || ( headerToken[1].charAt(headerToken[1].length()-1) == '|') ) {
+                        System.out.println(" [GQMETER] Switches cannot start or end with | chars , Process Terminating Now ..");
+                        System.exit(0);
+            		}
+
+            		Map<String,Integer> tokenOcc = new HashMap<String,Integer>();
+            		String switchToken[] = headerToken[1].split("\\|");
+                    for (String token : switchToken) {
+                    	token = token.toLowerCase();
+                    	if (  token.equals(MeterConstants.CONNECTED_DEVICES)  || token.equals(MeterConstants.SNAPSHOT)	) {
+                    		// good token
+                    		if ( tokenOcc.containsKey(token) ) {
+                                System.out.println(" [GQMETER] Printer/NSRG switch duplicates found , Process Terminating Now ..");
+                                System.exit(0);
+                    		}
+                    		tokenOcc.put(token, 0); // value doesnt matter , may be a list is enough for this - ss sep 4 , 2013
+                    	}
+                    	else {
+                            System.out.println(" [GQMETER] Printer/NSRG switch has invalid entry , Process Terminating Now ..");
+                            System.exit(0);
+                    	}
+                    }               		
+            	}
+            	else {
+                    System.out.println(" [GQMETER] Invalid Header Section entry , Process Terminating Now ..");
+                    System.exit(0);
+            	}
+            	
+            	// put the meterid or switch thing in the map and check for duplicates
+        		if ( switchOcc.containsKey(keyy) ) {
+                    System.out.println(" [GQMETER] Switch duplicates found , Process Terminating Now ..");
+                    System.exit(0);
+        		}
+            	switchOcc.put(keyy, 0);
+            	
+            } // while file read ends
+
+       		if ( ! headerFound ) {
+                System.out.println(" [GQMETER] No valid header delimeter found on Input Assets File , check manual..");
+                System.exit(0);
+       		}
+            
+       		if ( switchOcc.size() != 5) {
+                System.out.println(" [GQMETER] All switches need to be present on Input Assets File , check manual..");
+                System.exit(0);       			
+       		}
+       		
+       		if ( ! (headerLinesCount == 5) ) {
+                System.out.println(" [GQMETER] Invalid Header Section , 5 lines are reqd , Process Terminating Now ..");
+                System.exit(0);
+       		}
+
+			// send it to gate keeper and check if it is good.
+			isValid(meterId);
+
+			// *************************
+            // process the data  section
+            while ( ( line=br.readLine()) != null ) {
+            	 
+            	line = line.trim();
+            	
+                if (line.startsWith("#") || line.length() == 0) {
+                    continue;
+                }
+
+            	// split the line to key value
+            	String dataToken[] = line.split("\\s+");
+            	
+            	// key can be one among the 5 keys only 
+            	if ( ( dataToken.length == 1 ) || (dataToken.length > 3) ) {
+                    System.out.println(" [GQMETER] Invalid data line ; wrong # of tokens , continuing process .."+ line);
+                    continue;
+            	}
+
+            	if ( dataToken.length == 2 ) {
+            		if (! isIPAddressValid(dataToken[1])) {
+                        System.out.println(" [GQMETER] Invalid ip address ; continuing process ; line :" + line);
+                        continue;
+            		}
+            		else {
+            			communityIPMap.put(dataToken[1], dataToken[0]);	
+            		}
+            	}
+            	else if ( dataToken.length == 3 ) {
+            		if ( isIPAddressValid(dataToken[1])  && isIPAddressValid(dataToken[2]) ) {
+                        // to check the lowerboundip is greater than the upperboundip
+                        if (MeterUtils.ipComparator.compare(dataToken[1], dataToken[2]) == -1) {
+                            communityIPMap.put(dataToken[1], dataToken[0]);
+                            // Here we iterate the ip range and find & add those intermediate ips to map
+                            while (!(dataToken[1] = MeterUtils.nextIpAddress(dataToken[1])) .equals(dataToken[2])) {
+                                communityIPMap.put(dataToken[1], dataToken[0]);
+                            }
+                            communityIPMap.put(dataToken[2], dataToken[0]);
                         }
-                        if (line.startsWith(MeterConstants.METER_ID)
-                                || line.startsWith(MeterConstants.COMPUTER_SWITCHS)
-                                || line.startsWith(MeterConstants.PRINTER_SWITCHS)
-                                || line.startsWith(MeterConstants.NSRG_SWITCHS)
-                                || line.startsWith(MeterConstants.STORAGE_SWITCHS) || line.startsWith("@")) {
-                            sToken = new StringTokenizer(line, " ");
-                            if (sToken.countTokens() >= 2) {
-                                switchName = line.substring(0, line.indexOf(" "));
-                                headerLineCount++;
-                                if (switchMap.containsKey(switchName)) {
-                                    headerMap.put(switchName, headerLineCount);
-                                }// inner if ends
-                            }
-                            else {
-                                headerLineCount--;
-                            }
-                        }// outer if ends
+                        // to check the lowerboundip and ipupperboundip as same
+                        else if (MeterUtils.ipComparator.compare(dataToken[1], dataToken[2]) == 0) {
+                            communityIPMap.put(dataToken[1], dataToken[0]);
+                        }
+                        // else part for Invalid IP range
                         else {
-                            System.out.println(" [GQMETER] Invalid Header Section..");
-                            System.out.println(" [GQMETER] Process Terminated Now..");
+                            System.out.println(" [GQMETER] : Invalid ip range in line :" + line);
                             System.exit(0);
                         }
+            		}
+            		else {
+                        System.out.println(" [GQMETER] Invalid ip address ; continuing process ; line :" + line);
+                        continue;
                     }
-                    // Check the default lines present or not.
-                    if (!(headerLineCount == headerMap.size() && headerLineCount == 5)) {
-                        System.out.println(" [GQMETER] Invalid Header Section..");
-                        System.out.println(" [GQMETER] Process Terminated Now..");
-                        System.exit(0);
-                    }
-                    // Read the Header Section
-                    for (String line : headerAssetLines) {
-                        line = line.trim().toLowerCase();
-                        // line starts with # for Ignore the lines
-                        if (line.length() == 0 || line.startsWith("#")) {
-                            continue;
-                        }
-                        // line starts with $ for meterid
-                        if (line.startsWith("$")) {
-                            if (line.toLowerCase().startsWith(MeterConstants.METER_ID)) {
-                                gqmid = line.replace(MeterConstants.METER_ID, "").trim();
-                                isValid(gqmid);
-                            }
-                        }
-                        // line starts with @ for switches
-                        else if (line.startsWith("@")) {
-                            line = line.trim();
-                            sToken = new StringTokenizer(line, " ");
-                            if (sToken.countTokens() <= 2) {
-                                line = line.toLowerCase();
-                                switchName = line.substring(0, line.indexOf(" "));
-                                new MeterUtils().manageSwitches(line, switches);
-                            }// Token count if ends
-                            else {// else part for empty switch value
-                                System.out.println(" [GQMETER] Invalid Switch Values are given");
-                                System.out.println(" [GQMETER] Process should be stopped now.....");
-                                System.exit(0);
-                            }
-                        } // else if ends
-                    }
-                    // Read the snmpAssets Section
-                    for (String line : snmpAssetLines) {
-                        line = line.trim();
-                        // line starts with # for Ignore the lines
-                        if (line.length() == 0 || line.startsWith("#")) {
-                            continue;
-                        }
-                        else {
-                            sToken = new StringTokenizer(line, " ");
-                            if (sToken.countTokens() == 2 || sToken.countTokens() == 3) {
-                                communityString = sToken.nextToken().trim();
-                                ipLowerbound = sToken.nextToken().trim();
-                                if (sToken.hasMoreTokens()) {
-                                    ipUpperbound = sToken.nextToken().trim();
-                                    if (isIPAddressValid(ipLowerbound) && isIPAddressValid(ipUpperbound)) {
-                                        // to check the lowerboundip is greater than the upperboundip
-                                        if (MeterUtils.ipComparator.compare(ipLowerbound, ipUpperbound) == -1) {
-                                            communityIPMap.put(ipLowerbound, communityString);
-                                            // Here we iterate the ip range and find & add those intermediate ips to map
-                                            while (!(ipLowerbound = MeterUtils.nextIpAddress(ipLowerbound))
-                                                    .equals(ipUpperbound)) {
-                                                communityIPMap.put(ipLowerbound, communityString);
-                                            }
-                                            communityIPMap.put(ipUpperbound, communityString);
-                                        }
-                                        // to check the lowerboundip and ipupperboundip as same
-                                        else if (MeterUtils.ipComparator.compare(ipLowerbound, ipUpperbound) == 0) {
-                                            communityIPMap.put(ipLowerbound, communityString);
-                                        }
-                                        // else part for Invalid IP range
-                                        else {
-                                            System.out.println(" [GQMETER] IP lower bound : " + ipLowerbound
-                                                    + "IP upper bound : " + ipUpperbound + " -  : Invalid ip range");
-                                            System.exit(0);
-                                        }
-                                    }
-                                    // else part for Invalid Upperbound and Lowerbound
-                                    else if (isIPAddressValid(ipLowerbound)) {
-                                        System.out.println(" [GQMETER] INVALID UPPERBOUNDIP:" + ipUpperbound);
-                                        communityIPMap.put(ipLowerbound, communityString);
-                                    }
-                                    else if (isIPAddressValid(ipUpperbound)) {
-                                        System.out.println(" [GQMETER] INVALID LOWERBOUNDIP:" + ipLowerbound);
-                                        communityIPMap.put(ipUpperbound, communityString);
-                                    }
-                                    else {
-                                        System.out.println(" [GQMETER] INVALID UPPERBOUNDIP AND LOWERBOUNDIP:");
-                                        System.out.println(" [GQMETER] " + ipLowerbound + "   " + ipUpperbound);
-                                    }
-                                }// if ends
-                                 // if line contains Lowerbound only
-                                else {
-                                    if (isIPAddressValid(ipLowerbound)) {
-                                        communityIPMap.put(ipLowerbound, communityString);
-                                    }
-                                    else {
-                                        System.out.println(" [GQMETER] Invalid IPAddress:" + ipLowerbound);
-                                        continue;
-                                    }
-                                }
-                            }// if ends
-                             // Missing community string or Ipaddress
-                            else {
-                                System.out.println(" [GQMETER] INVALID : entry -" + line);
-                            }
-                        } // else ends
-                    }// for loop ends
-                }// if ends
-                 // else part for asset file missing
-                else {
-                    System.out.println(" [GQMETER] Exception occured : Unable to locate the input file");
-                    System.exit(1);
-                }
+            	}
+            	
+            } // while file read ends
+	            
+            br.close();
+
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            System.out.println(" [GQMETER] Exception occured : " + e);
+        }
+        finally {
+            try {
+            	gqmResponse.setAssetScanned((short) communityIPMap.size());
+                gqmResponse.setErrorInformationList(gqerrorInfoList); // Added the errors to the GQMResponse
+                return communityIPMap; // returns not null map with all the asset objects value
             }
             catch (Exception e) {
-                e.printStackTrace();
-                System.out.println(" [GQMETER] Exception occured : Unable to locate the input file for processing : "
-                        + e);
-            }
-            finally {
-                try {
-                    if (null != assetFileStream) {
-                        assetFileStream.close();
-                    }
-                    gqmResponse.setAssetScanned((short) communityIPMap.size());
-                    gqmResponse.setErrorInformationList(gqerrorInfoList); // Added the errors to the GQMResponse
-                    return communityIPMap; // returns not null map with all the asset objects value
-                }
-                catch (Exception e) {
-                    System.out.println(" [GQMETER] Exception occured while closing the buffer after reading : " + e);
-                }
+                System.out.println(" [GQMETER] Exception occured while closing the buffer after reading : " + e);
             }
         }
+        
         return communityIPMap;
     }
 
@@ -401,9 +425,10 @@ public final class ITAssetDiscoverer {
 
         // The start time of the meter execution
         long startTime = System.currentTimeMillis();
-        new MeterUtils().compMeterTime = 0;
-        new MeterUtils().printMeterTime = 0;
-        new MeterUtils().nsrgMeterTime = 0;
+//        new MeterUtils().compMeterTime = 0;
+//        new MeterUtils().printMeterTime = 0;
+//        new MeterUtils().nsrgMeterTime = 0;
+        
         List<ProtocolData> assetsList = null;
 
         HashMap<String, String> communityIPMap = this.readInput(inputFilePath);
@@ -423,8 +448,7 @@ public final class ITAssetDiscoverer {
         gqmResponse.setVersion("1");
         gqmResponse.setGqmid(gqmid);
 
-        System.out.println(" [GQMETER] Total number of assets(ip address) in input file : "
-                + gqmResponse.getAssetScanned());
+        System.out.println(" [GQMETER] Total number of assets(ip address) in input file : "   + gqmResponse.getAssetScanned());
         System.out.println(" [GQMETER] List of snmp configured devices : " + this.getSnmpKnownIPList().toString());
         System.out.println(" [GQMETER] SNMP not configured on : " + this.getSnmpUnknownIPList().toString());
         System.out.println(" [GQMETER] SNMP walk succeeded count is : " + this.getSnmpKnownIPList().size());

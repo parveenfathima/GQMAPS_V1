@@ -46,6 +46,7 @@ public class MeterUtils {
     public long nsrgMeterTime = 0;
     public long storageMeterTime = 0;
     private int switchValueCount = 0;
+    
     public static final String restURL = "http://cloud.gqexchange.com:8080/GQGatekeeper/";
 
     // public static final String restURL = "http://localhost:8080/GQGatekeeper/";
@@ -487,8 +488,8 @@ public class MeterUtils {
     public HashMap<MeterProtocols, LinkedList<String>> manageSwitches(String line,
             HashMap<MeterProtocols, LinkedList<String>> assetSwitches) {
 
-        if (line.toLowerCase().startsWith(MeterConstants.COMPUTER_SWITCHS)) {
-            line = line.replace(MeterConstants.COMPUTER_SWITCHS, "").trim();
+        if (line.toLowerCase().startsWith(MeterConstants.COMPUTER_SWITCH)) {
+            line = line.replace(MeterConstants.COMPUTER_SWITCH, "").trim();
             LinkedList<String> compSwitchList = null;
             compSwitchList = new LinkedList<String>();
             for (String switches : line.split("\\|")) {
@@ -502,8 +503,8 @@ public class MeterUtils {
             }
             assetSwitches.put(MeterProtocols.COMPUTER, compSwitchList);
         }
-        else if (line.toLowerCase().startsWith(MeterConstants.PRINTER_SWITCHS)) {
-            line = line.replace(MeterConstants.PRINTER_SWITCHS, "").trim();
+        else if (line.toLowerCase().startsWith(MeterConstants.PRINTER_SWITCH)) {
+            line = line.replace(MeterConstants.PRINTER_SWITCH, "").trim();
             LinkedList<String> printerSwitchList = null;
             printerSwitchList = new LinkedList<String>();
             for (String switches : line.split("\\|")) {
@@ -516,8 +517,8 @@ public class MeterUtils {
             }
             assetSwitches.put(MeterProtocols.PRINTER, printerSwitchList);
         }
-        else if (line.toLowerCase().startsWith(MeterConstants.NSRG_SWITCHS)) {
-            line = line.replace(MeterConstants.NSRG_SWITCHS, "").trim();
+        else if (line.toLowerCase().startsWith(MeterConstants.NSRG_SWITCH)) {
+            line = line.replace(MeterConstants.NSRG_SWITCH, "").trim();
             LinkedList<String> nsrgSwitchList = null;
             nsrgSwitchList = new LinkedList<String>();
             for (String switches : line.split("\\|")) {
@@ -530,8 +531,8 @@ public class MeterUtils {
             }
             assetSwitches.put(MeterProtocols.NSRG, nsrgSwitchList);
         }
-        else if (line.toLowerCase().startsWith(MeterConstants.STORAGE_SWITCHS)) {
-            line = line.replace(MeterConstants.STORAGE_SWITCHS, "").trim();
+        else if (line.toLowerCase().startsWith(MeterConstants.STORAGE_SWITCH)) {
+            line = line.replace(MeterConstants.STORAGE_SWITCH, "").trim();
             LinkedList<String> storageSwitchList = null;
             storageSwitchList = new LinkedList<String>();
             for (String switches : line.split("\\|")) {

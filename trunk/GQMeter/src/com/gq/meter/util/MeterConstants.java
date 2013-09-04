@@ -40,17 +40,16 @@ public class MeterConstants {
 
     public static final String SNAPSHOT = "snap_shot";
 
-    public static final String COMPUTER_SWITCHS = "@computer";
+    public static final String COMPUTER_SWITCH = "@computer";
 
-    public static final String PRINTER_SWITCHS = "@printer";
+    public static final String PRINTER_SWITCH = "@printer";
 
-    public static final String NSRG_SWITCHS = "@nsrg";
+    public static final String NSRG_SWITCH =  "@nsrg";
 
-    public static final String STORAGE_SWITCHS = "@storage";
+    public static final String STORAGE_SWITCH = "@storage";
 
     public static final String METER_ID = "$meterid";
 
-    public static final String FULL_DETAILS = "full";
 
     public static final String NO_VALUE = "No value is found";
 

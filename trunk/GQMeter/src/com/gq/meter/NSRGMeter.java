@@ -95,8 +95,7 @@ public class NSRGMeter implements GQSNMPMeter {
             // ASSET ID , RUN ID STARTS HERE.
             id = new CPNId(runId, assetId);
             for (String element : toggleSwitches) { // main for loop starts
-                if (element.equalsIgnoreCase(MeterConstants.FULL_DETAILS)
-                        || element.equalsIgnoreCase(MeterConstants.SNAPSHOT)) { // main if loop starts
+                if (element.equalsIgnoreCase(MeterConstants.SNAPSHOT)) { // main if loop starts
                     sysIP = ipAddress;
 
                     // The following oid's is used to get number of ports
@@ -158,8 +157,7 @@ public class NSRGMeter implements GQSNMPMeter {
                 } // main if loop ends
 
                 // The following oid's is used to get the devices that are connected to NSRG.
-                if (element.equalsIgnoreCase(MeterConstants.FULL_DETAILS)
-                        || element.equalsIgnoreCase(MeterConstants.CONNECTED_DEVICES)) {// 1st if loop starts
+                if (element.equalsIgnoreCase(MeterConstants.CONNECTED_DEVICES)) {// 1st if loop starts
                     oidString = ".1.3.6.1.2.1.4.22.1.4";
                     rootOID = new OID(oidString);
                     result = MeterUtils.walk(rootOID, target);
