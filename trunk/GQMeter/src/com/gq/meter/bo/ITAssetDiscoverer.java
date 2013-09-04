@@ -47,11 +47,6 @@ public final class ITAssetDiscoverer {
     private String gqmid = null;
     private Pattern pattern;
     private Matcher matcher;
-    private int meterCount = 0;
-    private int computerCount = 0;
-    private int printerCount = 0;
-    private int nsrgCount = 0;
-    private int storageCount = 0;
     private Gson gson = new GsonBuilder().create();
     private GQMeterResponse gqmResponse = null;
     private LinkedList<String> snmpKnownIPList = null;
@@ -156,12 +151,24 @@ public final class ITAssetDiscoverer {
         String communityString = null;
         String ipUpperbound = null;
         String ipLowerbound = null;
+        String inputAssets;
+        String headerAssetsPart = null;
+        String snmpAssetsPart = null;
         StringTokenizer sToken = null;
         File assetsInputFile = null;
-
+        String switchName = null;
+        int headerLineCount = 0;
+        HashMap<String, Integer> headerMap = new HashMap<String, Integer>();
+        HashMap<String, String> switchMap = new HashMap<String, String>();
         HashMap<String, String> communityIPMap = new HashMap<String, String>();
         gqerrorInfoList = new LinkedList<GQErrorInformation>();
         gqmResponse.setGqmid("GQMeterResponse");
+
+        switchMap.put(MeterConstants.METER_ID, "METERID");
+        switchMap.put(MeterConstants.COMPUTER_SWITCHS, "COMPUTER");
+        switchMap.put(MeterConstants.PRINTER_SWITCHS, "PRINTER");
+        switchMap.put(MeterConstants.NSRG_SWITCHS, "NSRG");
+        switchMap.put(MeterConstants.STORAGE_SWITCHS, "STORAGE");
 
         if (null != inputFilePath && inputFilePath.trim().length() != 0) {
             try {
@@ -170,49 +177,48 @@ public final class ITAssetDiscoverer {
                 if (assetsInputFile.exists() && assetsInputFile.isFile()) {
 
                     assetFileStream = new FileInputStream(assetsInputFile);
-                    String inputAssets = MeterUtils.read(assetFileStream);
-
-                    if (!inputAssets.contains("$$")) {
-                        System.out.println(" [GQMETER] No valid delimeter on Input Assets Section..");
-                        System.out.println(" [GQMETER] Process Terminated Now..");
-                        System.exit(0);
-                    }
-                    String headerAssetsPart = inputAssets.substring(0, inputAssets.indexOf("$$"));
-                    String snmpAssetsPart = inputAssets.substring(inputAssets.indexOf("$$") + 2, inputAssets.length());
+                    inputAssets = MeterUtils.read(assetFileStream);
 
                     if (inputAssets == null || inputAssets.trim().length() == 0) {
                         System.out.println(" [GQMETER] *** The asset file is empty ***");
                         System.exit(1);
                     }// if ends
 
+                    if (!inputAssets.contains("$$")) {
+                        System.out.println(" [GQMETER] No valid delimeter on Input Assets Section..");
+                        System.out.println(" [GQMETER] Check Input File..");
+                        System.exit(0);
+                    }// if ends
+
+                    // To split the input file into 2 parts for validation depends on delimeter $$
+                    headerAssetsPart = inputAssets.substring(0, inputAssets.indexOf("$$"));
+                    snmpAssetsPart = inputAssets.substring(inputAssets.indexOf("$$") + 2, inputAssets.length());
                     String headerAssetLines[] = headerAssetsPart.trim().replace("\t", " ").split("\n");
                     String snmpAssetLines[] = snmpAssetsPart.trim().replace("\t", " ").split("\n");
 
                     // Validation code for Header Section
                     for (String line : headerAssetLines) {
+                        line = line.trim().toLowerCase();
+                        if (line.startsWith("#") || line.trim().length() == 0) {
+                            continue;
+                        }
                         if (line.startsWith(MeterConstants.METER_ID)
                                 || line.startsWith(MeterConstants.COMPUTER_SWITCHS)
                                 || line.startsWith(MeterConstants.PRINTER_SWITCHS)
                                 || line.startsWith(MeterConstants.NSRG_SWITCHS)
-                                || line.startsWith(MeterConstants.STORAGE_SWITCHS) || line.startsWith("#")
-                                || line.trim().length() == 0) {
-                            if (line.startsWith(MeterConstants.METER_ID)) {
-                                meterCount++;
+                                || line.startsWith(MeterConstants.STORAGE_SWITCHS) || line.startsWith("@")) {
+                            sToken = new StringTokenizer(line, " ");
+                            if (sToken.countTokens() >= 2) {
+                                switchName = line.substring(0, line.indexOf(" "));
+                                headerLineCount++;
+                                if (switchMap.containsKey(switchName)) {
+                                    headerMap.put(switchName, headerLineCount);
+                                }// inner if ends
                             }
-                            if (line.startsWith(MeterConstants.COMPUTER_SWITCHS)) {
-                                computerCount++;
-                            }
-                            if (line.startsWith(MeterConstants.PRINTER_SWITCHS)) {
-                                printerCount++;
-                            }
-                            if (line.startsWith(MeterConstants.NSRG_SWITCHS)) {
-                                nsrgCount++;
-                            }
-                            if (line.startsWith(MeterConstants.STORAGE_SWITCHS)) {
-                                storageCount++;
+                            else {
+                                headerLineCount--;
                             }
                         }// outer if ends
-                         // else part for Invalid Header
                         else {
                             System.out.println(" [GQMETER] Invalid Header Section..");
                             System.out.println(" [GQMETER] Process Terminated Now..");
@@ -220,27 +226,22 @@ public final class ITAssetDiscoverer {
                         }
                     }
                     // Check the default lines present or not.
-                    if (!(meterCount == 1 && computerCount == 1 && printerCount == 1 && nsrgCount == 1 && storageCount == 1)) {
+                    if (!(headerLineCount == headerMap.size() && headerLineCount == 5)) {
                         System.out.println(" [GQMETER] Invalid Header Section..");
                         System.out.println(" [GQMETER] Process Terminated Now..");
                         System.exit(0);
                     }
                     // Read the Header Section
                     for (String line : headerAssetLines) {
+                        line = line.trim().toLowerCase();
                         // line starts with # for Ignore the lines
-                        if (line.trim().length() == 0 || line.startsWith("#")) {
+                        if (line.length() == 0 || line.startsWith("#")) {
                             continue;
                         }
                         // line starts with $ for meterid
                         if (line.startsWith("$")) {
                             if (line.toLowerCase().startsWith(MeterConstants.METER_ID)) {
                                 gqmid = line.replace(MeterConstants.METER_ID, "").trim();
-                                // This Condition used to check meter id value is empty or not
-                                if (gqmid.isEmpty()) {
-                                    System.out.println(" [GQMETER] Meter Id is empty");
-                                    System.out.println(" [GQMETER] ..............Check Meter Id .............");
-                                    System.exit(0);
-                                }
                                 isValid(gqmid);
                             }
                         }
@@ -248,38 +249,14 @@ public final class ITAssetDiscoverer {
                         else if (line.startsWith("@")) {
                             line = line.trim();
                             sToken = new StringTokenizer(line, " ");
-                            if (gqmid != null) {
-                                if (sToken.countTokens() == 2) {
-                                    line = line.toLowerCase();
-                                    String switchName = line.substring(0, line.indexOf(" "));
-                                    String switchValueName = line.replace(switchName, "").trim();
-                                    // Check if whether valid switches and values or not
-                                    if (switchValueName.contains(MeterConstants.FULL_DETAILS)
-                                            || switchValueName.contains(MeterConstants.CONNECTED_DEVICES)
-                                            || switchValueName.contains(MeterConstants.SNAPSHOT)
-                                            || switchValueName.contains(MeterConstants.PROCESS)
-                                            || switchValueName.contains(MeterConstants.INSTALLED_SOFTWARE)) {
-                                        new MeterUtils().manageSwitches(line, switches);
-                                    }
-                                    // else part for Invalid Switch value
-                                    else {
-                                        System.out.println(" [GQMETER] Invalid Switch Value..");
-                                        System.out.println(" [GQMETER] Line:" + line);
-                                        System.out.println(" [GQMETER] Process terminated Now....");
-                                        System.exit(0);
-                                    }
-                                }// Token count if ends
-                                 // else part for empty switch value
-                                else {
-                                    System.out.println(" [GQMETER] Check Switch Value is empty....");
-                                    System.out.println(" [GQMETER] Process should be stopped now.....");
-                                    System.exit(0);
-                                }
-                            }// 1st if ends
-                             // else part for empty meter id
-                            else {
-                                System.out.println(" [GQMETER] Check Meter Id...");
-                                System.out.println(" [GQMETER] Process stopped........");
+                            if (sToken.countTokens() <= 2) {
+                                line = line.toLowerCase();
+                                switchName = line.substring(0, line.indexOf(" "));
+                                new MeterUtils().manageSwitches(line, switches);
+                            }// Token count if ends
+                            else {// else part for empty switch value
+                                System.out.println(" [GQMETER] Invalid Switch Values are given");
+                                System.out.println(" [GQMETER] Process should be stopped now.....");
                                 System.exit(0);
                             }
                         } // else if ends
@@ -435,6 +412,7 @@ public final class ITAssetDiscoverer {
             gqmResponse.addToAssetInformationList(assetsList);
         }
         else {
+            System.out.println(" [GQMETER] There is no valid IPAddresses are Given..");
             System.out.println(" [GQMETER] Process Terminated.....");
             System.exit(0);
         }
