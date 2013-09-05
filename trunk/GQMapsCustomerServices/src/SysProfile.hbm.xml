@@ -3,7 +3,7 @@
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <!-- Generated Aug 1, 2013 4:22:41 PM by Hibernate Tools 3.4.0.CR1 -->
 <hibernate-mapping>
-    <class name="com.gq.meter.object.SysProfile" table="sys_profile" catalog="gqmaps">
+    <class name="com.gq.meter.object.SysProfile" table="sys_profile">
         <id name="keyy" type="string">
             <column name="keyy" length="40" />
             <generator class="assigned" />

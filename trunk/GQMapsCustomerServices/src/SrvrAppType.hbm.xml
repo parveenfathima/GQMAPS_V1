@@ -3,7 +3,7 @@
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <!-- Generated Aug 1, 2013 4:22:41 PM by Hibernate Tools 3.4.0.CR1 -->
 <hibernate-mapping>
-    <class name="com.gq.meter.object.SrvrAppType" table="srvr_app_type" catalog="gqmaps">
+    <class name="com.gq.meter.object.SrvrAppType" table="srvr_app_type">
         <id name="srvrAppId" type="short">
             <column name="srvr_app_id" />
             <generator class="assigned" />
