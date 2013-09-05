@@ -2,17 +2,14 @@ package com.gq.meter.bo;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -58,13 +55,25 @@ public final class ITAssetDiscoverer {
 
     private HashMap<MeterProtocols, LinkedList<String>> switches = new HashMap<MeterProtocols, LinkedList<String>>();
 
-    /**
+    ClientConfig config;
+    Client client;
+    WebResource service;
+
+    public ITAssetDiscoverer() {
+		super();
+
+	    config = new DefaultClientConfig();
+	    client = Client.create(config);
+	    service = client.resource(MeterUtils.restURL);
+	}
+
+	/**
      * This method used to find the asset type
      * 
      * @param communityIPMap
      * @return
      */
-    private List<ProtocolData> findassets(HashMap<String, String> communityIPMap) {
+    private List<ProtocolData> findAssets(HashMap<String, String> communityIPMap) {
 
         String snmpVersion = null;
         String assetDesc = null;
@@ -152,7 +161,6 @@ public final class ITAssetDiscoverer {
     private HashMap<String, String> readInput(String inputFilePath) {
 
         File assetsInputFile = null;
-        String meterId = null;
         HashMap<String, String> communityIPMap = new HashMap<String, String>();
         gqerrorInfoList = new LinkedList<GQErrorInformation>();
         gqmResponse.setGqmid("GQMeterResponse");
@@ -212,7 +220,7 @@ public final class ITAssetDiscoverer {
                         System.out.println(" [GQMETER] Meter has special char , Process Terminating Now ..");
                         System.exit(0);
             		}
-            		meterId =  headerToken[1];
+            		gqmid =  headerToken[1];
            		}
             	else if ( keyy.equals(MeterConstants.COMPUTER_SWITCH)  || keyy.equals(MeterConstants.STORAGE_SWITCH) ) {
             		Map<String,Integer> tokenOcc = new HashMap<String,Integer>();
@@ -301,7 +309,7 @@ public final class ITAssetDiscoverer {
        		}
 
 			// send it to gate keeper and check if it is good.
-			isValid(meterId);
+			isValid(gqmid);
 
 			// *************************
             // process the data  section
@@ -383,18 +391,18 @@ public final class ITAssetDiscoverer {
 
     private String isValid(String gqmid) {
         try {
-            ClientConfig config = new DefaultClientConfig();
-            Client client = Client.create(config);
-            WebResource service = client.resource(MeterUtils.restURL);
-            service = service.path("gqm-gk").path("metercheck");
+            service = service.path("metercheck");
             System.out.println(" [GQMETER] Validating the expiry date for the meter " + gqmid);
             ClientResponse response = service.queryParam("meterId", gqmid).post(ClientResponse.class);
+            
             String resp = response.getEntity(String.class).trim();
             String resp1 = resp.substring(1, 6);
             String protocolId = resp.substring(6, (resp.length() - 1));
+            
             if (!MeterConstants.PROTOCOL_ID.equals(protocolId)) {
                 MeterConstants.PROTOCOL_ID = protocolId;
             }
+            
             if (resp1.equals("valid")) {
                 System.out.println(" [GQMETER] The MeterId: " + gqmid + " is valid");
             }
@@ -425,20 +433,17 @@ public final class ITAssetDiscoverer {
 
         // The start time of the meter execution
         long startTime = System.currentTimeMillis();
-//        new MeterUtils().compMeterTime = 0;
-//        new MeterUtils().printMeterTime = 0;
-//        new MeterUtils().nsrgMeterTime = 0;
-        
+
         List<ProtocolData> assetsList = null;
 
         HashMap<String, String> communityIPMap = this.readInput(inputFilePath);
+        
         if (communityIPMap.size() > 0) {
-            assetsList = findassets(communityIPMap);
+            assetsList = findAssets(communityIPMap);
             gqmResponse.addToAssetInformationList(assetsList);
         }
         else {
-            System.out.println(" [GQMETER] There is no valid IPAddresses are Given..");
-            System.out.println(" [GQMETER] Process Terminated.....");
+            System.out.println(" [GQMETER] There are no valid IPAddresses given , Process Terminated..");
             System.exit(0);
         }
 
@@ -449,16 +454,14 @@ public final class ITAssetDiscoverer {
         gqmResponse.setGqmid(gqmid);
 
         System.out.println(" [GQMETER] Total number of assets(ip address) in input file : "   + gqmResponse.getAssetScanned());
-        System.out.println(" [GQMETER] List of snmp configured devices : " + this.getSnmpKnownIPList().toString());
+        System.out.println(" [GQMETER] SNMP configured on : " + this.getSnmpKnownIPList().toString());
         System.out.println(" [GQMETER] SNMP not configured on : " + this.getSnmpUnknownIPList().toString());
-        System.out.println(" [GQMETER] SNMP walk succeeded count is : " + this.getSnmpKnownIPList().size());
-        System.out.println(" [GQMETER] TOTAL duration taken for meter execution : " + (endTime - startTime));
+        System.out.println(" [GQMETER] SNMP walk succeess count is : " + this.getSnmpKnownIPList().size());
+        System.out.println(" [GQMETER] TOTAL taken for meter execution : " + (endTime - startTime));
         System.out.println(" [GQMETER] ended successfully ....");
+        
         // Sending the generated json output to the server
-        ClientConfig config = new DefaultClientConfig();
-        Client client = Client.create(config);
-        WebResource service = client.resource(MeterUtils.restURL);
-        service = service.path("gqm-gk").path("gatekeeper");
+        service = service.path("gatekeeper");
         Form form = new Form();
         form.add("gqMeterResponse", gson.toJson(gqmResponse));
         form.add("summary", "Sending the data from GQMeter to GQGatekeeper");
