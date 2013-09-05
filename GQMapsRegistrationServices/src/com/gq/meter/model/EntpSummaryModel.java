@@ -57,7 +57,7 @@ public class EntpSummaryModel {
             session.beginTransaction();
             // String hql =
             // "select a.sid, a.enterpriseId, a.blCd, a.eName, a.phone, a.email, a.userId, a.passwd, a.secQtn1, a.ans1, a.secQtn2, a.ans2, a.storeFwd, a.fwdUrl, a.noOfEmpl, a.entSqft, a.entAssetCount, a.dcSqft, a.dcAssetCount, a.dcUsePctg, a.dcTemp, a.regCmplt, a.active, a.comments, a.creDttm, count(b.meterId), c.expDttm from Enterprise a, EnterpriseMeter b, GateKeeper c  where a.enterpriseId = b.enterpriseId AND a.enterpriseId = c.enterpriseId group by a.enterpriseId";
-            String hql = "select e.sid, e.enterpriseId, e.blCd, e.eName, e.phone, e.email, e.userId, e.passwd, e.secQtn1, e.ans1, e.secQtn2, e.ans2, e.storeFwd, e.fwdUrl, e.noOfEmpl, e.entSqft, e.entAssetCount, e.dcSqft, e.dcAssetCount, e.dcUsePctg, e.dcTemp, e.regCmplt, e.comments, e.creDttm, (select count(em.meterId) from EnterpriseMeter em where e.enterpriseId = em.enterpriseId), (select g.expDttm from GateKeeper g where e.enterpriseId = g.enterpriseId) from Enterprise e order by regCmplt, sid desc";
+            String hql = "select e.sid, e.enterpriseId, e.blCd, e.eName, e.phone, e.email, e.userId, e.passwd, e.secQtn1, e.ans1, e.secQtn2, e.ans2, e.storeFwd, e.fwdUrl, e.noOfEmpl, e.entSqft, e.entAssetCount, e.dcSqft, e.dcAssetCount, e.dcUsePctg, e.dcTemp, e.regCmplt, e.comments, e.creDttm, (select count(em.meterId) from EnterpriseMeter em where e.enterpriseId = em.enterpriseId), (select g.expDttm from GateKeeper g where e.enterpriseId = g.enterpriseId) from Enterprise e order by regCmplt, sid";
             Query query = session.createQuery(hql);
             List<Object[]> summaryResult = query.list();
             System.out.println(summaryResult);
