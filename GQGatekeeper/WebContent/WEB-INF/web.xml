@@ -14,7 +14,7 @@
   
   <servlet-mapping>
     <servlet-name>GQGatekeeperJerseyRESTService</servlet-name>
-    <url-pattern>/gqm-gk/*</url-pattern>
+    <url-pattern>/*</url-pattern>
   </servlet-mapping>
   
   <welcome-file-list>
