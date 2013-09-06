@@ -50,20 +50,18 @@ public final class ITAssetDiscoverer {
     private Matcher matcher;
     private Gson gson = new GsonBuilder().create();
     private GQMeterResponse gqmResponse = null;
+
     private LinkedList<String> snmpKnownIPList = null;
     private LinkedList<String> snmpUnknownIPList = null;
+    private HashMap<MeterProtocols, LinkedList<String>> switches = new HashMap<MeterProtocols, LinkedList<String>>(4);
 
-    private HashMap<MeterProtocols, LinkedList<String>> switches = new HashMap<MeterProtocols, LinkedList<String>>();
-
-    ClientConfig config;
     Client client;
     WebResource service;
 
     public ITAssetDiscoverer() {
 		super();
 
-	    config = new DefaultClientConfig();
-	    client = Client.create(config);
+	    client = Client.create(new DefaultClientConfig());
 	    service = client.resource(MeterUtils.restURL);
 	}
 
@@ -163,7 +161,7 @@ public final class ITAssetDiscoverer {
         File assetsInputFile = null;
         HashMap<String, String> communityIPMap = new HashMap<String, String>();
         gqerrorInfoList = new LinkedList<GQErrorInformation>();
-        gqmResponse.setGqmid("GQMeterResponse");
+       // gqmResponse.setGqmid("GQMeterResponse");
 
         if ( inputFilePath == null || inputFilePath.trim().length() == 0) {
             System.out.println(" [GQMETER] Not a valid input file argument");
@@ -232,11 +230,11 @@ public final class ITAssetDiscoverer {
             		}
 
             		String switchToken[] = headerToken[1].split("\\|");
-                    System.out.println(" -- num tokens  .."+ switchToken.length);
-                         		
+                    
+                    LinkedList<String> switchList = new LinkedList<String>();
+                    
                     for (String token : switchToken) {
                     	token = token.toLowerCase();
-                        System.out.println(" -- curr token  .."+ token );
 
                     	if ( token.equals(MeterConstants.INSTALLED_SOFTWARE) || token.equals(MeterConstants.CONNECTED_DEVICES) || 
                     			token.equals(MeterConstants.PROCESS) || token.equals(MeterConstants.SNAPSHOT)	) {
@@ -246,12 +244,21 @@ public final class ITAssetDiscoverer {
                                 System.exit(0);
                     		}
                     		tokenOcc.put(token, 0); // value doesnt matter , may be a list is enough for this - ss sep 4 , 2013
+                    		// put it in switch map for findassets method to use
+                    		switchList.add(token);
                     	}
                     	else {
                             System.out.println(" [GQMETER] Computer/Storage switch has invalid entry , Process Terminating Now ..");
                             System.exit(0);
                     	}
-                    }               		
+
+                    }   
+                    if ( keyy.equals(MeterConstants.COMPUTER_SWITCH)  ) {
+                		switches.put(MeterProtocols.COMPUTER, switchList);
+                    }
+                    else {
+                		switches.put(MeterProtocols.STORAGE, switchList);
+                    }
             	} // comp switch proc ends
             	else if ( keyy.equals(MeterConstants.PRINTER_SWITCH) || keyy.equals(MeterConstants.NSRG_SWITCH) ) {
             		
@@ -263,6 +270,8 @@ public final class ITAssetDiscoverer {
 
             		Map<String,Integer> tokenOcc = new HashMap<String,Integer>();
             		String switchToken[] = headerToken[1].split("\\|");
+                    LinkedList<String> switchList = new LinkedList<String>();
+
                     for (String token : switchToken) {
                     	token = token.toLowerCase();
                     	if (  token.equals(MeterConstants.CONNECTED_DEVICES)  || token.equals(MeterConstants.SNAPSHOT)	) {
@@ -272,12 +281,20 @@ public final class ITAssetDiscoverer {
                                 System.exit(0);
                     		}
                     		tokenOcc.put(token, 0); // value doesnt matter , may be a list is enough for this - ss sep 4 , 2013
-                    	}
+                    		// put it in switch map for findassets method to use
+                    		switchList.add(token);
+                     	}
                     	else {
                             System.out.println(" [GQMETER] Printer/NSRG switch has invalid entry , Process Terminating Now ..");
                             System.exit(0);
                     	}
-                    }               		
+                    } 
+                    if ( keyy.equals(MeterConstants.PRINTER_SWITCH)  ) {
+                		switches.put(MeterProtocols.PRINTER, switchList);
+                    }
+                    else {
+                		switches.put(MeterProtocols.NSRG, switchList);
+                    }
             	}
             	else {
                     System.out.println(" [GQMETER] Invalid Header Section entry , Process Terminating Now ..");
@@ -391,9 +408,8 @@ public final class ITAssetDiscoverer {
 
     private String isValid(String gqmid) {
         try {
-            service = service.path("metercheck");
             System.out.println(" [GQMETER] Validating the expiry date for the meter " + gqmid);
-            ClientResponse response = service.queryParam("meterId", gqmid).post(ClientResponse.class);
+            ClientResponse response = service.path("metercheck").queryParam("meterId", gqmid).post(ClientResponse.class);
             
             String resp = response.getEntity(String.class).trim();
             String resp1 = resp.substring(1, 6);
@@ -453,20 +469,22 @@ public final class ITAssetDiscoverer {
         gqmResponse.setVersion("1");
         gqmResponse.setGqmid(gqmid);
 
-        System.out.println(" [GQMETER] Total number of assets(ip address) in input file : "   + gqmResponse.getAssetScanned());
+        System.out.println(" [GQMETER] JSON : " + gson.toJson(gqmResponse));
+        System.out.println(" [GQMETER] Total number of assets(ip address) in input file : " + gqmResponse.getAssetScanned());
         System.out.println(" [GQMETER] SNMP configured on : " + this.getSnmpKnownIPList().toString());
         System.out.println(" [GQMETER] SNMP not configured on : " + this.getSnmpUnknownIPList().toString());
         System.out.println(" [GQMETER] SNMP walk succeess count is : " + this.getSnmpKnownIPList().size());
         System.out.println(" [GQMETER] TOTAL taken for meter execution : " + (endTime - startTime));
-        System.out.println(" [GQMETER] ended successfully ....");
         
         // Sending the generated json output to the server
-        service = service.path("gatekeeper");
         Form form = new Form();
         form.add("gqMeterResponse", gson.toJson(gqmResponse));
         form.add("summary", "Sending the data from GQMeter to GQGatekeeper");
-        Builder builder = service.type(MediaType.APPLICATION_JSON);
+        Builder builder = service.path("gatekeeper").type(MediaType.APPLICATION_JSON);
         ClientResponse response = builder.post(ClientResponse.class, form);
+
+        System.out.println(" [GQMETER] ended successfully ...." + response.getStatus());
+
     }
 
     public static void main(String[] args) throws IOException {
