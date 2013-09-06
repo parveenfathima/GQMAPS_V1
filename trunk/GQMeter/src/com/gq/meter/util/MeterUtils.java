@@ -45,7 +45,6 @@ public class MeterUtils {
     public long printMeterTime = 0;
     public long nsrgMeterTime = 0;
     public long storageMeterTime = 0;
-    private int switchValueCount = 0;
     
     public static final String restURL = "http://cloud.gqexchange.com:8080/GQGatekeeper/";
 
@@ -304,19 +303,6 @@ public class MeterUtils {
         return ipList;
     } // getIpAddressesInInclusiveRange ends
 
-    /**
-     * @param is
-     * @return
-     * @throws IOException
-     */
-    public static String read(InputStream is) throws IOException {
-        StringWriter sessions = new StringWriter();
-        int c;
-        while ((c = is.read()) != -1) {
-            sessions.write(c);
-        }
-        return sessions.toString();
-    }// read ends
 
     /**
      * This method returns a Target, which contains information about where the data should be fetched and how.
@@ -478,81 +464,6 @@ public class MeterUtils {
         return secs;
     }
 
-    /**
-     * This mmethod used to read the meterid and meter switches from the asset file
-     * 
-     * @param line
-     * @param assetSwitches
-     * @return
-     */
-    public HashMap<MeterProtocols, LinkedList<String>> manageSwitches(String line,
-            HashMap<MeterProtocols, LinkedList<String>> assetSwitches) {
-
-        if (line.toLowerCase().startsWith(MeterConstants.COMPUTER_SWITCH)) {
-            line = line.replace(MeterConstants.COMPUTER_SWITCH, "").trim();
-            LinkedList<String> compSwitchList = null;
-            compSwitchList = new LinkedList<String>();
-            for (String switches : line.split("\\|")) {
-                if (switches.equals("snap_shot") || switches.equals("conn_devices") || switches.equals("process")
-                        || switches.equals("inst_sw")) {
-                    compSwitchList.add(switches);
-                }
-                else {
-                    switchValueCount++;
-                }
-            }
-            assetSwitches.put(MeterProtocols.COMPUTER, compSwitchList);
-        }
-        else if (line.toLowerCase().startsWith(MeterConstants.PRINTER_SWITCH)) {
-            line = line.replace(MeterConstants.PRINTER_SWITCH, "").trim();
-            LinkedList<String> printerSwitchList = null;
-            printerSwitchList = new LinkedList<String>();
-            for (String switches : line.split("\\|")) {
-                if (switches.equals("snap_shot") || switches.equals("conn_devices")) {
-                    printerSwitchList.add(switches);
-                }
-                else {
-                    switchValueCount++;
-                }
-            }
-            assetSwitches.put(MeterProtocols.PRINTER, printerSwitchList);
-        }
-        else if (line.toLowerCase().startsWith(MeterConstants.NSRG_SWITCH)) {
-            line = line.replace(MeterConstants.NSRG_SWITCH, "").trim();
-            LinkedList<String> nsrgSwitchList = null;
-            nsrgSwitchList = new LinkedList<String>();
-            for (String switches : line.split("\\|")) {
-                if (switches.equals("snap_shot") || switches.equals("conn_devices")) {
-                    nsrgSwitchList.add(switches);
-                }
-                else {
-                    switchValueCount++;
-                }
-            }
-            assetSwitches.put(MeterProtocols.NSRG, nsrgSwitchList);
-        }
-        else if (line.toLowerCase().startsWith(MeterConstants.STORAGE_SWITCH)) {
-            line = line.replace(MeterConstants.STORAGE_SWITCH, "").trim();
-            LinkedList<String> storageSwitchList = null;
-            storageSwitchList = new LinkedList<String>();
-            for (String switches : line.split("\\|")) {
-                if (switches.equals("snap_shot")) {
-                    storageSwitchList.add(switches);
-                }
-                else {
-                    switchValueCount++;
-                }
-            }
-            assetSwitches.put(MeterProtocols.STORAGE, storageSwitchList);
-        }
-        if (switchValueCount != 0) {
-            System.out.println(" [GQMETER] Invalid Switch Value/Not applicable to Current Switch..");
-            System.out.println(" [GQMETER] Line:" + line);
-            System.out.println(" [GQMETER] Process terminated Now....");
-            System.exit(0);
-        }
-        return assetSwitches;
-    }
 
     /**
      * This method used to convert the given ip address to a numeric value
