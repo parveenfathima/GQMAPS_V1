@@ -14,34 +14,33 @@ import com.gq.meter.object.Printer;
 import com.gq.meter.object.PrinterConnDevice;
 import com.gq.meter.object.PrinterSnapshot;
 
+import com.gq.util.DynamicSessionUtil;
 import com.gq.util.GQEDPConstants;
-import com.gq.util.HibernateUtil;
+
+/**
+ * @author parveen
+ */
 
 public class GqMeterPrinter {
 
     public static void insertData(Printer printer, GQMeterResponse gqmResponse, Long runId) {
+
         String meterId = gqmResponse.getGqmid();
         String enterpriseId = meterId.split("_")[0];
+
         Session session = null;
         SessionFactory sessionFactory = null;
+
         try {
             GQEDPConstants.logger.debug("Start a process to read a HIBERNATE xml file in GQMeterPrinter ");
             String dbInstanceName = "gqm" + enterpriseId;
-            String url = "jdbc:mysql://localhost:3306/" + dbInstanceName + "?autoReconnect=true";
+
             // This step will read hibernate.cfg.xml and prepare hibernate for use
-            if (HibernateUtil.SessionFactoryListMap.containsKey(dbInstanceName)) {
-                sessionFactory = HibernateUtil.SessionFactoryListMap.get(dbInstanceName);
-                if (sessionFactory == null) {
-                    sessionFactory = new HibernateUtil().dynamicSessionFactory(url);
-                    HibernateUtil.SessionFactoryListMap.put(dbInstanceName, sessionFactory);
-                }
-            }
-            else {
-                sessionFactory = new HibernateUtil().dynamicSessionFactory(url);
-                HibernateUtil.SessionFactoryListMap.put(dbInstanceName, sessionFactory);
-            }
+            sessionFactory = DynamicSessionUtil.dynamicSessionFactory(dbInstanceName);
+
             session = sessionFactory.getCurrentSession();
             session.beginTransaction();
+
             GQEDPConstants.logger.info("Session Successfully started for Printer");
 
             CPNId cid = printer.getId();
