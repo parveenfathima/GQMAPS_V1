@@ -41,7 +41,7 @@ public class GQDataXchangeController {
             Client client = Client.create(config);
 
             WebResource service = client.resource(fwdUrl);
-            service = service.path("gqm-gqedp").path("gqentdataprocessor");
+            service = service.path("gqentdataprocessor");
 
             Form form = new Form();
             form.add("gqMeterResponse", gson.toJson(gqmResponse));
