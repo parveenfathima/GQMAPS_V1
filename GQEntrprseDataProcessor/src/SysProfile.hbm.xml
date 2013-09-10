@@ -5,7 +5,7 @@
 <hibernate-mapping>
     <class name="com.gq.meter.object.SysProfile" table="sys_profile">
         <id name="keyy" type="string">
-            <column name="key" length="20" />
+            <column name="keyy" length="20" />
             <generator class="assigned" />
         </id>
         <property name="value" type="string">
