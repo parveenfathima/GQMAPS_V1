@@ -59,12 +59,5 @@
         <property name="monthlyRent" type="java.lang.Integer">
             <column name="monthly_rent" />
         </property>
-        
-        <set name="assets" table="asset" inverse="true" lazy="true" fetch="select">
-            <key>
-                <column name="ctlg_id" length="20" />
-            </key>
-            <one-to-many class="com.gq.meter.object.Asset" />
-        </set>
     </class>
 </hibernate-mapping>
