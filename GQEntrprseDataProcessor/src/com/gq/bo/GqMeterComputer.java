@@ -18,9 +18,13 @@ import com.gq.meter.object.CompSnapshot;
 import com.gq.meter.object.Computer;
 import com.gq.meter.object.OsType;
 
+import com.gq.util.DynamicSessionUtil;
 import com.gq.util.GQEDPConstants;
-import com.gq.util.HibernateUtil;
 
+/**
+ * @author parveen
+ */
+// This class takes care of inserting computer switch data's to database
 public class GqMeterComputer {
 
     public static void insertData(Computer computer, GQMeterResponse gqmResponse, Long runId) {
@@ -29,26 +33,18 @@ public class GqMeterComputer {
         String enterpriseId = meterId.split("_")[0];
         Session session = null;
         SessionFactory sessionFactory = null;
+
         try {
             GQEDPConstants.logger.debug("Start a process to read a HIBERNATE xml file in GQMeterComputer ");
             String dbInstanceName = "gqm" + enterpriseId;
-            String url = "jdbc:mysql://localhost:3306/" + dbInstanceName + "?autoReconnect=true";
+
             // This step will read hibernate.cfg.xml and prepare hibernate for use
-            if (HibernateUtil.SessionFactoryListMap.containsKey(dbInstanceName)) {
-                sessionFactory = HibernateUtil.SessionFactoryListMap.get(dbInstanceName);
-                if (sessionFactory == null) {
-                    sessionFactory = new HibernateUtil().dynamicSessionFactory(url);
-                    HibernateUtil.SessionFactoryListMap.put(dbInstanceName, sessionFactory);
-                }
-            }
-            else {
-                sessionFactory = new HibernateUtil().dynamicSessionFactory(url);
-                HibernateUtil.SessionFactoryListMap.put(dbInstanceName, sessionFactory);
-            }
+            sessionFactory = DynamicSessionUtil.dynamicSessionFactory(dbInstanceName);
+
             session = sessionFactory.getCurrentSession();
             session.beginTransaction();
-            GQEDPConstants.logger.info(" Session successfully started for GQMeterComputer");
 
+            GQEDPConstants.logger.info(" Session successfully started for GQMeterComputer");
             CPNId cid = computer.getId();
             String assetId = cid.getAssetId();
             cid.setRunId(runId);
