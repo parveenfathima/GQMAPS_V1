@@ -10,10 +10,6 @@ import com.gq.meter.util.CustomerServiceConstant;
 import com.gq.meter.object.Asset;
 import com.gq.meter.object.GetAsset;
 
-import java.sql.Timestamp;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -27,7 +23,7 @@ public class AssetEditModel {
         try {
             System.out.println("Enterprise Id:" + enterpriseId);
             String dbInstanceName = "gqm" + enterpriseId;
-            String url = "jdbc:mysql://cloud.gqexchange.com:3306/" + dbInstanceName + "?autoReconnect=true";
+            String url = "jdbc:mysql://localhost:3306/" + dbInstanceName + "?autoReconnect=true";
             if (HibernateUtil.SessionFactoryListMap.containsKey(dbInstanceName)) {
                 sessionFactory = HibernateUtil.SessionFactoryListMap.get(dbInstanceName);
                 if (sessionFactory == null) {
@@ -69,7 +65,7 @@ public class AssetEditModel {
         Date currentDate = null;
         try {
             String dbInstanceName = "gqm" + enterpriseId;
-            String url = "jdbc:mysql://cloud.gqexchange.com:3306/" + dbInstanceName + "?autoReconnect=true";
+            String url = "jdbc:mysql://localhost:3306/" + dbInstanceName + "?autoReconnect=true";
             if (HibernateUtil.SessionFactoryListMap.containsKey(dbInstanceName)) {
                 sessionFactory = HibernateUtil.SessionFactoryListMap.get(dbInstanceName);
                 if (sessionFactory == null) {
