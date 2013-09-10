@@ -12,8 +12,12 @@ import com.gq.meter.object.CPNId;
 import com.gq.meter.object.Storage;
 import com.gq.meter.object.StorageSnpsht;
 
+import com.gq.util.DynamicSessionUtil;
 import com.gq.util.GQEDPConstants;
-import com.gq.util.HibernateUtil;
+
+/**
+ * @author parveen
+ */
 
 public class GqMeterStorage {
 
@@ -23,29 +27,24 @@ public class GqMeterStorage {
         String enterpriseId = meterId.split("_")[0];
         Session session = null;
         SessionFactory sessionFactory = null;
+
         try {
+
             GQEDPConstants.logger.debug("Start a process to read a HIBERNATE xml file in GQMeterStorage ");
             String dbInstanceName = "gqm" + enterpriseId;
-            String url = "jdbc:mysql://localhost:3306/" + dbInstanceName + "?autoReconnect=true";
+
             // This step will read hibernate.cfg.xml and prepare hibernate for use
-            if (HibernateUtil.SessionFactoryListMap.containsKey(dbInstanceName)) {
-                sessionFactory = HibernateUtil.SessionFactoryListMap.get(dbInstanceName);
-                if (sessionFactory == null) {
-                    sessionFactory = new HibernateUtil().dynamicSessionFactory(url);
-                    HibernateUtil.SessionFactoryListMap.put(dbInstanceName, sessionFactory);
-                }
-            }
-            else {
-                sessionFactory = new HibernateUtil().dynamicSessionFactory(url);
-                HibernateUtil.SessionFactoryListMap.put(dbInstanceName, sessionFactory);
-            }
+            sessionFactory = DynamicSessionUtil.dynamicSessionFactory(dbInstanceName);
+
             session = sessionFactory.getCurrentSession();
             session.beginTransaction();
+
             GQEDPConstants.logger.info("Session Successfully started for Storage");
 
             CPNId cid = storage.getId();
             String assetId = cid.getAssetId();
             cid.setRunId(runId);
+
             // inserting asset
             GQEDPConstants.logger.debug("Create a Query to inserting a values to asset table in GQMeterStorage");
             String hql = "FROM Asset WHERE assetId = :ASSET_ID";
