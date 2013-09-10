@@ -48,7 +48,7 @@ public class GqEDPFilter {
         try {
             GQEDPConstants.logger.debug("Start to read a hibernate file for GQEDPFilter");
             String dbInstanceName = "gqm" + enterpriseId;
-            String url = "jdbc:mysql://192.168.1.95:3306/" + dbInstanceName + "?autoReconnect=true";
+            String url = "jdbc:mysql://localhost:3306/" + dbInstanceName + "?autoReconnect=true";
             // This step will read hibernate.cfg.xml and prepare hibernate for use
             if (HibernateUtil.SessionFactoryListMap.containsKey(dbInstanceName)) {
                 sessionFactory = HibernateUtil.SessionFactoryListMap.get(dbInstanceName);

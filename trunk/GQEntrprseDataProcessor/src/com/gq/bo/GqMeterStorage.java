@@ -26,7 +26,7 @@ public class GqMeterStorage {
         try {
             GQEDPConstants.logger.debug("Start a process to read a HIBERNATE xml file in GQMeterStorage ");
             String dbInstanceName = "gqm" + enterpriseId;
-            String url = "jdbc:mysql://192.168.1.95:3306/" + dbInstanceName + "?autoReconnect=true";
+            String url = "jdbc:mysql://localhost:3306/" + dbInstanceName + "?autoReconnect=true";
             // This step will read hibernate.cfg.xml and prepare hibernate for use
             if (HibernateUtil.SessionFactoryListMap.containsKey(dbInstanceName)) {
                 sessionFactory = HibernateUtil.SessionFactoryListMap.get(dbInstanceName);
