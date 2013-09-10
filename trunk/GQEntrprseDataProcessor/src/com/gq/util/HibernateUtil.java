@@ -1,21 +1,24 @@
 package com.gq.util;
 
-import java.util.HashMap;
 import org.hibernate.SessionFactory;
-import org.hibernate.cfg.Configuration;
+import org.hibernate.cfg.AnnotationConfiguration;
 
 public class HibernateUtil {
 
-    public SessionFactory sessionFactory;
+    private static final SessionFactory sessionFactory = buildSessionFactory();
 
-    public static HashMap<String, SessionFactory> SessionFactoryListMap = new HashMap<String, SessionFactory>();
+    private static SessionFactory buildSessionFactory() {
+        try {
+            // Create the SessionFactory from hibernate.cfg.xml
+            return new AnnotationConfiguration().configure().buildSessionFactory();
+        }
+        catch (Throwable ex) {
+            System.err.println("GQGatekeeper : Initial SessionFactory creation failed." + ex);
+            throw new ExceptionInInitializerError(ex);
+        }
+    }
 
-    public SessionFactory dynamicSessionFactory(String url) {
-        SessionFactory sessionFactory = null;
-        Configuration configuration = new Configuration();
-        configuration.configure();
-        configuration.setProperty("hibernate.connection.url", url);
-        sessionFactory = configuration.buildSessionFactory();
+    public static SessionFactory getSessionFactory() {
         return sessionFactory;
     }
 }
