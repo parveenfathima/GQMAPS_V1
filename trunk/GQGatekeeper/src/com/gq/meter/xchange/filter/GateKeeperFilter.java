@@ -22,6 +22,7 @@ import com.gq.meter.xchange.util.HibernateUtil;
 
 /**
  * @author Chandru
+ * @change rathish,parveen
  */
 // this class is takes care of validating and distributing incoming requests
 public class GateKeeperFilter {
@@ -248,23 +249,30 @@ public class GateKeeperFilter {
         try {
             session = HibernateUtil.getSessionFactory().getCurrentSession();
             session.beginTransaction();
+
             String hql = "select a.expDttm from GateKeeper a, EnterpriseMeter b where b.enterpriseId = a.enterpriseId and b.meterId = :METER_ID";
             GQGateKeeperConstants.logger.info("GATEKEEPER ::: " + hql);
             Query query = session.createQuery(hql);
             query.setParameter("METER_ID", meterId);
+
             GQGateKeeperConstants.logger.info("meterid before query Execution" + meterId);
+
             List<GateKeeper> gatekeeperResult = query.list();
             String hql1 = "select protocolId from EnterpriseMeter where meterId= :METER_ID";
             Query query1 = session.createQuery(hql1);
             query1.setParameter("METER_ID", meterId);
+
             List<GateKeeper> gatekeeperResult1 = query1.list();
+
             GQGateKeeperConstants.logger.debug("Protocol Id from GateKeeperResult:" + gatekeeperResult1.get(0));
             GQGateKeeperConstants.logger.debug("Result size After Query Execution " + gatekeeperResult.size());
             GQGateKeeperConstants.logger.debug("Contents After Query Execution " + gatekeeperResult.get(0));
             GQGateKeeperConstants.logger.debug("Before returning to Service " + gatekeeperResult);
+
             List<GateKeeper> finalGateKeeperResult = new ArrayList<GateKeeper>();
             finalGateKeeperResult.addAll(gatekeeperResult);
             finalGateKeeperResult.addAll(gatekeeperResult1);
+
             return finalGateKeeperResult;
         }
         catch (Exception e) {
@@ -277,7 +285,6 @@ public class GateKeeperFilter {
                 if (session.isOpen()) {
                     session.flush();
                     session.close();
-
                 }
             }
             catch (Exception e) {
