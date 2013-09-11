@@ -11,55 +11,57 @@ import com.gq.meter.object.DevCtlg;
 import com.gq.meter.object.SrvrAppType;
 import com.gq.meter.object.CompType;
 import com.gq.meter.object.AssetImp;
+
 import com.gq.meter.util.CustomerServiceConstant;
-import com.gq.meter.util.HibernateUtil;
+import com.gq.meter.util.DynamicSessionUtil;
 
+/**
+ * @author parveen
+ * 
+ */
+// This class is used to getting domain data's for requesting enterpriseId
 public class MapsDomainModel {
-
+    // Getting all domain details
     public MapsDomainBean getAllMapsDomainDetails(String enterpriseId) {
+
         Session session = null;
         MapsDomainBean mapsDomainServices = null;
         SessionFactory sessionFactory = null;
+
         try {
             System.out.println("Enterprise Id:" + enterpriseId);
             String dbInstanceName = "gqm" + enterpriseId;
-            String url = "jdbc:mysql://localhost:3306/" + dbInstanceName + "?autoReconnect=true";
-            if (HibernateUtil.SessionFactoryListMap.containsKey(dbInstanceName)) {
-                sessionFactory = HibernateUtil.SessionFactoryListMap.get(dbInstanceName);
-                if (sessionFactory == null) {
-                    sessionFactory = new HibernateUtil().dynamicSessionFactory(url);
-                    HibernateUtil.SessionFactoryListMap.put(dbInstanceName, sessionFactory);
-                }
-            }
-            else {
-                sessionFactory = new HibernateUtil().dynamicSessionFactory(url);
-                HibernateUtil.SessionFactoryListMap.put(dbInstanceName, sessionFactory);
-            }
+            // Create a session factory for requesting enterprise
+            sessionFactory = DynamicSessionUtil.dynamicSessionFactory(dbInstanceName);
+
+            // create a session to start a transaction
             session = sessionFactory.getCurrentSession();
             session.beginTransaction();
+
             // Getting Device Catalog details
             String devCtlg = "FROM DevCtlg";
             Query devCtlgQuery = session.createQuery(devCtlg);
             List<DevCtlg> devCtlgResult = devCtlgQuery.list();
+
             // Getting ServerApplciation Type
             String srvrAppType = "FROM SrvrAppType";
             Query srvrAppTypeQuery = session.createQuery(srvrAppType);
             List<SrvrAppType> srvrAppTypeResult = srvrAppTypeQuery.list();
+
             // Getting Computer Type
             String compType = "FROM CompType";
             Query compTypeQuery = session.createQuery(compType);
             List<CompType> compTypeResult = compTypeQuery.list();
+
             // Getting Asset Imp Levels
             String assetImp = "FROM AssetImp";
             Query assetImpQuery = session.createQuery(assetImp);
             List<AssetImp> assetImpResult = assetImpQuery.list();
 
             mapsDomainServices = new MapsDomainBean(devCtlgResult, srvrAppTypeResult, compTypeResult, assetImpResult);
-
         }
         catch (Exception e) {
-            CustomerServiceConstant.logger.error(
-                    " [MapsDomainModel]  Exception occured while fetching the CustomerServiceDetails ", e);
+            CustomerServiceConstant.logger.error(" Exception occured while fetching the CustomerServiceDetails ", e);
         }
         finally {
             try {
@@ -72,6 +74,7 @@ public class MapsDomainModel {
                 e.printStackTrace();
             }
         }
+        // To return the domain services
         return mapsDomainServices;
     }
 }
