@@ -23,19 +23,4 @@ public class HibernateUtil {
         return sessionFactory;
     }
 
-    public static HashMap<String, SessionFactory> SessionFactoryListMap = new HashMap<String, SessionFactory>();
-
-    public SessionFactory dynamicSessionFactory(String url) {
-        SessionFactory sessionFactory = null;
-        try {
-            Configuration configuration = new Configuration();
-            configuration.setProperty("hibernate.connection.url", url);
-            configuration.configure();
-            sessionFactory = configuration.buildSessionFactory();
-        }
-        catch (Exception e) {
-            System.out.println(e);
-        }
-        return sessionFactory;
-    }
 }
