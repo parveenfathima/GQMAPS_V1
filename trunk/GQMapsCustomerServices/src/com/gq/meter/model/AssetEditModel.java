@@ -24,6 +24,8 @@ public class AssetEditModel {
             System.out.println("Enterprise Id:" + enterpriseId);
             String dbInstanceName = "gqm" + enterpriseId;
             String url = "jdbc:mysql://localhost:3306/" + dbInstanceName + "?autoReconnect=true";
+
+            // String url = "jdbc:mysql://192.168.1.95:3306/" + dbInstanceName + "?autoReconnect=true";
             if (HibernateUtil.SessionFactoryListMap.containsKey(dbInstanceName)) {
                 sessionFactory = HibernateUtil.SessionFactoryListMap.get(dbInstanceName);
                 if (sessionFactory == null) {
@@ -66,6 +68,8 @@ public class AssetEditModel {
         try {
             String dbInstanceName = "gqm" + enterpriseId;
             String url = "jdbc:mysql://localhost:3306/" + dbInstanceName + "?autoReconnect=true";
+            // String url = "jdbc:mysql://192.168.1.95:3306/" + dbInstanceName + "?autoReconnect=true";
+
             if (HibernateUtil.SessionFactoryListMap.containsKey(dbInstanceName)) {
                 sessionFactory = HibernateUtil.SessionFactoryListMap.get(dbInstanceName);
                 if (sessionFactory == null) {
