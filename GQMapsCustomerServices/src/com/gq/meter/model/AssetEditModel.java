@@ -4,7 +4,7 @@ import org.hibernate.Session;
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 
-import com.gq.meter.util.HibernateUtil;
+import com.gq.meter.util.DynamicSessionUtil;
 import com.gq.meter.util.CustomerServiceConstant;
 
 import com.gq.meter.object.Asset;
@@ -13,41 +13,39 @@ import com.gq.meter.object.GetAsset;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * @author parveen
+ * 
+ */
+
+// This class is used to getting and updating asset(computer,printer,nsrg,storage) data's.
 public class AssetEditModel {
+
     Session session = null;
     GetAsset getAssetServices = null;
     SessionFactory sessionFactory = null;
 
+    // Getting asset details
     public GetAsset getAssetDetails(String enterpriseId) {
 
         try {
             System.out.println("Enterprise Id:" + enterpriseId);
             String dbInstanceName = "gqm" + enterpriseId;
-            String url = "jdbc:mysql://localhost:3306/" + dbInstanceName + "?autoReconnect=true";
 
-            // String url = "jdbc:mysql://192.168.1.95:3306/" + dbInstanceName + "?autoReconnect=true";
-            if (HibernateUtil.SessionFactoryListMap.containsKey(dbInstanceName)) {
-                sessionFactory = HibernateUtil.SessionFactoryListMap.get(dbInstanceName);
-                if (sessionFactory == null) {
-                    System.out.println("null");
-                    sessionFactory = new HibernateUtil().dynamicSessionFactory(url);
-                    HibernateUtil.SessionFactoryListMap.put(dbInstanceName, sessionFactory);
-                }
-            }
-            else {
-                sessionFactory = new HibernateUtil().dynamicSessionFactory(url);
-                HibernateUtil.SessionFactoryListMap.put(dbInstanceName, sessionFactory);
-            }
+            // Create a session factory for requesting enterprise
+            sessionFactory = DynamicSessionUtil.dynamicSessionFactory(dbInstanceName);
+
+            // create a session to start a transaction
             session = sessionFactory.getCurrentSession();
             session.beginTransaction();
+
             String asset = "FROM Asset";
             Query assetQuery = session.createQuery(asset);
             List<Asset> assetResult = assetQuery.list();
             getAssetServices = new GetAsset(assetResult);
         }
         catch (Exception e) {
-            CustomerServiceConstant.logger.error(
-                    " [AssetEditModel]  Exception occured while fetching the CustomerServiceDetails ", e);
+            CustomerServiceConstant.logger.error("Exception occured while fetching the CustomerServiceDetails ", e);
         }
         finally {
             try {
@@ -60,36 +58,27 @@ public class AssetEditModel {
                 e.printStackTrace();
             }
         }
+        // To return the asset service
         return getAssetServices;
     }
 
+    // updating assets
     public void updateAssets(String enterpriseId, Asset assetObject) throws Exception {
         Date currentDate = null;
+
         try {
             String dbInstanceName = "gqm" + enterpriseId;
-            String url = "jdbc:mysql://localhost:3306/" + dbInstanceName + "?autoReconnect=true";
-            // String url = "jdbc:mysql://192.168.1.95:3306/" + dbInstanceName + "?autoReconnect=true";
 
-            if (HibernateUtil.SessionFactoryListMap.containsKey(dbInstanceName)) {
-                sessionFactory = HibernateUtil.SessionFactoryListMap.get(dbInstanceName);
-                if (sessionFactory == null) {
-                    sessionFactory = new HibernateUtil().dynamicSessionFactory(url);
-                    HibernateUtil.SessionFactoryListMap.put(dbInstanceName, sessionFactory);
-                }
-            }
-            else {
-                sessionFactory = new HibernateUtil().dynamicSessionFactory(url);
-                HibernateUtil.SessionFactoryListMap.put(dbInstanceName, sessionFactory);
-            }
+            // Create a session factory for requesting enterprise
+            sessionFactory = DynamicSessionUtil.dynamicSessionFactory(dbInstanceName);
+
+            // create a session to start a transaction
             session = sessionFactory.getCurrentSession();
             session.beginTransaction();
+
             Asset oldAssetObject = (Asset) session.load(Asset.class, assetObject.getAssetId());
-            oldAssetObject.setAssetId(assetObject.getAssetId());
-            oldAssetObject.setName(assetObject.getName());
-            oldAssetObject.setDescr(assetObject.getDescr());
             oldAssetObject.setIpAddr(assetObject.getIpAddr());
-            oldAssetObject.setContact(assetObject.getContact());
-            oldAssetObject.setLocation(assetObject.getLocation());
+            oldAssetObject.setAssetId(assetObject.getAssetId());
             oldAssetObject.setCtlgId(assetObject.getCtlgId());
             oldAssetObject.setSrvrAppId(assetObject.getSrvrAppId());
             oldAssetObject.setAssetUsg(assetObject.getAssetUsg());
@@ -97,6 +86,7 @@ public class AssetEditModel {
             oldAssetObject.setOwnership(assetObject.getOwnership());
             oldAssetObject.setDcEnt(assetObject.getDcEnt());
             oldAssetObject.setActive(assetObject.getActive());
+            // If active value 'n' means set inactivated date and time,'y' means set null value.
             if (assetObject.getActive() == 'n') {
                 oldAssetObject.setInactiveDttm(new Date());
             }
@@ -104,22 +94,18 @@ public class AssetEditModel {
                 oldAssetObject.setInactiveDttm(currentDate);
             }
             oldAssetObject.setTypeId(assetObject.getTypeId());
+            System.out.println("Object updated Successfully");
             session.getTransaction().commit();
         }
         catch (Exception e) {
             System.out.println(e);
-            CustomerServiceConstant.logger.error(" [AssetEditModel]  Exception occured while Updating the Asset ", e);
-            throw new Exception(e);
+            CustomerServiceConstant.logger.error("Exception occured while Updating the Asset ", e);
+            throw e;
         }
         finally {
-            try {
-                if (session.isOpen()) {
-                    session.flush();
-                    session.close();
-                }
-            }
-            catch (Exception e) {
-                throw new Exception(e);
+            if (session.isOpen()) {
+                session.flush();
+                session.close();
             }
         }
     }
