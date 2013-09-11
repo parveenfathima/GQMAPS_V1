@@ -11,11 +11,6 @@
         <property name="descr" type="string">
             <column name="descr" length="30" not-null="true" />
         </property>
-        <set name="assets" table="asset" inverse="true" lazy="true" fetch="select">
-            <key>
-                <column name="protocol_id" length="10" not-null="true" />
-            </key>
-            <one-to-many class="com.gq.meter.object.Asset" />
-        </set>
+       
     </class>
 </hibernate-mapping>

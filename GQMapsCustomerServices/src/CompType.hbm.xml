@@ -11,6 +11,5 @@
         <property name="descr" type="string">
             <column name="descr" length="30" not-null="true" />
         </property>
-        
     </class>
 </hibernate-mapping>
