@@ -10,6 +10,10 @@
                 <param name="property">goal</param>
             </generator>
         </id>
+        <id name="inputId" type="java.lang.Short">
+            <column name="input_id" length="6" />
+            <generator class="identity"></generator>
+        </id>
         <one-to-one name="goal" class="Goal" constrained="true"></one-to-one>
         <many-to-one name="dataTypes" class="DataTypes" fetch="select">
             <column name="dtvalue" length="20" not-null="true">
@@ -26,5 +30,5 @@
                 <comment>label name to be displayed while executing the rsql like top installed sw</comment>
             </column>
         </property>
-    </class>
+       </class>
 </hibernate-mapping>
