@@ -1,3 +1,9 @@
+	$.jStorage.set("jsUserId", "");
+	$.jStorage.set("jsPwd", "");		
+	$.jStorage.set("jsEntpId","");	
+	$.jStorage.set("jsEName", "");
+
+
 //binding the click event to the submit button
 $(document).ready(function() 
 {
@@ -59,7 +65,8 @@ function userLogin()
 					
 					if(isValid === 1 && vFwdStore === "C" || vFwdStore === "c")
 					{		
-	
+						alert("valid");
+						alert($.jStorage.get("jsUserId"));
 						window.location.href = "dashboard_full.html";	
 		
 					}
@@ -79,7 +86,7 @@ function userLogin()
 			error : function(json) 
 			{
 				//alert("Invalid User Credentials" + json.status + " " + json.responseText);
-				alert("Error: Invalid user credentials!");
+				alert("Error from loading user credentials!");
 			}
 		});
 	}

@@ -6,19 +6,26 @@ var vUrl = "";
 // Set pie chart options
 var pieChartOptions = {'title':'',
 			   'is3D': true,
-			   'width':350,
-			   'height':200};
+			   'width':230,
+			   'height':180};
 
 // Set bar chart options			   
 var barChartOptions = {'title':'',
-   'width':300,
-   'height':200};
+   'width':200,
+   'height':180};
 
 // Ajax call to get all the dashboard services
 $(document).ready(function() 
 {
+	$('#btnConfAssets').click(function () { 
+		var id = $.jStorage.get("jsEntpId");
+	 	alert("jstorage value:  " + id );
+	 	document.frmAssetEdit.setEntp.value = id;
+	 	alert("hidden value  :" + $("#setEntp").val());
+	 });
 	
-	//alert($.jStorage.get("jsEntpId"));
+	$("#btnConfAssets").bind("click", goToAssetEdit);
+	
 	$("#entpName").text("Customer Dashboard for " + $.jStorage.get("jsEName"));
 	vType = "GET";						
 	
@@ -34,7 +41,7 @@ $(document).ready(function()
 		success:function(json)
 		{		
 
-			alert("inside success");			
+			//alert("inside success");			
 
 			$.each(json, function(i, v)
 			{
@@ -57,9 +64,7 @@ $(document).ready(function()
 		},
 		error:function(json)
 		{
-			//alert("inside error");	
-			
-			//alert("Error from loading google charts: " + json.status + " " + json.responseText);	
+			//alert("inside error")
 				
 			var obj = eval('(' + json.responseText + ')');	
 			
@@ -82,6 +87,7 @@ $(document).ready(function()
 	});	//end of ajax
 	
 	getPUE();
+	loadGoals();
 	
 	
 });
@@ -160,6 +166,7 @@ function showPlainText(plainText, divID)
 
 function showAlerts(plainText, divID)
 {
+	alert(plainText);
 	if(plainText <=0)
 		$("#" + divID).text("Meter expired, contact support!");
 	else if(plainText >= 1 && plainText <= 10)
@@ -171,25 +178,18 @@ function showAlerts(plainText, divID)
 //function to navigate to the asset_edit.jsp
 function goToAssetEdit()
 {
-	$("#btnConfAssets").bind("click", function()
-	{
-		window.location.href = "asset_edit.html";
-	});
+	alert("jstorage value:  " + $.jStorage.get("jsEntpId"));
+	document.frmAssetEdit.setEntp.value = $.jStorage.get("jsEntpId");
+	alert("hidden value  :" + $("#setEntp").val());
+	//$('#goToAssetEdit').submit();
 }
 
-function gotoAssetList()
-{
-	window.location.href = "asset_list.html";
-}
 
-function gotoGoal()
-{
-	window.location.href = "goal.html";
-}
-
+//function to display PUE 
 function getPUE()
 {
-	var vUrl = "http://localhost:8080/GQMapsCustomerServices/gqm-gqedp/procedure/getproc?entpId=" + $.jStorage.get("jsEntpId");
+	var vType = "GET";
+	var vUrl = $.jStorage.get("jsDBUrl") + "procedure/getproc?entpId=" + $.jStorage.get("jsEntpId");
 
 	$.ajax
 	({
@@ -200,12 +200,46 @@ function getPUE()
 		dataType: "json",
 		success:function(json)
 		{		
-			alert("inside PUE success");				
+			//alert("inside PUE success");	
+			$("#div_pue").text("Current month PUE is " + json);			
 		},
 		error:function(json)
 		{
-			alert("inside PUE error");			
+			alert("Error loading PUE data!");			
  
 		}	 
 	});	//end of ajax	
+}
+
+//function to load goals to the dashboard dropdown
+function loadGoals()
+{
+	var vType = "GET";
+	var vUrl = $.jStorage.get("jsDBUrl") + "goalmaster/goals";
+	
+	$.ajax
+	({
+		type:vType,
+		contentType: "application/json",
+		url:vUrl,
+		async:false,
+		dataType: "json",
+		success:function(json)
+		{		
+			//alert("inside goals list success");	
+			//alert(json[0]["goalData"][0]["goalId"]);
+			var vValues = "";
+			$.each(json[0]["goalData"], function(i,n)
+			{
+				vValues = vValues + '<option value = "'+ json[0]["goalData"][i]["goalId"] + '" >' + json[0]["goalData"][i]["goalDescr"] + '</option>';	
+			});
+			
+			$("#cmbGoals").append(vValues); 			
+					
+		},
+		error:function(json)
+		{
+			alert("Error from loading goals list!");			
+		}	 
+	});	//end of ajax		
 }
