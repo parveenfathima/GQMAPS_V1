@@ -22,7 +22,8 @@ import com.gq.util.DynamicSessionUtil;
 import com.gq.util.GQEDPConstants;
 
 /**
- * @author parveen
+ * @author chandru
+ * @change parveen
  */
 
 // this class takes care of validating and distributing incoming requests
@@ -50,18 +51,15 @@ public class GqEDPFilter {
         GQEDPConstants.logger.debug("Meterid from GQEDPFilter: " + meterId);
 
         try {
-            GQEDPConstants.logger.debug("Start to read a hibernate file for GQEDPFilter");
+            GQEDPConstants.logger.debug("Starting hibernate xsion for GQEDPFilter");
             String dbInstanceName = "gqm" + enterpriseId;
 
-            sessionFactory = DynamicSessionUtil.dynamicSessionFactory(dbInstanceName);
+            // This step will read hibernate.cfg.xml and prepare hibernate for use
+            sessionFactory = DynamicSessionUtil.getSessionFactory(dbInstanceName);
+            GQEDPConstants.logger.debug("Start to create a Session for requested Enterprise in GQEDPFilter");
             session = sessionFactory.getCurrentSession();
+            GQEDPConstants.logger.debug("Session Created Successfully for GQEDPFilter");
 
-            if (session == null) {
-
-                DynamicSessionUtil.SessionFactoryListMap.clear();
-                sessionFactory = DynamicSessionUtil.dynamicSessionFactory(dbInstanceName);
-                session = sessionFactory.getCurrentSession();
-            }
             session.beginTransaction();
 
             GQEDPConstants.logger.debug(meterId + " Transaction successfully started ");
@@ -76,6 +74,49 @@ public class GqEDPFilter {
 
             GQEDPConstants.logger.info(meterId + " Data successfully saved in the meterRun table ");
             session.getTransaction().commit();
+
+            for (ProtocolData pdData : pdList) {
+
+                switch (pdData.getProtocol()) {
+
+                case COMPUTER:
+                    Computer computerObj = gson.fromJson(pdData.getData(), Computer.class);
+                    GqMeterComputer.insertData(computerObj, gqmResponse, meterRun.getRunId());
+                    break;
+
+                case PRINTER:
+                    Printer printerData = gson.fromJson(pdData.getData(), Printer.class);
+                    GqMeterPrinter.insertData(printerData, gqmResponse, meterRun.getRunId());
+                    break;
+
+                case NSRG:
+                    NSRG nsrgData = gson.fromJson(pdData.getData(), NSRG.class);
+                    GqMeterNSRG.insertData(nsrgData, gqmResponse, meterRun.getRunId());
+                    break;
+
+                case STORAGE:
+                    Storage storageData = gson.fromJson(pdData.getData(), Storage.class);
+                    GqMeterStorage.insertData(storageData, gqmResponse, meterRun.getRunId());
+                    break;
+
+                case AIR:
+                    break;
+
+                case POWER:
+                    break;
+
+                case UNKNOWN:
+                    break;
+
+                case WATER:
+                    break;
+
+                default:
+                    break;
+                }
+
+            }
+            System.out.println("************* DATA SUCCESSFULLY SAVED ***********");
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -83,58 +124,13 @@ public class GqEDPFilter {
         }
         finally {
             try {
-                if (session.isOpen()) {
-                    session.flush();
-                    session.close();
-                    session.clear();
-                }
+                /*
+                 * if (session.isOpen()) { session.flush(); session.close(); session.clear(); }
+                 */
             }
             catch (Exception e) {
                 e.printStackTrace();
             }
         }// finally ends
-
-        for (ProtocolData pdData : pdList) {
-
-            switch (pdData.getProtocol()) {
-
-            case COMPUTER:
-                Computer computerObj = gson.fromJson(pdData.getData(), Computer.class);
-                GqMeterComputer.insertData(computerObj, gqmResponse, meterRun.getRunId());
-                break;
-
-            case PRINTER:
-                Printer printerData = gson.fromJson(pdData.getData(), Printer.class);
-                GqMeterPrinter.insertData(printerData, gqmResponse, meterRun.getRunId());
-                break;
-
-            case NSRG:
-                NSRG nsrgData = gson.fromJson(pdData.getData(), NSRG.class);
-                GqMeterNSRG.insertData(nsrgData, gqmResponse, meterRun.getRunId());
-                break;
-
-            case STORAGE:
-                Storage storageData = gson.fromJson(pdData.getData(), Storage.class);
-                GqMeterStorage.insertData(storageData, gqmResponse, meterRun.getRunId());
-                break;
-
-            case AIR:
-                break;
-
-            case POWER:
-                break;
-
-            case UNKNOWN:
-                break;
-
-            case WATER:
-                break;
-
-            default:
-                break;
-            }
-
-        }
-        System.out.println("************* DATA SUCCESSFULLY SAVED ***********");
     }
 }

@@ -39,8 +39,8 @@ public class GqMeterComputer {
             String dbInstanceName = "gqm" + enterpriseId;
 
             // This step will read hibernate.cfg.xml and prepare hibernate for use
-            sessionFactory = DynamicSessionUtil.dynamicSessionFactory(dbInstanceName);
-
+            sessionFactory = DynamicSessionUtil.getSessionFactory(dbInstanceName);
+            GQEDPConstants.logger.info("Session Factory for GQMeterComputer created Successfully");
             session = sessionFactory.getCurrentSession();
             session.beginTransaction();
 
