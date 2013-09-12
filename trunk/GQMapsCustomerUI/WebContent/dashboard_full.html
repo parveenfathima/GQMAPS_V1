@@ -27,16 +27,17 @@
     </head>
     
     <body class="body">
+		<form name = "frmAssetEdit"  method = "post" action = "asset_edit.jsp;">
+		<input type = "hidden" name ="setEntp" id = "setEntp"  />
         <div class="main-div"> <!--main div-->
             <div class="header"><!--header -->
             	<img src="theme/images/gquotient_logo.png"  style = "padding-top:25px; padding-left:25px" width="161" height="53" align="left"/>
                 <p id = "entpName" class="hesder-font" style = "padding-top:38px; padding-left:250px;">  </p> 
-                <p align="right" style="padding-right:10px; " > <a href="login.html" onClick="logout();"><font style="font-size:15px;"> <b>Logout</b></a></p>
+                <p align="right" style="padding-right:10px; " > <a href="login.html" onClick="logout();"> <font style="font-size:15px;"> <b>Logout</b></a></p>
             
             </div><!--/header -->
           
-            <div id="dlgAssetSample">
-                                
+            <div id="dlgAssetSample">                          
             </div>   
                                 
             <div class="content-div"><!--content div-->
@@ -46,47 +47,35 @@
                     	   
                             <div class="block-div top-block-div" style = "margin-left:80px"> <!-- chart div -->
                                 <div class="inner-head">
-                                    CHART
+                                    Performance Charts for Top Loaded Assets Today
                                 </div>
                                 <div  class="inner-content top-block-content-div" >
                                         <table>
                                             <tr>
-                                                <td>
-                                                    <div id="div_topcpuLoad" style="width: 400px; height: 200px; "></div>
-                                                </td>
-                                                <td>
-                                                    <div id="div_topmemoryLoad" style="width: 400px; height: 200px;  padding-left:2px"></div>
-                                                </td>
+                                                <td><div id="div_topcpuLoad" style="width: 400px; height: 200px; "></div></td>
+                                                <td><div id="div_topmemoryLoad" style="width: 400px; height: 200px;  padding-left:2px"></div></td>
                                             </tr>
                                             <tr><td><a href="#" id = "moreGraphs"><b>Click here for more graphs... </a></td></tr>
                                        </table>
-
                                 </div>
                             </div>    <!-- /chart div -->
                             
                             <div class="block-div right-block-div">  <!-- alert div -->                        
-                                <div class="inner-head">
-                                    ALERTS
-                                    
-                                </div>
-                                <div class="inner-content right-block-content-div" id = "div_expiryAlert">
-
-                                </div>
-                                
-                                
+                                <div class="inner-head">ALERTS</div>
+                                <div class="inner-content right-block-content-div" ><span class = "span-font span-color" id = "div_expiryAlert"></span></div>
                                 <div>
+                                   
                                         <div >
-                                            <input type = "button" id = "btnConfAssets" name = "btnConfAssets" value = "Configure Assets" onClick = "goToAssetEdit();" /> <br><br>
+                                     
+                                            <input type = "submit" id = "btnConfAssets" name = "btnConfAssets" value = "Configure Assets" /> <br><br>
                                             <input type = "button" id = "btnThreshold" name = "btnThreshold" value = "SLA & Threshold" /> <br><br>
                                             <label for = "cmbGoals"> Available Goals </label>
                                             <select name="cmbGoals" class = "db-cmb-font" id="cmbGoals" >
-                                                <option value = "">Power Usage Effectiveness</option>
-                                                <option value = "">Virtualization</option>
-                                                <option value = "">Monitoring</option>
-                                            </select>
-                                                                                         
-                                        </div>
 
+                                            </select>
+                                                                                       
+                                        </div>
+ 									 
                             	</div>                                  
                             </div>   <!-- /alert div -->  
                             
@@ -96,105 +85,64 @@
                    
                     <div>  <!-- 2nd row -->
                            <div class="block-div medium-block-div" style = "margin-left:80px">                      
-                                <div class="inner-head">
-                                    Least Loaded Assets
-                                    
-                                </div>
+                                <div class="inner-head">Least Loaded Assets</div>
                                 <div class="inner-content medium-block-content-div">
-                                    <div id= "div_leastAssets" style = "height:190px;">
-                                                                
-                                    </div>
-
-                                    <input type = "button" id = "btnVirtualization" name = "btnVirtualization" value = "Virtualization" onclick = "setGoal(1, 'virtualization');"/>
-                                    
-                                </div>
-
-                                
+                                    <div id= "div_leastAssets" style = "height:190px;"></div>
+                                    <div><input type = "button" id = "btnVirtualization" name = "btnVirtualization" value = "Virtualization" onclick = "setGoal(1, 'virtualization');"/></div>
+                                </div>  
                     		</div>
                             
                           <div class="block-div medium-block-div">                      
-                                <div class="inner-head">
-                                    Top Installed Software
-                                </div>
+                                <div class="inner-head">Top Installed Software</div>
                                 <div class="inner-content medium-block-content-div">
-                                	<div id = "div_installedSW">
-                                    	
-                                    </div>
-                                    <div>
-                                		<input type = "button" id = "btnPDI" name = "btnPDI" value = "Personal Device Impact" onClick="gotoAssetList();" /> 
-                                    </div> 
+                                	<div id = "div_installedSW"></div>
+                                    <div><input type = "button" id = "btnPDI" name = "btnPDI" value = "Personal Device Impact" /> </div> 
                                 </div>
                     		</div>
                             
                           <div class="block-div medium-block-div">                      
-                                <div class="inner-head">
-                                    PUE
-                                </div>
+                                <div class="inner-head">PUE</div>
                                 <div class="inner-content medium-block-content-div">
-                                	<div id = "div_pue">
-                                    	<font class = "td-font">Current month PUE: <span id = "div_pueData" class = "span-font span-color"> </span></font><br>
-                                    </div>
-                                    <div>    
-                                		<input type = "button" id = "btnPUE" name = "btnPUE" value = "PUE" onClick="gotoGoal();" />                                         
-                                    </div>
+                                	<div id = "div_pue"></div>
+                                    <div><input type = "button" id = "btnPUE" name = "btnPUE" value = "PUE" /></div>
                                 </div>
-
-                    		</div>
+                    	  </div>
                             
                           <div class="block-div medium-block-div">                      
-                                <div class="inner-head">
-                                    METER
-                                    
+                                <div class="inner-head"> METER </div>
+                                <div class="inner-content medium-block-content-div">
+                                    <span class="medium-content-div" id = "div_assetsScanned"></span>
+                                    <div class="medium-chart-div" id = "div_meterCount"></div>
+                                    <div><font class = "td-font" ><a href="#">Click here to download the meter jar file</a></font></div>
                                 </div>
-                                <span class="medium-content-div" id = "div_assetsScanned">
-                                </span>
-                                <div class="medium-chart-div" id = "div_meterCount">
-                                
-                                                                           
-                                        
-                                </div>
-                                <font class = "td-font" ><a href="#">Click here to download the meter jar file</a></font>
-                    		</div>                                                                                    
+                    	  </div>                                                                                    
                     </div> <!--/2nd row -->
                     
 
                     <div>  <!-- 3rd row -->
                            <div class="block-div medium-block-div" style = "margin-left:80px">                      
-                                <div class="inner-head">
-                                    Most Loaded Assets
-                                </div>
+                                <div class="inner-head">Most Loaded Assets</div>
                                 <div class="inner-content medium-block-content-div">
-                                    <div style="float:left; margin-left:5px; margin-right:5px; height=100px;" id = "div_mostAssets">
-                           
-                                    </div>
+                                    <div style="float:left; margin-left:5px; margin-right:5px; height=100px;" id = "div_mostAssets"></div>
                                 </div>
                     		</div>
                             
                           <div class="block-div medium-block-div">                      
-                                <div class="inner-head">
-                                    Top Black Listed Software
-                                </div>
-                                <div class="inner-content medium-block-content-div" id = "div_blacklistedSW">
-									
-                                </div>
+                                <div class="inner-head">Top Black Listed Software</div>
+                                <div class="inner-content medium-block-content-div" id = "div_blacklistedSW"></div>
+                                <span class = "span-font span-color"> * </span>To get the result, use developers' machine
                     		</div>
                             
                           <div class="block-div medium-block-div">                      
-                                <div class="inner-head">
-                                    Most Connected Server Assets
-                                </div>
-                                <div class="inner-content medium-block-content-div" id = "div_connectedServers">
-									<span class = "span-font span-color"> * </span>To get the result, use developers' machine
-                                </div>
+                                <div class="inner-head">Most Connected Server Assets</div>
+                                <div class="inner-content medium-block-content-div" id = "div_connectedServers"></div>
+                                <span class = "span-font span-color"> * </span>To get the result, use developers' machine
                     		</div>
                             
                           <div class="block-div medium-block-div">                      
-                                <div class="inner-head">
-                                    Externally Connected Websites
-                                </div>
-                                <div class="inner-content medium-block-content-div" id = "div_connectedWebsites">
-									<span class = "span-font span-color"> * </span>To get the result, use developers' machine
-                                </div>
+                                <div class="inner-head">Externally Connected Websites</div>
+                                <div class="inner-content medium-block-content-div" id = "div_connectedWebsites"></div>
+                                <span class = "span-font span-color"> * </span>To get the result, use developers' machine
                     		</div>                                                                                    
                     </div> <!--/3rd row -->
                     
@@ -208,7 +156,7 @@
             </div>
         
         </div> <!--/main div -->     
-
+	</form>
     </body>
     
 </html>
