@@ -36,8 +36,8 @@ public class GqMeterPrinter {
             String dbInstanceName = "gqm" + enterpriseId;
 
             // This step will read hibernate.cfg.xml and prepare hibernate for use
-            sessionFactory = DynamicSessionUtil.dynamicSessionFactory(dbInstanceName);
-
+            sessionFactory = DynamicSessionUtil.getSessionFactory(dbInstanceName);
+            GQEDPConstants.logger.info("Session Factory for GQMeterPrinter created Successfully");
             session = sessionFactory.getCurrentSession();
             session.beginTransaction();
 
