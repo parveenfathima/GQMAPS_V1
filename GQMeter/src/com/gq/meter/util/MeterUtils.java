@@ -39,7 +39,7 @@ import com.gq.meter.PrinterMeter;
 import com.gq.meter.StorageMeter;
 import com.gq.meter.object.Asset;
 
-public class MeterUtils {
+public final class MeterUtils {
 
     public long compMeterTime = 0;
     public long printMeterTime = 0;
@@ -105,6 +105,7 @@ public class MeterUtils {
             else {
                 errorList.add("Root OID : 1.3.6.1.2.1.1" + " " + MeterConstants.STANDARD_SYSTEM_ATTRIBUTES_ERROR);
             }
+            
             ipAddr = ipAddress;
             assetObj = new Asset();
             assetObj.setAssetId(assetId);
@@ -126,11 +127,7 @@ public class MeterUtils {
      * @param currIp
      * @return
      */
-    public HashMap<String, String> isSnmpConfigured(String communityString, String currIp) {
-        long snmpStartTime = System.currentTimeMillis();
-
-        long snmpKnownTime = 0;
-        long snmpUnknownTime = 0;
+    public static HashMap<String, String> isSnmpConfigured(String communityString, String currIp) {
 
         String oidString = MeterConstants.SNMP_CHECK_OCTET;
         String snmpVersion = MeterConstants.SNMP_VERSION_2;
@@ -139,6 +136,7 @@ public class MeterUtils {
         CommunityTarget target = MeterUtils.makeTarget(currIp, communityString, snmpVersion);
         OID rootOID = new OID(oidString);
         List<VariableBinding> result = walk(rootOID, target);
+        
         if (result == null || result.isEmpty()) {
             // may be the device is serving snmp but not version 2 , so lets try version 1
             snmpVersion = MeterConstants.SNMP_VERSION_1;
@@ -148,9 +146,7 @@ public class MeterUtils {
 
             if (result == null || result.isEmpty()) {
                 // may be the device is not serving snmp at all. so lets get out or throw io exception
-                long snmpEndTime = System.currentTimeMillis();
-                snmpUnknownTime = snmpUnknownTime + (snmpEndTime - snmpStartTime);// Time taken to find snmp is not
-                                                                                  // configured
+
                 assetDetails.put("snmpUnKnownIp", currIp);
                 return assetDetails; // if snmp is configured & the SNMP_CHECK_OCTET doesn't exist then return null;
             }// 2nd if ends
@@ -159,9 +155,6 @@ public class MeterUtils {
         assetDetails.put("snmpVersion", snmpVersion);
         assetDetails.put("assetDesc", result.get(0).getVariable().toString());
 
-        long snmpEndTime = System.currentTimeMillis();
-
-        snmpKnownTime = snmpKnownTime + (snmpEndTime - snmpStartTime); // Time taken to find snmp is configured
         assetDetails.put("snmpKnownIp", currIp);
         return assetDetails;
     }
@@ -176,7 +169,7 @@ public class MeterUtils {
         CommunityTarget target = MeterUtils.makeTarget(currIp, communityString, snmpVersion);
         String oidString = MeterConstants.SNMP_CHECK_PRINTER_OCTET; // Printer
         MeterProtocols mProtocol = null;
-        // call diff walks
+
         OID rootOID = new OID(oidString);
 
         List<VariableBinding> result = walk(rootOID, target);
@@ -212,28 +205,25 @@ public class MeterUtils {
      * @param switchList
      * @return
      */
-    public static GQMeterData getAssetObject(MeterProtocols protocol, String communityString, String currIp,
-            String snmpVersion, LinkedList<String> switchList) {
-
-        GQMeterData assetObject = null;
-        if (protocol.equals(MeterProtocols.PRINTER)
-                && (MeterConstants.PROTOCOL_ID.equals("it") || MeterConstants.PROTOCOL_ID.equals("printer"))) {
-            assetObject = new PrinterMeter().implement(communityString, currIp, snmpVersion, switchList);
-        }
-        else if (protocol.equals(MeterProtocols.NSRG)
-                && (MeterConstants.PROTOCOL_ID.equals("it") || MeterConstants.PROTOCOL_ID.equals("nsrg"))) {
-            assetObject = new NSRGMeter().implement(communityString, currIp, snmpVersion, switchList);
-        }
-        else if (protocol.equals(MeterProtocols.COMPUTER)
-                && (MeterConstants.PROTOCOL_ID.equals("it") || MeterConstants.PROTOCOL_ID.equals("computer"))) {
-            assetObject = new ComputerMeter().implement(communityString, currIp, snmpVersion, switchList);
-        }
-        else if (protocol.equals(MeterProtocols.STORAGE)
-                && (MeterConstants.PROTOCOL_ID.equals("it") || MeterConstants.PROTOCOL_ID.equals("storage"))) {
-            assetObject = new StorageMeter().implement(communityString, currIp, snmpVersion, switchList);
-        }
-        return assetObject;
-    }
+//    public static GQMeterData getAssetObject(MeterProtocols protocol, String communityString, String currIp,
+//            String snmpVersion, LinkedList<String> switchList) {
+//
+//        GQMeterData assetObject = null;
+//        
+//        if (protocol.equals(MeterProtocols.PRINTER) ) {
+//            assetObject = new PrinterMeter().implement(communityString, currIp, snmpVersion, switchList);
+//        }
+//        else if (protocol.equals(MeterProtocols.NSRG) ) {
+//            assetObject = new NSRGMeter().implement(communityString, currIp, snmpVersion, switchList);
+//        }
+//        else if (protocol.equals(MeterProtocols.COMPUTER) ) {
+//            assetObject = new ComputerMeter().implement(communityString, currIp, snmpVersion, switchList);
+//        }
+//        else if (protocol.equals(MeterProtocols.STORAGE) ) {
+//            assetObject = new StorageMeter().implement(communityString, currIp, snmpVersion, switchList);
+//        }
+//        return assetObject;
+//    }
 
     /**
      * This method used to find an asset is reachable or not from the host where our GQMeter is running.
@@ -291,7 +281,7 @@ public class MeterUtils {
      * @param ipAddrUpperBound
      * @return
      */
-    public LinkedList<String> getIpAddressesInInclusiveRange(String ipAddrLowerBound, String ipAddrUpperBound) {
+    public static LinkedList<String> getIpAddressesInInclusiveRange(String ipAddrLowerBound, String ipAddrUpperBound) {
 
         LinkedList<String> ipList = new LinkedList<String>();
         ipList.add(ipAddrLowerBound);
@@ -421,7 +411,7 @@ public class MeterUtils {
      * @param time
      * @return
      */
-    public long upTimeCalc(String time) {
+    public static long upTimeCalc(String time) {
         String dayString = null;
         String[] upTimeArray = null;
         String timeString = null;
