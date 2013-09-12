@@ -71,10 +71,6 @@ function validateForm()
 		}		
 		else if(comparePwd(vNewPwd, vConfPwd))
 		{
-			//user id validation
-			  
-			//var vUrl = 'http://localhost:8080/GQMapsRegistrationServices/gqm-gk/enterprise/getRegistration';
-			//var vUrl = 'http://192.168.1.95:8080/GQMapsRegistrationServices/gqm-gk/enterprise/getRegistration';	
 			var vUrl = $.jStorage.get("jsUrl") + "enterprise/getRegistration";			
 			
 			var vQuery = "";
@@ -107,9 +103,7 @@ function validateForm()
 							}
 							else
 							{
-								//alert("Valid user");	
-								//$.jStorage.set("jsUserId", vUserID);	
-								
+							
 								// Check for Change Security Questions option
 								var isChecked = $('#chkChageQA').is(':checked');
 								var vSId = $.jStorage.get("jsSId");
@@ -121,7 +115,6 @@ function validateForm()
 									}
 									else
 									{
-									  
 									  //alert("Form is ready to submit - includes change sec question : " + vSId + "ques val : " + vQues1 + "  " + vQues2 );
 																	
 									  var vCQues1 = $('#cmbChangeQues1').val();
@@ -145,8 +138,6 @@ function validateForm()
 								({
 									type:"PUT",
 									contentType: "application/json",
-									//url:"http://localhost:8080/GQMapsRegistrationServices/gqm-gk/enterprise/updatePassword",
-									//url:"http://192.168.1.95:8080/GQMapsRegistrationServices/gqm-gk/enterprise/updatePassword",
 									url: $.jStorage.get("jsUrl") + "enterprise/updatePassword",
 									async:false,
 									data:vQuery,
@@ -218,7 +209,6 @@ function changeQA()
 										
 		}
 }
-
 
 //function to reset the fields when Change Security Questions checkbox is unchecked
 function clearChangeQA()

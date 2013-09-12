@@ -1,6 +1,4 @@
 
-
-
 $(document).ready(function() 
 {
 	$.jStorage.set("jsQuestions", "");
@@ -27,14 +25,9 @@ function getDtTime()
 function loadSecQuestions()
 {
 			
-			var vType = "GET";
-			//var vUrl = "http://localhost:8080/GQMapsRegistrationServices/gqm-gk/secQuest/getSecQuestions";
-			//var vUrl = "http://192.168.1.95:8080/GQMapsRegistrationServices/gqm-gk/secQuest/getSecQuestions";									
-			
+			var vType = "GET";			
 			var vUrl = $.jStorage.get("jsUrl") + "secQuest/getSecQuestions";	
-			
-			
-					
+		
 			$.ajax
 			({
 				type:vType,
@@ -69,9 +62,7 @@ function loadSecQuestions()
 //loads all the business lines from the db
 function loadBusLine()
 {
-		var vType = "GET";
-		//var vUrl = "http://localhost:8080/GQMapsRegistrationServices/gqm-gk/busnLine/getBusnLine";		
-		//var vUrl = "http://192.168.1.95:8080/GQMapsRegistrationServices/gqm-gk/busnLine/getBusnLine";								
+		var vType = "GET";						
 		var vUrl = $.jStorage.get("jsUrl") + "busnLine/getBusnLine";
 				
 		$.ajax
@@ -104,8 +95,6 @@ function loadBusLine()
 function loadProtocol()
 {
 			var vType = "GET";
-			//var vUrl = "http://localhost:8080/GQMapsRegistrationServices/gqm-gk/secQuest/getSecQuestions";						
-			//var vUrl = "http://192.168.1.95:8080/GQMapsRegistrationServices/gqm-gk/protocol/getProtocols";	
 			var vUrl = $.jStorage.get("jsUrl") + "protocol/getProtocols";	
 			
 			var items = document.getElementById("cmbProtocol").options.length;
@@ -158,13 +147,13 @@ function validatePwd(password)
 		}
 }
  
-//function to check for a string containing a special character
+//function to check for a string containing a special characters including space
 function checkSpecialChar(string)
 {
 		var vPwdFlag = 0; 
 		for (var i = 0; i < string.length; i++) 
 		{
-			var specialChars = "!@#$%^&*()+=-[]\\\';,./{}|\":<>?~_";
+			var specialChars = " !@#$%^&*()+=-[]\\\';,./{}|\":<>?~_";
 			if (specialChars.indexOf(string.charAt(i)) != -1) 
 			{
 				vPwdFlag = 1;
