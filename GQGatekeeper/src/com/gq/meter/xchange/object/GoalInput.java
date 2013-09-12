@@ -1,4 +1,5 @@
 package com.gq.meter.xchange.object;
+
 // default package
 // Generated Jul 26, 2013 10:19:05 AM by Hibernate Tools 3.4.0.CR1
 
@@ -12,12 +13,14 @@ public class GoalInput implements java.io.Serializable {
     private DataTypes dataTypes;
     private String colHoldr;
     private String descr;
+    private Short inputId;
 
     public GoalInput() {
     }
 
-    public GoalInput(Goal goal, DataTypes dataTypes, String colHoldr, String descr) {
+    public GoalInput(Goal goal, Short inputId, DataTypes dataTypes, String colHoldr, String descr) {
         this.goal = goal;
+        this.inputId = inputId;
         this.dataTypes = dataTypes;
         this.colHoldr = colHoldr;
         this.descr = descr;
@@ -37,6 +40,14 @@ public class GoalInput implements java.io.Serializable {
 
     public void setGoal(Goal goal) {
         this.goal = goal;
+    }
+
+    public Short getInputId() {
+        return inputId;
+    }
+
+    public void setInputId(Short inputId) {
+        this.inputId = inputId;
     }
 
     public DataTypes getDataTypes() {
