@@ -55,12 +55,6 @@ public class MeterConstants {
 
     public static final String NO_OID = "No OID is found";
 
-    public static final String NSRG = "GqMaps NSRG Meter";
-
-    public static final String COMPUTER = "GqMaps Computer Meter";
-
-    public static final String PRINTER = "GqMaps Printer Meter";
-
     public static final String COMPUTER_PROTOCOL = "computer";
 
     public static final String PRINTER_PROTOCOL = "printer";
@@ -69,9 +63,9 @@ public class MeterConstants {
 
     public static final String STORAGE_PROTOCOL = "storage";
 
-    public static String PROTOCOL_ID = "it";
+    public static final String IT_PROTOCOL = "it";
 
-    public static HashMap<String, String> InstSwMap = new HashMap<String, String>();
+    public static HashMap<String, String> InstSwMap = new HashMap<String, String>(2200);
 
     static {
 
