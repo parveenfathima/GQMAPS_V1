@@ -149,7 +149,12 @@ public class DashboardServices {
                         CustomerServiceConstant.logger
                                 .info("[DASHBOARDSERVICES]  Query is Executing for the Enterprise");
                         prepareStmt = (PreparedStatement) dbCustomer.prepareStatement(resultString);
-                        prepareStmt.setString(1, entpId);
+                        int number = org.apache.commons.lang.StringUtils.countMatches(resultString, "?");
+                        System.out.println("count of ?is\t" + number);
+                        for (int i = 1; i <= number; i++) {
+                            prepareStmt.setString(i, entpId);
+                        }
+
                         entpResultset = prepareStmt.executeQuery();
                         CustomerServiceConstant.logger
                                 .info("[DASHBOARDSERVICES]  Query sucessfully Executed for the enterprise" + entpId);
@@ -158,7 +163,12 @@ public class DashboardServices {
                         CustomerServiceConstant.logger
                                 .info("[DASHBOARDSERVICES]  Query is ready to execute for the exchange with dynamic value");
                         prepareStmt = (PreparedStatement) dbExchange.prepareStatement(resultString);
-                        prepareStmt.setString(1, entpId);
+                        int number = org.apache.commons.lang.StringUtils.countMatches(resultString, "?");
+
+                        System.out.println("count of ?is\t" + number);
+                        for (int i = 1; i <= number; i++) {
+                            prepareStmt.setString(i, entpId);
+                        }
                         entpResultset = prepareStmt.executeQuery();
                         CustomerServiceConstant.logger
                                 .info("[DASHBOARDSERVICES]  Query sucessfully Executed for the enterprise with Dynamic value");
@@ -170,10 +180,9 @@ public class DashboardServices {
                         CustomerServiceConstant.logger
                                 .info("[DASHBOARDSERVICES]  Query is Executing with no Dynamic Value for the enterprise"
                                         + entpId);
-                        String entpquery = sql;
-                        stmt = (Statement) dbCustomer.prepareStatement(entpquery);
+                        stmt = (Statement) dbCustomer.prepareStatement(sql);
                         // Resultset returned by query
-                        entpResultset = stmt.executeQuery(entpquery);
+                        entpResultset = stmt.executeQuery(sql);
                         CustomerServiceConstant.logger
                                 .info("[DASHBOARDSERVICES]  Query sucessfully Executed for the enterprise" + entpId
                                         + "with no Dynamic value");
@@ -181,10 +190,9 @@ public class DashboardServices {
                     else {
                         CustomerServiceConstant.logger
                                 .info("[DASHBOARDSERVICES]  Query will be Executing with no Dynamic Value for Exchange");
-                        String entpquery = sql;
-                        stmt = (Statement) dbExchange.prepareStatement(entpquery);
+                        stmt = (Statement) dbExchange.prepareStatement(sql);
                         // Resultset returned by query
-                        entpResultset = stmt.executeQuery(entpquery);
+                        entpResultset = stmt.executeQuery(sql);
                         CustomerServiceConstant.logger
                                 .info("[DASHBOARDSERVICES]  Query sucessfully Executed for gqexchange with no Dynamic value");
                         // if (dynamic.equals("y")) {
