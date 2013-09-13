@@ -124,9 +124,12 @@ public class GqEDPFilter {
         }
         finally {
             try {
-                /*
-                 * if (session.isOpen()) { session.flush(); session.close(); session.clear(); }
-                 */
+
+                if (session.isOpen()) {
+                    session.flush();
+                    session.close();
+                    session.clear();
+                }
             }
             catch (Exception e) {
                 e.printStackTrace();
