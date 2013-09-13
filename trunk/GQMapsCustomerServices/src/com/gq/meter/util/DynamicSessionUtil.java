@@ -16,6 +16,7 @@ public class DynamicSessionUtil {
     public static SessionFactory dynamicSessionFactory(String dbInstanceName) {
 
         String url = "jdbc:mysql://localhost:3306/" + dbInstanceName + "?autoReconnect=true";
+        // String url = "jdbc:mysql://192.168.1.95:3306/" + dbInstanceName + "?autoReconnect=true";
         if (SessionFactoryListMap.containsKey(dbInstanceName)) {
 
             CustomerServiceConstant.logger.info("Existing Session Factory");

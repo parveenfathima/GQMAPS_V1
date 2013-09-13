@@ -4,10 +4,8 @@
 package com.gq.meter.restsvcs;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.sql.Types;
 
 import javax.ws.rs.Consumes;
@@ -19,7 +17,9 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import com.gq.meter.util.CustomerServiceConstant;
+import com.gq.meter.util.SqlUtil;
 import com.mysql.jdbc.CallableStatement;
+import com.mysql.jdbc.Statement;
 
 /**
  * @author GQ
@@ -33,21 +33,33 @@ public class ProcedureServices {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public Response getProcedure(@QueryParam("entpId") String entpId) throws ClassNotFoundException {
-        String dbURL = "jdbc:mysql://192.168.1.95:3306/gqm" + entpId
-                + "?user=gqmaps&password=Ch1ca803ear$&noAccessToProcedureBodies=true";
-        // String dbURL = "jdbc:mysql://192.168.1.95:3306/gqmaps";
+
         Connection dbCustomer = null;
-        Statement stmt = null;
-        ResultSet rs = null;
+        Connection dbExchange = null;
         CallableStatement pstmt = null;
+        Statement stmt = null;
         double output = 0;
-        String result = null;
+        String result = "";
+        String tsql = "";
+        ResultSet rs = null;
         try {
             // getting database connection to MySQL server
-            Class.forName("com.mysql.jdbc.Driver");
-            dbCustomer = DriverManager.getConnection(dbURL);
-            String sql = "{call calc_pue(?,?)}";
-            pstmt = (CallableStatement) dbCustomer.prepareCall(sql);
+            dbExchange = SqlUtil.getExchangeConnection();
+            dbCustomer = SqlUtil.getCustomerConnectionProcedureCall(entpId);
+            String sql = "select * from task_asst WHERE pos_id Like 'div_%' and tsql Like 'call%';";
+            stmt = (Statement) dbExchange.createStatement();
+            // Resultset returned by query
+            rs = stmt.executeQuery(sql);
+            CustomerServiceConstant.logger
+                    .info("[DASHBOARDSERVICES]  Query sucessfully Executed from the TaskAsst Table");
+            while (rs.next()) {
+                tsql = rs.getString("tsql");
+            }
+            System.out.println("procedure sql is+" + tsql);
+            String charreplace = tsql.replace("__string_in__", "?");
+            String finalquery = charreplace.replace("__double_out__", "?");
+            System.out.println("final query is" + finalquery);
+            pstmt = (CallableStatement) dbCustomer.prepareCall(finalquery);
             pstmt.setString(1, "all");
             pstmt.setString(2, "@it");
             System.out.println("pstmt" + pstmt);
@@ -58,7 +70,10 @@ public class ProcedureServices {
             result = Double.toString(output);
         }
         catch (SQLException e) {
-            CustomerServiceConstant.logger.info("[PROCEDURESERVICES]  Exception Occured during the Connection" + e);
+            CustomerServiceConstant.logger.error("[PROCEDURESERVICES]  Exception Occured during the Connection" + e);
+        }
+        catch (Exception e) {
+            CustomerServiceConstant.logger.error("[PROCEDURESERVICES]  Exception Occured during the Connection" + e);
         }
         return Response.ok(result).build();
 
