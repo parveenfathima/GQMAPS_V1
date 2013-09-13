@@ -50,6 +50,25 @@ public class EnterpriseMeterServices {
         return Response.ok(GQRegistrationConstants.gson.toJson(entMeterResult)).build();
     }
 
+    @Path("/getAllMeters")
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getAllMeters() {
+
+        GQGateKeeperConstants.logger.info("Generating all the enterprise meters list from GQGatekeeper");
+        EnterpriseMeterModel entMeterModel = new EnterpriseMeterModel();
+        List<EnterpriseMeter> entMeterResult = null;
+        try {
+            entMeterResult = entMeterModel.getAllMeters();
+        }
+        catch (Exception e) {
+            GQGateKeeperConstants.logger.error("Exception occured while fetching the enterprises list ", e);
+            return Response.status(400).build();
+        }
+        // Returning all the enterprises in JSON format
+        return Response.ok(GQRegistrationConstants.gson.toJson(entMeterResult)).build();
+    }
+
     @Path("/addEntMeters")
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
@@ -59,6 +78,7 @@ public class EnterpriseMeterServices {
             entMeterObject = GQRegistrationConstants.gson.fromJson(entMeterString, EnterpriseMeter.class);
             GQGateKeeperConstants.logger.info("Saving the new enterprise : " + entMeterObject.getEnterpriseId());
             EnterpriseMeterModel entMeterModel = new EnterpriseMeterModel();
+            System.out.println("Enterprise meter object received from json string: \n" + entMeterObject.toString());
             entMeterModel.addEnterpriseMeter(entMeterObject);
         }
         catch (Exception e) {
@@ -90,7 +110,7 @@ public class EnterpriseMeterServices {
         // Returning all the protocols in JSON format
         return Response.ok(GQRegistrationConstants.gson.toJson(entMeterResult)).build();
     }
-    
+
     /**
      * This method is used to get the protocol details of the particular enterprise
      * 
