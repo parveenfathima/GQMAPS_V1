@@ -27,7 +27,7 @@ public final class AssetDiscoverythread implements Runnable{
 	@Override
 	public void run() {
 		
-        System.out.println(" [GQMETER] New asset snmp thread started at "+ System.currentTimeMillis());
+        //System.out.println(" [GQMETER] New asset snmp thread started at "+ System.currentTimeMillis());
 
         List<String> errorList = new LinkedList<String>();
         
@@ -44,7 +44,7 @@ public final class AssetDiscoverythread implements Runnable{
             }
         }
 
-		System.out.println(" [GQMETER] New asset snmp thread ended at "+ System.currentTimeMillis());
+		//System.out.println(" [GQMETER] New asset snmp thread ended at "+ System.currentTimeMillis());
 		
 	}
 
