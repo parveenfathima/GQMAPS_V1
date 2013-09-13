@@ -1,0 +1,129 @@
+
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+	pageEncoding="ISO-8859-1"%>
+
+<%@page import="com.gq.meter.object.Asset"%>
+<%@page import="com.gq.meter.object.DevCtlg"%>
+<%@page import="java.util.ArrayList"%>
+<%@page import="java.util.List"%>
+<%@page import="com.gq.cust.AssetHelper"%>
+
+<!DOCTYPE>
+
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>Insert title here</title>
+<link type="text/css"
+	href="jquery-ui-1.10.2.custom/css/blitzer/jquery-ui-1.10.2.custom.css"
+	rel="stylesheet" />
+<link type="text/css" href="css/gqmaps.css" rel="stylesheet" />
+
+<script src="jquery-ui-1.10.2.custom/js/jquery-1.9.1.js"></script>
+<script src="jquery-ui-1.10.2.custom/js/jquery-ui-1.10.2.custom.js"></script>
+<script> 
+	
+	function handleClick(){
+		
+		var assetTable = document.getElementById("tblComputerList");
+		
+		var chk_arr =  document.getElementsByName("chkApply");
+		var total = 0;
+		var ipaddresses = '';
+		for (var i =1,row; row = assetTable.rows[i]; i++) {
+			
+			    if ( chk_arr[i-1].checked ) {
+			     	
+			    	//alert(  "ip = " +row.cells[2].innerHTML 
+			    	//+ ", cost = " + row.cells[3].innerHTML);
+			    
+			     total = total+ parseInt(row.cells[3].innerHTML);
+			     ipaddresses = ipaddresses + ',' + row.cells[2].innerHTML;
+			     				    	
+			  	} 
+		}//for ends
+		alert(total + '' + ipaddresses);
+	} 	
+	
+</script>
+
+</head>
+<body>
+	<h1>List of Servers</h1>
+<% 	
+
+ 		int i = 0;
+ 		int j = 0;
+ 		int cost=0;
+		String ctlgDesc = "";
+				
+ 		Asset a = new Asset();
+		// AssetData assetData = new AssetData();
+		
+		// Asset list
+		List<Asset> assetListDB = AssetHelper.getAssetList();
+		
+		DevCtlg d =new DevCtlg();
+ 		List<DevCtlg> dcListDB = AssetHelper.getDevCtlgList();
+ 					
+%>
+
+<form>
+<div id="myDiv">
+	<table id="tblComputerList" border="1">
+		<tr bgcolor="green" style="color: white;">
+			<th>Apply</th>
+			<th>Asset ID</th>
+			<th>IP Address</th>
+			<th>Cost</th>
+			<th>Descr</th>		
+			
+		</tr>
+		
+		
+<%
+			for (i = 0; i < assetListDB.size(); i++) {
+						  
+						for (j = 0;j < dcListDB.size(); j++) {
+							if ( dcListDB.get(j).getCtlgId().equals( assetListDB.get(i).getCtlgId() ) ) {
+								if ( dcListDB.get(j).getMonthlyRent() == null ) {
+									cost = 0;
+								}
+								else {
+									cost = dcListDB.get(j).getMonthlyRent();	
+								}
+								 
+								ctlgDesc = dcListDB.get(j).getDescr();
+							}
+						}
+				 
+		%>
+		
+			<tr>
+			<td><input type="checkbox" id = "chkApply" >
+
+			</td>
+			<td><%=assetListDB.get(i).getAssetId()%></td>
+			<td><%=assetListDB.get(i).getIpAddr()%></td>
+			
+			
+			
+			
+			<td><%= cost %></td>
+			
+			<td><%= ctlgDesc %> </td>
+
+
+ <% 
+	}		
+%>
+</tr>
+	</table>
+</div>
+		<input type="button" value="Submit" onclick="handleClick()"> 
+	
+</form>
+
+</body>
+
+</html>	
