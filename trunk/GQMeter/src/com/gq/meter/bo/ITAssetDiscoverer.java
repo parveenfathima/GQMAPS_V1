@@ -465,12 +465,12 @@ public final class ITAssetDiscoverer {
         gqmResponse.setGqmid(gqmid);
         gqmResponse.setAssetDiscovered((short) snmpKnownIPList.size());
 
-        System.out.println(" [GQMETER] json : " + gson.toJson(gqmResponse));
+      //  System.out.println(" [GQMETER] json : " + gson.toJson(gqmResponse));
         System.out.println(" [GQMETER] Total number of assets(ip address) in input file : " + gqmResponse.getAssetScanned());
         System.out.println(" [GQMETER] SNMP configured on : " + this.snmpKnownIPList.toString());
         System.out.println(" [GQMETER] SNMP not configured on : " + this.snmpUnknownIPList.toString());
-        System.out.println(" [GQMETER] SNMP walk succeess count is : " + this.snmpKnownIPList.size());
-        System.out.println(" [GQMETER] TOTAL taken for meter execution : " + (endTime - startTime));
+        System.out.println(" [GQMETER] SNMP walk succeeded on : " + this.snmpKnownIPList.size());
+        System.out.println(" [GQMETER] TOTAL time taken for meter execution : " + (endTime - startTime));
         
         // Sending the generated json output to the server
         Form form = new Form();
