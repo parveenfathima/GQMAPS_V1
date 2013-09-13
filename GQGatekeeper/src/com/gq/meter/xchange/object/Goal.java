@@ -1,4 +1,5 @@
 package com.gq.meter.xchange.object;
+
 // default package
 // Generated Jul 26, 2013 10:19:05 AM by Hibernate Tools 3.4.0.CR1
 
@@ -15,7 +16,6 @@ public class Goal implements java.io.Serializable {
     private String perfNotes;
     private char timeBound;
     private byte[] img;
-    private GoalInput goalInput;
     private Set goalSnpshts = new HashSet(0);
 
     public Goal() {
@@ -27,14 +27,12 @@ public class Goal implements java.io.Serializable {
         this.timeBound = timeBound;
     }
 
-    public Goal(String goalId, String descr, String perfNotes, char timeBound, byte[] img, GoalInput goalInput,
-            Set goalSnpshts) {
+    public Goal(String goalId, String descr, String perfNotes, char timeBound, byte[] img, Set goalSnpshts) {
         this.goalId = goalId;
         this.descr = descr;
         this.perfNotes = perfNotes;
         this.timeBound = timeBound;
         this.img = img;
-        this.goalInput = goalInput;
         this.goalSnpshts = goalSnpshts;
     }
 
@@ -76,14 +74,6 @@ public class Goal implements java.io.Serializable {
 
     public void setImg(byte[] img) {
         this.img = img;
-    }
-
-    public GoalInput getGoalInput() {
-        return this.goalInput;
-    }
-
-    public void setGoalInput(GoalInput goalInput) {
-        this.goalInput = goalInput;
     }
 
     public Set getGoalSnpshts() {
