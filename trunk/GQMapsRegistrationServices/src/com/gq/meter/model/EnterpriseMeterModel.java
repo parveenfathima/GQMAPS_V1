@@ -107,7 +107,7 @@ public class EnterpriseMeterModel {
             for (Object[] list : entMeterResult) {
                 EnterpriseMeter meters = new EnterpriseMeter();
                 meters.setProtocolId((String) list[0]);
-                meters.setPcount((Long) list[1]);
+                meters.setPcount((Integer) list[1]);
                 meterList.add(meters);
             }
             return meterList;
@@ -150,6 +150,35 @@ public class EnterpriseMeterModel {
         }
         catch (Exception e) {
             GQGateKeeperConstants.logger.error("Exception occured while fetching the protocolId ", e);
+            throw new Exception(e);
+        }
+        finally {
+            try {
+                if (session.isOpen()) {
+                    session.flush();
+                    session.close();
+                }
+            }
+            catch (Exception e) {
+                GQGateKeeperConstants.logger.error("Exception occured while closing the session ", e);
+                throw new Exception(e);
+            }
+        }
+    }
+
+    public List<EnterpriseMeter> getAllMeters() throws Exception {
+        Session session = null;
+        try {
+            session = HibernateUtil.getSessionFactory().getCurrentSession();
+            session.beginTransaction();
+
+            String hql = "FROM EnterpriseMeter";
+            Query query = session.createQuery(hql);
+            List<EnterpriseMeter> entMeterResult = query.list();
+            return entMeterResult;
+        }
+        catch (Exception e) {
+            GQGateKeeperConstants.logger.error("Exception occured while fetching the enterprises ", e);
             throw new Exception(e);
         }
         finally {
