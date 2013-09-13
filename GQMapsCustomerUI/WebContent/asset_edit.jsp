@@ -123,10 +123,13 @@ function updateAsset(count)
 <form id = "frmAsset" name = "frmAsset">
 <table>
 <tr>
-	<td><label> Asset Edit for&nbsp; <%=request.getParameter("setEntp") %></label> </td>
-	<td>&nbsp; <a href="login.html" onClick="logout();"> &nbsp; &nbsp; Logout</b></a></td>
-	<td>&nbsp; <a href="dashboard_full.html" > &nbsp; &nbsp; Back</b></a></td>
-	
+	<td><label><h1> Asset Edit for&nbsp; <%=request.getParameter("setEntp") %></h1>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label> </td>
+	<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		<a href="dashboard_full.html" > Back</a>
+	</td>
+	<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="login.html" onClick="logout();">Logout</a></td>
 </tr>
 </table>
 	<%
