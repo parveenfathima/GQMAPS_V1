@@ -405,4 +405,41 @@ public class EnterpriseModel {
             }
         }
     }
+
+    /**
+     * This method used to fetch all details for the registered enterprise in GQMaps
+     * 
+     * @return
+     * @throws Exception
+     */
+    public List<Enterprise> getEnterpriseDetails(String entpId) throws Exception {
+        Session session = null;
+        try {
+            session = HibernateUtil.getSessionFactory().getCurrentSession();
+            session.beginTransaction();
+
+            String hql = "FROM Enterprise where  enterprise_id=:E_ID";
+            Query query = session.createQuery(hql);
+            query.setParameter("E_ID", entpId);
+            List<Enterprise> entMeterResult = query.list();
+            return entMeterResult;
+        }
+        catch (Exception e) {
+            GQGateKeeperConstants.logger.error("Exception occured while fetching the enterprises ", e);
+            throw new Exception(e);
+        }
+        finally {
+            try {
+                if (session.isOpen()) {
+                    session.flush();
+                    session.close();
+                }
+            }
+            catch (Exception e) {
+                GQGateKeeperConstants.logger.error("Exception occured while closing the session ", e);
+                throw new Exception(e);
+            }
+        }
+    }
+
 }
