@@ -4,7 +4,7 @@ $(document).ready(function()
 	$("#submit").bind("click", userLogin);
 });
 
-// login validation for both admin and customers
+// login validation for admin user
 function userLogin() 
 {
 	var user = $.trim($('#txtUserId').val());
@@ -30,10 +30,7 @@ function userLogin()
 
 		$.ajax({
 			type : "GET",
-			beforeSend: function(xhr) 
-			{ 
-			  xhr.setRequestHeader("Content-Type", "application/json");
-			},
+			contentType: "application/json",
 			url : vUrl,
 			dataType : "json",
 			success : function(json) 
@@ -70,20 +67,19 @@ function userLogin()
 						$('#pwdPassword').val("");	
 						$('#txtUserId').focus();
 					}
-					
 				}
 				
 			}, //end of success
 			error : function(json) 
 			{
 				//alert("Invalid User Credentials" + json.status + " " + json.responseText);
-				alert("Error: Invalid user credentials!");
+				alert("Error from loading user credentials!");
 			}
 		});
 	}
 }
 
-//change password validation. User id input is must to navigate to the change_password page
+//change password validation. User id input is a must to navigate to the change_password page
 function checkForValue() 
 {
 	var user = $.trim($('#txtUserId').val());
