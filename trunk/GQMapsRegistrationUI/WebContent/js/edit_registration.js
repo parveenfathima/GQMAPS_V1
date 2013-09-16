@@ -1,4 +1,3 @@
-
 var arrEntp = new Array(enterprise()); // global array to store all the enterprises from the rest service
 var gArrayIndex = ""; // global enterprise id.
 var gRegStatus = "";
@@ -6,29 +5,49 @@ var gMeterId = 0;
 var gUserId = 0;
 var arrIndex;
 
-$.jStorage.set("jsLat", "0.00"); 
-$.jStorage.set("jsLong", "0.00");
+$.jStorage.set("jsLat", "0.0"); 
+$.jStorage.set("jsLong", "0.0");
 
 $(document).ready(function() 
 {
-	listEnterprise();
-	
-	$( "#txtNewExpiry").bind("focusin", showDate);
-	
-	$("#txtPhone").keypress(function (e) 
+	//alert("Edit Registration " + $.jStorage.get("jsUserId") + "     " + $.jStorage.get("jsPwd"));
+	if(($.jStorage.get("jsUserId") === "") || ($.jStorage.get("jsPwd") === ""))
 	{
-	// if the letter is not digit then display error and don't type anything
-	 if (e.which != 8 && e.which != 0 && (e.which < 48 || e.which > 57)) 
-	 {
-		//display error message
-		alert("Enter numbers only");
-		$("#txtPhone").focus();
-		return false;
-	 }
-   }); 
-   
-   $( "#btnCancel").bind("click", cancelEdit);
-   
+		window.location.href = "login.html";
+	}
+	else
+	{
+		$("#datepicker").keypress( function(e) {
+		  
+		// if the letter is not digit then display error and don't type anything
+		 if (e.which != 8 && e.which != 0 && (e.which >= 48 || e.which <= 57)) 
+		 {
+			//display error message
+			alert("Enter numbers only");
+			$("#txtPhone").focus();
+			return false;
+		 }
+		});	
+		
+		listEnterprise();
+		
+		$( "#txtNewExpiry").bind("focusin", showDate);
+		
+		$("#txtPhone").keypress(function (e) 
+		{
+		// if the letter is not digit then display error and don't type anything
+		 if (e.which != 8 && e.which != 0 && (e.which < 48 || e.which > 57)) 
+		 {
+			//display error message
+			alert("Enter numbers only");
+			$("#txtPhone").focus();
+			return false;
+		 }
+	   }); 
+	   
+	   $( "#btnCancel").bind("click", cancelEdit);
+	}
+	
 });
 
 function cancelEdit()
@@ -59,10 +78,7 @@ function openGeneralDialog(i)
 	$("#txtDCTemp").val(arrEntp[i].getDcTemp());
 
 	$("#taComments").val(arrEntp[i].getComments());
-	
-	//var isActive = $.trim(arrEntp[i].getActive());  //field removed from db
-	
-	
+
 	//if no meter, then we can edit the enterprise id. otherwise, no
 	var mCount = hasMeter($("#txtEID").val());
 	
@@ -74,14 +90,6 @@ function openGeneralDialog(i)
 	{
 		$(txtEID).removeAttr("disabled");
 	}
-		
-	/*
-	if(isActive === 'y')
-		$('input:checkbox[name=chkActive]').attr('checked',true);
-	else
-		$('input:checkbox[name=chkActive]').attr('checked',false);
-		*/
-		
 	
 	var isRegistered = $.trim(arrEntp[i].getRegStatus());
 	
@@ -106,10 +114,8 @@ function saveGeneral()
 }
 
 // updating only the changed enterprise
-
 function updateEntp(dbEntp)
 {		
-	
 	var eid = $.trim($("#txtEID").val());
 	var ename = $.trim($("#txtEName").val());
 	var uid = $.trim($("#txtUID").val());
@@ -136,10 +142,6 @@ function updateEntp(dbEntp)
 	if(isRegistered)
 		regStatus  = "y";
 
-	/*if(isActive)
-		active = "y";*/
-
-	
 	var formEntp = new enterprise(dbEntp.getSId(), eid, ename, uid, pwd, output, url, empCount, eSqft, eAsset, dSqft, dAsset, dcUsed, dcTemp, comments, regStatus, dbEntp.getMCount(), dbEntp.getExpDate());
                                             //sid, eid, ename, uid, pwd, output, url, empCount, eSqft, eAsset, dSqft, dAsset, dcUsed, dcTemp,  comments, regStatus, mcount, expDate)  
 											
@@ -152,47 +154,72 @@ function updateEntp(dbEntp)
 		$('input:checkbox[name=chkRegCompl]').attr('checked',false);	
 		return false;		
 	}
-	else if(!validatePwd(formEntp.getPwd()))
+	else if(formEntp.getEId().length === 0 || formEntp.getUId().length === 0 || formEntp.getPwd().length === 0)
 	{
-		$("#txtPwd").select();
+		alert("Enter all the mandatory values");
+		$("#txtEID").focus();
 		return false;
-	}		
-	else if(checkSpecialChar(formEntp.getUId()))
-	{
-		alert("User ID should not contain special characters");
-		$("#txtUID").focus();
-		return false;		
 	}
 	else if(compareObject(dbEntp, formEntp))
 	{
 		alert("No changes found");
 		$( "#dlgGeneral" ).dialog( "close" );
 	}
-	else if(formEntp.getEId().length === 0 || formEntp.getUId().length === 0 || formEntp.getPwd().length === 0)
+	else if(!validatePwd(formEntp.getPwd()))
 	{
-		alert("Enter all the mandatory values");
-		$("#txtEID").focus();
+		$("#txtPwd").select();
 		return false;
 	}	
-	else if(eSqft.toString().length > 11)
+	else if(formEntp.getEId().length > 10)
+	{
+		alert("Enterprise ID length should be less than or equal to 10");
+		$("#txtEID").select();
+		return false;
+	}
+	else if(!checkUniqueEntpID(formEntp.getEId()))
+	{
+		alert("Enter unique enterprise ID");
+		$("#txtEID").select();
+		return false;
+	}
+
+	else if(checkSpecialChar(formEntp.getEId()) || checkForNoInString(formEntp.getEId()))
+	{
+		alert("Please enter Enterprise ID without special characters/numbers/space");	
+		$("#txtEID").select();
+		return false;		
+	}
+	else if(checkSpecialChar(formEntp.getUId()))
+	{
+		alert("Please enter User ID without special characters/space");	
+		$("#txtUID").select();
+		return false;		
+	}
+	else if(checkSpace(formEntp.getPwd()))
+	{
+		alert("Please enter Password without space(s)");	
+		$("#txtPwd").select();
+		return false;			
+	}
+	else if(eSqft.toString().length > 9)
 	{
 		alert("Please enter valid IT usable area");
 		$('#txtESqft').select();
 		return false;
 	}
-	else if(eAsset.toString().length > 11)
+	else if(eAsset.toString().length > 9)
 	{
 		alert("Please enter valid total number of IT assets");
 		$('#txtEAsset').select();
 		return false;
 	}
-	else if(dSqft.toString().length > 11)
+	else if(dSqft.toString().length > 9)
 	{
 		alert("Please enter valid datacentre usable area");
 		$('#txtDCSqft').select();
 		return false;
 	}	
-	else if(dAsset.toString().length > 11)
+	else if(dAsset.toString().length > 9)
 	{
 		alert("Please enter valid datacentre assets");
 		$('#txtDCAsset').select();
@@ -204,7 +231,7 @@ function updateEntp(dbEntp)
 		$('#txtDCUsed').select();
 		return false;
 	}				
-	else if(dcTemp.toString().length > 11)
+	else if(dcTemp > 99)
 	{
 		alert("Please enter valid datacenter temperature");
 		$('#txtDCTemp').focus();
@@ -213,7 +240,6 @@ function updateEntp(dbEntp)
 	else
 	{
 		var vType = "PUT";
-	//	var vUrl = "http://localhost:8080/GQMapsRegistrationServices/gqm-gk/enterprise/updateRegistration";		
 		var vUrl = $.jStorage.get("jsUrl") + "enterprise/updateRegistration";
 		
 		if(formEntp.getUrl() === "")	formEntp.setUrl(" ");
@@ -227,7 +253,7 @@ function updateEntp(dbEntp)
 		var vQuery = "";
 		
 		vQuery = vQuery + '{"sid":"' + dbEntp.getSId() + '", "enterpriseId":"' + formEntp.getEId() + '", "userId":"' + formEntp.getUId() + '", "passwd":"' ;
-		vQuery = vQuery + 	formEntp.getPwd() + '", "storeFwd":"' + formEntp.getOutput() + '", "fwdUrl":"' + formEntp.getUrl() + '", "noOfEmpl" : "' + formEntp.getEmpCount(); 
+		vQuery = vQuery + 	formEntp.getPwd() + '", "noOfEmpl" : "' + formEntp.getEmpCount(); 
 		vQuery = vQuery + '", "entSqft":"' + formEntp.getESqft();
 		vQuery = vQuery + '", "entAssetCount":"'+ formEntp.getEAsset() + '", "dcSqft": "' + formEntp.getDSqft() + '", "dcAssetCount":"'+ formEntp.getDAsset();
 		vQuery = vQuery + '", "dcUsePctg":"'+ formEntp.getDcUsed() + '", "dcTemp":"'+ formEntp.getDcTemp()+ '", "regCmplt":"' + formEntp.getRegStatus() + '"}';	
@@ -309,18 +335,19 @@ function compareObject(obj1, obj2)
 	return true;
 }
 
-
 // binding the datepicker with the field
 function showDate()
 {
 	$("#txtNewExpiry").datepicker({ dateFormat: 'yy-mm-dd' });
 }
 
-
 // opening the meter dialog for the selected enterprise to add the meter details. 
 function openMeterDialog(index)
 {
 	gArrayIndex = index;
+	
+	clearMeterDetails();
+	
 	$( "#dlgMeter" ).dialog( "open" );
 
 	//loading the protocols from db in the dropdown in general.js
@@ -332,6 +359,15 @@ function openMeterDialog(index)
 function saveMeter()
 {
 	addEntpMeter(arrEntp[gArrayIndex]);
+}
+
+function clearMeterDetails()
+{
+	$("#txtMeterID").val("");
+	$("#cmbProtocol").val("");
+	$("#txtPhone").val("");
+	$.trim($("#taAddress").val(""));
+	$.trim($("#txtDesc").val(""));
 }
 
 function addEntpMeter(dbEntp)
@@ -354,6 +390,12 @@ function addEntpMeter(dbEntp)
 	{
 		alert("Enter mandatory values to submit the details");
 		return false;
+	}
+	else if(checkSpecialChar(vMId))
+	{
+		alert("Please enter Meter ID without special characters/space");	
+		$("#txtMeterID").select();
+		return false;		
 	}
 	else if($("#cmbProtocol").val() === "" )
 	{
@@ -380,14 +422,14 @@ function addEntpMeter(dbEntp)
 			return false;
 		}
 	
-		var vType = "POST";
-		//var vUrl = "http://localhost:8080/GQMapsRegistrationServices/gqm-gk/enterpriseMeters/addEntMeters";						
-		var vUrl = $.jStorage.get("jsUrl") + "enterpriseMeters/addEntMeters";
+		var vType = "POST";						
+		var vUrl = $.jStorage.get("jsUrl") + "enterpriseMeters/addEntMeters?entpId=" + vEId;
 				
 		var vQuery = "";
 		vQuery = vQuery + '{"meterId":"' + vMId + '","protocolId":"' + vProtocol + '", "enterpriseId":"' + vEId + '", "descr":"' + vDesc + '", "address":"' + vAddress;
-		vQuery = vQuery + '","phone":"' + vPhone + '", "creDttm":"' + vDtTime + '", "latitude":' + $.jStorage.get("jsLat")  + ', "longitude":' + $.jStorage.get("jsLong")  + '}';																		
-				
+		vQuery = vQuery + '","phone":"' + vPhone + '", "creDttm":"' + vDtTime + '", "latitude":"' + $.jStorage.get("jsLat");
+		vQuery = vQuery + '", "longitude":"' + $.jStorage.get("jsLong")  + '"}';																		
+		alert(vQuery);		
 		$.ajax
 		({
 			type:vType,
@@ -399,18 +441,20 @@ function addEntpMeter(dbEntp)
 			success:function(json) 
 			{
 				gMeterId = 0;	
-				$.jStorage.set("jsLat", "0.00"); 
-				$.jStorage.set("jsLong", "0.00");			
+				$.jStorage.set("jsLat", "0.0"); 
+				$.jStorage.set("jsLong", "0.0");			
 				
 				alert("Meter details saved successfully!");
-				//$('#frmMeter').get(0).reset();
-				gArrayIndex = "";
+				clearMeterDetails();
 				window.location.href = "edit_registration.html";
+				gArrayIndex = "";
 			},
 			error:function(json)
 			{
 				resetVariables();	
+				clearMeterDetails();
 				alert("Error from adding meter details: " + json.status + " " + json.responseText);
+				
 			}
 		});	
 	}
@@ -425,6 +469,7 @@ function openValidityDialog(index)
 	//$('#txtNewExpiry').blur(); 	
 }
 
+// saving the gatekeeper and gatekeeper audit values
 function saveValidity()
 {
 	updateGateKpr(arrEntp[gArrayIndex]);
@@ -432,40 +477,56 @@ function saveValidity()
 
 function updateGateKpr(dbEntp)
 {
-	var dateObject = $("#datepicker").datepicker("getDate");
+	
+	var dateObject = $("#datepicker").datepicker("expDate");
 		
 	var vExpDate = $.trim($("#txtNewExpiry").val());
 	
 	var vComments = $.trim($("#taValComments").val());
+	
+	//var date = $.datepicker.parseDate('dd-mm-yyyy', dateObject);
 	
 	var now = new Date(); 
 	var today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 	
 	var date = vExpDate.split("-");
 	var dtStr = date[1] + "/" + date[0] + "/" + date[2];
-	
+		
 	var vEDate = new Date(dtStr);
-
-	if (vExpDate === "" || vExpDate.length === 0)
+	
+	var vEId = dbEntp.getEId();
+	var mCount = hasMeter(vEId); //check whether the enterprise has got meter or not to update the expiry date
+	
+	if(mCount === 0)
+	{
+		alert("The enterprise has " + mCount + " meter(s), add at least one meter details to update the meter expiry date");
+		$('#txtNewExpiry').val("");
+		$('#taValComments').val("");
+		$( "#dlgValidity" ).dialog( "close" );
+		return false;		
+	}
+	else if (vExpDate === "" || vExpDate.length === 0)
 	{
 		alert("Select expiry date");
 		$('#txtNewExpiry').blur(); 	
+		return false;
 	}
 	else if(vEDate < today)
 	{
 		alert("Enter a valid date which should be greater than the current date");
 		$('#txtNewExpiry').val("");
 		$('#txtNewExpiry').focus();
+		return false;
 	}
 	else if(vComments === "" || vComments.length === 0)
 	{
 		alert("Enter comments");
 		$("#taValComments").focus();
+		return false;
 	}
 	else
 	{
 		var vType = "POST";
-		//var vUrl = "http://localhost:8080/GQMapsRegistrationServices/gqm-gk/gatekeeper/addEntAudit";
 		var vUrl = $.jStorage.get("jsUrl") + "gatekeeper/addEntAudit";						
 
 		var date = vExpDate.split("-");
@@ -513,7 +574,7 @@ $(function() {
 	  $( "#dlgGeneral" ).dialog({
 		  autoOpen: false,
 		  height: 475,
-		  width: 475,
+		  width: 500,
 		  modal: true,
 		  position: "center"
 	  });		  
@@ -544,8 +605,6 @@ $(function() {
 // dynamic grid listing all the enterprises
 function listEnterprise()
 {			
-		//var vUrl = 'http://localhost:8080/GQMapsRegistrationServices/gqm-gk/enterprise/getRegistration';
-		//var vUrl = 'http://localhost:8080/GQMapsRegistrationServices/gqm-gk/general/getEntpSummaryList';
 		var vUrl = $.jStorage.get("jsUrl") + "general/getEntpSummaryList";
 		
 		$.ajax({
@@ -578,13 +637,25 @@ function listEnterprise()
 								
 								
 								vEntpList += '<td> <input type = "button" class = "button-font-a" id = "btnGeneral" title = "General" onClick = "openGeneralDialog(' + i + ')"/></td>';
-								vEntpList += '<td> <input type = "button" class = "button-font-a" id = "btnMeter" title = "Add Meter" onClick = "openMeterDialog(' + i + ')"/></td>';
-								vEntpList += '<td> <input type = "button" class = "button-font-a" id = "btnValidity" title = "Add Validity" onClick = "openValidityDialog(' + i + ')"/></td>';                                            
-								vEntpList += '<td  style = "padding-left: 34px;" class = "gen-form-font">' +  arrEntp[i].getEId() + '</td>';
-								vEntpList += '<td  style = "padding-left: 65px;" class = "gen-form-font">' +  arrEntp[i].getEName() + '</td>';
-								vEntpList += '<td  style = "padding-left: 80px;" class = "gen-form-font">' +  arrEntp[i].getMCount()  + '</td>';
-								vEntpList += '<td  style = "padding-left: 100px;" class = "gen-form-font">' +  arrEntp[i].getExpDate() + '</td>';
-								vEntpList += '</tr>';														
+								//check for a valid enterprise id to add meter and validity details
+								if(checkSpecialChar(arrEntp[i].getEId()) || checkForNoInString(arrEntp[i].getEId()))
+								{
+									vEntpList += '<td> <input type = "button" class = "button-font-a" id = "btnMeter" title = "Edit Enterprise ID to add meters" onClick = "openMeterDialog(' + i + ')" disabled = "disbaled" /></td>';
+									vEntpList += '<td> <input type = "button" class = "button-font-a" id = "btnValidity" title = "Edit Enterprise ID to add validity details" onClick = "openValidityDialog(' + i + ')"  disabled = "disbaled" /></td>';  									
+								}	
+								else
+								{
+									vEntpList += '<td> <input type = "button" class = "button-font-a" id = "btnMeter" title = "Add Meter" onClick = "openMeterDialog(' + i + ')"/></td>';
+									vEntpList += '<td> <input type = "button" class = "button-font-a" id = "btnValidity" title = "Add Validity" onClick = "openValidityDialog(' + i + ')"/></td>';  									
+								}
+                                          
+								vEntpList += '<td width="100" style = "padding-left: 34px;" class = "gen-form-font">' +  arrEntp[i].getEId() + '</td>';
+								vEntpList += '<td width="100" style = "padding-left: 40px;" class = "gen-form-font">' +  arrEntp[i].getEName() + '</td>';
+								vEntpList += '<td width="100"> </td>';
+								vEntpList += '<td width="80"  style = "padding-right: 20px;" class = "gen-form-font">' +  arrEntp[i].getMCount()  + '</td>';
+								vEntpList += '<td width="160" class = "gen-form-font">' +  arrEntp[i].getExpDate() + '</td>';
+								vEntpList += '</tr>';					
+																				
 						});	
 						
 						$("#tblEList").append(vEntpList);		
@@ -651,9 +722,6 @@ enterprise.prototype.setEId = function(eid)
 {
 	this.eid = eid;
 }
-
-
-
 
 enterprise.prototype.getEName = function()
 {
@@ -786,17 +854,6 @@ enterprise.prototype.setComments = function(comments)
 {
 	this.comments = comments;
 }
-/*
-enterprise.prototype.getActive = function()
-{
-	return this.active;
-}
-
-enterprise.prototype.setActive = function(active)
-{
-	this.active = active;
-}
-*/
 
 enterprise.prototype.getRegStatus = function()
 {
@@ -848,8 +905,7 @@ function convertToTwoDigit(no)
 function validateMeterId(meterId, eid)
 {
 	  var vType = "GET";
-	  //var vUrl = "http://localhost:8080/GQMapsRegistrationServices/gqm-gk/enterpriseMeters/getEntMeters";	
-	  var vUrl = $.jStorage.get("jsUrl") + "enterpriseMeters/getEntMeters?entpId="+eid;	
+	  var vUrl = $.jStorage.get("jsUrl") + "enterpriseMeters/getAllMeters";	
 	  
 	  $.ajax
 	  ({
@@ -880,9 +936,7 @@ function validateMeterId(meterId, eid)
 
 function resetVariables()
 {
-	  gArrayIndex = "";
-	  //gLongitude = null;
-	  //gLatitude = null;	
+	  gArrayIndex = "";	
 	  gRegStatus = "";
 	  gMeterId = 0;
 }
@@ -891,8 +945,7 @@ function resetVariables()
 function loadMeters(i)
 {
 	var vType = "GET";	
-	//var vUrl = "http://localhost:8080/GQMapsRegistrationServices/gqm-gk/enterpriseMeters/getEntMeters";		
-	var vUrl = $.jStorage.get("jsUrl") + "enterpriseMeters/getEntMeters/?entpId=" + arrEntp[i].getEId();
+	var vUrl = $.jStorage.get("jsUrl") + "enterpriseMeters/getEntMeters?entpId=" + arrEntp[i].getEId();
 	
 	var vValues = "";
 	$("#tblMeterList").text("");
@@ -915,7 +968,6 @@ function loadMeters(i)
 						vValues = vValues + '<td width="80px" style = "padding-left:10px">' + n["meterId"] + '</td>';
 						vValues = vValues + '<td width="120px" style = "padding-left:20px">' + n["protocolId"] + '</td>';
 						vValues = vValues + '</tr>';
-						
 					});
 				}
 				$("#tblMeterList").append(vValues);  
@@ -929,11 +981,11 @@ function loadMeters(i)
 			
 }
 
+//validating whether the enterprise has purchased meters or not
 function hasMeter(eid)
 {
-		var vType = "GET";	
-		//var vUrl = "http://localhost:8080/GQMapsRegistrationServices/gqm-gk/enterpriseMeters/getEntMeters";		
-		var vUrl = $.jStorage.get("jsUrl") + "enterpriseMeters/getEntMeters/?entpId=" + eid;
+		var vType = "GET";		
+		var vUrl = $.jStorage.get("jsUrl") + "enterpriseMeters/getEntMeters?entpId=" + eid;
 		var mCount = 0;
 		$.ajax
 		({
@@ -955,8 +1007,40 @@ function hasMeter(eid)
 		return mCount;
 }
 
+//check for unique enterprise ID while saving the edited enterprise ID
+function checkUniqueEntpID(eid)
+{
+		var vType = "GET";		
+		var vUrl = $.jStorage.get("jsUrl") + "enterprise/getEnterpriseDetails?entpId=" + eid;
+		var count = 0;
+		$.ajax
+		({
+			type:vType,
+			contentType: "application/json",
+			url:vUrl,
+			async:false,
+			dataType: "json",
+			success:function(json)
+			{				
+				count = json.length;	
+			},
+			error:function(json)
+			{
+				alert("Error from laoding enterprise details: " + json.status + " " + json.responseText);
+			} 
+		});	
+		
+		if(count === 0)
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+}
 
-// funtion that returns the longitue and latitude of an address passed.
+// funtion that returns the longitude and latitude of an address passed.
 function getGeoLocation(address) {
 	var geocoder = new google.maps.Geocoder();
 	//var address = document.getElementById("taAddress").value;
@@ -970,9 +1054,9 @@ function getGeoLocation(address) {
 			
 		} else 
 		{
-			$.jStorage.set("jsLat", "0.00"); 
-			$.jStorage.set("jsLong", "0.00");
-			alert("Request failed.");
+			$.jStorage.set("jsLat", "0.0"); 
+			$.jStorage.set("jsLong", "0.0");
+			alert("Not a proper address to fetch latitude and longitude from google maps.");
 		}
 	});
 }
@@ -980,8 +1064,7 @@ function getGeoLocation(address) {
 //check for unique user id 
 function validateUserId(userId)
 {
-	  var vType = "GET";
-	  //var vUrl = "http://localhost:8080/GQMapsRegistrationServices/gqm-gk/enterprise/getRegistration";	
+	  var vType = "GET";	
 	  var vUrl = $.jStorage.get("jsUrl") + "enterprise/getRegistration";	
 	  
 	  $.ajax
@@ -1008,5 +1091,3 @@ function validateUserId(userId)
 	  });	
 			
 }
-
-

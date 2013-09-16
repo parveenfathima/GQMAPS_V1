@@ -71,10 +71,7 @@ function validateForm()
 		}		
 		else if(comparePwd(vNewPwd, vConfPwd))
 		{
-			//user id validation
-			  
-			//var vUrl = 'http://localhost:8080/GQMapsRegistrationServices/gqm-gk/enterprise/getRegistration';
-			//var vUrl = 'http://192.168.1.95:8080/GQMapsRegistrationServices/gqm-gk/enterprise/getRegistration';	
+			//user id validation	
 			var vUrl = $.jStorage.get("jsUrl") + "enterprise/getRegistration";			
 			
 			var vQuery = "";
@@ -145,8 +142,6 @@ function validateForm()
 								({
 									type:"PUT",
 									contentType: "application/json",
-									//url:"http://localhost:8080/GQMapsRegistrationServices/gqm-gk/enterprise/updatePassword",
-									//url:"http://192.168.1.95:8080/GQMapsRegistrationServices/gqm-gk/enterprise/updatePassword",
 									url: $.jStorage.get("jsUrl") + "enterprise/updatePassword",
 									async:false,
 									data:vQuery,
@@ -181,6 +176,7 @@ function validateForm()
 		}	
 }
 
+//comparing old and new password
 function comparePwd(password, confPwd)
 {
 	  if(password != confPwd)
