@@ -170,26 +170,10 @@ function updateEntp(dbEntp)
 		$("#txtPwd").select();
 		return false;
 	}	
-	else if($('#txtEID').is(':disabled') === false) 
+	else if($('#txtEID').is(':disabled') === false && !validateEntpID(formEntp.getEId())) 
 	{ 
-		if(formEntp.getEId().length > 10)
-		{
-			alert("Enterprise ID length should be less than or equal to 10");
-			$("#txtEID").select();
-			return false;
-		}
-		else if(checkSpecialChar(formEntp.getEId()) || checkForNoInString(formEntp.getEId()))
-		{
-			alert("Please enter Enterprise ID without special characters/numbers/space");	
-			$("#txtEID").select();
-			return false;			
-		}
-		else if(!checkUniqueEntpID(formEntp.getEId()))
-		{
-			alert("Enter unique enterprise ID");
-			$("#txtEID").select();
-			return false;
-		}	
+		$("#txtUID").select();
+		return false;		
 	}
 	else if(checkSpecialChar(formEntp.getUId()))
 	{
@@ -312,8 +296,33 @@ function updateEntp(dbEntp)
 		});	
 	}
 	
-	return true;
+	
 }
+
+function validateEntpID(eid)
+{
+		if(eid.length > 10)
+		{
+			alert("Enterprise ID length should be less than or equal to 10");
+			$("#txtEID").select();
+			return false;
+		}
+		else if(checkSpecialChar(eid) || checkForNoInString(eid))
+		{
+			alert("Please enter Enterprise ID without special characters/numbers/space");	
+			$("#txtEID").select();
+			return false;			
+		}
+		else if(!checkUniqueEntpID(eid))
+		{
+			alert("Enter unique enterprise ID");
+			$("#txtEID").select();
+			return false;
+		}	
+		else
+			return true;
+}
+
 
 
 // compare the enterprise values before and after the change. If changed, then only the ajax will be called to update.
