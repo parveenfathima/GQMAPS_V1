@@ -11,6 +11,12 @@ $(window).load(function ()
 //binding the click event to the submit button
 $(document).ready(function()
 {
+	if($.jStorage.get("jsUserId") === "")
+	{
+		window.location.href = "login.html";
+	}
+	else
+	{
 		$("#submit").bind("click", validateForm);
 		$('#chkChageQA').bind("click", changeQA);
 		
@@ -18,6 +24,7 @@ $(document).ready(function()
 		loadSecQuestions();
 
 		isValid = 0; // 0 and 1 indicates invalid and valid user flags.
+	}
 });
 
 // function to validate the change_password form

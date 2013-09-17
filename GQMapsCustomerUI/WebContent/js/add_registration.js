@@ -2,9 +2,13 @@
 //binding the click event to the submit button
 $(document).ready(function()
 {
+	
+	
 		$("#submit").bind("click", validateForm);
 		
-		$('input[type=submit]', this).removeAttr("disabled");
+		$('#frmAddRegn').bind("submit", formSubmit); 
+	
+		//$('input[type=submit]', this).removeAttr("disabled");
 		
 		// called when key is pressed in txtPhone textbox
 		$("#txtPhone, #txtESqft, #txtEAsset, #txtDCSqft, #txtDCAsset, #txtDCUsed, #txtDCTemp").keypress(function (e) {
@@ -21,6 +25,14 @@ $(document).ready(function()
 	   loadBusLine();
 
 });
+
+function formSubmit()
+{
+	e.preventDefault();
+	$('#frmAddRegn').unbind('submit');
+	$('#submit').attr('disabled','disabled');
+	$('#frmAddRegn').submit();
+}
 
 
 function validateForm()
@@ -59,7 +71,7 @@ function validateForm()
 			$('#txtEName').select();
 			return false;
 		}
-		else if(checkSpecialChar(vEName))
+		else if(checkSpecialCharWithSpace(vEName))
 		{
 			alert("Please enter Enterprise Name without special characters");	
 			$('#txtEName').select();
@@ -216,7 +228,7 @@ function validateForm()
 				dataType: "json",
 				success:function(json)
 				{
-					$('input[type=submit]', this).attr('disabled', 'disabled');
+					//$('input[type=submit]', this).attr('disabled', 'disabled');
 					
 					alert("Thank you for registering with GQuotient energy optimization services, an email has been sent to the registered email address with the next steps!");
 					window.location.href = "login.html";
