@@ -31,8 +31,9 @@ public class MapsDomainModel {
         try {
             System.out.println("Enterprise Id:" + enterpriseId);
             String dbInstanceName = "gqm" + enterpriseId;
+
             // Create a session factory for requesting enterprise
-            sessionFactory = DynamicSessionUtil.dynamicSessionFactory(dbInstanceName);
+            sessionFactory = DynamicSessionUtil.getSessionFactory(dbInstanceName);
 
             // create a session to start a transaction
             session = sessionFactory.getCurrentSession();
