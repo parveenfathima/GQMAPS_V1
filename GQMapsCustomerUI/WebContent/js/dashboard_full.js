@@ -243,3 +243,16 @@ function loadGoals()
 		}	 
 	});	//end of ajax		
 }
+
+
+function gotoAssetList(e)
+{
+	//window.location.href = "server_list.jsp";
+	window.open('server_list.jsp',"serverlist","right=2000,top=20,toolbar=no, " +
+				"status=no,location=no,	menubar=no, scrollbars=yes, resizable=no, width=400, height=400");
+				
+	
+		
+	//ServerLIst.document.write('My PDF File Title');
+}
+
