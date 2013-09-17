@@ -26,7 +26,8 @@ function userLogin()
 	} 
 	else 
 	{
-		var vUrl = $.jStorage.get("jsUrl") + "enterprise/getRegistration";
+		//var vUrl = http://localhost:8080/GQMapsRegistrationServices/enterprise/getEnterpriseDetails?userId=aps&passwd=1
+		var vUrl = $.jStorage.get("jsUrl") + "enterprise/getEnterpriseDetails?userId=" + user + "&passwd=" + pwd;
 
 		$.ajax({
 			type : "GET",
@@ -49,12 +50,12 @@ function userLogin()
 							$.jStorage.set("jsPwd", pwd);		
 							$.jStorage.set("jsEntpId", n["enterpriseId"]);	
 							$.jStorage.set("jsEName", n["eName"]);
-							vFwdStore = n["storeFwd"];
+							return false;
 						}
 					  
 					});		
 					
-					if(isValid === 1 && vFwdStore === "C" || vFwdStore === "c")
+					if(isValid === 1)
 					{		
 							window.location.href = "edit_registration.html";	
 					}
