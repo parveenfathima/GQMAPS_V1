@@ -170,24 +170,26 @@ function updateEntp(dbEntp)
 		$("#txtPwd").select();
 		return false;
 	}	
-	else if(formEntp.getEId().length > 10)
-	{
-		alert("Enterprise ID length should be less than or equal to 10");
-		$("#txtEID").select();
-		return false;
-	}
-	else if(!checkUniqueEntpID(formEntp.getEId()))
-	{
-		alert("Enter unique enterprise ID");
-		$("#txtEID").select();
-		return false;
-	}
-
-	else if(checkSpecialChar(formEntp.getEId()) || checkForNoInString(formEntp.getEId()))
-	{
-		alert("Please enter Enterprise ID without special characters/numbers/space");	
-		$("#txtEID").select();
-		return false;		
+	else if($('#txtEID').is(':disabled') === false) 
+	{ 
+		if(formEntp.getEId().length > 10)
+		{
+			alert("Enterprise ID length should be less than or equal to 10");
+			$("#txtEID").select();
+			return false;
+		}
+		else if(checkSpecialChar(formEntp.getEId()) || checkForNoInString(formEntp.getEId()))
+		{
+			alert("Please enter Enterprise ID without special characters/numbers/space");	
+			$("#txtEID").select();
+			return false;			
+		}
+		else if(!checkUniqueEntpID(formEntp.getEId()))
+		{
+			alert("Enter unique enterprise ID");
+			$("#txtEID").select();
+			return false;
+		}	
 	}
 	else if(checkSpecialChar(formEntp.getUId()))
 	{
