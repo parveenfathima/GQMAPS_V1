@@ -33,7 +33,7 @@ public class AssetEditModel {
             String dbInstanceName = "gqm" + enterpriseId;
 
             // Create a session factory for requesting enterprise
-            sessionFactory = DynamicSessionUtil.dynamicSessionFactory(dbInstanceName);
+            sessionFactory = DynamicSessionUtil.getSessionFactory(dbInstanceName);
 
             // create a session to start a transaction
             session = sessionFactory.getCurrentSession();
@@ -70,7 +70,7 @@ public class AssetEditModel {
             String dbInstanceName = "gqm" + enterpriseId;
 
             // Create a session factory for requesting enterprise
-            sessionFactory = DynamicSessionUtil.dynamicSessionFactory(dbInstanceName);
+            sessionFactory = DynamicSessionUtil.getSessionFactory(dbInstanceName);
 
             // create a session to start a transaction
             session = sessionFactory.getCurrentSession();
