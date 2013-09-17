@@ -7,33 +7,38 @@ import org.hibernate.cfg.Configuration;
 
 /**
  * @author parveen
+ * @change sriram
  */
 public class DynamicSessionUtil {
 
-    public static HashMap<String, SessionFactory> SessionFactoryListMap = new HashMap<String, SessionFactory>();
-    public static SessionFactory sessionFactory = null;
+    private static HashMap<String, SessionFactory> SessionFactoryListMap = new HashMap<String, SessionFactory>(10);
 
-    public static SessionFactory dynamicSessionFactory(String dbInstanceName) {
+    public static SessionFactory getSessionFactory(String dbInstanceName) {
 
-        String url = "jdbc:mysql://localhost:3306/" + dbInstanceName + "?autoReconnect=true";
-        // String url = "jdbc:mysql://192.168.1.95:3306/" + dbInstanceName + "?autoReconnect=true";
+        SessionFactory sessionFactory = null;
+        String url = "jdbc:mysql://localhost:3306/" + dbInstanceName;
+        // String url = "jdbc:mysql://192.168.1.95:3306/" + dbInstanceName;
+
         if (SessionFactoryListMap.containsKey(dbInstanceName)) {
-
-            CustomerServiceConstant.logger.info("Existing Session Factory");
             sessionFactory = SessionFactoryListMap.get(dbInstanceName);
 
+            if ((sessionFactory == null) || (sessionFactory.getCurrentSession() == null)) {
+                createSessionFactory(dbInstanceName, url);
+            }
         }
-
-        if (sessionFactory == null || (!SessionFactoryListMap.containsKey(dbInstanceName))) {
-
-            CustomerServiceConstant.logger.debug("Null session factory so newly creating a sessionfactory for that..");
-            Configuration configuration = new Configuration();
-            configuration.setProperty("hibernate.connection.url", url);
-            configuration.configure();
-            sessionFactory = configuration.buildSessionFactory();
-            SessionFactoryListMap.put(dbInstanceName, sessionFactory);
+        else {
+            createSessionFactory(dbInstanceName, url);
         }
+        return SessionFactoryListMap.get(dbInstanceName);
+    } // method end
 
-        return sessionFactory;
+    private static void createSessionFactory(String dbInstanceName, String url) {
+
+        Configuration configuration = new Configuration();
+        configuration.setProperty("hibernate.connection.url", url);
+        configuration.configure();
+        SessionFactory sessionFactory = configuration.buildSessionFactory();
+        SessionFactoryListMap.put(dbInstanceName, sessionFactory);
     }
+
 }
