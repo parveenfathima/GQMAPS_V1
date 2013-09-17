@@ -157,12 +157,12 @@ public class EnterpriseServices {
     @Path("/getEnterpriseDetails")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getEnterprisesDetails(@QueryParam("entpId") String entpId) {
+    public Response getEnterprisesDetails(@QueryParam("userId") String userId, @QueryParam("passwd") String passwd) {
         GQGateKeeperConstants.logger.info("Generating all the enterprises list from GQGatekeeper");
         EnterpriseModel entmodel = new EnterpriseModel();
         List<Enterprise> entMeterResult = null;
         try {
-            entMeterResult = entmodel.getEnterpriseDetails(entpId);
+            entMeterResult = entmodel.getEnterpriseDetails(userId, passwd);
         }
         catch (Exception e) {
             GQGateKeeperConstants.logger.error("Exception occured while fetching the enterprises list ", e);

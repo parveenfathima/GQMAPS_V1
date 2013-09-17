@@ -409,18 +409,22 @@ public class EnterpriseModel {
     /**
      * This method used to fetch all details for the registered enterprise in GQMaps
      * 
+     * @param passwd
+     * 
      * @return
      * @throws Exception
      */
-    public List<Enterprise> getEnterpriseDetails(String entpId) throws Exception {
+    public List<Enterprise> getEnterpriseDetails(String userId, String passwd) throws Exception {
         Session session = null;
         try {
             session = HibernateUtil.getSessionFactory().getCurrentSession();
             session.beginTransaction();
 
-            String hql = "FROM Enterprise where  enterprise_id=:E_ID";
+            String hql = "FROM Enterprise where  user_id=:UID and passwd=:PWD";
             Query query = session.createQuery(hql);
-            query.setParameter("E_ID", entpId);
+            query.setParameter("UID", userId);
+            query.setParameter("PWD", passwd);
+
             List<Enterprise> entMeterResult = query.list();
             return entMeterResult;
         }
