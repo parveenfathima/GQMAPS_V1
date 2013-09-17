@@ -17,78 +17,84 @@ var barChartOptions = {'title':'',
 // Ajax call to get all the dashboard services
 $(document).ready(function() 
 {
-	$('#btnConfAssets').click(function () { 
-		var id = $.jStorage.get("jsEntpId");
-	 	alert("jstorage value:  " + id );
-	 	document.frmAssetEdit.setEntp.value = id;
-	 	alert("hidden value  :" + $("#setEntp").val());
-	 });
+	if(($.jStorage.get("jsUserId") === "") || ($.jStorage.get("jsPwd") === ""))
+	{
+		window.location.href = "login.html";
+	}
+	else
+	{
+		$('#btnConfAssets').click(function () { 
+			var id = $.jStorage.get("jsEntpId");
+			//alert("jstorage value:  " + id );
+			document.frmAssetEdit.setEntp.value = id;
+			//alert("hidden value  :" + $("#setEntp").val());
+		 });
+		
+		$("#btnConfAssets").bind("click", goToAssetEdit);
+		
+		$("#entpName").text("Customer Dashboard for " + $.jStorage.get("jsEName"));
+		vType = "GET";						
+		
+		var vUrl = $.jStorage.get("jsDBUrl") + "DashboardServices/getdashboard?entpId=" + $.jStorage.get("jsEntpId");
 	
-	$("#btnConfAssets").bind("click", goToAssetEdit);
+		$.ajax
+		({
+			type:vType,
+			contentType: "application/json",
+			url:vUrl,
+			async:false,
+			dataType: "json",
+			success:function(json)
+			{		
 	
-	$("#entpName").text("Customer Dashboard for " + $.jStorage.get("jsEName"));
-	vType = "GET";						
+				//alert("inside success");			
 	
-	var vUrl = $.jStorage.get("jsDBUrl") + "DashboardServices/getdashboard?entpId=" + $.jStorage.get("jsEntpId");
-
-	$.ajax
-	({
-		type:vType,
-		contentType: "application/json",
-		url:vUrl,
-		async:false,
-		dataType: "json",
-		success:function(json)
-		{		
-
-			//alert("inside success");			
-
-			$.each(json, function(i, v)
-			{
-				if(json[i]["charttype"] === "pie")
-					showPieChart(json[i]["data"], json[i]["divId"]);
-				else if(json[i]["charttype"] === "bar")
-					showBarChart(json[i]["data"], json[i]["divId"]);
-				else if(json[i]["charttype"] === "line")
-					showLineChart(json[i]["data"], json[i]["divId"]);					
-				else if(json[i]["charttype"] === "plain")
+				$.each(json, function(i, v)
 				{
-					if(json[i]["divId"] === "div_expiryAlert")
-						showAlerts(json[i]["data"], json[i]["divId"]);
-					else
-						showPlainText(json[i]["data"], json[i]["divId"]);
-				}
-			});	 	                           
-			
-			
-		},
-		error:function(json)
-		{
-			//alert("inside error")
+					if(json[i]["charttype"] === "pie")
+						showPieChart(json[i]["data"], json[i]["divId"]);
+					else if(json[i]["charttype"] === "bar")
+						showBarChart(json[i]["data"], json[i]["divId"]);
+					else if(json[i]["charttype"] === "line")
+						showLineChart(json[i]["data"], json[i]["divId"]);					
+					else if(json[i]["charttype"] === "plain")
+					{
+						if(json[i]["divId"] === "div_expiryAlert")
+							showAlerts(json[i]["data"], json[i]["divId"]);
+						else
+							showPlainText(json[i]["data"], json[i]["divId"]);
+					}
+				});	 	                           
 				
-			var obj = eval('(' + json.responseText + ')');	
-			
-			$.each(obj, function(i, v){
-				if(obj[i]["charttype"] === "pie")
-					showPieChart(obj[i]["data"], obj[i]["divId"]);
-				else if(obj[i]["charttype"] === "bar") 
-					showBarChart(obj[i]["data"], obj[i]["divId"]);
-				else if(obj[i]["charttype"] === "line")
-					showLineChart(obj[i]["data"], obj[i]["divId"]);										 
-				else if(obj[i]["charttype"] === "plain")
-				{
-					if(obj[i]["divId"] === "div_expiryAlert")
-						showAlerts(obj[i]["data"], obj[i]["divId"]);
-					else
-						showPlainText(obj[i]["data"], obj[i]["divId"]);	 
-				}
-			});	 
-		}	 
-	});	//end of ajax
-	
-	getPUE();
-	loadGoals();
-	
+				
+			},
+			error:function(json)
+			{
+				//alert("inside error")
+					
+				var obj = eval('(' + json.responseText + ')');	
+				
+				$.each(obj, function(i, v){
+					if(obj[i]["charttype"] === "pie")
+						showPieChart(obj[i]["data"], obj[i]["divId"]);
+					else if(obj[i]["charttype"] === "bar") 
+						showBarChart(obj[i]["data"], obj[i]["divId"]);
+					else if(obj[i]["charttype"] === "line")
+						showLineChart(obj[i]["data"], obj[i]["divId"]);										 
+					else if(obj[i]["charttype"] === "plain")
+					{
+						if(obj[i]["divId"] === "div_expiryAlert")
+							showAlerts(obj[i]["data"], obj[i]["divId"]);
+						else
+							showPlainText(obj[i]["data"], obj[i]["divId"]);	 
+					}
+				});	 
+			}	 
+		});	//end of ajax
+		
+		getPUE();
+		loadGoals();
+	}
 	
 });
 
@@ -166,7 +172,7 @@ function showPlainText(plainText, divID)
 
 function showAlerts(plainText, divID)
 {
-	alert(plainText);
+	//alert(plainText);
 	if(plainText <=0)
 		$("#" + divID).text("Meter expired, contact support!");
 	else if(plainText >= 1 && plainText <= 10)
@@ -178,10 +184,9 @@ function showAlerts(plainText, divID)
 //function to navigate to the asset_edit.jsp
 function goToAssetEdit()
 {
-	alert("jstorage value:  " + $.jStorage.get("jsEntpId"));
+	//alert("jstorage value:  " + $.jStorage.get("jsEntpId"));
 	document.frmAssetEdit.setEntp.value = $.jStorage.get("jsEntpId");
-	alert("hidden value  :" + $("#setEntp").val());
-	//$('#goToAssetEdit').submit();
+	//alert("hidden value  :" + $("#setEntp").val());
 }
 
 
@@ -244,7 +249,6 @@ function loadGoals()
 	});	//end of ajax		
 }
 
-
 function gotoAssetList(e)
 {
 	//window.location.href = "server_list.jsp";
@@ -255,4 +259,3 @@ function gotoAssetList(e)
 		
 	//ServerLIst.document.write('My PDF File Title');
 }
-
