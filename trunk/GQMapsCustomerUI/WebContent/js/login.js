@@ -32,20 +32,19 @@ function userLogin()
 	} 
 	else 
 	{
-		var vUrl = $.jStorage.get("jsUrl") + "enterprise/getRegistration";
+		//var vUrl = $.jStorage.get("jsUrl") + "enterprise/getRegistration";
+		//var vUrl = http://localhost:8080/GQMapsRegistrationServices/enterprise/getEnterpriseDetails?userId=aps&passwd=1
+		var vUrl = $.jStorage.get("jsUrl") + "enterprise/getEnterpriseDetails?userId=" + user + "&passwd=" + pwd;
 
 		$.ajax({
 			type : "GET",
-			beforeSend: function(xhr) 
-			{ 
-			  xhr.setRequestHeader("Content-Type", "application/json");
-			},
+			contentType: "application/json",
 			url : vUrl,
 			dataType : "json",
 			success : function(json) 
 			{
 				var vRecLen = json.length;
-				var vFwdStore = "";	
+				//var vFwdStore = "";	
 				var vActive = "n";		
 				if(vRecLen > 0)
 				{
@@ -58,17 +57,15 @@ function userLogin()
 							$.jStorage.set("jsPwd", pwd);		
 							$.jStorage.set("jsEntpId", n["enterpriseId"]);	
 							$.jStorage.set("jsEName", n["eName"]);
-							vFwdStore = n["storeFwd"];
+							//vFwdStore = n["storeFwd"];
+							return false;
 						}
-					  
+				
 					});		
 					
-					if(isValid === 1 && vFwdStore === "C" || vFwdStore === "c")
+					if(isValid === 1)
 					{		
-						alert("valid");
-						alert($.jStorage.get("jsUserId"));
 						window.location.href = "dashboard_full.html";	
-		
 					}
 					else
 					{
