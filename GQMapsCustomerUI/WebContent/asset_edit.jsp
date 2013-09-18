@@ -24,6 +24,8 @@
 <script src = "js/asset_edit.js"> </script>  
 
 <script type="text/javascript">
+
+var assetsDB = { assetDataDB: [] };
 function updateAsset(count)
 {
 	//alert("Count: " + count);
@@ -41,7 +43,7 @@ function updateAsset(count)
 	var jsonString = "";
 
 	var assets = { assetData: [] };
-
+	
 	var j = 0;
 	for(j=0; j < count; j++)
 	{
@@ -88,10 +90,8 @@ function updateAsset(count)
 	    });
 	}
 
-	var jsonData = JSON.stringify(assets.assetData);
-
 	var vType = "PUT";
-	alert("before update: "  + $.jStorage.get("jsEntpId"));
+	//alert("before update: "  + $.jStorage.get("jsEntpId"));
 	var vUrl = $.jStorage.get("jsDBUrl") + "AssetEditServices/updateAssetData?enterpriseId=" + $.jStorage.get("jsEntpId");
 			
 	$.ajax
@@ -104,8 +104,24 @@ function updateAsset(count)
 		dataType: "json",
 		success:function(response)
 		{
+ 			getCurrentAssets();
+ 			
+ 			//alert("assetsDB: " + JSON.stringify(assetsDB.assetDataDB));
+ 			
+ 			alert("assetsDB length: " + assetsDB.assetDataDB.length + " " + "assets length: " + assets.assetData.length);
+ 			
+ 			$.each(assets.assetData, function(i, n){
+ 			
+				//alert(assets.assetData[i].assetId); 	
+				if(!compareObject(assets.assetData[i], assetsDB.assetDataDB[i]))
+				{
+					alert("changes found for " + i);
+				}		
+ 			});
+ 			
  			alert("Asset details are saved successfully!");
- 			window.location.href = "dashboard_full.html";
+
+ 			//window.location.href = "dashboard_full.html";
 		},
 		error:function(json)
 		{
@@ -113,6 +129,83 @@ function updateAsset(count)
 		} 
 	});	
 
+}
+
+function getCurrentAssets()
+{
+	//alert("Count: " + count);
+	var vActive = "";
+	var vAssetID = "";
+	var vIP = ""; 
+	var vCatalog = "";
+	var vSrvrType = "";
+	var vUsage = "";
+	var vImpLevel = "";
+	var vOwnership = "";
+	var vLocation = "";
+	var vCompType = "";
+	
+	var vType = "GET";
+	//alert("before getting current assets: "  + $.jStorage.get("jsEntpId"));
+	var vUrl = $.jStorage.get("jsDBUrl") + "AssetEditServices/getAssetData?enterpriseId=" + $.jStorage.get("jsEntpId");
+			
+	$.ajax
+	({
+		type:vType,
+		contentType: "application/json",
+		url:vUrl,
+		async:false,
+		dataType: "json",
+		success:function(response)
+		{
+ 			//alert("Current asset details inside success!");
+ 			
+ 			$.each(response["assetResult"], function(i,n)
+			{
+				 assetsDB.assetDataDB.push({ 
+	        
+					"assetId": response["assetResult"][i]["assetId"],
+					"ipAddr": response["assetResult"][i]["ipAddr"],
+					"ctlgId": response["assetResult"][i]["ctlgId"],
+					"srvrAppId": response["assetResult"][i]["srvrAppId"], 
+					"assetUsg": response["assetResult"][i]["assetUsg"],
+					"impLvl": response["assetResult"][i]["impLvl"],
+					"ownership": response["assetResult"][i]["ownership"],
+					"dcEnt": response["assetResult"][i]["dcEnt"],
+					"active": response["assetResult"][i]["active"], 
+					"typeId": response["assetResult"][i]["typeId"]        
+	    		});
+			
+			});
+			
+		},
+		error:function(json)
+		{
+			alert("Error from updating asset details: " + json.status + " " + json.responseText);
+		} 
+	});	
+}
+
+function compareObject(obj1, obj2)
+{
+	for(var p in obj1)
+	{
+		alert(obj1[p] + "   " + obj2[p]);
+		if(obj1[p] !== obj2[p])
+		{
+			return false;
+		}
+	}
+	
+	for(var p in obj2)
+	{
+	alert(obj1[p] + "   " + obj2[p]);
+		if(obj1[p] !== obj2[p]){
+			return false;
+		}
+	}
+	
+	return true;
 }
 	
 </script>
