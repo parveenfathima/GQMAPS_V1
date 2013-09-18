@@ -1,8 +1,6 @@
 package com.gq.meter.util;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.StringWriter;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -13,7 +11,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
-import java.util.StringTokenizer;
 import java.util.Vector;
 import java.util.concurrent.TimeUnit;
 
@@ -32,11 +29,6 @@ import org.snmp4j.smi.UdpAddress;
 import org.snmp4j.smi.VariableBinding;
 import org.snmp4j.transport.DefaultUdpTransportMapping;
 
-import com.gq.meter.ComputerMeter;
-import com.gq.meter.GQMeterData;
-import com.gq.meter.NSRGMeter;
-import com.gq.meter.PrinterMeter;
-import com.gq.meter.StorageMeter;
 import com.gq.meter.object.Asset;
 
 public final class MeterUtils {
@@ -46,8 +38,6 @@ public final class MeterUtils {
     public long nsrgMeterTime = 0;
     public long storageMeterTime = 0;
     
-    public static final String restURL = "http://cloud.gqexchange.com:8080/GQGatekeeper/";
-
     // public static final String restURL = "http://localhost:8080/GQGatekeeper/";
     public static Asset sysBasicInfo(String communityString, String ipAddress, String snmpVersion,
             List<String> errorList) {
@@ -195,35 +185,6 @@ public final class MeterUtils {
         return mProtocol;
     }
 
-    /**
-     * This method used to returns the asset object with all the informations
-     * 
-     * @param protocol
-     * @param communityString
-     * @param currIp
-     * @param snmpVersion
-     * @param switchList
-     * @return
-     */
-//    public static GQMeterData getAssetObject(MeterProtocols protocol, String communityString, String currIp,
-//            String snmpVersion, LinkedList<String> switchList) {
-//
-//        GQMeterData assetObject = null;
-//        
-//        if (protocol.equals(MeterProtocols.PRINTER) ) {
-//            assetObject = new PrinterMeter().implement(communityString, currIp, snmpVersion, switchList);
-//        }
-//        else if (protocol.equals(MeterProtocols.NSRG) ) {
-//            assetObject = new NSRGMeter().implement(communityString, currIp, snmpVersion, switchList);
-//        }
-//        else if (protocol.equals(MeterProtocols.COMPUTER) ) {
-//            assetObject = new ComputerMeter().implement(communityString, currIp, snmpVersion, switchList);
-//        }
-//        else if (protocol.equals(MeterProtocols.STORAGE) ) {
-//            assetObject = new StorageMeter().implement(communityString, currIp, snmpVersion, switchList);
-//        }
-//        return assetObject;
-//    }
 
     /**
      * This method used to find an asset is reachable or not from the host where our GQMeter is running.
@@ -473,7 +434,7 @@ public final class MeterUtils {
     }
 
     /**
-     * Overrding the Comaprator class comapare method to comapre two ip's numeric values
+     * Overriding the Comparator class compare method to compare two ip's numeric values
      */
     public static Comparator<String> ipComparator = new Comparator<String>() {
         @Override

@@ -21,7 +21,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import com.gq.meter.GQErrorInformation;
-import com.gq.meter.GQMeterData;
 import com.gq.meter.GQMeterResponse;
 import com.gq.meter.assist.ProtocolData;
 
@@ -63,7 +62,7 @@ public final class ITAssetDiscoverer {
 		super();
 
 	    client = Client.create(new DefaultClientConfig());
-	    service = client.resource(MeterUtils.restURL);
+	    service = client.resource(MeterConstants.restURL);
 	}
 
 	/**
@@ -75,12 +74,10 @@ public final class ITAssetDiscoverer {
     private List<ProtocolData> findAssets(HashMap<String, String> communityIPMap) {
 
         String snmpVersion = null;
-        String assetDesc = null;
         String communityString = null;
         String ipAddress = null;
 
         MeterProtocols assetProtocol = null;
-//        GQMeterData assetObject = null;
         HashMap<String, String> snmpDetails = null;
 
         List<GQErrorInformation> gqErrorInfoList = new LinkedList<GQErrorInformation>();
@@ -99,13 +96,12 @@ public final class ITAssetDiscoverer {
                 
                 if (snmpDetails.get("snmpUnKnownIp") != null ) {
                     snmpUnknownIPList.add(ipAddress);
-                    errorList.add(communityString + " - " + ipAddress + " -  : Cannot reach the asset");
+                    errorList.add(communityString + " - " + ipAddress + " -  : Unable to reach the asset");
                     gqErrorInfoList.add(new GQErrorInformation(null, errorList));
                     continue;
                 }
                 
                 snmpVersion = snmpDetails.get("snmpVersion");
-                assetDesc = snmpDetails.get("assetDesc");
 
                 if (snmpDetails.get("snmpKnownIp") != null) {
                     snmpKnownIPList.add(ipAddress);
@@ -125,27 +121,16 @@ public final class ITAssetDiscoverer {
  
                     	// i hope the last 2 params of the adt constructor will have them set so they are available here 
                     	// very rusty stupid code from ss - sep 11 , 2013
-                    	
-//                        if (assetObject == null) {
-//                            errorList.add(ipAddress + " - " + assetProtocol.name()   + " : Unable to fetch the meter details");
-//                            gqErrorInfoList.add(new GQErrorInformation(assetDesc, errorList));
-//                        }
-//                        else {
-//                            pdList.add(new ProtocolData(assetProtocol, gson.toJson(assetObject.getMeterData())));
-//                            if (assetObject.getErrorInformation() != null) {
-//                                gqErrorInfoList.add(assetObject.getErrorInformation());
-//                            }
-//                        }
-
+                    	// it works !! - sep 18 , 2013	
                     }
-                    // *********************************************************************
-                    
                 }
+
             }// for loop ends
+            
             es.shutdown();
             //wait for all threads to complete or we shouldnt execute nothing beyond here...
             boolean finished = es.awaitTermination(1, TimeUnit.MINUTES); // this is a blocking call 
-//            if ( finished ) 
+
             System.out.println(" [GQMETER] all threads complete ");
 
         }
@@ -475,7 +460,7 @@ public final class ITAssetDiscoverer {
         // Sending the generated json output to the server
         Form form = new Form();
         form.add("gqMeterResponse", gson.toJson(gqmResponse));
-        form.add("summary", "Sending the data from GQMeter to GQGatekeeper");
+        form.add("summary", "Sending data from GQMeter to GQGatekeeper");
         
         Builder builder = service.path("gatekeeper").type(MediaType.APPLICATION_JSON);
         ClientResponse response = builder.post(ClientResponse.class, form);
