@@ -4,6 +4,8 @@ import java.util.HashMap;
 
 public class MeterConstants {
 
+    public static final String restURL = "http://cloud.gqexchange.com:8080/GQGatekeeper/";
+
     public static final String STATUS_PASS = "pass";
 
     public static final String STATUS_FAIL = "fail";

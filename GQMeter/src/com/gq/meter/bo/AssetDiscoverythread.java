@@ -35,7 +35,7 @@ public final class AssetDiscoverythread implements Runnable{
 
         if (assetObject == null) {
             errorList.add(ipAddress + " - " + assetProtocol.name()   + " : Unable to fetch the meter details");
-            gqErrorInfoList.add(new GQErrorInformation("should be assetDesc but ss testing", errorList));
+            gqErrorInfoList.add(new GQErrorInformation(ipAddress +", comm str = "+communityString, errorList));
         }
         else {
             pdList.add(new ProtocolData(assetProtocol, gson.toJson(assetObject.getMeterData())));
@@ -45,7 +45,6 @@ public final class AssetDiscoverythread implements Runnable{
         }
 
 		//System.out.println(" [GQMETER] New asset snmp thread ended at "+ System.currentTimeMillis());
-		
 	}
 
 	String snmpVersion ; 
