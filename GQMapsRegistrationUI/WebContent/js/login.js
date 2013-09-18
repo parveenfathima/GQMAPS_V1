@@ -85,7 +85,7 @@ function checkForValue()
 {
 	var user = $.trim($('#txtUserId').val());
 
-	if (user.length === 0) 
+	if (user.length === 0 || user === null) 
 	{
 		alert("Please enter your userid");
 			

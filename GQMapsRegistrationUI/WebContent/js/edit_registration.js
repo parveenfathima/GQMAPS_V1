@@ -10,8 +10,8 @@ $.jStorage.set("jsLong", "0.0");
 
 $(document).ready(function() 
 {
-	//alert("Edit Registration " + $.jStorage.get("jsUserId") + "     " + $.jStorage.get("jsPwd"));
-	if(($.jStorage.get("jsUserId") === "") || ($.jStorage.get("jsPwd") === ""))
+	alert("Edit Registration " + $.jStorage.get("jsUserId") + "     " + $.jStorage.get("jsPwd"));
+	if($.jStorage.get("jsUserId") === "" || $.jStorage.get("jsUserId") === null || $.jStorage.get("jsPwd") === "" || $.jStorage.get("jsPwd") === null)
 	{
 		window.location.href = "login.html";
 	}
