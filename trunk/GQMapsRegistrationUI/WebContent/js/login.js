@@ -89,7 +89,7 @@ function checkForValue()
 	{
 		alert("Please enter your userid");
 			
-		window.location.href = "login.html"
+		//window.location.href = "login.html"
 		$("#txtUserId").focus();
 	} 
 	else 
