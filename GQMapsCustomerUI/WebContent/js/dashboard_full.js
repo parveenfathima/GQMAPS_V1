@@ -17,7 +17,7 @@ var barChartOptions = {'title':'',
 // Ajax call to get all the dashboard services
 $(document).ready(function() 
 {
-	if(($.jStorage.get("jsUserId") === "") || ($.jStorage.get("jsPwd") === ""))
+	if($.jStorage.get("jsUserId") === "" || $.jStorage.get("jsUserId") === null || $.jStorage.get("jsPwd") === "" || $.jStorage.get("jsPwd") === null)
 	{
 		window.location.href = "login.html";
 	}
@@ -58,12 +58,7 @@ $(document).ready(function()
 					else if(json[i]["charttype"] === "line")
 						showLineChart(json[i]["data"], json[i]["divId"]);					
 					else if(json[i]["charttype"] === "plain")
-					{
-						if(json[i]["divId"] === "div_expiryAlert")
-							showAlerts(json[i]["data"], json[i]["divId"]);
-						else
-							showPlainText(json[i]["data"], json[i]["divId"]);
-					}
+						showPlainText(json[i]["data"], json[i]["divId"]);
 				});	 	                           
 				
 				
@@ -82,12 +77,7 @@ $(document).ready(function()
 					else if(obj[i]["charttype"] === "line")
 						showLineChart(obj[i]["data"], obj[i]["divId"]);										 
 					else if(obj[i]["charttype"] === "plain")
-					{
-						if(obj[i]["divId"] === "div_expiryAlert")
-							showAlerts(obj[i]["data"], obj[i]["divId"]);
-						else
-							showPlainText(obj[i]["data"], obj[i]["divId"]);	 
-					}
+						showPlainText(obj[i]["data"], obj[i]["divId"]);	 
 				});	 
 			}	 
 		});	//end of ajax
@@ -168,17 +158,6 @@ function showLineChart(lineData, divId)
 function showPlainText(plainText, divID)
 {
 		$("#" + divID).text(plainText);
-}
-
-function showAlerts(plainText, divID)
-{
-	//alert(plainText);
-	if(plainText <=0)
-		$("#" + divID).text("Meter expired, contact support!");
-	else if(plainText >= 1 && plainText <= 10)
-		$("#" + divID).text("Meter will get expired in " + plainText + " days!");
-	else
-		$("#" + divID).text("No alerts!");
 }
 
 //function to navigate to the asset_edit.jsp
