@@ -10,7 +10,6 @@ $.jStorage.set("jsLong", "0.0");
 
 $(document).ready(function() 
 {
-	alert("Edit Registration " + $.jStorage.get("jsUserId") + "     " + $.jStorage.get("jsPwd"));
 	if($.jStorage.get("jsUserId") === "" || $.jStorage.get("jsUserId") === null || $.jStorage.get("jsPwd") === "" || $.jStorage.get("jsPwd") === null)
 	{
 		window.location.href = "login.html";
@@ -23,7 +22,7 @@ $(document).ready(function()
 		 if (e.which != 8 && e.which != 0 && (e.which >= 48 || e.which <= 57)) 
 		 {
 			//display error message
-			alert("Enter numbers only");
+			alert("Please enter numbers only");
 			$("#txtPhone").focus();
 			return false;
 		 }
@@ -39,7 +38,7 @@ $(document).ready(function()
 		 if (e.which != 8 && e.which != 0 && (e.which < 48 || e.which > 57)) 
 		 {
 			//display error message
-			alert("Enter numbers only");
+			alert("Please enter numbers only");
 			$("#txtPhone").focus();
 			return false;
 		 }
@@ -156,7 +155,7 @@ function updateEntp(dbEntp)
 	}
 	else if(formEntp.getEId().length === 0 || formEntp.getUId().length === 0 || formEntp.getPwd().length === 0)
 	{
-		alert("Enter all the mandatory values");
+		alert("Please enter all the mandatory values");
 		$("#txtEID").focus();
 		return false;
 	}
@@ -201,19 +200,19 @@ function updateEntp(dbEntp)
 	}
 	else if(dSqft.toString().length > 9)
 	{
-		alert("Please enter valid datacentre usable area");
+		alert("Please enter valid datacenter usable area");
 		$('#txtDCSqft').select();
 		return false;
 	}	
 	else if(dAsset.toString().length > 9)
 	{
-		alert("Please enter valid datacentre assets");
+		alert("Please enter valid datacenter assets");
 		$('#txtDCAsset').select();
 		return false;
 	}	
 	else if(dcUsed  > 100)
 	{
-		alert("Please enter valid datacentre occupancy rate");
+		alert("Please enter valid datacenter occupancy rate");
 		$('#txtDCUsed').select();
 		return false;
 	}				
@@ -303,7 +302,7 @@ function validateEntpID(eid)
 {
 		if(eid.length > 10)
 		{
-			alert("Enterprise ID length should be less than or equal to 10");
+			alert("Please enter the Enterprise ID with the maximum length of 10 characters");
 			$("#txtEID").select();
 			return false;
 		}
@@ -315,7 +314,7 @@ function validateEntpID(eid)
 		}
 		else if(!checkUniqueEntpID(eid))
 		{
-			alert("Enter unique enterprise ID");
+			alert("Please enter unique Enterprise ID");
 			$("#txtEID").select();
 			return false;
 		}	
@@ -440,7 +439,7 @@ function addEntpMeter(dbEntp)
 		vQuery = vQuery + '{"meterId":"' + vMId + '","protocolId":"' + vProtocol + '", "enterpriseId":"' + vEId + '", "descr":"' + vDesc + '", "address":"' + vAddress;
 		vQuery = vQuery + '","phone":"' + vPhone + '", "creDttm":"' + vDtTime + '", "latitude":"' + $.jStorage.get("jsLat");
 		vQuery = vQuery + '", "longitude":"' + $.jStorage.get("jsLong")  + '"}';																		
-		alert(vQuery);		
+		
 		$.ajax
 		({
 			type:vType,
@@ -476,8 +475,7 @@ function openValidityDialog(index)
 {
 	gArrayIndex = index;
 	$( "#dlgValidity" ).dialog( "open" );
-	$("#hValidity").text("Add validity details for " + arrEntp[gArrayIndex].getEName());
-	//$('#txtNewExpiry').blur(); 	
+	$("#hValidity").text("Add validity details for " + arrEntp[gArrayIndex].getEName());	
 }
 
 // saving the gatekeeper and gatekeeper audit values
@@ -494,8 +492,6 @@ function updateGateKpr(dbEntp)
 	var vExpDate = $.trim($("#txtNewExpiry").val());
 	
 	var vComments = $.trim($("#taValComments").val());
-	
-	//var date = $.datepicker.parseDate('dd-mm-yyyy', dateObject);
 	
 	var now = new Date(); 
 	var today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
@@ -564,9 +560,7 @@ function updateGateKpr(dbEntp)
 			success:function(json) 
 			{
 				alert("Validity details saved successfully!");
-				//$( "#dlgValidity" ).dialog( "close" );
 				window.location.href = "edit_registration.html";
-				//$("#validity")[0].reset();
 				gArrayIndex = "";
 				
 			},
@@ -686,7 +680,6 @@ function listEnterprise()
 			}
 		});			  		
 }
-
 
 //-------------------------------------------------Enterprise object---------------------------------------------------
 
@@ -929,7 +922,6 @@ function validateMeterId(meterId, eid)
 		  {				
 				$.each(json, function(i,n)
 				{
-					//alert("db: " + n["meterId"] + "current: "  + meterId);
 					if(n["meterId"] === meterId)
 					{
 						gMeterId = 1;

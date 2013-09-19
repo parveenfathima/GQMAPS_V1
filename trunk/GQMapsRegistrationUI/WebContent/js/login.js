@@ -26,7 +26,6 @@ function userLogin()
 	} 
 	else 
 	{
-		//var vUrl = http://localhost:8080/GQMapsRegistrationServices/enterprise/getEnterpriseDetails?userId=aps&passwd=1
 		var vUrl = $.jStorage.get("jsUrl") + "enterprise/getEnterpriseDetails?userId=" + user + "&passwd=" + pwd;
 
 		$.ajax({
@@ -73,7 +72,6 @@ function userLogin()
 			}, //end of success
 			error : function(json) 
 			{
-				//alert("Invalid User Credentials" + json.status + " " + json.responseText);
 				alert("Error from loading user credentials!");
 			}
 		});
@@ -88,8 +86,6 @@ function checkForValue()
 	if (user.length === 0 || user === null) 
 	{
 		alert("Please enter your userid");
-			
-		//window.location.href = "login.html"
 		$("#txtUserId").focus();
 	} 
 	else 
