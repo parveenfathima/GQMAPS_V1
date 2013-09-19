@@ -1,0 +1,52 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+    
+<hibernate-mapping>
+	<class name="com.gq.dk.model.Enterprise" table="gqdk_enterprise" dynamic-update="true" dynamic-insert="true">
+	
+	   <id name="enterpriseId" column="enterprise_id" >
+	       <generator class="increment"/>
+	   </id>
+	   <property name="enterpriseName" >
+	   		<column name="enterprise_name" />
+	   </property>
+	   <property name="adminName" >
+	   		<column name="admin_name" />
+	   </property>
+	   <property name="mobileno" >
+	   		<column name="mobileno" />
+	   </property>
+	   <property name="email" >
+	   		<column name="email" />
+	   </property>
+	   <property name="port" >
+	   		<column name="port" />
+	   </property>
+	   <property name="centerLatitude" >
+	   		<column name="center_latitude" />
+	   </property>
+	    <property name="centerLongitude" >
+	   		<column name="center_longitude" />
+	   </property>
+	     <property name="zoomLevel" >
+	   		<column name="zoom_level" />
+	   </property>
+	    <property name="screenRefreshTimeout" >
+	   		<column name="screen_refresh_timeout" />
+	   </property>
+	   <property name="firstEscMinutes" >
+	   		<column name="first_esc_minutes" />
+	   </property>
+	   <property name="secondEscMinutes" >
+	   		<column name="second_esc_minutes" />
+	   </property>
+	   
+	</class>
+		
+	<query name="enterpriseQuery">
+ 		<![CDATA[from Enterprise e where e.enterpriseId = :eid]]>
+ 	</query>
+ 
+</hibernate-mapping>

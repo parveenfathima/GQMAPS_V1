@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+    
+<hibernate-mapping>
+	<class name="com.gq.dk.model.SystemProfile" table="gqdk_system_profile" dynamic-update="true" dynamic-insert="true">
+	   <id name="keycol" column="keycol" >
+	   </id>
+	   <property name="value" >
+	   		<column name="value" />
+	   </property>
+	</class>
+
+	<query name="profileGetQuery">
+ 		<![CDATA[from SystemProfile sp where sp.keycol = :keyid]]>
+ 	</query>
+
+</hibernate-mapping>

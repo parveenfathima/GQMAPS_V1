@@ -1,0 +1,76 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+    
+<hibernate-mapping>
+	<class name="com.gq.dk.model.Solar1000" table="gqdk_solar1000" dynamic-update="true" dynamic-insert="true">
+	   <id name="sid" column="sid" >
+	       <generator class="sequence">
+	       <param name="sequence">gqdk_solar1000_sid_seq</param>
+	       </generator>
+	   </id>
+	   <property name="unitId">
+	   		<column name="unitid" />
+	   </property>
+	   <property name="enterpriseId">
+	   		<column name="enterprise_id" />
+	   </property>
+	    <property name="recordingDttm" >
+	   		<column name="recordingdttm" />
+	   </property>
+	   <property name="panelVoltage1">
+	   		<column name="panelvoltage1" />
+	   </property>
+	   <property name="panelVoltage2">
+	   		<column name="panelvoltage2" />
+	   </property>
+	   <property name="batteryVoltage">
+	   		<column name="batteryvoltage" />
+	   </property>
+	   <property name="dgVoltage">
+	   		<column name="dgvoltage" />
+	   </property>
+	   <property name="ebRVoltage">
+	   		<column name="ebrvoltage" />
+	   </property>
+	   <property name="ebYVoltage">
+	   		<column name="ebyvoltage" />
+	   </property>
+	   <property name="ebBVoltage">
+	   		<column name="ebbvoltage" />
+	   </property>
+	   <property name="solarChargeCurrent1">
+	   		<column name="solarchargecurrent1" />
+	   </property>
+	   <property name="solarChargeCurrent2">
+	   		<column name="solarchargecurrent2" />
+	   </property>
+	   <property name="btsChargeCurrent">
+	   		<column name="btschargecurrent" />
+	   </property>
+	   <property name="dischargeCurrent">
+	   		<column name="dischargecurrent" />
+	   </property>
+	   
+	   <property name="batteryAhPercent">
+	   		<column name="batteryahpercent" />
+	   </property>
+	   <property name="sunlight">
+	   		<column name="sunlight" />
+	   </property>
+	   <property name="batteryTemperature">
+	   		<column name="batterytemperature" />
+	   </property>
+	   
+	   <property name="batteryAh">
+	   		<column name="batteryah" />
+	   </property>
+	   <property name="fuel">
+	   		<column name="fuel" />
+	   </property>
+	   
+	</class>
+	
+
+</hibernate-mapping>

@@ -1,0 +1,25 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-configuration PUBLIC
+"-//Hibernate/Hibernate Configuration DTD//EN"
+"http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+<session-factory>
+  <property name="hibernate.connection.driver_class">org.postgresql.Driver</property>
+  <property name="hibernate.connection.url">jdbc:postgresql://192.168.1.95:5432/gq-dk-perfmon</property> <!--  todo -->
+  <property name="hibernate.connection.username">postgres</property>
+  <property name="hibernate.connection.password">postgres</property>
+  <property name="hibernate.connection.pool_size">100</property>
+  <property name="show_sql">false</property>
+  <property name="dialect">org.hibernate.dialect.PostgreSQLDialect</property>
+  <property name="hibernate.hbm2ddl.auto">update</property>
+  <property name="current_session_context_class">thread</property>
+ 
+  <!-- Mapping files -->
+   <mapping resource="solar1000.hbm.xml" />
+   <mapping resource="enterprise.hbm.xml" />
+   <mapping resource="system_profile.hbm.xml" />
+
+</session-factory>
+</hibernate-configuration>
+
+
