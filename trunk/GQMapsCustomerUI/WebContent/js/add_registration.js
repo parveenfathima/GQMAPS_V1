@@ -2,14 +2,8 @@
 //binding the click event to the submit button
 $(document).ready(function()
 {
-	
-	
 		$("#submit").bind("click", validateForm);
-		
-		$('#frmAddRegn').bind("submit", formSubmit); 
 	
-		//$('input[type=submit]', this).removeAttr("disabled");
-		
 		// called when key is pressed in txtPhone textbox
 		$("#txtPhone, #txtESqft, #txtEAsset, #txtDCSqft, #txtDCAsset, #txtDCUsed, #txtDCTemp").keypress(function (e) {
 		// if the letter is not digit then display error and don't type anything
@@ -25,15 +19,6 @@ $(document).ready(function()
 	   loadBusLine();
 
 });
-
-function formSubmit()
-{
-	e.preventDefault();
-	$('#frmAddRegn').unbind('submit');
-	$('#submit').attr('disabled','disabled');
-	$('#frmAddRegn').submit();
-}
-
 
 function validateForm()
 {
@@ -228,9 +213,10 @@ function validateForm()
 				dataType: "json",
 				success:function(json)
 				{
-					//$('input[type=submit]', this).attr('disabled', 'disabled');
-					
+					$('#frmAddRegn').unbind('submit');
+					$('#submit').attr('disabled','disabled');
 					alert("Thank you for registering with GQuotient energy optimization services, an email has been sent to the registered email address with the next steps!");
+					$('#frmAddRegn').submit();
 					window.location.href = "login.html";
 				},
 				failure:function(json)
@@ -281,7 +267,6 @@ function convertToTwoDigit(no)
 {
 		return (no >=0 && no <10 ? ("0"+ no) : no)
 }
-
 
 //function disable submit button on submission of the form.
 $('#frmAddRegn').submit(function(){
