@@ -128,7 +128,7 @@ function updateAsset(count)
 			dataType: "json",
 			success:function(response)
 			{
-	 			alert(assetsForUpdate.assetUpdateData.length + " asset(s) were updated successfully!");
+	 			alert("Asset details were updated successfully!");
 			},
 			error:function(json)
 			{
@@ -443,12 +443,12 @@ function getCurrentAssets()
 				<th style="width: 150px;">Asset ID</th>
 				<th style="width: 130px;">IP Address</th>
 				<th style="width: 150px;">Catalog</th>
-				<th style="width: 100px;">Server Type</th>
+				<th style="width: 100px;display:none;">Server Type</th>
 				<th style="width: 100px;">Asset Usage</th>
 				<th>Asset Importance</th>
 				<th>Ownership</th>
 				<th>Location</th>
-				<th style="width: 100px;">Comp. Type</th>
+				<th style="width: 100px;display:none;">Comp. Type</th>
 			</tr>
 			<%
 				for (i = 0; i < assetListDB.size(); i++) {
@@ -497,12 +497,15 @@ function getCurrentAssets()
 									}
 						%>
 				</select></td>
-				<td style="width: 100px;"><input type="text"
+				<td style="width: 100px; display:none;"><input type="text"
 					id=<%="cmbSrvrApp" + i%> name=<%="cmbSrvrApp" + i%>
 					disabled="disabled" value="null" style="width: 100px;" /></td>
-				<td style="width: 100px;"><input type="text"
-					id=<%="txtAssetUsage" + i%> name=<%="txtAssetUsage" + i%>
-					disabled="disabled" value="null" style="width: 100px;" /></td>
+					
+				<td style="width: 100px;"><input type="text" id=<%="txtAssetUsage" + i%>
+					name=<%="txtAssetUsage" + i%>
+					value="<%=assetListDB.get(i).getAssetUsg()%>" width="100px" /></td>
+										
+					 
 				<td><select name=<%="cmbImpLevel" + i%>
 					id=<%="cmbImpLevel" + i%>>
 						<%
@@ -555,7 +558,7 @@ function getCurrentAssets()
 									}
 						%>
 				</select></td>
-				<td style="width: 100px;"><input type="text"
+				<td style="width: 100px;display:none;"><input type="text"
 					name=<%="cmbCompType" + i%> id=<%="cmbCompType" + i%>
 					disabled="disabled" value="null" style="width: 100px;" /></td>
 			</tr>
@@ -574,12 +577,12 @@ function getCurrentAssets()
 				<th style="width: 150px;">Asset ID</th>
 				<th style="width: 100px;">IP Address</th>
 				<th style="width: 150px;">Catalog</th>
-				<th>Server Type</th>
-				<th style="width: 100px;">Asset Usage</th>
-				<th>Asset Importance</th>
+				<th style = "display:none;">Server Type</th>
+				<th style="width: 100px;display:none;">Asset Usage</th>
+				<th style = "display:none;">Asset Importance</th>
 				<th>Ownership</th>
 				<th>Location</th>
-				<th style="width: 100px;">Comp. Type</th>
+				<th style="width: 100px;display:none;">Comp. Type</th>
 			</tr>
 			<%
 				for (i = 0; i < assetListDB.size(); i++) {
@@ -625,14 +628,14 @@ function getCurrentAssets()
 									}
 						%>
 				</select></td>
-				<td><input type="text" id=<%="cmbSrvrApp" + i%>
+				<td style = "display:none;"><input type="text" id=<%="cmbSrvrApp" + i%>
 					name=<%="cmbSrvrApp" + i%> disabled="disabled" value="null"
 					hidden="hidden" style="width: 100px;" /></td>
-				<td style="width: 100px;"><input type="text"
+				<td style="width: 100px;display:none;"><input type="text"
 					id=<%="txtAssetUsage" + i%> name=<%="txtAssetUsage" + i%>
 					disabled="disabled" value="null" hidden="hidden"
 					style="width: 100px;" /></td>
-				<td><input type="text" id=<%="cmbImpLevel" + i%>
+				<td style = "display:none;"><input type="text" id=<%="cmbImpLevel" + i%>
 					name=<%="cmbImpLevel" + i%> disabled="disabled" value="null"
 					hidden="hidden" style="width: 100px;" /></td>
 				<td><select name=<%="cmbOwnership" + i%>
@@ -669,7 +672,7 @@ function getCurrentAssets()
 									}
 						%>
 				</select></td>
-				<td><input type="text" name=<%="cmbCompType" + i%>
+				<td style = "display:none;"><input type="text" name=<%="cmbCompType" + i%>
 					id=<%="cmbCompType" + i%> disabled="disabled" value="null"
 					style="width: 100px;" /></td>
 			</tr>
