@@ -103,10 +103,7 @@ function validateForm()
 								return false;						
 							}
 							else
-							{
-								//alert("Valid user");	
-								//$.jStorage.set("jsUserId", vUserID);	
-								
+							{								
 								// Check for Change Security Questions option
 								var isChecked = $('#chkChageQA').is(':checked');
 								var vSId = $.jStorage.get("jsSId");
