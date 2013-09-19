@@ -25,9 +25,7 @@ $(document).ready(function()
 	{
 		$('#btnConfAssets').click(function () { 
 			var id = $.jStorage.get("jsEntpId");
-			//alert("jstorage value:  " + id );
 			document.frmAssetEdit.setEntp.value = id;
-			//alert("hidden value  :" + $("#setEntp").val());
 		 });
 		
 		$("#btnConfAssets").bind("click", goToAssetEdit);
@@ -45,10 +43,7 @@ $(document).ready(function()
 			async:false,
 			dataType: "json",
 			success:function(json)
-			{		
-	
-				//alert("inside success");			
-	
+			{			
 				$.each(json, function(i, v)
 				{
 					if(json[i]["charttype"] === "pie")
@@ -65,8 +60,6 @@ $(document).ready(function()
 			},
 			error:function(json)
 			{
-				//alert("inside error")
-					
 				var obj = eval('(' + json.responseText + ')');	
 				
 				$.each(obj, function(i, v){
@@ -110,11 +103,9 @@ function showBarChart(barData, divId)
 //function to diplay pie chart in the specified div location
 function showPieChart(pieData, divId)
 {					
-
 	  google.setOnLoadCallback(drawChart);
 	  var data = new google.visualization.DataTable(pieData);
-
-	  
+  
 	  function drawChart() 
 	  {
 			var chart = new google.visualization.PieChart(document.getElementById(divId));
@@ -124,11 +115,9 @@ function showPieChart(pieData, divId)
 
 //function to diplay line chart in the specified div location
 function showLineChart(lineData, divId)
-{					
-	  
+{					  
 	  function drawATLChart() 
 	  {
-				 
 		  var data = new google.visualization.DataTable(lineData);
 
 		  var annotatedtimeline = new google.visualization.AnnotatedTimeLine(
@@ -163,9 +152,7 @@ function showPlainText(plainText, divID)
 //function to navigate to the asset_edit.jsp
 function goToAssetEdit()
 {
-	//alert("jstorage value:  " + $.jStorage.get("jsEntpId"));
 	document.frmAssetEdit.setEntp.value = $.jStorage.get("jsEntpId");
-	//alert("hidden value  :" + $("#setEntp").val());
 }
 
 
@@ -210,8 +197,6 @@ function loadGoals()
 		dataType: "json",
 		success:function(json)
 		{		
-			//alert("inside goals list success");	
-			//alert(json[0]["goalData"][0]["goalId"]);
 			var vValues = "";
 			$.each(json[0]["goalData"], function(i,n)
 			{
@@ -233,8 +218,5 @@ function gotoAssetList(e)
 	//window.location.href = "server_list.jsp";
 	window.open('server_list.jsp',"serverlist","right=2000,top=20,toolbar=no, " +
 				"status=no,location=no,	menubar=no, scrollbars=yes, resizable=no, width=400, height=400");
-				
-	
-		
 	//ServerLIst.document.write('My PDF File Title');
 }

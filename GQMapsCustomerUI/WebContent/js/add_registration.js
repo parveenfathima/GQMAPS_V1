@@ -85,26 +85,26 @@ function validateForm()
 		}
 		else if(vPhone.length == 0 )
 		{
-			alert("Enter Phone number");	
+			alert("Please enter the mobile number");	
 			$('#txtPhone').select();	
 			return false;			
 		}
-		else if($.trim($('#txtPhone').val()).length != 10 && $.trim($('#txtPhone').val()).length != 15)
+		else if($.trim($('#txtPhone').val()).length < 10 || $.trim($('#txtPhone').val()).length > 15)
 		{
-			alert("Enter a valid cell phone number");
+			alert("Please enter a valid mobile number");
 			$('#txtPhone').select();
 			return false;			
 		}
 		
 		else if(vEmail.length === 0)
 		{
-			alert("Enter E-mail ID");
+			alert("Please enter the email Id");
 			$('#txtEmail').select();
 			return false;					
 		}
 		else if(!validateEMail(vEmail))
 		{
-			alert("Enter a valid E-mail ID");
+			alert("Please enter a valid email Id");
 			$('#txtEmail').select();	
 			return false;			
 		}
@@ -133,7 +133,7 @@ function validateForm()
 		}
 		else if(vQues2 === vQues1)
 		{
-			alert("Select unique security questions");
+			alert("Please choose distinct security questions");
 			$('#cmbQues2').focus();
 			return false;			
 		}
@@ -162,19 +162,19 @@ function validateForm()
 		}
 		else if(vDCSqft.toString().length > 9)
 		{
-			alert("Please enter valid datacentre usable area");
+			alert("Please enter valid datacenter usable area");
 			$('#txtDCSqft').select();
 			return false;
 		}	
 		else if(vDCAsset.toString().length > 9)
 		{
-			alert("Please enter valid datacentre assets");
+			alert("Please enter valid datacenter assets");
 			$('#txtDCAsset').select();
 			return false;
 		}	
 		else if(vDCUsed > 100)
 		{
-			alert("Please enter valid datacentre occupancy rate");
+			alert("Please enter valid datacenter occupancy rate");
 			$('#txtDCUsed').select();
 			return false;
 		}				
