@@ -108,7 +108,7 @@ function updateAsset(count)
 			 assets.assetData[i].active != assetsDB.assetDataDB[i].active ||
 			 assets.assetData[i].typeId != assetsDB.assetDataDB[i].typeId)
 		 {
-		 	assetsForUpdate.assetUpdateData.push(assetsDB.assetDataDB[i]);
+		 	assetsForUpdate.assetUpdateData.push(assets.assetData[i]);
 		 }
 		
  	});
@@ -117,7 +117,7 @@ function updateAsset(count)
 	{
 		var vType = "PUT";
 		var vUrl = $.jStorage.get("jsDBUrl") + "AssetEditServices/updateAssetData?enterpriseId=" + $.jStorage.get("jsEntpId");
-				
+		alert(JSON.stringify(assetsForUpdate.assetUpdateData));		
 		$.ajax
 		({
 			type:vType,
