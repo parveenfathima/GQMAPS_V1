@@ -182,7 +182,7 @@ public class EnterpriseModel {
             // null) {
             // throw new Exception("invalid enterprise data for update");
             // }
-            oldEntObject.setEnterpriseId(entObject.getEnterpriseId());
+            // oldEntObject.setEnterpriseId(entObject.getEnterpriseId());
             oldEntObject.setUserId(entObject.getUserId());
             oldEntObject.setPasswd(entObject.getPasswd());
             oldEntObject.setStoreFwd(entObject.getStoreFwd());
@@ -446,4 +446,34 @@ public class EnterpriseModel {
         }
     }
 
+    public List<Enterprise> getEnterprise(String entpId) throws Exception {
+        Session session = null;
+        try {
+            session = HibernateUtil.getSessionFactory().getCurrentSession();
+            session.beginTransaction();
+
+            String hql = "FROM Enterprise where  enterprise_id=:E_ID";
+            Query query = session.createQuery(hql);
+            query.setParameter("E_ID", entpId);
+
+            List<Enterprise> entMeterResult = query.list();
+            return entMeterResult;
+        }
+        catch (Exception e) {
+            GQGateKeeperConstants.logger.error("Exception occured while fetching the enterprises ", e);
+            throw new Exception(e);
+        }
+        finally {
+            try {
+                if (session.isOpen()) {
+                    session.flush();
+                    session.close();
+                }
+            }
+            catch (Exception e) {
+                GQGateKeeperConstants.logger.error("Exception occured while closing the session ", e);
+                throw new Exception(e);
+            }
+        }
+    }
 }

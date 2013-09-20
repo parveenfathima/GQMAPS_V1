@@ -150,7 +150,7 @@ public class EnterpriseServices {
     }
 
     /**
-     * This method used to fetch all the enterprises
+     * This method used to fetch the enterprises for the user
      * 
      * @return
      */
@@ -163,6 +163,29 @@ public class EnterpriseServices {
         List<Enterprise> entMeterResult = null;
         try {
             entMeterResult = entmodel.getEnterpriseDetails(userId, passwd);
+        }
+        catch (Exception e) {
+            GQGateKeeperConstants.logger.error("Exception occured while fetching the enterprises list ", e);
+            return Response.status(400).build();
+        }
+        // Returning all the enterprises in JSON format
+        return Response.ok(GQRegistrationConstants.gson.toJson(entMeterResult)).build();
+    }
+
+    /**
+     * This method used to fetch all the enterprises
+     * 
+     * @return
+     */
+    @Path("/getEnterprise")
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getEnterprise(@QueryParam("entpId") String entpId) {
+        GQGateKeeperConstants.logger.info("Generating all the enterprises list from GQGatekeeper");
+        EnterpriseModel entmodel = new EnterpriseModel();
+        List<Enterprise> entMeterResult = null;
+        try {
+            entMeterResult = entmodel.getEnterprise(entpId);
         }
         catch (Exception e) {
             GQGateKeeperConstants.logger.error("Exception occured while fetching the enterprises list ", e);
