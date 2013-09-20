@@ -9,21 +9,21 @@ import java.util.Date;
  * @author GQ
  * 
  */
-public class Data {
+public class ChartRowData {
     private String name;
     private double value;
-    private Date date;
     private CharSequence chartData;
+    private double value1;
 
-    public Data() {
+    public ChartRowData() {
 
     }
 
-    public Data(String name, long value, Date date, CharSequence chartData) {
+    public ChartRowData(String name, long value, Date date, CharSequence chartData, double value1) {
         this.name = name;
         this.value = value;
-        this.date = date;
-        this.setChartData(chartData);
+        this.chartData = chartData;
+        this.setValue1(value1);
 
     }
 
@@ -57,27 +57,20 @@ public class Data {
         return this.value = d;
     }
 
-    /**
-     * @return the date
-     */
-    public Date getDate() {
-        return date;
-    }
-
-    /**
-     * @param date the date to set
-     * @return
-     */
-    public Date setDate(Date date) {
-        return this.date = date;
-    }
-
     public CharSequence getChartData() {
         return chartData;
     }
 
     public void setChartData(CharSequence chartData) {
         this.chartData = chartData;
+    }
+
+    public double getValue1() {
+        return value1;
+    }
+
+    public void setValue1(double value1) {
+        this.value1 = value1;
     }
 
 }

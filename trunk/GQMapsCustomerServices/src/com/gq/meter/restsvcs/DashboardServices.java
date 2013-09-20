@@ -25,7 +25,7 @@ import com.google.visualization.datasource.datatable.ColumnDescription;
 import com.google.visualization.datasource.datatable.DataTable;
 import com.google.visualization.datasource.datatable.value.ValueType;
 import com.google.visualization.datasource.render.JsonRenderer;
-import com.gq.meter.object.Data;
+import com.gq.meter.object.ChartRowData;
 import com.gq.meter.object.TaskAssist;
 import com.gq.meter.util.CustomerServiceConstant;
 import com.gq.meter.util.SqlUtil;
@@ -56,13 +56,13 @@ public class DashboardServices {
         String positionId = "";
         String dynamicInput = null;
         String relatedDb = null;
-        List<Data> data = null;
+        List<ChartRowData> chartRowData = null;
         String chartData = "";
         double plainData = 0;
         String lineData = "";
         String plain = "";
         TaskAssist taskAssist = new TaskAssist(taskId, descr, sql, dynamicInput, chartType, columnHeader, relatedDb,
-                positionId, data, chartData, plainData, lineData, plain);
+                positionId, chartRowData, chartData, plainData, lineData, plain);
         PreparedStatement prepareStmt = null;
         String result = "";
         ResultSet entpResultset;
@@ -226,8 +226,15 @@ public class DashboardServices {
                     ArrayList<ColumnDescription> pieBarColumn = new ArrayList<ColumnDescription>();
                     CustomerServiceConstant.logger
                             .info("[DASHBOARDSERVICES]  Column Header is set for the BAR/PIE charts");
-                    pieBarColumn.add(new ColumnDescription(colHeader[0], ValueType.TEXT, colHeader[0]));
-                    pieBarColumn.add(new ColumnDescription(colHeader[1], ValueType.NUMBER, colHeader[1]));
+                    if (colHeader.length == 2) {
+                        pieBarColumn.add(new ColumnDescription(colHeader[0], ValueType.TEXT, colHeader[0]));
+                        pieBarColumn.add(new ColumnDescription(colHeader[1], ValueType.NUMBER, colHeader[1]));
+                    }
+                    else if (colHeader.length == 3) {
+                        pieBarColumn.add(new ColumnDescription(colHeader[0], ValueType.TEXT, colHeader[0]));
+                        pieBarColumn.add(new ColumnDescription(colHeader[1], ValueType.NUMBER, colHeader[1]));
+                        pieBarColumn.add(new ColumnDescription(colHeader[2], ValueType.NUMBER, colHeader[2]));
+                    }
                     chartdata.addColumns(pieBarColumn);
                 }
                 else if (chartType.equals("line")) {
@@ -235,16 +242,22 @@ public class DashboardServices {
                     CustomerServiceConstant.logger.info("[DASHBOARDSERVICES]  column Header is set for the Line chart");
                     // System.out.println("inside line");
                     // DataTable chartdata = new DataTable();
-
-                    lineColumn.add(new ColumnDescription(colHeader[0], ValueType.DATETIME, colHeader[0]));
-                    lineColumn.add(new ColumnDescription(colHeader[1], ValueType.NUMBER, colHeader[1]));
+                    if (colHeader.length <= 2) {
+                        lineColumn.add(new ColumnDescription(colHeader[0], ValueType.DATETIME, colHeader[0]));
+                        lineColumn.add(new ColumnDescription(colHeader[1], ValueType.NUMBER, colHeader[1]));
+                    }
+                    else if (colHeader.length == 3) {
+                        lineColumn.add(new ColumnDescription(colHeader[0], ValueType.DATETIME, colHeader[0]));
+                        lineColumn.add(new ColumnDescription(colHeader[1], ValueType.NUMBER, colHeader[1]));
+                        lineColumn.add(new ColumnDescription(colHeader[2], ValueType.NUMBER, colHeader[2]));
+                    }
                     chartdata.addColumns(lineColumn);
                 }
-                List<Data> cDataList = new ArrayList<Data>();
+                List<ChartRowData> cDataList = new ArrayList<ChartRowData>();
 
                 while (entpResultset.next()) {
                     CustomerServiceConstant.logger.info("[DASHBOARDSERVICES]  Query is Executed for dynamic columns");
-                    Data cData = new Data();
+                    ChartRowData cData = new ChartRowData();
                     for (int i = 1; i <= metaDataColumnCount; i++) {
                         int type = rsMetaData.getColumnType(i);
                         if (type == Types.VARCHAR || type == Types.CHAR) {
@@ -257,6 +270,13 @@ public class DashboardServices {
                             // dt = datavalue.setDate(entpResultset.getTimestamp(i));
                             // cData.setDate(entpResultset.getTimestamp(i));
                             cData.setName(entpResultset.getString(i));
+                        }
+                        else if (type == Types.DECIMAL) {
+                            if (i == 2)
+                                cData.setValue(entpResultset.getDouble(i));
+                            else
+                                cData.setValue1(entpResultset.getDouble(i));
+
                         }
                         else {
                             // val = datavalue.setValue(entpResultset.getDouble(i));
@@ -274,7 +294,8 @@ public class DashboardServices {
                     CustomerServiceConstant.logger
                             .info("[DASHBOARDSERVICES]  Rows and Columns are being added for BAR/PIE charts");
                     for (int i = 0; i < cDataList.size(); i++) {
-                        chartdata.addRowFromValues(cDataList.get(i).getName(), cDataList.get(i).getValue());
+                        chartdata.addRowFromValues(cDataList.get(i).getName(), cDataList.get(i).getValue(), cDataList
+                                .get(i).getValue1());
                     }
                     // System.out.println("\ndata1\t" + cDataList.get(i).getName() + "\tcdata2\t"
                     // + cDataList.get(i).getValue());

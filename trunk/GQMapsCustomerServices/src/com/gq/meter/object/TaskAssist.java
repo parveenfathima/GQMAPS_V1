@@ -19,7 +19,7 @@ public class TaskAssist {
     public String[] columnHeader;
     public String relatedDb;
     public String positionId;
-    private List<Data> data;
+    private List<ChartRowData> chartRowData;
     private CharSequence chartData;
     private double plainData;
     private String plain;
@@ -30,7 +30,7 @@ public class TaskAssist {
     }
 
     public TaskAssist(int taskId, String descr, String sql, String dynamic, String chartType, String[] columnHeader,
-            String relatedDb, String positionId, List<Data> data, CharSequence chartData, double plainData,
+            String relatedDb, String positionId, List<ChartRowData> chartRowData, CharSequence chartData, double plainData,
             String lineData, String plain) {
         this.taskId = taskId;
         this.descr = descr;
@@ -40,7 +40,7 @@ public class TaskAssist {
         this.columnHeader = columnHeader;
         this.relatedDb = relatedDb;
         this.positionId = positionId;
-        this.data = data;
+        this.chartRowData = chartRowData;
         this.chartData = chartData;
         this.plainData = plainData;
         this.lineData = lineData;
@@ -162,17 +162,17 @@ public class TaskAssist {
     }
 
     /**
-     * @return the data
+     * @return the chartRowData
      */
-    public List<Data> getData() {
-        return data;
+    public List<ChartRowData> getData() {
+        return chartRowData;
     }
 
     /**
-     * @param data the data to set
+     * @param chartRowData the chartRowData to set
      */
-    public void setData(List<Data> data) {
-        this.data = data;
+    public void setData(List<ChartRowData> chartRowData) {
+        this.chartRowData = chartRowData;
     }
 
     public CharSequence getChartData() {
