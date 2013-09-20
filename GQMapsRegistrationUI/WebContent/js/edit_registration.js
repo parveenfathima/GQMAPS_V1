@@ -22,11 +22,22 @@ $(document).ready(function()
 		 if (e.which != 8 && e.which != 0 && (e.which >= 48 || e.which <= 57)) 
 		 {
 			//display error message
-			alert("Please enter numbers only");
+			alert("Enter numbers only");
 			$("#txtPhone").focus();
 			return false;
 		 }
-		});	
+		});
+		  
+		  
+		$("#txtPhone, #txtESqft, #txtEAsset, #txtDCSqft, #txtDCAsset, #txtDCUsed, #txtDCTemp").keypress(function (e) {
+		// if the letter is not digit then display error and don't type anything
+		 if (e.which != 8 && e.which != 0 && (e.which < 48 || e.which > 57)) 
+		 {
+			//display error message
+			alert("Please enter numbers only");
+			return false;
+		 }
+	   }); 
 		
 		listEnterprise();
 		
@@ -35,6 +46,7 @@ $(document).ready(function()
 		$("#txtPhone").keypress(function (e) 
 		{
 		// if the letter is not digit then display error and don't type anything
+		
 		 if (e.which != 8 && e.which != 0 && (e.which < 48 || e.which > 57)) 
 		 {
 			//display error message
@@ -153,7 +165,7 @@ function updateEntp(dbEntp)
 		$('input:checkbox[name=chkRegCompl]').attr('checked',false);	
 		return false;		
 	}
-	else if(formEntp.getEId().length === 0 || formEntp.getUId().length === 0 || formEntp.getPwd().length === 0)
+	else if(formEntp.getEId().length === 0 || formEntp.getUId().length === 0 || formEntp.getPwd().length === 0 || formEntp.getEName().length === 0)
 	{
 		alert("Please enter all the mandatory values");
 		$("#txtEID").focus();
@@ -164,28 +176,28 @@ function updateEntp(dbEntp)
 		alert("No changes found");
 		$( "#dlgGeneral" ).dialog( "close" );
 	}
-	else if(!validatePwd(formEntp.getPwd()))
-	{
-		$("#txtPwd").select();
-		return false;
-	}	
 	else if($('#txtEID').is(':disabled') === false && !validateEntpID(formEntp.getEId())) 
 	{ 
-		$("#txtUID").select();
+		$("#txtEID").select();
 		return false;		
 	}
-	else if(checkSpecialChar(formEntp.getUId()))
+	else if(checkSpecialChar(formEntp.getEName()))
+	{
+		alert("Please enter Enterprise Name without special characters");	
+		$('#txtEName').select();
+		return false;			
+	}	
+	else if(checkSpecialCharWithSpace(formEntp.getUId()))
 	{
 		alert("Please enter User ID without special characters/space");	
 		$("#txtUID").select();
 		return false;		
 	}
-	else if(checkSpace(formEntp.getPwd()))
+	else if(!validatePwd(formEntp.getPwd()))
 	{
-		alert("Please enter Password without space(s)");	
 		$("#txtPwd").select();
-		return false;			
-	}
+		return false;
+	}	
 	else if(eSqft.toString().length > 9)
 	{
 		alert("Please enter valid IT usable area");
@@ -294,8 +306,6 @@ function updateEntp(dbEntp)
 			}
 		});	
 	}
-	
-	
 }
 
 function validateEntpID(eid)
@@ -306,7 +316,7 @@ function validateEntpID(eid)
 			$("#txtEID").select();
 			return false;
 		}
-		else if(checkSpecialChar(eid) || checkForNoInString(eid))
+		else if(checkSpecialCharWithSpace(eid) || checkForNoInString(eid))
 		{
 			alert("Please enter Enterprise ID without special characters/numbers/space");	
 			$("#txtEID").select();
@@ -321,8 +331,6 @@ function validateEntpID(eid)
 		else
 			return true;
 }
-
-
 
 // compare the enterprise values before and after the change. If changed, then only the ajax will be called to update.
 function compareObject(obj1, obj2)
@@ -398,10 +406,16 @@ function addEntpMeter(dbEntp)
 	
 	if(vMId.length === 0 || vMId == "" || vPhone.length === 0 || vPhone === "" || vAddress.length === 0 || vAddress === "")
 	{
-		alert("Enter mandatory values to submit the details");
+		alert("Please enter mandatory values to submit the details");
 		return false;
 	}
-	else if(checkSpecialChar(vMId))
+	else if(vPhone.length < 10 || vPhone.length  > 15)
+	{
+		alert("Please enter a valid mobile number");	
+		$("#txtPhone").select();
+		return false;		
+	}
+	else if(checkSpecialCharWithSpace(vMId))
 	{
 		alert("Please enter Meter ID without special characters/space");	
 		$("#txtMeterID").select();
@@ -411,12 +425,6 @@ function addEntpMeter(dbEntp)
 	{
 		alert("Select protocol");
 		$("#cmbProtocol").focus();
-	}
-	else if(vPhone.length != 10)
-	{
-		alert("Enter a valid phone number");
-		$("#txtPhone").select();	
-		return false;	
 	}	
 	else 
 	{	
@@ -643,7 +651,7 @@ function listEnterprise()
 								
 								vEntpList += '<td> <input type = "button" class = "button-font-a" id = "btnGeneral" title = "General" onClick = "openGeneralDialog(' + i + ')"/></td>';
 								//check for a valid enterprise id to add meter and validity details
-								if(checkSpecialChar(arrEntp[i].getEId()) || checkForNoInString(arrEntp[i].getEId()))
+								if(checkSpecialCharWithSpace(arrEntp[i].getEId()) || checkForNoInString(arrEntp[i].getEId()))
 								{
 									vEntpList += '<td> <input type = "button" class = "button-font-a" id = "btnMeter" title = "Edit Enterprise ID to add meters" onClick = "openMeterDialog(' + i + ')" disabled = "disbaled" /></td>';
 									vEntpList += '<td> <input type = "button" class = "button-font-a" id = "btnValidity" title = "Edit Enterprise ID to add validity details" onClick = "openValidityDialog(' + i + ')"  disabled = "disbaled" /></td>';  									
@@ -1014,7 +1022,7 @@ function hasMeter(eid)
 function checkUniqueEntpID(eid)
 {
 		var vType = "GET";		
-		var vUrl = $.jStorage.get("jsUrl") + "enterprise/getEnterpriseDetails?entpId=" + eid;
+		var vUrl = $.jStorage.get("jsUrl") + "enterprise/getEnterprise?entpId=" + eid;
 		var count = 0;
 		$.ajax
 		({
