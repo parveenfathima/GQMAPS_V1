@@ -182,11 +182,9 @@ public class EnterpriseModel {
             // null) {
             // throw new Exception("invalid enterprise data for update");
             // }
-            // oldEntObject.setEnterpriseId(entObject.getEnterpriseId());
+            oldEntObject.setEnterpriseId(entObject.getEnterpriseId());
             oldEntObject.setUserId(entObject.getUserId());
             oldEntObject.setPasswd(entObject.getPasswd());
-            oldEntObject.setStoreFwd(entObject.getStoreFwd());
-            oldEntObject.setFwdUrl(entObject.getFwdUrl());
             oldEntObject.setNoOfEmpl(entObject.getNoOfEmpl());
             oldEntObject.setEntSqft(entObject.getEntSqft());
             oldEntObject.setEntAssetCount(entObject.getEntAssetCount());
