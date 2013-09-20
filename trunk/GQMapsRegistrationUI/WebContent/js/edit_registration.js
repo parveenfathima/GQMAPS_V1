@@ -97,6 +97,10 @@ function openGeneralDialog(i)
 	{
 		$("#txtEID").attr("disabled", "disabled");
 	}
+	else if(!checkSpecialCharWithSpace(arrEntp[i].getEId()) && !checkForNoInString(arrEntp[i].getEId()))
+	{
+		$("#txtEID").attr('disabled', 'disabled');
+	}
 	else
 	{
 		$(txtEID).removeAttr("disabled");
@@ -331,6 +335,7 @@ function validateEntpID(eid)
 		else
 			return true;
 }
+
 
 // compare the enterprise values before and after the change. If changed, then only the ajax will be called to update.
 function compareObject(obj1, obj2)
@@ -650,6 +655,8 @@ function listEnterprise()
 								
 								
 								vEntpList += '<td> <input type = "button" class = "button-font-a" id = "btnGeneral" title = "General" onClick = "openGeneralDialog(' + i + ')"/></td>';
+				
+								
 								//check for a valid enterprise id to add meter and validity details
 								if(checkSpecialCharWithSpace(arrEntp[i].getEId()) || checkForNoInString(arrEntp[i].getEId()))
 								{
