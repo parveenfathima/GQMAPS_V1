@@ -145,8 +145,8 @@ function validatePwd(password)
 		}
 }
  
-//function to check for a string containing a special character
-function checkSpecialChar(string)
+//function to check for a string containing a special character    
+function checkSpecialCharWithSpace(string)
 {
 		var vPwdFlag = 0; 
 		for (var i = 0; i < string.length; i++) 
@@ -164,6 +164,27 @@ function checkSpecialChar(string)
 		else if(vPwdFlag == 1)
 			return true;
 }
+
+//function to check for a string containing a special characters including space
+function checkSpecialChar(string)
+{
+		var vPwdFlag = 0; 
+		for (var i = 0; i < string.length; i++) 
+		{
+			var specialChars = "!@#$%^&*()+=-[]\\\';,./{}|\":<>?~_";
+			if (specialChars.indexOf(string.charAt(i)) != -1) 
+			{
+				vPwdFlag = 1;
+				break;
+			}
+		}	
+
+		if(vPwdFlag == 0)
+			return false;
+		else if(vPwdFlag == 1)
+			return true;
+}
+
 
 //function to check for space
 function checkSpace(string)
