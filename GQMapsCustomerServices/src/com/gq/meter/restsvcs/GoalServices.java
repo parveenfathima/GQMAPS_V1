@@ -24,7 +24,7 @@ import com.google.visualization.datasource.datatable.DataTable;
 import com.google.visualization.datasource.datatable.value.ValueType;
 import com.google.visualization.datasource.render.JsonRenderer;
 import com.gq.meter.object.AssetData;
-import com.gq.meter.object.Data;
+import com.gq.meter.object.ChartRowData;
 import com.gq.meter.object.Goal;
 import com.gq.meter.object.GoalSnpsht;
 import com.gq.meter.util.CustomerServiceConstant;
@@ -205,9 +205,9 @@ public class GoalServices {
                             lineColumn.add(new ColumnDescription(colHeader[1], ValueType.NUMBER, colHeader[1]));
                             chartdata.addColumns(lineColumn);
                         }
-                        List<Data> cDataList = new ArrayList<Data>();
+                        List<ChartRowData> cDataList = new ArrayList<ChartRowData>();
                         while (entpResultset.next()) {
-                            Data cData = new Data();
+                            ChartRowData cData = new ChartRowData();
                             for (int i = 1; i <= metaDataColumnCount; i++) {
                                 int type = rsMetaData.getColumnType(i);
                                 if (type == Types.VARCHAR || type == Types.CHAR) {
