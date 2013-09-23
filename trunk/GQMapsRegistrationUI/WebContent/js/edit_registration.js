@@ -176,9 +176,14 @@ function updateEntp(dbEntp)
 		$("#txtEID").focus();
 		return false;
 	}
-	else if(compareObject(dbEntp, formEntp))
+/*	else if(compareObject(dbEntp, formEntp))
 	{
 		alert("No changes found");
+		$( "#dlgGeneral" ).dialog( "close" );
+	} */
+	else if(compareMembers(dbEntp, formEntp))
+	{
+		alert("No changes made");
 		$( "#dlgGeneral" ).dialog( "close" );
 	}
 	else if($('#txtEID').is(':disabled') === false && !validateEntpID(dbEntp.getEId(), formEntp.getEId())) 
@@ -254,8 +259,9 @@ function updateEntp(dbEntp)
 
 		var vQuery = "";
 		
-		vQuery = vQuery + '{"sid":"' + dbEntp.getSId() + '", "enterpriseId":"' + formEntp.getEId() + '", "userId":"' + formEntp.getUId() + '", "passwd":"' ;
-		vQuery = vQuery + 	formEntp.getPwd() + '", "noOfEmpl" : "' + formEntp.getEmpCount(); 
+		vQuery = vQuery + '{"sid":"' + dbEntp.getSId() + '", "enterpriseId":"' + formEntp.getEId() + '", "eName":"' + formEntp.getEName();
+		vQuery = vQuery + '", "userId":"' + formEntp.getUId() + '", "passwd":"' + formEntp.getPwd();
+		vQuery = vQuery + '", "noOfEmpl" : "' + formEntp.getEmpCount(); 
 		vQuery = vQuery + '", "entSqft":"' + formEntp.getESqft();
 		vQuery = vQuery + '", "entAssetCount":"'+ formEntp.getEAsset() + '", "dcSqft": "' + formEntp.getDSqft() + '", "dcAssetCount":"'+ formEntp.getDAsset();
 		vQuery = vQuery + '", "dcUsePctg":"'+ formEntp.getDcUsed() + '", "dcTemp":"'+ formEntp.getDcTemp()+ '", "regCmplt":"' + formEntp.getRegStatus() + '"}';	
@@ -358,6 +364,23 @@ function compareObject(obj1, obj2)
 	}
 	
 	return true;
+}
+
+function compareMembers(obj1, obj2)
+{
+	if(obj1.getSId() === obj2.getSId() && obj1.getEId() === obj2.getEId() && obj1.getEName() === obj2.getEName() && obj1.getUId() === obj2.getUId() &&
+	obj1.getPwd() === obj2.getPwd() && obj1.getEmpCount() === obj2.getEmpCount() && obj1.getESqft() === obj2.getESqft() &&
+	obj1.getEAsset() === obj2.getEAsset() && obj1.getDSqft() === obj2.getDSqft() && obj1.getDAsset() === obj2.getDAsset() &&
+	obj1.getDcUsed() === obj2.getDcUsed() && obj1.getDcTemp() === obj2.getDcTemp() && obj1.getRegStatus() ===  obj2.getRegStatus()) 
+	{
+		//alert("objects are equal");
+		return true;
+	}
+	else
+	{
+		return false;
+		//alerts("objects are not equal");
+	}
 }
 
 // binding the datepicker with the field
