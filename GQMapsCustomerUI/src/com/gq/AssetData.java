@@ -18,6 +18,8 @@ import com.gq.ui.object.DomainData;
 public class AssetData {
 
 	String enterpriseId = "";
+	
+	String url = "http://localhost:8080/GQMapsCustomerServices/";
 
 	Gson gson = new GsonBuilder().setDateFormat("yyyy-mm-dd hh:mm:ss").create();
 
@@ -119,8 +121,10 @@ public class AssetData {
 		enterpriseId = entpId;
 		Client client = Client.create();
 
-		String url = "http://localhost:8080/GQMapsCustomerServices/mapsDomainServices/getMapsDomainData?enterpriseId="
-				+ entpId;
+		//String url = "http://localhost:8080/GQMapsCustomerServices/mapsDomainServices/getMapsDomainData?enterpriseId="
+			//	+ entpId;
+		
+		url = url + "mapsDomainServices/getMapsDomainData?enterpriseId=" + entpId;
 
 		WebResource webResourceDomain = client.resource(url);
 
@@ -230,7 +234,8 @@ public class AssetData {
 		enterpriseId = entpId;
 		Client client = Client.create();
 
-		String url = "http://localhost:8080/GQMapsCustomerServices/AssetEditServices/getAssetData?enterpriseId="	+ entpId;
+		//String url = "http://localhost:8080/GQMapsCustomerServices/AssetEditServices/getAssetData?enterpriseId="	+ entpId;
+		url = url + "AssetEditServices/getAssetData?enterpriseId=" + entpId;
 		
 		System.out.println("URL::::::::::::::::::: " + url);
 		WebResource webResourceAsset = client.resource(url);
