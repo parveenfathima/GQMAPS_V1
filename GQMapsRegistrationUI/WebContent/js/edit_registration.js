@@ -97,10 +97,11 @@ function openGeneralDialog(i)
 	{
 		$("#txtEID").attr("disabled", "disabled");
 	}
-	else if(!checkSpecialCharWithSpace(arrEntp[i].getEId()) && !checkForNoInString(arrEntp[i].getEId()))
+	/*else if(!checkSpecialCharWithSpace(arrEntp[i].getEId()) && !checkForNoInString(arrEntp[i].getEId()))
+	
 	{
 		$("#txtEID").attr('disabled', 'disabled');
-	}
+	}*/
 	else
 	{
 		$(txtEID).removeAttr("disabled");
@@ -180,7 +181,7 @@ function updateEntp(dbEntp)
 		alert("No changes found");
 		$( "#dlgGeneral" ).dialog( "close" );
 	}
-	else if($('#txtEID').is(':disabled') === false && !validateEntpID(formEntp.getEId())) 
+	else if($('#txtEID').is(':disabled') === false && !validateEntpID(dbEntp.getEId(), formEntp.getEId())) 
 	{ 
 		$("#txtEID").select();
 		return false;		
@@ -312,7 +313,8 @@ function updateEntp(dbEntp)
 	}
 }
 
-function validateEntpID(eid)
+//function to validate the enterprise id while editing the general information which needs to be unique
+function validateEntpID(dbEId, eid)
 {
 		if(eid.length > 10)
 		{
@@ -326,7 +328,7 @@ function validateEntpID(eid)
 			$("#txtEID").select();
 			return false;			
 		}
-		else if(!checkUniqueEntpID(eid))
+		else if(dbEId != eid && !checkUniqueEntpID(eid))
 		{
 			alert("Please enter unique Enterprise ID");
 			$("#txtEID").select();
@@ -379,6 +381,7 @@ function openMeterDialog(index)
 	loadMeters(index);
 }
 
+//function to save the newly added meter details
 function saveMeter()
 {
 	addEntpMeter(arrEntp[gArrayIndex]);
