@@ -1,6 +1,6 @@
 $(document).ready(function() 
 {
-	$.jStorage.set("jsQuestions", "");
+		$.jStorage.set("jsQuestions", "");
 });
 
 function logout()
@@ -92,41 +92,41 @@ function loadBusLine()
 //loads all the protocols from the db
 function loadProtocol()
 {
-			var vType = "GET";
-			var vUrl = $.jStorage.get("jsUrl") + "protocol/getProtocols";	
-			
-			var items = document.getElementById("cmbProtocol").options.length;
-			
-			//loading the protocols only once since the dialog can be opened many times	
-			
-			if(items === 0)		
-			{
-				$.ajax
-				({
-					type:vType,
-					contentType: "application/json",
-					url:vUrl,
-					async:false,
-					dataType: "json",
-					success:function(json)
-					{				
-						var vValues = "";
-						$.each(json, function(i,n)
-						{
-								vValues = vValues + '<option value = "'+ json[i]["protocolId"] + '" >' + json[i]["protocolId"] + '</option>';
-						});
-						
-						$("#cmbProtocol").append(vValues); 
-						 
-	
-												  
-					},
-					error:function(json)
+		var vType = "GET";
+		var vUrl = $.jStorage.get("jsUrl") + "protocol/getProtocols";	
+		
+		var items = document.getElementById("cmbProtocol").options.length;
+		
+		//loading the protocols only once since the dialog can be opened many times	
+		
+		if(items === 0)		
+		{
+			$.ajax
+			({
+				type:vType,
+				contentType: "application/json",
+				url:vUrl,
+				async:false,
+				dataType: "json",
+				success:function(json)
+				{				
+					var vValues = "";
+					$.each(json, function(i,n)
 					{
-						alert("Error from loading protocols: " + json.status + " " + json.responseText);
-					} 
-				});	
-			}
+							vValues = vValues + '<option value = "'+ json[i]["protocolId"] + '" >' + json[i]["protocolId"] + '</option>';
+					});
+					
+					$("#cmbProtocol").append(vValues); 
+					 
+
+											  
+				},
+				error:function(json)
+				{
+					alert("Error from loading protocols: " + json.status + " " + json.responseText);
+				} 
+			});	
+		}
 }
 
 //-------------------------------------PASSWORD FIELD related functions------------------------------
@@ -134,9 +134,9 @@ function loadProtocol()
 // validating the password to contain max of 6-12 chars with at least 1 special, number, uppercase and lowercase characters...
 function validatePwd(password)
 {
-		if(password.length < 6 || password.length >12 || !checkSpecialChar(password)||!checkForNoInString(password)||!checkForUCase(password)||!checkForLCase(password))
+		if(password.length < 6 || password.length >12 || !checkSpecialCharWithSpace(password)||!checkForNoInString(password)||!checkForUCase(password)||!checkForLCase(password) || checkSpace(password))
 		{
-			alert("Please enter valid password");
+			alert("Please enter a valid password");
 			return false;
 		}
 		else
@@ -222,24 +222,24 @@ function checkForNoInString(string)
 //function to check for a string containing an uppercase character
 function checkForUCase(string)
 {
-	var vUpperCaseStr = new RegExp('[A-Z]');
-	
-	if(!string.match(vUpperCaseStr))
-		return false;
+		var vUpperCaseStr = new RegExp('[A-Z]');
 		
-	return true;
+		if(!string.match(vUpperCaseStr))
+			return false;
+			
+		return true;
 }
 
 
 //function to check for a string containing a lowercase character
 function checkForLCase(string)
 {
-	var vLowerCaseStr = new RegExp('[a-z]');
-	
-	if(!string.match(vLowerCaseStr))
-		return false;
+		var vLowerCaseStr = new RegExp('[a-z]');
 		
-	return true;
+		if(!string.match(vLowerCaseStr))
+			return false;
+			
+		return true;
 }
 
 
