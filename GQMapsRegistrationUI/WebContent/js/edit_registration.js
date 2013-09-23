@@ -176,16 +176,6 @@ function updateEntp(dbEntp)
 		$("#txtEID").focus();
 		return false;
 	}
-/*	else if(compareObject(dbEntp, formEntp))
-	{
-		alert("No changes found");
-		$( "#dlgGeneral" ).dialog( "close" );
-	} */
-	else if(compareMembers(dbEntp, formEntp))
-	{
-		alert("No changes made");
-		$( "#dlgGeneral" ).dialog( "close" );
-	}
 	else if($('#txtEID').is(':disabled') === false && !validateEntpID(dbEntp.getEId(), formEntp.getEId())) 
 	{ 
 		$("#txtEID").select();
@@ -243,6 +233,11 @@ function updateEntp(dbEntp)
 		alert("Please enter valid datacenter temperature");
 		$('#txtDCTemp').focus();
 		return false;
+	}
+	else if(compareMembers(dbEntp, formEntp))
+	{
+		alert("No changes made");
+		$( "#dlgGeneral" ).dialog( "close" );
 	}
 	else
 	{
@@ -492,7 +487,7 @@ function addEntpMeter(dbEntp)
 				gMeterId = 0;	
 				$.jStorage.set("jsLat", "0.0"); 
 				$.jStorage.set("jsLong", "0.0");			
-				
+				$("#sbtnMeter").attr('disabled', 'disabled');
 				alert("Meter details saved successfully!");
 				clearMeterDetails();
 				window.location.href = "edit_registration.html";
