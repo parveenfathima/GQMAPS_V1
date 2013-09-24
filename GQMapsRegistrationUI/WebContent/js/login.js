@@ -49,7 +49,7 @@ function userLogin()
 							$.jStorage.set("jsPwd", pwd);		
 							$.jStorage.set("jsEntpId", n["enterpriseId"]);	
 							$.jStorage.set("jsEName", n["eName"]);
-							$.jStorage.set("jsTimeout", 20);
+							$.jStorage.set("jsTimeout", 180);
 							return false;
 						}
 					  
@@ -92,7 +92,7 @@ function checkForValue()
 	else 
 	{
 		$.jStorage.set("jsUserID", user);
-		$.jStorage.set("jsTimeout", 20);		
+		$.jStorage.set("jsTimeout", 180);		
 		window.location.href = "change_password.html";
 	}
 }
