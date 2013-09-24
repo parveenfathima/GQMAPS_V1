@@ -61,12 +61,17 @@ public class ProcedureServices {
             System.out.println("final query is" + finalquery);
             pstmt = (CallableStatement) dbCustomer.prepareCall(finalquery);
             pstmt.setString(1, "all");
-            pstmt.setString(2, "@it");
-            System.out.println("pstmt" + pstmt);
-            pstmt.execute();
             pstmt.registerOutParameter(2, Types.DOUBLE);
-            output = pstmt.getDouble(2);
-            System.out.println("outsize" + output);
+            System.out.println("pstmt" + pstmt);
+            rs = pstmt.executeQuery();
+            if (rs.next()) {
+                output = rs.getDouble(1);
+                System.out.println("out" + output);
+            }
+            else {
+                System.out.println("nodata");
+            }
+            CustomerServiceConstant.logger.error("[PROCEDURESERVICES]  PUE data" + output);
             result = Double.toString(output);
         }
         catch (SQLException e) {
