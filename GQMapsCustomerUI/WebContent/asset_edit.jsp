@@ -198,9 +198,45 @@ function getCurrentAssets()
 
 </script>
 
+
+<!--timeout css -->
+<style type="text/css">
+#idletimeout {
+	background: #4E4E4E;
+	border: 3px solid #4E4E4E;
+	color: #fff;
+	font-family: arial, sans-serif;
+	text-align: center;
+	font-size: 15px;
+	padding: 10px;
+	position: relative;
+	top: 0px;
+	left: 0;
+	right: 0;
+	z-index: 100000;
+	display: none;
+}
+
+#idletimeout a {
+	color: #fff;
+	font-weight: bold
+}
+
+#idletimeout span {
+	font-weight: bold
+}
+</style>
+
+
 </head>
 <body>
 
+
+    <div id="idletimeout" style="top: 150px; margin-left: 215px; margin-right: 200px; ">
+        Logging off in <span><!-- countdown place holder --></span>&nbsp;seconds due to inactivity.
+        <a id="idletimeout-resume" href="#">Click here to continue</a>.
+    </div>  
+            
 	<form id="frmAsset" name="frmAsset">
 		<table>
 			<tr>
@@ -294,14 +330,14 @@ function getCurrentAssets()
 			</tr>
 			<%
 				for (i = 0; i < assetListDB.size(); i++) {
-					if (assetListDB.get(i).getProtocolId().equals("computer")) {
+						if (assetListDB.get(i).getProtocolId().equals("computer")) {
 			%>
 			<tr>
 				<td><%=j = j + 1%></td>
 				<td><select name=<%="cmbStatus" + i%> id=<%="cmbStatus" + i%>>
 						<%
 							for (int status = 0; status < aryStatus.length; status++) {
-										if (assetListDB.get(i).getActive() == aryStatus[status]) {
+														if (assetListDB.get(i).getActive() == aryStatus[status]) {
 						%>
 						<option value="<%=(char) aryStatus[status]%>" selected="selected"><%=(char) aryStatus[status]%></option>
 						<%
@@ -310,7 +346,7 @@ function getCurrentAssets()
 						<option value="<%=(char) aryStatus[status]%>"><%=(char) aryStatus[status]%></option>
 						<%
 							}
-									}
+													}
 						%>
 				</select></td>
 
@@ -323,8 +359,8 @@ function getCurrentAssets()
 					style="width: 150px">
 						<%
 							for (int catalog = 0; catalog < compCatalogListDB.size(); catalog++) {
-										if (assetListDB.get(i).getCtlgId() == compCatalogListDB
-												.get(catalog).getId()) {
+														if (assetListDB.get(i).getCtlgId() == compCatalogListDB
+																.get(catalog).getId()) {
 						%>
 						<option value="<%=compCatalogListDB.get(catalog).getId()%>"
 							selected="selected"><%=compCatalogListDB.get(catalog).getDesc()%></option>
@@ -334,15 +370,15 @@ function getCurrentAssets()
 						<option value="<%=compCatalogListDB.get(catalog).getId()%>"><%=compCatalogListDB.get(catalog).getDesc()%></option>
 						<%
 							}
-									}
+													}
 						%>
 				</select></td>
 				<td><select name=<%="cmbSrvrApp" + i%> id=<%="cmbSrvrApp" + i%>
 					style="width: 100px;">
 						<%
 							for (int srvr = 0; srvr < srvrAppListDB.size(); srvr++) {
-										if (assetListDB.get(i).getSrvrAppId() == Byte
-												.parseByte(srvrAppListDB.get(srvr).getId())) {
+														if (assetListDB.get(i).getSrvrAppId() == Byte
+																.parseByte(srvrAppListDB.get(srvr).getId())) {
 						%>
 						<option value="<%=srvrAppListDB.get(srvr).getId()%>"
 							selected="selected"><%=srvrAppListDB.get(srvr).getDesc()%></option>
@@ -352,7 +388,7 @@ function getCurrentAssets()
 						<option value="<%=srvrAppListDB.get(srvr).getId()%>"><%=srvrAppListDB.get(srvr).getDesc()%></option>
 						<%
 							}
-									}
+													}
 						%>
 				</select></td>
 				<td><input type="text" id=<%="txtAssetUsage" + i%>
@@ -362,8 +398,8 @@ function getCurrentAssets()
 					id=<%="cmbImpLevel" + i%> style="width: 100px;">
 						<%
 							for (int impl = 0; impl < assetImpLevelListDB.size(); impl++) {
-										if ((byte) assetListDB.get(i).getImpLvl() == Byte
-												.valueOf(assetImpLevelListDB.get(impl).getId())) {
+														if ((byte) assetListDB.get(i).getImpLvl() == Byte
+																.valueOf(assetImpLevelListDB.get(impl).getId())) {
 						%>
 						<option value="<%=assetImpLevelListDB.get(impl).getId()%>"
 							selected="selected"><%=assetImpLevelListDB.get(impl).getDesc()%></option>
@@ -373,15 +409,15 @@ function getCurrentAssets()
 						<option value="<%=assetImpLevelListDB.get(impl).getId()%>"><%=assetImpLevelListDB.get(impl).getDesc()%></option>
 						<%
 							}
-									}
+													}
 						%>
 				</select></td>
 				<td><select name=<%="cmbOwnership" + i%>
 					id=<%="cmbOwnership" + i%>>
 						<%
 							for (int ownership = 0; ownership < aryOwnership.length; ownership++) {
-										if (assetListDB.get(i).getOwnership()
-												.equals(aryOwnership[ownership])) {
+														if (assetListDB.get(i).getOwnership()
+																.equals(aryOwnership[ownership])) {
 						%>
 						<option value="<%=aryOwnership[ownership]%>" selected="selected">
 							<%=aryOwnership[ownership]%></option>
@@ -391,14 +427,14 @@ function getCurrentAssets()
 						<option value="<%=aryOwnership[ownership]%>"><%=aryOwnership[ownership]%></option>
 						<%
 							}
-									}
+													}
 						%>
 				</select></td>
 				<td><select name=<%="cmbLocation" + i%>
 					id=<%="cmbLocation" + i%>>
 						<%
 							for (int loc = 0; loc < aryLocation.length; loc++) {
-										if (assetListDB.get(i).getLocation() == aryLocation[loc]) {
+														if (assetListDB.get(i).getLocation() == aryLocation[loc]) {
 						%>
 						<option value="<%=aryLocation[loc]%>" selected="selected"><%=aryLocation[loc]%></option>
 						<%
@@ -407,15 +443,15 @@ function getCurrentAssets()
 						<option value="<%=aryLocation[loc]%>"><%=aryLocation[loc]%></option>
 						<%
 							}
-									}
+													}
 						%>
 				</select></td>
 				<td><select name=<%="cmbCompType" + i%>
 					id=<%="cmbCompType" + i%>>
 						<%
 							for (int comp = 0; comp < compTypeListDB.size(); comp++) {
-										if (assetListDB.get(i).getTypeId()
-												.equals(compTypeListDB.get(comp).getId())) {
+														if (assetListDB.get(i).getTypeId()
+																.equals(compTypeListDB.get(comp).getId())) {
 						%>
 						<option value="<%=compTypeListDB.get(comp).getId()%>"
 							selected="selected"><%=compTypeListDB.get(comp).getDesc()%></option>
@@ -425,13 +461,13 @@ function getCurrentAssets()
 						<option value="<%=compTypeListDB.get(comp).getId()%>"><%=compTypeListDB.get(comp).getDesc()%></option>
 						<%
 							}
-									}
+													}
 						%>
 				</select></td>
 			</tr>
 			<%
 				}
-				}
+					}
 			%>
 		</table>
 
@@ -443,23 +479,23 @@ function getCurrentAssets()
 				<th style="width: 150px;">Asset ID</th>
 				<th style="width: 130px;">IP Address</th>
 				<th style="width: 150px;">Catalog</th>
-				<th style="width: 100px;display:none;">Server Type</th>
+				<th style="width: 100px; display: none;">Server Type</th>
 				<th style="width: 100px;">Asset Usage</th>
 				<th>Asset Importance</th>
 				<th>Ownership</th>
 				<th>Location</th>
-				<th style="width: 100px;display:none;">Comp. Type</th>
+				<th style="width: 100px; display: none;">Comp. Type</th>
 			</tr>
 			<%
 				for (i = 0; i < assetListDB.size(); i++) {
-					if (assetListDB.get(i).getProtocolId().equals("printer")) {
+						if (assetListDB.get(i).getProtocolId().equals("printer")) {
 			%>
 			<tr>
 				<td><%=k = k + 1%></td>
 				<td><select name=<%="cmbStatus" + i%> id=<%="cmbStatus" + i%>>
 						<%
 							for (int status = 0; status < aryStatus.length; status++) {
-										if (assetListDB.get(i).getActive() == aryStatus[status]) {
+														if (assetListDB.get(i).getActive() == aryStatus[status]) {
 						%>
 						<option value="<%=(char) aryStatus[status]%>" selected="selected"><%=(char) aryStatus[status]%></option>
 						<%
@@ -468,7 +504,7 @@ function getCurrentAssets()
 						<option value="<%=(char) aryStatus[status]%>"><%=(char) aryStatus[status]%></option>
 						<%
 							}
-									}
+													}
 						%>
 				</select></td>
 				<td style="width: 150px;"><span id=<%="assetID" + i%>
@@ -481,8 +517,8 @@ function getCurrentAssets()
 					id=<%="cmbCatalog" + i%>>
 						<%
 							for (int catalog = 0; catalog < printerCatalogListDB.size(); catalog++) {
-										if (assetListDB.get(i).getCtlgId() == printerCatalogListDB
-												.get(catalog).getId()) {
+														if (assetListDB.get(i).getCtlgId() == printerCatalogListDB
+																.get(catalog).getId()) {
 						%>
 						<option value="<%=printerCatalogListDB.get(catalog).getId()%>"
 							selected="selected"><%=printerCatalogListDB.get(catalog)
@@ -494,24 +530,24 @@ function getCurrentAssets()
 									.getDesc()%></option>
 						<%
 							}
-									}
+													}
 						%>
 				</select></td>
-				<td style="width: 100px; display:none;"><input type="text"
+				<td style="width: 100px; display: none;"><input type="text"
 					id=<%="cmbSrvrApp" + i%> name=<%="cmbSrvrApp" + i%>
 					disabled="disabled" value="null" style="width: 100px;" /></td>
-					
-				<td style="width: 100px;"><input type="text" id=<%="txtAssetUsage" + i%>
-					name=<%="txtAssetUsage" + i%>
+
+				<td style="width: 100px;"><input type="text"
+					id=<%="txtAssetUsage" + i%> name=<%="txtAssetUsage" + i%>
 					value="<%=assetListDB.get(i).getAssetUsg()%>" width="100px" /></td>
-										
-					 
+
+
 				<td><select name=<%="cmbImpLevel" + i%>
 					id=<%="cmbImpLevel" + i%>>
 						<%
 							for (int impl = 0; impl < assetImpLevelListDB.size(); impl++) {
-										if ((byte) assetListDB.get(i).getImpLvl() == Byte
-												.valueOf(assetImpLevelListDB.get(impl).getId())) {
+														if ((byte) assetListDB.get(i).getImpLvl() == Byte
+																.valueOf(assetImpLevelListDB.get(impl).getId())) {
 						%>
 						<option value="<%=assetImpLevelListDB.get(impl).getId()%>"
 							selected="selected"><%=assetImpLevelListDB.get(impl).getDesc()%></option>
@@ -521,15 +557,15 @@ function getCurrentAssets()
 						<option value="<%=assetImpLevelListDB.get(impl).getId()%>"><%=assetImpLevelListDB.get(impl).getDesc()%></option>
 						<%
 							}
-									}
+													}
 						%>
 				</select></td>
 				<td><select name=<%="cmbOwnership" + i%>
 					id=<%="cmbOwnership" + i%>>
 						<%
 							for (int ownership = 0; ownership < aryOwnership.length; ownership++) {
-										if (assetListDB.get(i).getOwnership()
-												.equals(aryOwnership[ownership])) {
+														if (assetListDB.get(i).getOwnership()
+																.equals(aryOwnership[ownership])) {
 						%>
 						<option value="<%=aryOwnership[ownership]%>" selected="selected">
 							<%=aryOwnership[ownership]%></option>
@@ -539,14 +575,14 @@ function getCurrentAssets()
 						<option value="<%=aryOwnership[ownership]%>"><%=aryOwnership[ownership]%></option>
 						<%
 							}
-									}
+													}
 						%>
 				</select></td>
 				<td><select name=<%="cmbLocation" + i%>
 					id=<%="cmbLocation" + i%>>
 						<%
 							for (int loc = 0; loc < aryLocation.length; loc++) {
-										if (assetListDB.get(i).getLocation() == aryLocation[loc]) {
+														if (assetListDB.get(i).getLocation() == aryLocation[loc]) {
 						%>
 						<option value="<%=aryLocation[loc]%>" selected="selected"><%=aryLocation[loc]%></option>
 						<%
@@ -555,16 +591,16 @@ function getCurrentAssets()
 						<option value="<%=aryLocation[loc]%>"><%=aryLocation[loc]%></option>
 						<%
 							}
-									}
+													}
 						%>
 				</select></td>
-				<td style="width: 100px;display:none;"><input type="text"
+				<td style="width: 100px; display: none;"><input type="text"
 					name=<%="cmbCompType" + i%> id=<%="cmbCompType" + i%>
 					disabled="disabled" value="null" style="width: 100px;" /></td>
 			</tr>
 			<%
 				}
-				}
+					}
 			%>
 
 		</table>
@@ -577,23 +613,23 @@ function getCurrentAssets()
 				<th style="width: 150px;">Asset ID</th>
 				<th style="width: 100px;">IP Address</th>
 				<th style="width: 150px;">Catalog</th>
-				<th style = "display:none;">Server Type</th>
-				<th style="width: 100px;display:none;">Asset Usage</th>
-				<th style = "display:none;">Asset Importance</th>
+				<th style="display: none;">Server Type</th>
+				<th style="width: 100px; display: none;">Asset Usage</th>
+				<th style="display: none;">Asset Importance</th>
 				<th>Ownership</th>
 				<th>Location</th>
-				<th style="width: 100px;display:none;">Comp. Type</th>
+				<th style="width: 100px; display: none;">Comp. Type</th>
 			</tr>
 			<%
 				for (i = 0; i < assetListDB.size(); i++) {
-					if (assetListDB.get(i).getProtocolId().equals("nsrg")) {
+						if (assetListDB.get(i).getProtocolId().equals("nsrg")) {
 			%>
 			<tr>
 				<td><%=l = l + 1%></td>
 				<td><select name=<%="cmbStatus" + i%> id=<%="cmbStatus" + i%>>
 						<%
 							for (int status = 0; status < aryStatus.length; status++) {
-										if (assetListDB.get(i).getActive() == aryStatus[status]) {
+														if (assetListDB.get(i).getActive() == aryStatus[status]) {
 						%>
 						<option value="<%=(char) aryStatus[status]%>" selected="selected"><%=(char) aryStatus[status]%></option>
 						<%
@@ -602,7 +638,7 @@ function getCurrentAssets()
 						<option value="<%=(char) aryStatus[status]%>"><%=(char) aryStatus[status]%></option>
 						<%
 							}
-									}
+													}
 						%>
 				</select></td>
 				<td style="width: 150px;"><span id=<%="assetID" + i%>
@@ -614,8 +650,8 @@ function getCurrentAssets()
 					style="width: 150px;">
 						<%
 							for (int catalog = 0; catalog < nsrgCatalogListDB.size(); catalog++) {
-										if (assetListDB.get(i).getCtlgId() == nsrgCatalogListDB
-												.get(catalog).getId()) {
+														if (assetListDB.get(i).getCtlgId() == nsrgCatalogListDB
+																.get(catalog).getId()) {
 						%>
 						<option value="<%=nsrgCatalogListDB.get(catalog).getId()%>"
 							selected="selected"><%=nsrgCatalogListDB.get(catalog).getDesc()%></option>
@@ -625,25 +661,27 @@ function getCurrentAssets()
 						<option value="<%=nsrgCatalogListDB.get(catalog).getId()%>"><%=nsrgCatalogListDB.get(catalog).getDesc()%></option>
 						<%
 							}
-									}
+													}
 						%>
 				</select></td>
-				<td style = "display:none;"><input type="text" id=<%="cmbSrvrApp" + i%>
-					name=<%="cmbSrvrApp" + i%> disabled="disabled" value="null"
-					hidden="hidden" style="width: 100px;" /></td>
-				<td style="width: 100px;display:none;"><input type="text"
+				<td style="display: none;"><input type="text"
+					id=<%="cmbSrvrApp" + i%> name=<%="cmbSrvrApp" + i%>
+					disabled="disabled" value="null" hidden="hidden"
+					style="width: 100px;" /></td>
+				<td style="width: 100px; display: none;"><input type="text"
 					id=<%="txtAssetUsage" + i%> name=<%="txtAssetUsage" + i%>
 					disabled="disabled" value="null" hidden="hidden"
 					style="width: 100px;" /></td>
-				<td style = "display:none;"><input type="text" id=<%="cmbImpLevel" + i%>
-					name=<%="cmbImpLevel" + i%> disabled="disabled" value="null"
-					hidden="hidden" style="width: 100px;" /></td>
+				<td style="display: none;"><input type="text"
+					id=<%="cmbImpLevel" + i%> name=<%="cmbImpLevel" + i%>
+					disabled="disabled" value="null" hidden="hidden"
+					style="width: 100px;" /></td>
 				<td><select name=<%="cmbOwnership" + i%>
 					id=<%="cmbOwnership" + i%> style="width: 50px">
 						<%
 							for (int ownership = 0; ownership < aryOwnership.length; ownership++) {
-										if (assetListDB.get(i).getOwnership()
-												.equals(aryOwnership[ownership])) {
+														if (assetListDB.get(i).getOwnership()
+																.equals(aryOwnership[ownership])) {
 						%>
 						<option value="<%=aryOwnership[ownership]%>" selected="selected">
 							<%=aryOwnership[ownership]%></option>
@@ -653,14 +691,14 @@ function getCurrentAssets()
 						<option value="<%=aryOwnership[ownership]%>"><%=aryOwnership[ownership]%></option>
 						<%
 							}
-									}
+													}
 						%>
 				</select></td>
 				<td><select name=<%="cmbLocation" + i%>
 					id=<%="cmbLocation" + i%>>
 						<%
 							for (int loc = 0; loc < aryLocation.length; loc++) {
-										if (assetListDB.get(i).getLocation() == aryLocation[loc]) {
+														if (assetListDB.get(i).getLocation() == aryLocation[loc]) {
 						%>
 						<option value="<%=aryLocation[loc]%>" selected="selected"><%=aryLocation[loc]%></option>
 						<%
@@ -669,16 +707,16 @@ function getCurrentAssets()
 						<option value="<%=aryLocation[loc]%>"><%=aryLocation[loc]%></option>
 						<%
 							}
-									}
+													}
 						%>
 				</select></td>
-				<td style = "display:none;"><input type="text" name=<%="cmbCompType" + i%>
-					id=<%="cmbCompType" + i%> disabled="disabled" value="null"
-					style="width: 100px;" /></td>
+				<td style="display: none;"><input type="text"
+					name=<%="cmbCompType" + i%> id=<%="cmbCompType" + i%>
+					disabled="disabled" value="null" style="width: 100px;" /></td>
 			</tr>
 			<%
 				}
-				}
+					}
 			%>
 
 		</table>
@@ -688,3 +726,38 @@ function getCurrentAssets()
 	</form>
 </body>
 </html>
+
+
+</div>
+<!-- Mask to cover the whole screen -->
+<div id="mask"></div>
+
+<script src="js/jquery.idletimer.js" type="text/javascript"></script>
+<script src="js/jquery.idletimeout.js" type="text/javascript"></script>
+<!--jQuery plugin to set session timeout -->
+<script type="text/javascript">
+    $.idleTimeout('#idletimeout', '#idletimeout a', {
+        //idleAfter : 20,
+		idleAfter : $.jStorage.get("jsTimeout"),
+        onTimeout : function() {
+            $(this).slideUp();
+            window.location = "login.html";
+        },
+        onIdle : function() {
+            var maskHeight = $(document).height();
+            var maskWidth = $(window).width();
+            $('#mask').css({'width':maskWidth,'height':maskHeight});
+            $('#mask').fadeIn(1000);	
+            $('#mask').fadeTo("slow",0.8);	
+            $(this).slideDown(); // show the warning bar
+        },
+        onCountdown : function(counter) {
+            $(this).find("span").html(counter); // update the counter
+        },
+        onResume : function() {
+            $(this).slideUp(); // hide the warning bar
+            $('#mask').hide();
+            $('.window').hide();
+        }
+    });
+</script>
