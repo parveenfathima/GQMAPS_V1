@@ -25,7 +25,7 @@ import com.gq.meter.util.MeterUtils;
 
 /**
  * @author yogalakshmi.s
- * 
+ * @change parveen
  */
 public class NSRGMeter implements GQSNMPMeter {
 
@@ -35,6 +35,7 @@ public class NSRGMeter implements GQSNMPMeter {
     public GQMeterData implement(String communityString, String ipAddress, String snmpVersion,
             LinkedList<String> toggleSwitches) {
 
+        long nsrgMeterTime = 0L;
         long NSRGstartTime = System.currentTimeMillis();
         Snmp snmp = null;
 
@@ -188,7 +189,7 @@ public class NSRGMeter implements GQSNMPMeter {
         GQMeterData gqMeterObject = new GQMeterData(gqErrorInfo, nsrg);
 
         long NSRGendTime = System.currentTimeMillis();
-        new MeterUtils().nsrgMeterTime = new MeterUtils().nsrgMeterTime + (NSRGendTime - NSRGstartTime);
+        nsrgMeterTime = nsrgMeterTime + (NSRGendTime - NSRGstartTime);
         return gqMeterObject;
     }
 

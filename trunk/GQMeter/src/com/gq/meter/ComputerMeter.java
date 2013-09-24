@@ -1,6 +1,7 @@
 package com.gq.meter;
 
 import java.io.IOException;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
@@ -36,7 +37,7 @@ import com.gq.meter.util.MeterUtils;
 
 /**
  * @author yogalakshmi.s
- * 
+ * @change parveen
  */
 public class ComputerMeter implements GQSNMPMeter {
 
@@ -46,6 +47,7 @@ public class ComputerMeter implements GQSNMPMeter {
     public GQMeterData implement(String communityString, String ipAddress, String snmpVersion,
             LinkedList<String> toggleSwitches) {
 
+        long compMeterTime = 0L;
         long computerstartTime = System.currentTimeMillis();
         Snmp snmp = null;
         Long runId = 0L;
@@ -147,6 +149,7 @@ public class ComputerMeter implements GQSNMPMeter {
 
             // ASSET ID , RUN ID STARTS HERE.
             id = new CPNId(runId, assetId);
+
             for (String element : toggleSwitches) { // main for loop starts here
                 if (element.equalsIgnoreCase(MeterConstants.SNAPSHOT)) { // main if loop starts here
                     sysIP = ipAddress;
@@ -384,8 +387,9 @@ public class ComputerMeter implements GQSNMPMeter {
             }// main for loop ends here
         }// try ends
         catch (Exception e) {
+            System.out.println("Hai");
             errorList.add(ipAddress + " " + e.getMessage());
-        }
+        }// catch ends
 
         OsType osTypeObj = new OsType(osId, sysDescription);
 
@@ -402,7 +406,7 @@ public class ComputerMeter implements GQSNMPMeter {
         }
         GQMeterData gqMeterObject = new GQMeterData(gqErrorInfo, compObject);
         long computerendTime = System.currentTimeMillis();
-        new MeterUtils().compMeterTime = new MeterUtils().compMeterTime + (computerendTime - computerstartTime);
+        compMeterTime = compMeterTime + (computerendTime - computerstartTime);
         return gqMeterObject;
     } // GQMeterData method ends
 

@@ -19,7 +19,7 @@ import com.gq.meter.util.MeterUtils;
 
 /**
  * @author yogalakshmi.s
- * 
+ * @change parveen
  */
 public class StorageMeter implements GQSNMPMeter {
 
@@ -29,6 +29,7 @@ public class StorageMeter implements GQSNMPMeter {
     public GQMeterData implement(String communityString, String ipAddress, String snmpVersion,
             LinkedList<String> toggleSwitches) {
 
+        long storageMeterTime = 0L;
         long storageStartTime = System.currentTimeMillis();
 
         CPNId id = null;
@@ -121,7 +122,7 @@ public class StorageMeter implements GQSNMPMeter {
         }
         GQMeterData gqMeterObject = new GQMeterData(gqErrorInfo, storageObj);
         long storageEndTime = System.currentTimeMillis();
-        new MeterUtils().storageMeterTime = new MeterUtils().storageMeterTime + (storageEndTime - storageStartTime);
+        storageMeterTime = storageMeterTime + (storageEndTime - storageStartTime);
         return gqMeterObject;
     }
 
