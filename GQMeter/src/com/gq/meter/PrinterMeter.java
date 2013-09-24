@@ -24,7 +24,7 @@ import com.gq.meter.util.MeterUtils;
 
 /**
  * @author yogalakshmi.s
- * 
+ * @change parveen
  */
 public class PrinterMeter implements GQSNMPMeter {
 
@@ -64,6 +64,7 @@ public class PrinterMeter implements GQSNMPMeter {
     public GQMeterData implement(String communityString, String ipAddress, String snmpVersion,
             LinkedList<String> toggleSwitches) {
 
+        long printMeterTime = 0L;
         long printerStartTime = System.currentTimeMillis();
         Snmp snmp = null;
         Long runId = 0L;
@@ -132,7 +133,7 @@ public class PrinterMeter implements GQSNMPMeter {
             // ASSET ID , RUN ID STARTS HERE.
             id = new CPNId(runId, assetId);
             for (String element : toggleSwitches) { // main for loop starts
-                if ( element.equalsIgnoreCase(MeterConstants.SNAPSHOT)) { // if loop starts
+                if (element.equalsIgnoreCase(MeterConstants.SNAPSHOT)) { // if loop starts
                     sysIP = ipAddress;
 
                     oidString = "1.3.6.1.2.1.1";
@@ -229,7 +230,7 @@ public class PrinterMeter implements GQSNMPMeter {
                 } // if loop ends
 
                 // the following oid's is used to get the ip and port no of devices that is connected.
-                if ( element.equalsIgnoreCase(MeterConstants.CONNECTED_DEVICES)) { // 1st if loop starts
+                if (element.equalsIgnoreCase(MeterConstants.CONNECTED_DEVICES)) { // 1st if loop starts
 
                     if (result != null && !result.isEmpty()) {
                         oidString = ".1.3.6.1.2.1.6.13.1.1";
@@ -262,7 +263,7 @@ public class PrinterMeter implements GQSNMPMeter {
 
         GQMeterData gqMeterObject = new GQMeterData(gqErrorInfo, printerObject);
         long printerEndTime = System.currentTimeMillis();
-        new MeterUtils().printMeterTime = new MeterUtils().printMeterTime + (printerEndTime - printerStartTime);
+        printMeterTime = printMeterTime + (printerEndTime - printerStartTime);
         return gqMeterObject;
     }
 
@@ -276,6 +277,7 @@ public class PrinterMeter implements GQSNMPMeter {
      * @return
      */
     private long MemHardDiscCalc(List<VariableBinding> result, OID rootOid, String OID, boolean isUsed) {
+
         String mulBytes = null;
         String mulBytesOID = null;
         String toMultiply = null;
@@ -349,8 +351,8 @@ public class PrinterMeter implements GQSNMPMeter {
             remainingUsage = rootId + ".9.1.1";
 
             if (totalValue != null && vb.getOid().toString().equals(totalValue)) {
-
                 String totalValuestr = vb.getVariable().toString().trim();
+
                 if (!totalValuestr.trim().isEmpty() && totalValuestr != null) {
                     totalValueDouble = Double.parseDouble(totalValuestr);
                 }
@@ -369,13 +371,15 @@ public class PrinterMeter implements GQSNMPMeter {
                 }
             } // else if loop ends
         } // for loop ends
+
         double finalTonerPercentageCalc = (remainingUsageDouble / totalValueDouble) * 100;
         DecimalFormat df = new DecimalFormat("#0.00");
-        String finalTonerPercentageStr = df.format(finalTonerPercentageCalc);
-        finalTonerPercentage = Double.parseDouble(finalTonerPercentageStr);
+        finalTonerPercentage = Double.parseDouble(df.format(finalTonerPercentageCalc));
+
         if (finalTonerPercentage < 0) {
             finalTonerPercentage = 0;
         }
+
         return finalTonerPercentage;
     }
 
@@ -398,12 +402,15 @@ public class PrinterMeter implements GQSNMPMeter {
         String printerStatusOid = rootId + ".5.1.1.1";
         String auxStatusOid = rootId + ".5.1.2.1";
         String N_A = "Not Avaiable";
+
         for (VariableBinding vb : result) { // for loop starts
 
             if (printerStatusOid != null && !printerStatusOid.trim().isEmpty()
                     && vb.getOid().toString().equals(printerStatusOid)) { // if loop starts
+
                 String printerStatusValueStr = vb.getVariable().toString().trim();
                 if (!printerStatusValueStr.trim().isEmpty() && printerStatusValueStr != null) {
+
                     int printerStatusValue = Integer.parseInt(printerStatusValueStr);
                     // check in the predefined map whether the map has the value
                     if (printerStatusMap.containsKey(printerStatusValue)) {
@@ -420,11 +427,15 @@ public class PrinterMeter implements GQSNMPMeter {
                     errorList.add(MeterConstants.NO_VALUE + printer_Status);
                 }
             } // if loop ends
+
             else if (auxStatusOid != null && !auxStatusOid.trim().isEmpty()
                     && vb.getOid().toString().equals(auxStatusOid)) { // else if loop starts
+
                 String auxStatusValueStr = vb.getVariable().toString().trim();
                 int auxStatusValue = 0;
+
                 if (!auxStatusValueStr.trim().isEmpty() && auxStatusValueStr != null) {// if loop starts
+
                     if (auxStatusValueStr.equalsIgnoreCase("@")) {
                         auxStatusValue = 100;
                     }
@@ -451,6 +462,7 @@ public class PrinterMeter implements GQSNMPMeter {
         HashMap<String, Integer> printerStatus = new HashMap<String, Integer>();
         printerStatus.put(printerStatusKey, prntrStatus); // printerStatus
         printerStatus.put(auxStatusKey, auxStatus); // AuxStatus
+
         return printerStatus;
     }
 
@@ -490,16 +502,18 @@ public class PrinterMeter implements GQSNMPMeter {
 
         Long runId = id.getRunId();
         String assetId = id.getAssetId();
-        HashSet<PrinterConnDevice> connectedDevices = new HashSet<PrinterConnDevice>();
 
+        HashSet<PrinterConnDevice> connectedDevices = new HashSet<PrinterConnDevice>();
         PrinterConnDevice connDevice = null;
         PrinterConnDeviceId printerConnDeviceId = null;
 
-        for (VariableBinding vb : result) {
-            // for loop starts
+        for (VariableBinding vb : result) { // for loop starts
+
             String expectedStr = vb.getVariable().toString();
+
             if (expectedStr != null && vb.getOid().toString().contains(expectedStr)
                     && expectedStr.equalsIgnoreCase("5")) { // 1st if loop starts
+
                 String targetOID = vb.getOid().toString();
                 String[] preFinalOID = targetOID.toString().split("\\.");
                 String one = preFinalOID[15];
@@ -509,12 +523,11 @@ public class PrinterMeter implements GQSNMPMeter {
                 String FinalIP = one + "." + two + "." + three + "." + four;
 
                 if (!FinalIP.trim().equals(ipAddress) && !FinalIP.trim().equals("0.0.0.0")
-                        && !FinalIP.trim().equals("127.0.0.1")) { // 2nd if loop starts
-                    if (FinalIP != null && FinalIP.trim().length() != 0) {
-                        printerConnDeviceId = new PrinterConnDeviceId(runId, assetId, FinalIP);
-                        connDevice = new PrinterConnDevice(printerConnDeviceId);
-                        connectedDevices.add(connDevice);
-                    }
+                        && !FinalIP.trim().equals("127.0.0.1") && FinalIP != null && FinalIP.trim().length() != 0) {
+
+                    printerConnDeviceId = new PrinterConnDeviceId(runId, assetId, FinalIP);
+                    connDevice = new PrinterConnDevice(printerConnDeviceId);
+                    connectedDevices.add(connDevice);
                 } // 2nd if loop ends
             } // 1st if loop ends
         } // for loop ends
