@@ -390,9 +390,10 @@ function openMeterDialog(index)
 	gArrayIndex = index;
 	
 	clearMeterDetails();
-	
-	$( "#dlgMeter" ).dialog( "open" );
 
+	$( "#dlgMeter" ).dialog( "open" );
+	$("#hMeter").text("Add Meter for " + arrEntp[index].getEName());
+	
 	//loading the protocols from db in the dropdown in general.js
 	loadProtocol();
 	$("#tblMeterList").val("");
@@ -623,7 +624,7 @@ $(function() {
 $(function() {
 	  $( "#dlgMeter" ).dialog({
 		  autoOpen: false,
-		  height: 465,
+		  height: 500,
 		  width: 300,
 		  modal: true,
 		  position: "center"
@@ -988,7 +989,7 @@ function loadMeters(i)
 	
 	var vValues = "";
 	$("#tblMeterList").text("");
-	$("#hMeter").text("Add Meter for " + arrEntp[i].getEName());
+	//$("#hMeter").text("Add Meter for " + arrEntp[i].getEName());
 	$.ajax
 	({
 		type:vType,
