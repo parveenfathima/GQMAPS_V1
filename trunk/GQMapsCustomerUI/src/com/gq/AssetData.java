@@ -14,6 +14,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.gq.meter.object.*;
 import com.gq.ui.object.DomainData;
+import com.gq.util.GQMapsCustomerUIConstants;
 
 public class AssetData {
 
@@ -121,12 +122,9 @@ public class AssetData {
 	public List<DomainData> getDomainDataList(String entpId) {
 		enterpriseId = entpId;
 		Client client = Client.create();
-		
-//		String url = "http://192.168.1.95:8080/GQMapsCustomerServices/mapsDomainServices/getMapsDomainData?enterpriseId="
-//				+ entpId;	
-		
 		String url = "http://localhost:8080/GQMapsCustomerServices/mapsDomainServices/getMapsDomainData?enterpriseId="
 				+ entpId;		
+		//url = url + "mapsDomainServices/getMapsDomainData?enterpriseId=" + entpId;
 
 		WebResource webResourceDomain = client.resource(url);
 
@@ -139,10 +137,12 @@ public class AssetData {
 		} catch (ParseException e) {
 
 			System.out.println("\nNo domain data\n");
+			GQMapsCustomerUIConstants.logger.error("Error loading domain data is:\t" + "and the domainDataStr is : " + domainDataStr);
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
+		
+		GQMapsCustomerUIConstants.logger.info("Domain data is:\t" + domainDataStr);
 		System.out.println("\nDomainData String: " + domainDataStr);
 
 		List<DomainData> domainDataListDB = new ArrayList<DomainData>();
@@ -236,18 +236,15 @@ public class AssetData {
 		enterpriseId = entpId;
 		Client client = Client.create();
 
-		//String url = "http://192.168.1.95:8080/GQMapsCustomerServices/AssetEditServices/getAssetData?enterpriseId="	+ entpId;
-		
 		String url = "http://localhost:8080/GQMapsCustomerServices/AssetEditServices/getAssetData?enterpriseId="	+ entpId;
-		
 		//url = url + "AssetEditServices/getAssetData?enterpriseId=" + entpId;
 		
 		System.out.println("URL::::::::::::::::::: " + url);
 		WebResource webResourceAsset = client.resource(url);
 
 		String assetStr = webResourceAsset.get(String.class);
+		
 
-		System.out.println("\nAssetData String: " + assetStr);
 
 		JSONObject jsnobject = null;
 		try {
@@ -255,8 +252,13 @@ public class AssetData {
 				jsnobject = new JSONObject(assetStr);
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
+			GQMapsCustomerUIConstants.logger.error("Error loading asset data:\t" + "and the assetStr is : " + assetStr);			
 			e.printStackTrace();
 		}
+		
+		GQMapsCustomerUIConstants.logger.info("Asset data is:\t" + assetStr);
+		System.out.println("\nAssetData String: " + assetStr);
+		
 		JSONArray jsonAssetArray = jsnobject.getJSONArray("assetResult");
 
 		List<Asset> assetListDB = new ArrayList<Asset>();
