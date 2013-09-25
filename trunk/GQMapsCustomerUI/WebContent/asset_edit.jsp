@@ -65,6 +65,12 @@ function updateAsset(count)
 		vUsage =  $.trim($("#txtAssetUsage"+j).val()); // NA for nsrg
 		if(vUsage === "" || vUsage === "null" || vUsage === null)
 			vUsage = null;
+		else if(vUsage.length > 50)
+		{
+			$("#txtAssetUsage"+j).select();
+			//alert("Please enter Asset Usage within 50 characters");
+			return false;
+		}
 		
 		vImpLevel =  $("#cmbImpLevel"+j).val(); // NA for nsrg
 		if(vImpLevel === null || vImpLevel === "null")
@@ -117,7 +123,7 @@ function updateAsset(count)
 	{
 		var vType = "PUT";
 		var vUrl = $.jStorage.get("jsDBUrl") + "AssetEditServices/updateAssetData?enterpriseId=" + $.jStorage.get("jsEntpId");
-		alert(JSON.stringify(assetsForUpdate.assetUpdateData));		
+				
 		$.ajax
 		({
 			type:vType,
@@ -140,8 +146,6 @@ function updateAsset(count)
 	{
 		alert("No changes were made!");
 	}
-	
-	window.location.href = "dashboard_full.html";
 }
 
 function getCurrentAssets()
@@ -249,8 +253,7 @@ function getCurrentAssets()
 					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 					<a href="dashboard_full.html"> Back</a>
 				</td>
-				<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="login.html"
-					onClick="logout();">Logout</a></td>
+
 			</tr>
 		</table>
 		<%
@@ -261,7 +264,7 @@ function getCurrentAssets()
 			String entp = "";
 			char aryStatus[] = { 'y', 'n' };
 			String aryOwnership[] = { "Own", "Lease" };
-			String aryLocation[] = { "DC", "EP" };
+			String aryLocation[] = { "dc", "ep" };
 
 			Asset a = new Asset();
 			AssetData assetData = new AssetData();
@@ -281,12 +284,28 @@ function getCurrentAssets()
 					.println("\n Enterprise User id is -----------------------------------------: "
 							+ request.getParameter("setEntp"));
 
-			assetListDB = assetData.getAssetList(entp);
-			System.out.println("Total assets: " + assetListDB.size());
-
-			domainDataListDB = assetData.getDomainDataList(entp);
-			System.out.println("Total Domain Data: " + domainDataListDB.size());
-
+			try
+			{
+				assetListDB = assetData.getAssetList(entp);
+				System.out.println("Total assets: " + assetListDB.size());
+			}
+			catch(Exception e)
+			{
+				System.out.println("\nError loading asset data... ");
+				e.printStackTrace();
+			}
+			
+			try
+			{
+				domainDataListDB = assetData.getDomainDataList(entp);
+				System.out.println("Total Domain Data: " + domainDataListDB.size());
+			}
+			catch(Exception e)
+			{
+				System.out.println("\nError loading domain data... ");
+				e.printStackTrace();
+			}
+			
 			//computer catalog domain list
 			List<DomainData> compCatalogListDB = new ArrayList<DomainData>();
 			compCatalogListDB = assetData.getCatalogList("computer");
@@ -393,7 +412,7 @@ function getCurrentAssets()
 				</select></td>
 				<td><input type="text" id=<%="txtAssetUsage" + i%>
 					name=<%="txtAssetUsage" + i%>
-					value="<%=assetListDB.get(i).getAssetUsg()%>" width="50px" /></td>
+					value="<%=assetListDB.get(i).getAssetUsg()%>" width="50px" maxlength="50"/></td>
 				<td><select name=<%="cmbImpLevel" + i%>
 					id=<%="cmbImpLevel" + i%> style="width: 100px;">
 						<%
@@ -539,7 +558,7 @@ function getCurrentAssets()
 
 				<td style="width: 100px;"><input type="text"
 					id=<%="txtAssetUsage" + i%> name=<%="txtAssetUsage" + i%>
-					value="<%=assetListDB.get(i).getAssetUsg()%>" width="100px" /></td>
+					value="<%=assetListDB.get(i).getAssetUsg()%>" width="100px" maxlength="50"/></td>
 
 
 				<td><select name=<%="cmbImpLevel" + i%>
@@ -605,19 +624,19 @@ function getCurrentAssets()
 
 		</table>
 
-		<h4>Network, Switch, Router and Gateway</h4>
+		<h4>Network, Switch, Router and Gateway List</h4>
 		<table id="tblNsrg" border="1">
 			<tr bgcolor="green" style="color: white;">
 				<th>S.#</th>
 				<th style="width: 50px;">Asset Active</th>
 				<th style="width: 150px;">Asset ID</th>
 				<th style="width: 100px;">IP Address</th>
-				<th style="width: 150px;">Catalog</th>
+				<th style="width: 300px;">Catalog</th>
 				<th style="display: none;">Server Type</th>
 				<th style="width: 100px; display: none;">Asset Usage</th>
 				<th style="display: none;">Asset Importance</th>
-				<th>Ownership</th>
-				<th>Location</th>
+				<th style="width: 100px;">Ownership</th>
+				<th style="width: 100px;">Location</th>
 				<th style="width: 100px; display: none;">Comp. Type</th>
 			</tr>
 			<%
@@ -646,8 +665,8 @@ function getCurrentAssets()
 				</span></td>
 				<td style="width: 150px;"><span id=<%="ipAddr" + i%>
 					name=<%="ipAddr" + i%>><%=assetListDB.get(i).getIpAddr()%> </span></td>
-				<td><select name=<%="cmbCatalog" + i%> id=<%="cmbCatalog" + i%>
-					style="width: 150px;">
+				<td ><select name=<%="cmbCatalog" + i%> id=<%="cmbCatalog" + i%>
+					style="width: 300px;">
 						<%
 							for (int catalog = 0; catalog < nsrgCatalogListDB.size(); catalog++) {
 														if (assetListDB.get(i).getCtlgId() == nsrgCatalogListDB
@@ -677,7 +696,7 @@ function getCurrentAssets()
 					disabled="disabled" value="null" hidden="hidden"
 					style="width: 100px;" /></td>
 				<td><select name=<%="cmbOwnership" + i%>
-					id=<%="cmbOwnership" + i%> style="width: 50px">
+					id=<%="cmbOwnership" + i%> style="width: 100px">
 						<%
 							for (int ownership = 0; ownership < aryOwnership.length; ownership++) {
 														if (assetListDB.get(i).getOwnership()
@@ -694,8 +713,8 @@ function getCurrentAssets()
 													}
 						%>
 				</select></td>
-				<td><select name=<%="cmbLocation" + i%>
-					id=<%="cmbLocation" + i%>>
+				<td ><select name=<%="cmbLocation" + i%>
+					id=<%="cmbLocation" + i%> style="width: 100px;">
 						<%
 							for (int loc = 0; loc < aryLocation.length; loc++) {
 														if (assetListDB.get(i).getLocation() == aryLocation[loc]) {
