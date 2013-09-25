@@ -240,3 +240,28 @@ function setFocusEditPwd()
 
 //-------------------------------------/PASSWORD FIELD related functions------------------------------
 
+//validating whether the enterprise has purchased meters or not
+function hasMeter(eid)
+{
+		var vType = "GET";		
+		var vUrl = $.jStorage.get("jsUrl") + "enterpriseMeters/getEntMeters?entpId=" + eid;
+		var mCount = 0;
+		$.ajax
+		({
+			type:vType,
+			contentType: "application/json",
+			url:vUrl,
+			async:false,
+			dataType: "json",
+			success:function(json)
+			{				
+				mCount = json.length;		
+			},
+			error:function(json)
+			{
+				alert("Error from laoding meter details: " + json.status + " " + json.responseText);
+			} 
+		});	
+		
+		return mCount;
+}
