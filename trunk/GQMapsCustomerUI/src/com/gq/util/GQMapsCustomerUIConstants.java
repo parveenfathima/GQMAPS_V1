@@ -12,8 +12,8 @@ public class GQMapsCustomerUIConstants {
     public static final Logger logger = Logger.getLogger("GQMapsCustomerConstants.class");
 
     private static FileAppender fileappender;
-    private static String logFilePrefix = "C:/customerUILogs/";
-    //private static String logFilePrefix = "/opt/gq/maps/logs/";
+    //private static String logFilePrefix = "C:/customerUILogs/";
+    private static String logFilePrefix = "/opt/gq/maps/logs/";
     private static String logFileName = "CustomerUI.log";
 
     private static final String LOG_FILE_NAME_DATE_PATTERN = "yyyy-MM-dd";
