@@ -12,15 +12,17 @@ public class GQMapsCustomerUIConstants {
     public static final Logger logger = Logger.getLogger("GQMapsCustomerConstants.class");
 
     private static FileAppender fileappender;
-    private static String logFilePrefix = "/opt/gq/maps/logs/";
-    private static String logFileName = "enterpriseDataProcessor.log";
+    private static String logFilePrefix = "C:/customerUILogs/";
+    //private static String logFilePrefix = "/opt/gq/maps/logs/";
+    private static String logFileName = "CustomerUI.log";
 
     private static final String LOG_FILE_NAME_DATE_PATTERN = "yyyy-MM-dd";
 
     static {
         logger.info("Inside create logger method");
-        GQMapsCustomerUIConstants.logger.info("initializing gqmaps EntrprseDataProcessor logger..."); 
+        GQMapsCustomerUIConstants.logger.info("initializing CustomerUI......."); 
         String logFile = logFilePrefix + logFileName;
+        
         try {
             fileappender = new org.apache.log4j.DailyRollingFileAppender(new PatternLayout(
                     "  %-15C{1} | %d{MMM dd HH:mm} | %5p | %m%n"), logFile, LOG_FILE_NAME_DATE_PATTERN);
@@ -31,9 +33,8 @@ public class GQMapsCustomerUIConstants {
                     + new Date() + ". TERMINATING server ??.... ************"); 
         }
         logger.addAppender(fileappender);
-        logger.info("after create logger method");
+        logger.info("after creating CustomerUI logger method");
     }
 
 }
 
-// GQEDPConstants.logger.info(" ....");
