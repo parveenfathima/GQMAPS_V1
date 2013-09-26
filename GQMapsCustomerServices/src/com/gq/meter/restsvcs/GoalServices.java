@@ -75,6 +75,7 @@ public class GoalServices {
         List<Goal> goalList = new ArrayList<Goal>();
         List<AssetData> assetArray = new ArrayList<AssetData>();
         List<GoalSnpsht> goalArray = new ArrayList<GoalSnpsht>();
+        JSONObject goalData = new JSONObject();
         try {
             dbExchange = SqlUtil.getExchangeConnection();
             dbCustomer = SqlUtil.getCustomerConnection(entpId);
@@ -272,43 +273,6 @@ public class GoalServices {
                     }
                 }
             }
-            String assetSql = "select a.asset_id,a.ip_addr,b.servr_cost,b.monthly_rent from asset a, dev_ctlg b where a.ctlg_id = b.ctlg_id;";
-            stmt = (Statement) dbCustomer.prepareStatement(assetSql);
-            ResultSet assetSet = stmt.executeQuery(assetSql);
-            CustomerServiceConstant.logger.info("[GOALSERVICES]  Query Sucessfully Executed for the Asset");
-            while (assetSet.next()) {
-                AssetData assetObject = new AssetData();
-                asset_Id = assetSet.getString("asset_id");
-                assetObject.setAsset_Id(asset_Id);
-                System.out.println("getdata" + assetObject.getAsset_Id());
-                if (assetSet.getString("ip_addr") != null && assetSet.getString("ip_addr").trim() != "") {
-                    ipAddr = assetSet.getString("ip_addr");
-                }
-                else {
-                    ipAddr = "NA";
-                }
-                assetObject.setIpAddr(ipAddr);
-                serverCost = assetSet.getDouble("servr_cost");
-                assetObject.setServerCost(serverCost);
-                if (assetSet.getInt("monthly_rent") != 0) {
-                    monthlyRent = assetSet.getInt("monthly_rent");
-                }
-                else {
-                    monthlyRent = 0;
-                }
-                assetObject.setMonthlyRent(monthlyRent);
-                assetArray.add(assetObject);
-            }
-            JSONArray assetJsonArray = new JSONArray();
-            JSONObject assetTitle = new JSONObject();
-            for (int i = 0; i < assetArray.size(); i++) {
-                JSONObject assetJson = new JSONObject();
-                assetJson.put("AssetId", assetArray.get(i).getAsset_Id());
-                assetJson.put("IpAddress", assetArray.get(i).getIpAddr());
-                assetJson.put("ServerCost", assetArray.get(i).getServerCost());
-                assetJson.put("MonthlyRent", assetArray.get(i).getMonthlyRent());
-                assetJsonArray.put(assetJson);
-            }
             CustomerServiceConstant.logger.info("[GOALSERVICES]  Asset JSON is Constructed");
             String goalSnpshtQuery = "select snpsht_id as SnapshotId, start_date as StartDate, end_date as EndDate, notes as Notes,cost_benefit as RealizedBenefit from goal_snpsht;";
             stmt = (Statement) dbExchange.createStatement();
@@ -336,8 +300,7 @@ public class GoalServices {
             }
             goalTitle.put("GoalSnapshotData", goalJsonArray);
             CustomerServiceConstant.logger.info("[GOALSERVICES]  Goal JSON Constructed");
-            assetTitle.put("AssetData", assetJsonArray);
-            JSONArray chartDataArray = new JSONArray();
+            JSONArray GoalDataArray = new JSONArray();
             JSONObject chartDataTitle = new JSONObject();
             for (int i = 0; i < goalList.size(); i++) {
                 JSONObject json = new JSONObject();
@@ -364,15 +327,14 @@ public class GoalServices {
                 else {
                     json.put("Data", goalList.get(i).getChartData());
                 }
-                chartDataArray.put(json);
+                GoalDataArray.put(json);
             }
             CustomerServiceConstant.logger.info("[GOALSERVICES]  Final JSon is Constructed");
-            chartDataTitle.put("ChartData", chartDataArray);
-            JSONArray finalResult = new JSONArray();
-            finalResult.put(chartDataTitle);
-            finalResult.put(assetTitle);
-            finalResult.put(goalTitle);
-            result = finalResult.toString();
+            chartDataTitle.put("GoalData", GoalDataArray);
+            goalData.put("GoalSnapshotData", goalJsonArray);
+            goalData.put("GoalData", GoalDataArray);
+            result = goalData.toString();
+
         }
         catch (SQLException ex) {
             CustomerServiceConstant.logger
