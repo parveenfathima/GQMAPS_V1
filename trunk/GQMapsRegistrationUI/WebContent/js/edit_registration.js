@@ -299,8 +299,10 @@ function updateEntp(dbEntp)
 								alert("Error from sending activation email: " + json.status + " " + json.responseText);
 							}
 						});
-				}
+				}				
+				
 				// end of activation email
+				$('#sbtnGeneral').attr('disabled','disabled');				
 				alert(msg);
 				$( "#dlgGeneral" ).dialog( "close" );
 				window.location.href = "edit_registration.html";
