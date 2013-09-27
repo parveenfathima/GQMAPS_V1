@@ -450,7 +450,7 @@ public final class ITAssetDiscoverer {
         gqmResponse.setGqmid(gqmid);
         gqmResponse.setAssetDiscovered((short) snmpKnownIPList.size());
 
-      //  System.out.println(" [GQMETER] json : " + gson.toJson(gqmResponse));
+        System.out.println(" [GQMETER] json : " + gson.toJson(gqmResponse));
         System.out.println(" [GQMETER] Total number of assets(ip address) in input file : " + gqmResponse.getAssetScanned());
         System.out.println(" [GQMETER] SNMP configured on : " + this.snmpKnownIPList.toString());
         System.out.println(" [GQMETER] SNMP not configured on : " + this.snmpUnknownIPList.toString());
