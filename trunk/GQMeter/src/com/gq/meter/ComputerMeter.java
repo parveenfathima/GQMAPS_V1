@@ -773,13 +773,8 @@ public class ComputerMeter implements GQSNMPMeter {
 
         Long runId = id.getRunId();
         String assetId = id.getAssetId();
-        int installedSoftwareSize = appResult.size();
 
-        if (isLinux) {
-            installedSoftwareSize = (installedSoftwareSize / 2) + 100;
-        }
-
-        ArrayList<CompInstSoftware> installedSwList = new ArrayList<CompInstSoftware>(installedSoftwareSize);
+        ArrayList<CompInstSoftware> installedSwList = new ArrayList<CompInstSoftware>(appResult.size());
         CompInstSoftwareId ins = null;
         try {
             if (isWindows) {
@@ -806,8 +801,7 @@ public class ComputerMeter implements GQSNMPMeter {
                     if (appResult.get(appResultCount).getVariable().toString().trim().equals("4")) {
 
                         String softwareName = softwareResult.get(appResultCount).getVariable().toString().trim();
-                        Date installDate = getDate(dateResult.get(appResultCount).getVariable().toString().trim(),
-                                isLinux);
+                        Date installDate = getDate(dateResult.get(appResultCount).getVariable().toString().trim(),  isLinux);
                         String[] softwareNameTokens = softwareName.split("-");
                         String finalSoftwareName = "";
                         for (int count = 0; count < softwareNameTokens.length; count++) {
@@ -817,6 +811,7 @@ public class ComputerMeter implements GQSNMPMeter {
                                 finalSoftwareName += softwareNameTokens[count] + "-";
                             }
                         }
+                        
                         finalSoftwareName = finalSoftwareName.substring(0, finalSoftwareName.lastIndexOf("-"));
                         if (!MeterConstants.InstSwMap.containsKey(finalSoftwareName)) {
                             if (softwareName != null && softwareName.trim().length() != 0) { // 2nd if loop starts
