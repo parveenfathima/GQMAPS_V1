@@ -1,7 +1,6 @@
 package com.gq.meter;
 
 import java.io.IOException;
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
@@ -47,7 +46,6 @@ public class ComputerMeter implements GQSNMPMeter {
     public GQMeterData implement(String communityString, String ipAddress, String snmpVersion,
             LinkedList<String> toggleSwitches) {
 
-        long compMeterTime = 0L;
         long computerstartTime = System.currentTimeMillis();
         Snmp snmp = null;
         Long runId = 0L;
@@ -149,7 +147,6 @@ public class ComputerMeter implements GQSNMPMeter {
 
             // ASSET ID , RUN ID STARTS HERE.
             id = new CPNId(runId, assetId);
-
             for (String element : toggleSwitches) { // main for loop starts here
                 if (element.equalsIgnoreCase(MeterConstants.SNAPSHOT)) { // main if loop starts here
                     sysIP = ipAddress;
@@ -159,7 +156,7 @@ public class ComputerMeter implements GQSNMPMeter {
                     if (result != null && !result.isEmpty()) {
                         temp = oidString + ".3.0";
                         tempStr = MeterUtils.getSNMPValue(temp, result);
-                        upTime = new MeterUtils().upTimeCalc(tempStr);
+                        upTime = MeterUtils.upTimeCalc(tempStr);
                     }
 
                     // The following oid's is used to get no. of users and processes
@@ -245,6 +242,9 @@ public class ComputerMeter implements GQSNMPMeter {
                             else { // 2nd else loop starts
                                 usedMemory = getMemorycalc(result, rootOID, variable, true);
                             } // 2nd else loop ends
+                            if (usedMemory == 0) {
+                                errorList.add(ipAddress + " " + "Unable to get used Memory");
+                            }
                         } // 1st else loop ends
                     } // 1st if loop ends
                     else {
@@ -337,6 +337,7 @@ public class ComputerMeter implements GQSNMPMeter {
 
                         installedSwList = installedSwListCalc(appResult, softwareResult, dateResult, rootOID,
                                 isWindows, isLinux, id);
+
                     } // 2nd if loop ends
                     else {
                         errorList.add(assetId + " Root OID : 1.3.6.1.2.1.25.6.3.1.4" + " "
@@ -345,7 +346,7 @@ public class ComputerMeter implements GQSNMPMeter {
                 } // 1st if loop ends.
 
                 // the following oid's is used to get the IP and port number for the devices that is connected.
-                if ( element.equalsIgnoreCase(MeterConstants.CONNECTED_DEVICES)) { // 1st if loop starts
+                if (element.equalsIgnoreCase(MeterConstants.CONNECTED_DEVICES)) { // 1st if loop starts
 
                     if (result != null && !result.isEmpty()) {
                         oidString = ".1.3.6.1.2.1.6.13.1.4";
@@ -376,8 +377,14 @@ public class ComputerMeter implements GQSNMPMeter {
                         oidString = ".1.3.6.1.2.1.25.5.1.1.2";
                         rootOID = new OID(oidString);
                         List<VariableBinding> memShareResult = MeterUtils.walk(rootOID, target);
-
-                        processList = ProcessCalc(result, rootOID, sysRunNameResult, cpuShareResult, memShareResult, id);
+                        if (sysRunNameResult.size() == cpuShareResult.size()
+                                && sysRunNameResult.size() == memShareResult.size()) {
+                            processList = ProcessCalc(result, rootOID, sysRunNameResult, cpuShareResult,
+                                    memShareResult, id);
+                        }
+                        else {
+                            errorList.add(ipAddress + " Unable to get details for process calculations");
+                        }
                     } // 2nd if loop ends
                     else {
                         errorList.add(assetId + " Root OID : .1.3.6.1.2.1.25" + " "
@@ -387,9 +394,8 @@ public class ComputerMeter implements GQSNMPMeter {
             }// main for loop ends here
         }// try ends
         catch (Exception e) {
-            System.out.println("Hai");
             errorList.add(ipAddress + " " + e.getMessage());
-        }// catch ends
+        }
 
         OsType osTypeObj = new OsType(osId, sysDescription);
 
@@ -406,7 +412,7 @@ public class ComputerMeter implements GQSNMPMeter {
         }
         GQMeterData gqMeterObject = new GQMeterData(gqErrorInfo, compObject);
         long computerendTime = System.currentTimeMillis();
-        compMeterTime = compMeterTime + (computerendTime - computerstartTime);
+        new MeterUtils().compMeterTime = new MeterUtils().compMeterTime + (computerendTime - computerstartTime);
         return gqMeterObject;
     } // GQMeterData method ends
 
@@ -489,9 +495,6 @@ public class ComputerMeter implements GQSNMPMeter {
                 }
                 else if (isUsed && mulBytes != null && usedMultiply != null) {
                     memory = memory + Long.parseLong(mulBytes.trim()) * Long.parseLong(usedMultiply.trim());
-                }
-                else {
-                    errorList.add(MeterConstants.NO_VALUE + " " + memory);
                 }
             } // 2nd if loop ends
         } // 1st for loop ends
@@ -767,10 +770,12 @@ public class ComputerMeter implements GQSNMPMeter {
     private ArrayList<CompInstSoftware> installedSwListCalc(List<VariableBinding> appResult,
             List<VariableBinding> softwareResult, List<VariableBinding> dateResult, OID rootOid, boolean isWindows,
             boolean isLinux, CPNId id) {
+
         Long runId = id.getRunId();
         String assetId = id.getAssetId();
         int installedSoftwareSize = appResult.size();
-        if (!isWindows) {
+
+        if (isLinux) {
             installedSoftwareSize = (installedSoftwareSize / 2) + 100;
         }
 
@@ -778,6 +783,7 @@ public class ComputerMeter implements GQSNMPMeter {
         CompInstSoftwareId ins = null;
         try {
             if (isWindows) {
+
                 for (int i = 0; i < appResult.size(); i++) { // for loop starts
                     if (appResult.get(i).getVariable().toString().trim().equals("4")) { // 1st if loop starts
                         String softwareName = softwareResult.get(i).getVariable().toString().trim();
@@ -794,13 +800,14 @@ public class ComputerMeter implements GQSNMPMeter {
                     } // 1st if loop ends
                 } // for loop ends
             }
-            if (isLinux) {
+            else if (isLinux) {
 
-                for (int i = 0; i < appResult.size(); i++) { // for loop starts
-                    if (appResult.get(i).getVariable().toString().trim().equals("4")) {
+                for (int appResultCount = 0; appResultCount < appResult.size(); appResultCount++) { // for loop starts
+                    if (appResult.get(appResultCount).getVariable().toString().trim().equals("4")) {
 
-                        String softwareName = softwareResult.get(i).getVariable().toString().trim();
-                        Date installDate = getDate(dateResult.get(i).getVariable().toString().trim(), isLinux);
+                        String softwareName = softwareResult.get(appResultCount).getVariable().toString().trim();
+                        Date installDate = getDate(dateResult.get(appResultCount).getVariable().toString().trim(),
+                                isLinux);
                         String[] softwareNameTokens = softwareName.split("-");
                         String finalSoftwareName = "";
                         for (int count = 0; count < softwareNameTokens.length; count++) {
@@ -823,8 +830,8 @@ public class ComputerMeter implements GQSNMPMeter {
                             }// 2nd if loop ends
                         } // 1st if loop ends
                     }
-                }// for
-            }
+                }// for ends
+            }// else if ends
         }// try ends
         catch (Exception e) {
             e.printStackTrace();
