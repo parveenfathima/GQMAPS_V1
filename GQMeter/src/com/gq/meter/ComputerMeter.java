@@ -377,14 +377,14 @@ public class ComputerMeter implements GQSNMPMeter {
                         oidString = ".1.3.6.1.2.1.25.5.1.1.2";
                         rootOID = new OID(oidString);
                         List<VariableBinding> memShareResult = MeterUtils.walk(rootOID, target);
-                        if (sysRunNameResult.size() == cpuShareResult.size()
-                                && sysRunNameResult.size() == memShareResult.size()) {
-                            processList = ProcessCalc(result, rootOID, sysRunNameResult, cpuShareResult,
-                                    memShareResult, id);
-                        }
-                        else {
-                            errorList.add(ipAddress + " Unable to get details for process calculations");
-                        }
+                        /*
+                         * if (sysRunNameResult.size() == cpuShareResult.size() && sysRunNameResult.size() ==
+                         * memShareResult.size()) {
+                         */
+                        processList = ProcessCalc(result, rootOID, sysRunNameResult, cpuShareResult, memShareResult, id);
+                        /*
+                         * } else { errorList.add(ipAddress + " Unable to get details for process calculations"); }
+                         */
                     } // 2nd if loop ends
                     else {
                         errorList.add(assetId + " Root OID : .1.3.6.1.2.1.25" + " "
