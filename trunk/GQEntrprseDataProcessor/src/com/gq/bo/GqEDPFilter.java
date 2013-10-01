@@ -127,8 +127,8 @@ public class GqEDPFilter {
 
                 if (session.isOpen()) {
                     session.flush();
-                    session.close();
                     session.clear();
+                    session.close();
                 }
             }
             catch (Exception e) {
