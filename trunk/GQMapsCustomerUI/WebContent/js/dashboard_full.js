@@ -20,8 +20,8 @@ var barChartOptions = {'title':'',
 // Goal input dialog configuration
 var optGoalInput = {
 		  autoOpen: false,
-		  height: "auto",
-		  width: "auto",
+		  height: 300,
+		  width: 300,
 		  modal: true ,
 		  position: "center",
 		  close: function () {
@@ -36,8 +36,8 @@ var myPos = [ $(window).width() / 2, 50 ];
 // Asset list dialog configuration	
 var optAssetList = {
 		  autoOpen: false,
-		  height: "auto",
-		  width: "auto",
+		  height: 400,
+		  width: 300,
 		  modal: true ,
 		  position: "center",
 		  close: function () {
@@ -293,19 +293,22 @@ function checkGoalInput(goalId)
 				$.each(json, function(i, v)
 				{
 					vValues = vValues + ' <label for = "' + json[i]["descr"] + '" > ' + json[i]["descr"] + ' </label> ';
-					
-					if(json[i]["dtvalue"] === "string")
-					{
+	 				if(json[i]["dtvalue"] === "date")
+						vValues = vValues + ' <input type="text" name="' + json[i]["descr"] + '" id="' + json[i]["descr"] + '" disabled="disabled"  /> ';	   						
+					else					
 						vValues = vValues + ' <input type="text" name="' + json[i]["descr"] + '" id="' + json[i]["descr"] + '"  /> ';
-					}
-					else if(json[i]["dtvalue"] === "date")
-					{
-						vValues = vValues + ' <input type="text" name="' + json[i]["descr"] + '" id="' + json[i]["descr"] + '"  /> ';						
-					}
-
 				});	 
 
 				$("#addElements").append(vValues);	
+				
+				$.each(json, function(i, v)
+				{
+	 				if(json[i]["dtvalue"] === "date")
+					{
+						$("#"+json[i]["descr"]).datetimepicker({ showOn: "button", buttonImage: "css/DateTimePickerCSS/images/calendar.gif", buttonImageOnly: true })	   						
+					} 
+				});	 				
+	 
 				$("#dlgGoalInput").dialog(optGoalInput).dialog('open');		
 				
 			}
