@@ -19,6 +19,7 @@ import com.gq.meter.xchange.filter.GateKeeperFilter;
 import com.gq.meter.xchange.model.EnterpriseModel;
 import com.gq.meter.xchange.object.Enterprise;
 import com.gq.meter.xchange.util.GQGateKeeperConstants;
+import com.gq.meter.xchange.util.StringCompression;
 
 /**
  * @author Chandru
@@ -62,7 +63,7 @@ public class GateKeeperServices {
      */
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    public void keepGate(@FormParam("gqMeterResponse") String gqMeterResponseString) {
+    public void keepGate(@FormParam("gqMeterResponse") String gqMeterResponseString) throws IOException {
         // GQGateKeeperConstants.logger.debug("Incoming json is : " + gqMeterResponseString);
         GQGateKeeperConstants.logger.info("Data is received by GQGatekeeper");
         Gson gson = new GsonBuilder().create();
@@ -71,7 +72,8 @@ public class GateKeeperServices {
         try {
             GQGateKeeperConstants.logger.info("Unmarshalling the received data");
             // unmarshall the response from the gqmeter running in premise and start processing.....
-            gqMeterResponse = gson.fromJson(gqMeterResponseString, GQMeterResponse.class);
+            gqMeterResponse = gson.fromJson(StringCompression.decompress(gqMeterResponseString), GQMeterResponse.class);
+
         }
         catch (JsonSyntaxException e) {
             GQGateKeeperConstants.logger.fatal("Unmarshall exception is occured : ", e);
