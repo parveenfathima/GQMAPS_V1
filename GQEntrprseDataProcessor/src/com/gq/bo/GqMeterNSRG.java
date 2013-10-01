@@ -103,8 +103,8 @@ public class GqMeterNSRG {
                 if (session.isOpen()) {
                     sessionFactory.close();
                     session.flush();
-                    session.close();
                     session.clear();
+                    session.close();
                 }
             }
             catch (Exception e) {
