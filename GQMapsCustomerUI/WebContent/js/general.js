@@ -265,3 +265,56 @@ function hasMeter(eid)
 		
 		return mCount;
 }
+
+
+function getCurrentAssets()
+{
+	var vActive = "";
+	var vAssetID = "";
+	var vIP = ""; 
+	var vCatalog = "";
+	var vSrvrType = "";
+	var vUsage = "";
+	var vImpLevel = "";
+	var vOwnership = "";
+	var vLocation = "";
+	var vCompType = "";
+	
+	var vType = "GET";
+	var vUrl = $.jStorage.get("jsDBUrl") + "AssetEditServices/getAssetData?enterpriseId=" + $.jStorage.get("jsEntpId");
+			
+	$.ajax
+	({
+		type:vType,
+		contentType: "application/json",
+		url:vUrl,
+		async:false,
+		dataType: "json",
+		success:function(response)
+		{
+ 			
+ 			$.each(response["assetResult"], function(i,n)
+			{
+				 assetsDB.assetDataDB.push({ 
+	        
+					"assetId": response["assetResult"][i]["assetId"],
+					"ipAddr": response["assetResult"][i]["ipAddr"],
+					"ctlgId": response["assetResult"][i]["ctlgId"],
+					"srvrAppId": response["assetResult"][i]["srvrAppId"], 
+					"assetUsg": response["assetResult"][i]["assetUsg"],
+					"impLvl": response["assetResult"][i]["impLvl"],
+					"ownership": response["assetResult"][i]["ownership"],
+					"dcEnt": response["assetResult"][i]["dcEnt"],
+					"active": response["assetResult"][i]["active"], 
+					"typeId": response["assetResult"][i]["typeId"]        
+	    		});
+			
+			});
+			
+		},
+		error:function(json)
+		{
+			alert("Error from updating asset details: " + json.status + " " + json.responseText);
+		} 
+	});	
+}
