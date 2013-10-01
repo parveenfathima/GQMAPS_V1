@@ -399,7 +399,7 @@ function submitGoalInput()
 					else
 					{
 						aryGoalInputs.push({
-							text: json[i]["descr"],
+							text: json[i]["colHoldr"],
 							value: $("#"+json[i]["descr"]).val()
             				});
 					}
