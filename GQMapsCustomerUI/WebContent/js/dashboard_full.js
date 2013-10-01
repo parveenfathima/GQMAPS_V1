@@ -1,8 +1,11 @@
 $.jStorage.set("jsMeters", "");
+$.jStorage.set("jsAstCount", 0);
+$.jStorage.set("goalId", "");
+
 
 var vType = "";	
 var vUrl = "";
-
+var assetsDB = { assetDataDB: [] };
 // Set pie chart options
 var pieChartOptions = {'title':'',
 			   'is3D': true,
@@ -14,6 +17,41 @@ var barChartOptions = {'title':'',
    'width':200,
    'height':180};
 
+// Goal input dialog configuration
+var optGoalInput = {
+		  autoOpen: false,
+		  height: "auto",
+		  width: "auto",
+		  modal: true ,
+		  position: "center",
+		  close: function () {
+			
+			  $("#addElements").children(this).remove();
+			  $(this).dialog('close');
+			  }
+	};
+	
+var myPos = [ $(window).width() / 2, 50 ];
+	
+// Asset list dialog configuration	
+var optAssetList = {
+		  autoOpen: false,
+		  height: "auto",
+		  width: "auto",
+		  modal: true ,
+		  position: "center",
+		  close: function () {
+					
+				$("#trAssetIdHead").remove();			
+				for(i=0; i<$.jStorage.get("jsAstCount"); i++)
+				{			
+					$("#trAssetId"+ i).remove();
+				}						
+				
+				$(this).dialog('close');
+			  }
+	};	
+	  
 // Ajax call to get all the dashboard services
 $(document).ready(function() 
 {
@@ -23,15 +61,25 @@ $(document).ready(function()
 	}
 	else
 	{
+		//getting asset details of the enterprise
+		getCurrentAssets();
+		$.jStorage.set("jsAstCount", assetsDB.assetDataDB.length);
+	
 		$('#btnConfAssets').click(function () { 
 			var id = $.jStorage.get("jsEntpId");
 			document.frmAssetEdit.setEntp.value = id;
 		 });
 		
-		$("#btnConfAssets").bind("click", goToAssetEdit);
+		
+		$("#btnShowAssets").bind("click", addText);	
+		$("#btnConfAssets").bind("click", goToAssetEdit);	
+		$("#openAsset").bind("click", openAssetList);
+		$("#btnAsset").bind("click", submitGoalInput);
+		
 		
 		$("#entpName").text("Customer Dashboard for " + $.jStorage.get("jsEName"));
-		vType = "GET";						
+		
+		var vType = "GET";						
 		
 		var vUrl = $.jStorage.get("jsDBUrl") + "DashboardServices/getdashboard?entpId=" + $.jStorage.get("jsEntpId");
 	
@@ -142,7 +190,6 @@ function showLineChart(lineData, divId)
 		  google.setOnLoadCallback(drawATLChart);		
 }
 
-
 //function to display text in the specified div location
 function showPlainText(plainText, divID)
 {
@@ -154,7 +201,6 @@ function goToAssetEdit()
 {
 	document.frmAssetEdit.setEntp.value = $.jStorage.get("jsEntpId");
 }
-
 
 //function to display PUE 
 function getPUE()
@@ -220,3 +266,152 @@ function gotoAssetList(e)
 				"status=no,location=no,	menubar=no, scrollbars=yes, resizable=no, width=400, height=400");
 	//ServerLIst.document.write('My PDF File Title');
 }
+
+
+//opening goal input dialog based on the goal id in goal_input table
+function checkGoalInput(goalId)
+{
+	$.jStorage.set("goalId", goalId);
+	var vType = "GET";
+	var vUrl = $.jStorage.get("jsDBUrl") + "GoalInputServices/getGoalInput?goalId=" + goalId;
+						
+	$.ajax
+	({
+		type:vType,
+		contentType: "application/json",
+		url:vUrl,
+		async:false,
+		dataType: "json",
+		success:function(json)
+		{		
+			//alert("length of json is : " + json.length+ "   inside checkGoalInput for the goal:   " + goalId); 
+			var len = json.length;
+			var vValues = "";
+			if(len>0)
+			{		
+				
+				$.each(json, function(i, v)
+				{
+					vValues = vValues + ' <label for = "' + json[i]["descr"] + '" > ' + json[i]["descr"] + ' </label> ';
+					
+					if(json[i]["dtvalue"] === "string")
+					{
+						vValues = vValues + ' <input type="text" name="' + json[i]["descr"] + '" id="' + json[i]["descr"] + '"  /> ';
+					}
+					else if(json[i]["dtvalue"] === "date")
+					{
+						vValues = vValues + ' <input type="text" name="' + json[i]["descr"] + '" id="' + json[i]["descr"] + '"  /> ';						
+					}
+
+				});	 
+
+				$("#addElements").append(vValues);	
+				$("#dlgGoalInput").dialog(optGoalInput).dialog('open');		
+				
+			}
+			else
+			{
+				//TODO navigate to task asset page
+				window.location.href = "login.html";
+			}
+		
+		},
+		error:function(json)
+		{
+			alert("Error from loading goals list!");			
+		}	 
+	});	//end of ajax			
+}
+
+// opening the asset list dialog to copy the selected assets
+function openAssetList()
+{
+	var vValues = "";
+	
+	$("#txtSelAssets").val("");
+	
+	vValues = vValues + '<table><thead><tr id = "trAssetIdHead"><th>Action</th><th>Asset ID</th></tr></thead><tbody>'
+	$.each(assetsDB.assetDataDB, function(i, n)
+	{
+		vValues = vValues + '<tr id = "trAssetId' + i + '"><td><input type = "checkbox"  id = "chkAssetId' + i + '" value = "' +  assetsDB.assetDataDB[i].assetId  + '"/></td>';
+		vValues = vValues + '<td  >' + assetsDB.assetDataDB[i].assetId  + '</td> </tr>';							
+	});		
+	
+	vValues = vValues + '</tbody></table>';   
+	
+	$("#spnAssetList").append(vValues);
+	
+	$("#dlgAssetList").dialog(optAssetList).dialog('open');	
+				
+}
+
+//concatenating asset IDs on selection to copy past from asset list dialog box
+function addText()
+{
+	$("#txtSelAssets").val("");
+	var i =0;
+	var txt = ""
+	var len = assetsDB.assetDataDB.length;
+
+	for(i=0; i<len; i++)
+	{
+		if($("#chkAssetId"+i).is(':checked'))
+		{
+			txt = txt + $("#chkAssetId"+i).val() + ',';
+		}
+	}
+	
+	if($.trim(txt) != "" && txt.length > 2)
+		$("#txtSelAssets").val(txt.substring(0, txt.length-1));
+}
+
+// submiting the goal input values to task page
+function submitGoalInput()
+{
+	var vType = "GET";
+	var vUrl = $.jStorage.get("jsDBUrl") + "GoalInputServices/getGoalInput?goalId=" + 	$.jStorage.get("goalId");
+	
+	var vValues = "";
+	
+	var aryGoalInputs = [];
+
+	$.ajax
+	({
+		type:vType,
+		contentType: "application/json",
+		url:vUrl,
+		async:false,
+		dataType: "json",
+		success:function(json)
+		{		
+			var len = json.length;
+			if(len>0)
+			{		
+				$.each(json, function(i, v)
+				{
+					//alert($("#"+json[i]["descr"]).val());
+					if($.trim($("#"+json[i]["descr"]).val()) === "")
+					{
+						alert("Enter all input values");
+						$("#"+json[i]["descr"]).select();
+						return false;
+					}
+					else
+					{
+						aryGoalInputs.push({
+							text: json[i]["descr"],
+							value: $("#"+json[i]["descr"]).val()
+            				});
+					}
+				});	 
+				
+				alert("final text length to be submitted is :" + aryGoalInputs.length + "  " + JSON.stringify(aryGoalInputs));
+			}	
+		},
+		error:function(json)
+		{
+			alert("Error from loading goals list!");			
+		}	 
+	});	//end of ajax		
+}
+
