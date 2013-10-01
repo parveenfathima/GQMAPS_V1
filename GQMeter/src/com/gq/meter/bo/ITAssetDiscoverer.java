@@ -27,6 +27,7 @@ import com.gq.meter.assist.ProtocolData;
 import com.gq.meter.util.MeterConstants;
 import com.gq.meter.util.MeterProtocols;
 import com.gq.meter.util.MeterUtils;
+import com.gq.meter.util.StringCompression;
 
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
@@ -420,7 +421,7 @@ public final class ITAssetDiscoverer {
         return pattern.matcher(ipAddress).matches();
     }
 
-    public void discover(String inputFilePath) {
+    public void discover(String inputFilePath) throws IOException {
 
         System.out.println(" [GQMETER] started .......");
         gqmResponse = new GQMeterResponse();
@@ -450,7 +451,7 @@ public final class ITAssetDiscoverer {
         gqmResponse.setGqmid(gqmid);
         gqmResponse.setAssetDiscovered((short) snmpKnownIPList.size());
 
-        System.out.println(" [GQMETER] json : " + gson.toJson(gqmResponse));
+//        System.out.println(" [GQMETER] json : " + gson.toJson(gqmResponse));
         System.out.println(" [GQMETER] Total number of assets(ip address) in input file : " + gqmResponse.getAssetScanned());
         System.out.println(" [GQMETER] SNMP configured on : " + this.snmpKnownIPList.toString());
         System.out.println(" [GQMETER] SNMP not configured on : " + this.snmpUnknownIPList.toString());
@@ -459,7 +460,7 @@ public final class ITAssetDiscoverer {
         
         // Sending the generated json output to the server
         Form form = new Form();
-        form.add("gqMeterResponse", gson.toJson(gqmResponse));
+        form.add("gqMeterResponse", StringCompression.compress(gson.toJson(gqmResponse)));
         form.add("summary", "Sending data from GQMeter to GQGatekeeper");
         
         Builder builder = service.path("gatekeeper").type(MediaType.APPLICATION_JSON);
