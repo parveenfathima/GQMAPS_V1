@@ -22,6 +22,7 @@
 <script src="js/jstorage.js"> </script>
 <script src="js/rest_service.js"> </script>
 <script src="js/asset_edit.js"> </script>
+<script src = "js/general.js"> </script>    
 
 <script type="text/javascript">
 
