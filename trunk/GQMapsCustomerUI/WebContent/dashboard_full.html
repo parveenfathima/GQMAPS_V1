@@ -3,10 +3,7 @@
     <head>
          <meta charset="utf-8">
          <title>Customer Dashboard</title>
-        
-          
-        
-          
+      
         <script type="text/javascript" src = "http://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.js" charset="utf-8"></script>
 		<script type="text/javascript" src = "http://www.google.com/jsapi" charset="utf-8"></script>
 
@@ -14,40 +11,22 @@
             google.load("visualization", "1", {packages:["piechart", "corechart", "annotatedtimeline", "geomap"]});
         </script>
         
-<!--        <link rel="stylesheet" href="css/jquery.ui.theme.css" type="text/css"/>    -->
-        
         <link type="text/css" href = "css/gqmaps.css" rel="stylesheet" />
-        <link type="text/css" href="css/gqhome.css" rel="stylesheet" />    
-                 
+        <link type="text/css" href="css/gqhome.css" rel="stylesheet" />                     
         <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
-        <script src = "jquery-ui-1.10.2.custom/js/jquery-1.9.1.js" ></script>
-                
-        <script src="SlickGrid-master/lib/jquery-1.7.min.js"></script>
-        <script src="SlickGrid-master/lib/jquery.event.drag-2.2.js"></script>
         
+        <script src = "jquery-ui-1.10.2.custom/js/jquery-1.9.1.js" ></script>
+                     
         <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?key=AIzaSyBGIi2rSK9Qp2dY1EewX-JUsK0sjQsxAak&sensor=false"></script>  
         <script src="jquery-ui-1.10.2.custom/js/jquery-ui-1.10.0.custom.js"></script>   
-     	<script type="text/javascript" src="js/DateTimePickerJS/DateTimePicker.js"></script>               
-        <script src="SlickGrid-master/slick.core.js"></script>
-        <script src="SlickGrid-master/slick.grid.js"></script>      
-        <script src="SlickGrid-master/slick.dataview.js"></script>
-                
-
-
+     	<script type="text/javascript" src="js/DateTimePickerJS/DateTimePicker.js"></script>  
                 
         <!--/custom scripts -->             
          <script src = "js/jstorage.js"> </script>             
          <script src = "js/rest_service.js"> </script>              
          <script src = "js/dashboard_full.js"> </script>   
-         <script src = "js/general.js"> </script>         
-
-		<script type="text/javascript">
-    
-            $(function () {
-               $("#txtDate").datetimepicker({ showOn: "button", buttonImage: "css/DateTimePickerCSS/images/calendar.gif", buttonImageOnly: true })	   
-            });
-			   
-        </script>     
+         <script src = "js/general.js"> </script>    
+         <script src = "js/chart.js"> </script>         
            
         <!--dialog css -->
         <style>
@@ -83,6 +62,7 @@
             
             </div><!--/header -->
 
+			<!--div for session timeout -->
             <div id="idletimeout" style="top: 150px; margin-left: 215px; margin-right: 200px; ">
                 Logging off in <span><!-- countdown place holder --></span>&nbsp;seconds due to inactivity.
                 <a id="idletimeout-resume" href="#">Click here to continue</a>.
@@ -94,9 +74,7 @@
                       <fieldset>   
                           <a id = "openAsset" href = "#">Asset List</a>
                           <span id = "addElements"> </span>
-                      
-                         <label for="txtDate" id = "lblDtTime" >Recording Date and Time  </label> 
-                          <input type="text" name="txtDate" id="txtDate" style="width:150px;" readonly />                                                              
+                                                                                
             
                           <br><br>
                           <input type="button" id = "btnAsset" value="Submit" />
@@ -179,7 +157,7 @@
                                 <div class="inner-head">PUE</div>
                                 <div class="inner-content medium-block-content-div">
                                 	<div id = "div_pue"></div>
-                                    <div><input type = "button" id = "btnPUE" name = "btnPUE" value = "PUE" onClick = "openAssetList();"/></div>
+                                    <div><input type = "button" id = "btnPUE" name = "btnPUE" value = "PUE"/></div>
                                 </div>
                     	  </div>
                             
