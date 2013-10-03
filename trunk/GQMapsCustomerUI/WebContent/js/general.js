@@ -1,4 +1,3 @@
-
 $(document).ready(function() 
 {
 	$.jStorage.set("jsQuestions", "");
@@ -266,7 +265,7 @@ function hasMeter(eid)
 		return mCount;
 }
 
-
+//gets the asset records for the current enterprise id.
 function getCurrentAssets()
 {
 	var vActive = "";
