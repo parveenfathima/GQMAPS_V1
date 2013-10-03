@@ -251,8 +251,8 @@ function checkGoalInput(goalId)
 			}
 			else
 			{
-				//TODO navigate to task asset page
-				window.location.href = "login.html";
+				//TODO navigate to goal.jsp page
+				window.location.href = "goal.jsp";
 			}
 		
 		},
@@ -345,6 +345,8 @@ function submitGoalInput()
 				});	 
 				
 				alert("final text length to be submitted is :" + aryGoalInputs.length + "  " + JSON.stringify(aryGoalInputs));
+				$("#dlgGoalInput").dialog(optGoalInput).dialog('close');		
+				window.location.href = "goal.jsp";
 			}	
 		},
 		error:function(json)
