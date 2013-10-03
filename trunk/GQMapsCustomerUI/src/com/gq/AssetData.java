@@ -286,18 +286,15 @@ public class AssetData {
 			if (asset.getSrvrAppId() == null)
 				asset.setSrvrAppId((short) 4);
 
-			if (asset.getImpLvl() == null)
-				asset.setImpLvl((byte) 3);
-
 			if (asset.getOwnership() == null)
 				asset.setOwnership("Own");
 
 			if (asset.getDcEnt() == null)
 				asset.setDcEnt("DC");
 
-			if (asset.getTypeId() == null
+			if (asset.getType_id() == null
 					&& asset.getProtocolId().equals("computer"))
-				asset.setTypeId("server");
+				asset.setType_id("server");
 
 			assetListDB.add(asset);
 		}
