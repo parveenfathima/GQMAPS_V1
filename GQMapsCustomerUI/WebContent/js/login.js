@@ -32,8 +32,6 @@ function userLogin()
 	} 
 	else 
 	{
-		//var vUrl = $.jStorage.get("jsUrl") + "enterprise/getRegistration";
-		//var vUrl = http://localhost:8080/GQMapsRegistrationServices/enterprise/getEnterpriseDetails?userId=aps&passwd=1
 		var vUrl = $.jStorage.get("jsUrl") + "enterprise/getEnterpriseDetails?userId=" + user + "&passwd=" + pwd;
 
 		$.ajax({

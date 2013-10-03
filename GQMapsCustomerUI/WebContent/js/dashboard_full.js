@@ -2,7 +2,6 @@ $.jStorage.set("jsMeters", "");
 $.jStorage.set("jsAstCount", 0);
 $.jStorage.set("goalId", "");
 
-
 var vType = "";	
 var vUrl = "";
 var assetsDB = { assetDataDB: [] };
@@ -30,8 +29,6 @@ var optGoalInput = {
 			  $(this).dialog('close');
 			  }
 	};
-	
-var myPos = [ $(window).width() / 2, 50 ];
 	
 // Asset list dialog configuration	
 var optAssetList = {
@@ -129,66 +126,6 @@ $(document).ready(function()
 	
 });
 
-//function to diplay bar chart in the specified div location
-function showBarChart(barData, divId)
-{					
-	  // Set a callback to run when the Google Visualization API is loaded.
-	  google.setOnLoadCallback(drawChart);
-	
-	  var data = new google.visualization.DataTable(barData);
-	  // Callback that creates and populates a data table,
-	  // instantiates the pie chart, passes in the data and
-	  // draws it.
-	  
-	  function drawChart() 
-	  {
-		// Instantiate and draw our chart, passing in some options.
-		var chart = new google.visualization.BarChart(document.getElementById(divId));
-		chart.draw(data, barChartOptions);
-	  }
-}
-
-//function to diplay pie chart in the specified div location
-function showPieChart(pieData, divId)
-{					
-	  google.setOnLoadCallback(drawChart);
-	  var data = new google.visualization.DataTable(pieData);
-  
-	  function drawChart() 
-	  {
-			var chart = new google.visualization.PieChart(document.getElementById(divId));
-			chart.draw(data, pieChartOptions);
-	  }
-}
-
-//function to diplay line chart in the specified div location
-function showLineChart(lineData, divId)
-{					  
-	  function drawATLChart() 
-	  {
-		  var data = new google.visualization.DataTable(lineData);
-
-		  var annotatedtimeline = new google.visualization.AnnotatedTimeLine(
-		  document.getElementById(divId));
-		  
-		  annotatedtimeline.draw(data, 
-					{'displayAnnotations': true,
-					lineWidth: 1,
-					'fill': 0,
-					title:'', 
-					titleY: '',
-					displayLegendValues:true,
-					displayZoomButtons:false,
-					legendPosition:'newRow',
-					dateFormat:'EEE, MMM d,yy HH:mm',
-					'colors': ['green', 'red', 'orange'],
-					'displayRangeSelector' : false
-					}
-					);
-		  }
-		  
-		  google.setOnLoadCallback(drawATLChart);		
-}
 
 //function to display text in the specified div location
 function showPlainText(plainText, divID)
@@ -284,7 +221,6 @@ function checkGoalInput(goalId)
 		dataType: "json",
 		success:function(json)
 		{		
-			//alert("length of json is : " + json.length+ "   inside checkGoalInput for the goal:   " + goalId); 
 			var len = json.length;
 			var vValues = "";
 			if(len>0)
@@ -293,6 +229,7 @@ function checkGoalInput(goalId)
 				$.each(json, function(i, v)
 				{
 					vValues = vValues + ' <label for = "' + json[i]["descr"] + '" > ' + json[i]["descr"] + ' </label> ';
+					
 	 				if(json[i]["dtvalue"] === "date")
 						vValues = vValues + ' <input type="text" name="' + json[i]["descr"] + '" id="' + json[i]["descr"] + '" disabled="disabled"  /> ';	   						
 					else					
@@ -305,7 +242,7 @@ function checkGoalInput(goalId)
 				{
 	 				if(json[i]["dtvalue"] === "date")
 					{
-						$("#"+json[i]["descr"]).datetimepicker({ showOn: "button", buttonImage: "css/DateTimePickerCSS/images/calendar.gif", buttonImageOnly: true })	   						
+						$("#"+json[i]["descr"]).datetimepicker({ showOn: "button", buttonImage: "images/calendar.gif", buttonImageOnly: true })	   						
 					} 
 				});	 				
 	 
@@ -337,13 +274,12 @@ function openAssetList()
 	$.each(assetsDB.assetDataDB, function(i, n)
 	{
 		vValues = vValues + '<tr id = "trAssetId' + i + '"><td><input type = "checkbox"  id = "chkAssetId' + i + '" value = "' +  assetsDB.assetDataDB[i].assetId  + '"/></td>';
-		vValues = vValues + '<td  >' + assetsDB.assetDataDB[i].assetId  + '</td> </tr>';							
+		vValues = vValues + '<td>' + assetsDB.assetDataDB[i].assetId  + '</td></tr>';							
 	});		
 	
 	vValues = vValues + '</tbody></table>';   
 	
 	$("#spnAssetList").append(vValues);
-	
 	$("#dlgAssetList").dialog(optAssetList).dialog('open');	
 				
 }
@@ -364,6 +300,7 @@ function addText()
 		}
 	}
 	
+	//truncating the last comma
 	if($.trim(txt) != "" && txt.length > 2)
 		$("#txtSelAssets").val(txt.substring(0, txt.length-1));
 }
@@ -392,7 +329,6 @@ function submitGoalInput()
 			{		
 				$.each(json, function(i, v)
 				{
-					//alert($("#"+json[i]["descr"]).val());
 					if($.trim($("#"+json[i]["descr"]).val()) === "")
 					{
 						alert("Enter all input values");
@@ -417,4 +353,3 @@ function submitGoalInput()
 		}	 
 	});	//end of ajax		
 }
-
