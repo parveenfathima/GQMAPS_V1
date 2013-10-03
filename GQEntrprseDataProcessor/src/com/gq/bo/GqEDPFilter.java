@@ -27,12 +27,13 @@ import com.gq.util.GQEDPConstants;
  */
 
 // this class takes care of validating and distributing incoming requests
-public class GqEDPFilter {
+public final class GqEDPFilter {
+
+    Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
     public void process(GQMeterResponse gqmResponse) {
 
-        GQEDPConstants.logger.info(" Enterprise data processor is ready to parse and save....");
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+    	// extract response
         String meterId = gqmResponse.getGqmid();
         String enterpriseId = meterId.split("_")[0];
         Long runId = gqmResponse.getRunid();
@@ -41,17 +42,18 @@ public class GqEDPFilter {
         short discovered = gqmResponse.getAssetDiscovered();
         long runTimeMs = gqmResponse.getRunTimeMiliSeconds();
         List<ProtocolData> pdList = gqmResponse.getAssetInformationList();
+        
         Session session = null;
         MeterRun meterRun = null;
         SessionFactory sessionFactory = null;
 
+        System.out.println("************* EDP STARTED - BEGINNING RUN " + runId + " ***********");
+
         meterId = meterId.split("_")[1];
 
-        GQEDPConstants.logger.debug("Enterpriseid from GQEDPFilter: " + enterpriseId);
-        GQEDPConstants.logger.debug("Meterid from GQEDPFilter: " + meterId);
+        GQEDPConstants.logger.debug("Enterprise id : " + enterpriseId + " , Meter id : " + meterId);
 
         try {
-            GQEDPConstants.logger.debug("Starting hibernate xsion for GQEDPFilter");
             String dbInstanceName = "gqm" + enterpriseId;
 
             // This step will read hibernate.cfg.xml and prepare hibernate for use
@@ -64,7 +66,7 @@ public class GqEDPFilter {
 
             GQEDPConstants.logger.debug(meterId + " Transaction successfully started ");
             // TODO : create a sequence table which includes runid and assetid and generates a unique key to replace the
-            // redendunt use of runid and assetid on all the tables
+            // redundant use of runid and assetid on all the tables
             GQEDPConstants.logger.debug("Ready to store the Data in Meter Run Table");
             GQEDPConstants.logger.debug("Details are" + runId + "\n" + meterId + "\n" + recordDT + "\n" + scanned
                     + "\n" + discovered + "\n" + runTimeMs);
@@ -116,7 +118,7 @@ public class GqEDPFilter {
                 }
 
             }
-            System.out.println("************* DATA SUCCESSFULLY SAVED ***********");
+            System.out.println("************* DATA SUCCESSFULLY SAVED - END OF RUN  ***********");
         }
         catch (Exception e) {
             e.printStackTrace();

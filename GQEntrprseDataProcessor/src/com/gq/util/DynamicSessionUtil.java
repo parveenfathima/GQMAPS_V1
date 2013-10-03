@@ -13,30 +13,30 @@ public class DynamicSessionUtil {
 
     private static HashMap<String, SessionFactory> SessionFactoryListMap = new HashMap<String, SessionFactory>(10);
 
-    public static SessionFactory getSessionFactory(String dbInstanceName) {
+    public static synchronized SessionFactory getSessionFactory(String dbInstanceName) {
 
         SessionFactory sessionFactory = null;
         String url = "jdbc:mysql://localhost:3306/" + dbInstanceName;
 
         if (SessionFactoryListMap.containsKey(dbInstanceName)) {
-            GQEDPConstants.logger.info("Existing Session Factory");
+            GQEDPConstants.logger.info("Session Factory exists for " + dbInstanceName);
             sessionFactory = SessionFactoryListMap.get(dbInstanceName);
 
             if ((sessionFactory == null) || (sessionFactory.getCurrentSession() == null)) {
-                GQEDPConstants.logger.debug("Null session factory so newly creating a sessionfactory for that..");
+                GQEDPConstants.logger.debug("Null session factory so newly creating one for .." + dbInstanceName);
                 createSessionFactory(dbInstanceName, url);
             }
         }
         else {
-            GQEDPConstants.logger.debug("No entry in map yet for .." + dbInstanceName);
+            GQEDPConstants.logger.debug("No entry in map yet for .." + dbInstanceName + " , creating one ...");
             createSessionFactory(dbInstanceName, url);
         }
+        
         return SessionFactoryListMap.get(dbInstanceName);
     } // method end
 
     private static void createSessionFactory(String dbInstanceName, String url) {
 
-        GQEDPConstants.logger.debug("createSessionFactory...");
         Configuration configuration = new Configuration();
         configuration.setProperty("hibernate.connection.url", url);
         configuration.configure();
