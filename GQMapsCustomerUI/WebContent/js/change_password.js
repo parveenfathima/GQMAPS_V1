@@ -114,9 +114,7 @@ function validateForm()
 										return false;
 									}
 									else
-									{
-									  //alert("Form is ready to submit - includes change sec question : " + vSId + "ques val : " + vQues1 + "  " + vQues2 );
-																	
+									{																
 									  var vCQues1 = $('#cmbChangeQues1').val();
 									  var vCAns1 = $('#txtChangeAns1').val();
 									  var vCQues2 = $('#cmbChangeQues2').val();
@@ -126,13 +124,9 @@ function validateForm()
 									}
 								}
 								else
-								{
-									//alert("Form is ready to submit - only new pwd : " + vSId);									
+								{							
 									vQuery =  '{"sid":"' + vSId + '", "passwd":"' + vNewPwd + '", "secQtn1":"0", "ans1":" ","secQtn2":"0", "ans2":" "}';	
-						  
 								}
-								
-								// TODO form submission code goes here
 								
 								$.ajax
 								({
@@ -145,7 +139,6 @@ function validateForm()
 									success:function(json)
 									{
 										alert("Updated successfully!");
-										//$("#frmAddRegn")[0].reset();  
 										window.location.href = "login.html";
 									},
 									failure:function(json)
@@ -219,11 +212,9 @@ function clearChangeQA()
 		$('#txtChangeAns2').val("");
 }
 
-
 //function to validate the fields in the Change Security Questions if the checkbox is checked
 function validateChangeQA()
-{
-	
+{	
 		var vCQues1 = $('#cmbChangeQues1').val();
 		var vCAns1 = $('#txtChangeAns1').val();
 		var vCQues2 = $('#cmbChangeQues2').val();
