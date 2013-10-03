@@ -470,7 +470,7 @@ function getCurrentAssets()
 					id=<%="cmbCompType" + i%>>
 						<%
 							for (int comp = 0; comp < compTypeListDB.size(); comp++) {
-														if (assetListDB.get(i).getTypeId()
+														if (assetListDB.get(i).getType_id()
 																.equals(compTypeListDB.get(comp).getId())) {
 						%>
 						<option value="<%=compTypeListDB.get(comp).getId()%>"
