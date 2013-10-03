@@ -24,66 +24,10 @@ public class Asset implements java.io.Serializable {
     private Character active;
     private Date inactiveDttm;
     private String ctlgId;
-    private Byte imp_level;
+    private byte impLvl;
     private String type_id;
 
     public Asset() {
-    }
-
-    public Asset(String assetId, String protocolId, String assetUsg) {
-        this.assetId = assetId;
-        this.protocolId = protocolId;
-        this.assetUsg = assetUsg;
-    }
-
-    public Asset(String assetId, String protocolId, String name, String descr, String ipAddr, String contact,
-            String location, Short srvrAppId, String assetUsg, String ctlgId, Byte imp_level) {
-        super();
-        this.assetId = assetId;
-        this.protocolId = protocolId;
-        this.name = name;
-        this.descr = descr;
-        this.contact = contact;
-        this.location = location;
-        this.srvrAppId = srvrAppId;
-        this.assetUsg = assetUsg;
-        this.ctlgId = ctlgId;
-        this.imp_level = imp_level;
-        this.ipAddr = ipAddr;
-    }
-
-    public Asset(String assetId, String protocolId, String name, String descr, String ipAddr, String contact,
-            String location, Short srvrAppId, String assetUsg, String ownership, String dcEnt, Character active,
-            Date inactiveDttm, String ctlgId, Byte imp_level, String type_id) {
-        super();
-        this.assetId = assetId;
-        this.protocolId = protocolId;
-        this.name = name;
-        this.descr = descr;
-        this.ipAddr = ipAddr;
-        this.contact = contact;
-        this.location = location;
-        this.srvrAppId = srvrAppId;
-        this.assetUsg = assetUsg;
-        this.ownership = ownership;
-        this.dcEnt = dcEnt;
-        this.active = active;
-        this.inactiveDttm = inactiveDttm;
-        this.ctlgId = ctlgId;
-        this.imp_level = imp_level;
-        this.type_id = type_id;
-    }
-
-    public Asset(String assetId, String protocolId, String name, String descr, String ipAddr, String contact,
-            String location) {
-        super();
-        this.assetId = assetId;
-        this.protocolId = protocolId;
-        this.name = name;
-        this.descr = descr;
-        this.ipAddr = ipAddr;
-        this.contact = contact;
-        this.location = location;
     }
 
     public String getCtlgId() {
@@ -94,12 +38,12 @@ public class Asset implements java.io.Serializable {
         this.ctlgId = ctlgId;
     }
 
-    public Byte getImp_level() {
-        return imp_level;
+    public byte getImpLvl() {
+        return impLvl;
     }
 
-    public void setImp_level(Byte imp_level) {
-        this.imp_level = imp_level;
+    public void setImpLvl(byte impLvl) {
+        this.impLvl = impLvl;
     }
 
     public String getAssetId() {
@@ -211,6 +155,40 @@ public class Asset implements java.io.Serializable {
     }
 
     public void setType_id(String type_id) {
+        this.type_id = type_id;
+    }
+
+    public Asset(String assetId, String protocolId, String name, String descr, String ipAddr, String contact,
+            String location) {
+        super();
+        this.assetId = assetId;
+        this.protocolId = protocolId;
+        this.name = name;
+        this.descr = descr;
+        this.ipAddr = ipAddr;
+        this.contact = contact;
+        this.location = location;
+    }
+
+    public Asset(String assetId, String protocolId, String name, String descr, String ipAddr, String contact,
+            String location, Short srvrAppId, String assetUsg, String ownership, String dcEnt, Character active,
+            Date inactiveDttm, String ctlgId, byte impLvl, String type_id) {
+        super();
+        this.assetId = assetId;
+        this.protocolId = protocolId;
+        this.name = name;
+        this.descr = descr;
+        this.ipAddr = ipAddr;
+        this.contact = contact;
+        this.location = location;
+        this.srvrAppId = srvrAppId;
+        this.assetUsg = assetUsg;
+        this.ownership = ownership;
+        this.dcEnt = dcEnt;
+        this.active = active;
+        this.inactiveDttm = inactiveDttm;
+        this.ctlgId = ctlgId;
+        this.impLvl = impLvl;
         this.type_id = type_id;
     }
 
