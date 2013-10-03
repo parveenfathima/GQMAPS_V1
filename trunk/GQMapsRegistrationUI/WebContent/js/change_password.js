@@ -114,10 +114,7 @@ function validateForm()
 										return false;
 									}
 									else
-									{
-									  
-									  //alert("Form is ready to submit - includes change sec question : " + vSId + "ques val : " + vQues1 + "  " + vQues2 );
-																	
+									{																
 									  var vCQues1 = $('#cmbChangeQues1').val();
 									  var vCAns1 = $('#txtChangeAns1').val();
 									  var vCQues2 = $('#cmbChangeQues2').val();
@@ -127,13 +124,9 @@ function validateForm()
 									}
 								}
 								else
-								{
-									//alert("Form is ready to submit - only new pwd : " + vSId);									
+								{									
 									vQuery =  '{"sid":"' + vSId + '", "passwd":"' + vNewPwd + '", "secQtn1":"0", "ans1":" ","secQtn2":"0", "ans2":" "}';	
-						  
 								}
-								
-								// TODO form submission code goes here
 								
 								$.ajax
 								({
