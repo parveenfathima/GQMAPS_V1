@@ -52,7 +52,7 @@
     </head>
     
     <body class="body">
-		<form name = "frmAssetEdit"  method = "post" action = "asset_edit.jsp;">
+		<form name = "frmAssetEdit"  id = "frmAssetEdit" method = "post" action = "asset_edit.jsp;">
 		<input type = "hidden" name ="setEntp" id = "setEntp"  />
         <div class="main-div"> <!--main div-->
             <div class="header"><!--header -->
@@ -85,7 +85,6 @@
 			<!-- Asset list dialog box -->
             <div hidden id="dlgAssetList" title="Asset List">
                   <form id ="frmAssetList">
-                  	<fieldset>
                         <span id = "spnAssetList" class="clsSpan"> </span>
                     <input type = "button" name = "btnShowAssets" id="btnShowAssets"  value = "Show Selected Assets" />
                     <input type = "text" name = "txtSelAssets" id = "txtSelAssets" />
