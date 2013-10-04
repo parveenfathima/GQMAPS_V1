@@ -2,6 +2,7 @@ $.jStorage.set("jsMeters", "");
 $.jStorage.set("jsAstCount", 0);
 $.jStorage.set("goalId", "");
 
+
 var vType = "";	
 var vUrl = "";
 var assetsDB = { assetDataDB: [] };
@@ -341,17 +342,20 @@ function submitGoalInput()
 							text: json[i]["colHoldr"],
 							value: $("#"+json[i]["descr"]).val()
             				});
-					}
+					}	
 				});	 
 				
 				alert("final text length to be submitted is :" + aryGoalInputs.length + "  " + JSON.stringify(aryGoalInputs));
-				$("#dlgGoalInput").dialog(optGoalInput).dialog('close');		
-				window.location.href = "goal.jsp";
+				if(aryGoalInputs.length > 0)
+				{
+					$("#dlgGoalInput").dialog(optGoalInput).dialog('close');		
+					//window.location.href = "goal.jsp";	
+				}
 			}	
 		},
 		error:function(json)
 		{
-			alert("Error from loading goals list!");			
+			alert("Error from submitting goal input details!");			
 		}	 
 	});	//end of ajax		
 }
