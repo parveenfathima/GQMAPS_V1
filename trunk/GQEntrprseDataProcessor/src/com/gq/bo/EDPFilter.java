@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -16,7 +17,6 @@ import com.gq.meter.object.Computer;
 import com.gq.meter.object.MeterRun;
 import com.gq.meter.object.NSRG;
 import com.gq.meter.object.Printer;
-import com.gq.meter.object.Storage;
 
 import com.gq.util.DynamicSessionUtil;
 import com.gq.util.GQEDPConstants;
@@ -27,7 +27,7 @@ import com.gq.util.GQEDPConstants;
  */
 
 // this class takes care of validating and distributing incoming requests
-public final class GqEDPFilter {
+public final class EDPFilter {
 
     Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
@@ -46,15 +46,15 @@ public final class GqEDPFilter {
         Session session = null;
         MeterRun meterRun = null;
         SessionFactory sessionFactory = null;
-
-        System.out.println("************* EDP STARTED - BEGINNING RUN " + runId + " ***********");
+        Transaction tx = null;
+        
+        GQEDPConstants.logger.debug("************* EDP STARTED - BEGINNING RUN " + runId + " ***********");
 
         meterId = meterId.split("_")[1];
 
-        GQEDPConstants.logger.debug("Enterprise id : " + enterpriseId + " , Meter id : " + meterId);
-
         try {
             String dbInstanceName = "gqm" + enterpriseId;
+            GQEDPConstants.logger.debug("Enterprise id : <" + enterpriseId + "> , Meter id : <" + meterId + "> dbInstanceName : <" + dbInstanceName +">");
 
             // This step will read hibernate.cfg.xml and prepare hibernate for use
             sessionFactory = DynamicSessionUtil.getSessionFactory(dbInstanceName);
@@ -62,7 +62,7 @@ public final class GqEDPFilter {
             session = sessionFactory.getCurrentSession();
             GQEDPConstants.logger.debug("Session Created Successfully for GQEDPFilter");
 
-            session.beginTransaction();
+            tx = session.beginTransaction();
 
             GQEDPConstants.logger.debug(meterId + " Transaction successfully started ");
             // TODO : create a sequence table which includes runid and assetid and generates a unique key to replace the
@@ -75,7 +75,6 @@ public final class GqEDPFilter {
             session.save(meterRun);
 
             GQEDPConstants.logger.info(meterId + " Data successfully saved in the meterRun table ");
-            session.getTransaction().commit();
 
             for (ProtocolData pdData : pdList) {
 
@@ -83,59 +82,61 @@ public final class GqEDPFilter {
 
                 case COMPUTER:
                     Computer computerObj = gson.fromJson(pdData.getData(), Computer.class);
-                    GqMeterComputer.insertData(computerObj, gqmResponse, meterRun.getRunId());
+                    new GqMeterComputer().insertData(computerObj, gqmResponse, meterRun.getRunId() , session);
                     break;
 
                 case PRINTER:
                     Printer printerData = gson.fromJson(pdData.getData(), Printer.class);
-                    GqMeterPrinter.insertData(printerData, gqmResponse, meterRun.getRunId());
+                    new GqMeterPrinter().insertData(printerData, gqmResponse, meterRun.getRunId(), session);
                     break;
 
                 case NSRG:
                     NSRG nsrgData = gson.fromJson(pdData.getData(), NSRG.class);
-                    GqMeterNSRG.insertData(nsrgData, gqmResponse, meterRun.getRunId());
+                    new GqMeterNSRG().insertData(nsrgData, gqmResponse, meterRun.getRunId(), session);
                     break;
 
                 case STORAGE:
-                    Storage storageData = gson.fromJson(pdData.getData(), Storage.class);
-                    GqMeterStorage.insertData(storageData, gqmResponse, meterRun.getRunId());
+//                    Storage storageData = gson.fromJson(pdData.getData(), Storage.class);
+//                    GqMeterStorage.insertData(storageData, gqmResponse, meterRun.getRunId());
                     break;
 
                 case AIR:
-                    break;
-
                 case POWER:
-                    break;
-
                 case UNKNOWN:
-                    break;
-
                 case WATER:
-                    break;
-
                 default:
                     break;
                 }
-
             }
-            System.out.println("************* DATA SUCCESSFULLY SAVED - END OF RUN  ***********");
+            // commit the unit of work , meters will have flush only
+            tx.commit();
+            
+            GQEDPConstants.logger.debug("************* DATA SUCCESSFULLY SAVED - END OF RUN  ***********");
         }
         catch (Exception e) {
+        	
+        	GQEDPConstants.logger.error("EDPFilter exception " + e.getMessage() + "for meter " + meterId );
+        	if (tx != null) {
+        		tx.rollback();
+        	}
             e.printStackTrace();
-            GQEDPConstants.logger.error(meterId + " Transaction failed to start");
         }
         finally {
-            try {
+        	// i dont believe the following lines are reqd since current session will hold one for the thread and need not be closed
+        	// sriram , oct 3, 2013
 
-                if (session.isOpen()) {
-                    session.flush();
-                    session.clear();
-                    session.close();
-                }
-            }
-            catch (Exception e) {
-                e.printStackTrace();
-            }
-        }// finally ends
-    }
-}
+        	//            try {
+			//                if (session.isOpen()) {
+			//                    session.flush();
+			//                    session.clear();
+			//                    session.close();
+			//                }
+			//            }
+			//            catch (Exception e) {
+			//                e.printStackTrace();
+			//            }
+         }// finally ends
+    } // method ends
+    
+} // class ends
+
