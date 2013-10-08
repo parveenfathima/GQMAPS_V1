@@ -3,11 +3,11 @@
                                          "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
 <hibernate-configuration>
  <session-factory>
-  <property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
-  <property name="hibernate.connection.username">gqmaps</property>
-  <property name="hibernate.connection.password">Ch1ca803ear$</property>
+		<property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
+		<property name="hibernate.connection.username">gqmaps</property>
+		<property name="hibernate.connection.password">Ch1ca803ear$</property>
         <property name="hibernate.connection.provider_class">org.hibernate.connection.C3P0ConnectionProvider</property>
-        <property name="hibernate.c3p0.timeout">1800</property>
+        <property name="hibernate.c3p0.timeout">700</property>
         <property name="hibernate.c3p0.min_size">5</property>
         <property name="hibernate.c3p0.max_statements">100</property>
         <property name="hibernate.c3p0.idle_test_period">100</property>
@@ -17,27 +17,28 @@
         <property name="cache.provider_class">org.hibernate.cache.NoCacheProvider</property>
         <property name="show_sql">true</property>
         <property name="dialect">org.hibernate.dialect.MySQLDialect</property>
-        <property name="hibernate.hbm2ddl.auto">update</property>
   
-  <!-- Mapping files -->
-  <mapping resource="Asset.hbm.xml"/>
-  <mapping resource="CompConnDevice.hbm.xml"/>
-  <mapping resource="CompInstSoftware.hbm.xml"/>
-  <mapping resource="CompProcess.hbm.xml"/>
-  <mapping resource="CompSnapshot.hbm.xml"/>
-  <mapping resource="MeterRun.hbm.xml"/>
-  <mapping resource="OsType.hbm.xml"/>
-  <mapping resource="PrinterSnapshot.hbm.xml"/>
-  <mapping resource="PrinterConnDevice.hbm.xml"/>
-  <mapping resource="NSRGSnapshot.hbm.xml"/>
-  <mapping resource="NSRGConnDevice.hbm.xml"/>
-  <mapping resource="StorageSnpsht.hbm.xml"/>
-  <mapping resource="AssetImp.hbm.xml"/>
-  <mapping resource="CompType.hbm.xml"/>
-  <mapping resource="DevCtlg.hbm.xml"/>
-  <mapping resource="Power.hbm.xml"/>
-  <mapping resource="Protocol.hbm.xml"/>
-  <mapping resource="SrvrAppType.hbm.xml"/>
-  <mapping resource="SysProfile.hbm.xml"/>
+		<!-- Mapping files -->
+		<mapping resource="Asset.hbm.xml"/>
+		<mapping resource="CompConnDevice.hbm.xml"/>
+		<mapping resource="CompInstSoftware.hbm.xml"/>
+		<mapping resource="CompProcess.hbm.xml"/>
+		<mapping resource="CompSnapshot.hbm.xml"/>
+		<mapping resource="MeterRun.hbm.xml"/>
+		<mapping resource="OsType.hbm.xml"/>
+		<mapping resource="PrinterSnapshot.hbm.xml"/>
+		<mapping resource="PrinterConnDevice.hbm.xml"/>
+		<mapping resource="NSRGSnapshot.hbm.xml"/>
+		<mapping resource="NSRGConnDevice.hbm.xml"/>
+		<mapping resource="StorageSnpsht.hbm.xml"/>
+		<mapping resource="AssetImp.hbm.xml"/>
+		<mapping resource="CompType.hbm.xml"/>
+		<mapping resource="DevCtlg.hbm.xml"/>
+		<mapping resource="Power.hbm.xml"/>
+		<mapping resource="Protocol.hbm.xml"/>
+		<mapping resource="SrvrAppType.hbm.xml"/>
+		<mapping resource="SysProfile.hbm.xml"/>
+		  
  </session-factory>
+ 
 </hibernate-configuration>

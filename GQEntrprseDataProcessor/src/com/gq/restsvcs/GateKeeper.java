@@ -1,9 +1,7 @@
 package com.gq.restsvcs;
 
-import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
 
@@ -13,8 +11,9 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 
-import com.gq.bo.GqEDPFilter;
+import com.gq.bo.EDPFilter;
 import com.gq.meter.GQMeterResponse;
+import com.gq.util.GQEDPConstants;
 
 //import com.sun.jerse
 // POJO, no interface no extends
@@ -29,41 +28,37 @@ import com.gq.meter.GQMeterResponse;
 @Path("/gqentdataprocessor")
 public class GateKeeper {
 
-    // This method is called if TEXT_PLAIN is request
-    @GET
-    @Produces({ MediaType.TEXT_PLAIN, MediaType.TEXT_XML, MediaType.APPLICATION_XML })
-    public String sayHello() {
-        return "Gate keeper is up and running.....";
-    }
-
-    // This method is called if HTML is request
-    @GET
-    @Produces(MediaType.TEXT_HTML)
-    public String sayHtmlHello() {
-        return "<html> " + "<title>" + "Hello Jersey text html" + "</title>" + "<body><h1>" + "Hello Jersey text html "
-                + "</body></h1>" + "</html> ";
-    }
-
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     public void keepGate(@FormParam("gqMeterResponse") String gqMeterResponseString) {
 
         try {
-            System.out.println("Incoming json is => " + gqMeterResponseString);
+        	
+            GQEDPConstants.logger.debug("\n******************** NEW EDP WS REQUEST BEGINS *************************************\n");
 
-            Gson gson = new GsonBuilder().setPrettyPrinting().create();
+            GQEDPConstants.logger.debug("Incoming json is => " + gqMeterResponseString);
+
+            Gson gson = new GsonBuilder().create();
 
             GQMeterResponse gqMeterResponse = gson.fromJson(gqMeterResponseString, GQMeterResponse.class);
             // unmarshall the response from the gqmeter running in premise and start processing.....
 
-            GqEDPFilter gkf = new GqEDPFilter();
+            EDPFilter gkf = new EDPFilter();
 
             gkf.process(gqMeterResponse);
         }
         catch (JsonSyntaxException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
+            GQEDPConstants.logger.debug("Start a process to read a HIBERNATE xml file in GQMeterComputer ");
         }
+        finally {
+            GQEDPConstants.logger.debug("\n******************** EDP WS REQUEST ENDS *************************************\n");
+        }
+        
+//        GqEDPFilter gkf = new GqEDPFilter();
+//        Gson gson = new GsonBuilder().create();
+//        GQMeterResponse gqMeterResponse = gson.fromJson(gqMeterResponseString, GQMeterResponse.class);
+//        gkf.process(gqMeterResponse);
     }
 
 }

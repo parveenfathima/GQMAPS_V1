@@ -2,6 +2,7 @@ package com.gq.util;
 
 import java.util.HashMap;
 
+import org.hibernate.HibernateException;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 
@@ -21,10 +22,24 @@ public class DynamicSessionUtil {
         if (SessionFactoryListMap.containsKey(dbInstanceName)) {
             GQEDPConstants.logger.info("Session Factory exists for " + dbInstanceName);
             sessionFactory = SessionFactoryListMap.get(dbInstanceName);
+            try {
+                if ((sessionFactory == null) || (sessionFactory.getCurrentSession() == null)) {
+                    GQEDPConstants.logger.debug("Null session factory so newly creating one for .." + dbInstanceName);
+                    createSessionFactory(dbInstanceName, url);
+                }
+            }
+            catch(HibernateException he){
+            	he.printStackTrace();
+                GQEDPConstants.logger.debug("HibernateException so newly creating one for .." + dbInstanceName);
 
-            if ((sessionFactory == null) || (sessionFactory.getCurrentSession() == null)) {
-                GQEDPConstants.logger.debug("Null session factory so newly creating one for .." + dbInstanceName);
-                createSessionFactory(dbInstanceName, url);
+                try {
+                	createSessionFactory(dbInstanceName, url);
+                }
+                catch(HibernateException he1){
+                	he.printStackTrace();
+                    GQEDPConstants.logger.debug("HibernateException createSessionFactory .." + dbInstanceName);
+                }
+
             }
         }
         else {
@@ -37,12 +52,12 @@ public class DynamicSessionUtil {
 
     private static void createSessionFactory(String dbInstanceName, String url) {
 
-        Configuration configuration = new Configuration();
-        configuration.setProperty("hibernate.connection.url", url);
-        configuration.configure();
-        SessionFactory sessionFactory = configuration.buildSessionFactory();
-        GQEDPConstants.logger.debug("Session Factory created");
-        SessionFactoryListMap.put(dbInstanceName, sessionFactory);
-    }
+		    Configuration configuration = new Configuration();
+		    configuration.setProperty("hibernate.connection.url", url);
+		    configuration.configure();
+		    SessionFactory sessionFactory = configuration.buildSessionFactory();
+		    GQEDPConstants.logger.debug("Session Factory created");
+		    SessionFactoryListMap.put(dbInstanceName, sessionFactory);
+    } // method ends
 
 }
