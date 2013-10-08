@@ -35,29 +35,29 @@ public class GoalSnapshotServices {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public Response addGoalSnpsht(@QueryParam("flag") String flag, String jsonString) {
-        GoalSnpsht goalObject = null;
+        GoalSnpsht snpshtObject = null;
         try {
             dbExchange = SqlUtil.getExchangeConnection();
             CustomerServiceConstant.logger.info("[GOALSNAPSHOTSERVICES]  Session Created Sucessfully for GQExchange");
             // CustomerServiceConstant.logger.info("authString : " + jsonString);
-            goalObject = CustomerServiceConstant.gson.fromJson(jsonString, GoalSnpsht.class);
+            snpshtObject = CustomerServiceConstant.gson.fromJson(jsonString, GoalSnpsht.class);
             Timestamp currentDate = new Timestamp(new Date().getTime());
             CustomerServiceConstant.logger.info("[GOALSNAPSHOTSERVICES]  Current Date is" + currentDate);
             if (flag.equalsIgnoreCase("save") && flag != null && flag != " ") {
                 CustomerServiceConstant.logger.info("[GOALSNAPSHOTSERVICES]  Data is Inserting into GoalSnapshot");
                 String goalSnpshtSql = "insert into goal_snpsht (goal_id,enterprise_id,start_date,cost_benefit) values(?,?,?,?);";
                 prepareStmt = (PreparedStatement) dbExchange.prepareStatement(goalSnpshtSql);
-                prepareStmt.setString(1, goalObject.getGoalId());
-                prepareStmt.setString(2, goalObject.getEntpId());
+                prepareStmt.setString(1, snpshtObject.getGoalId());
+                prepareStmt.setString(2, snpshtObject.getEntpId());
                 prepareStmt.setTimestamp(3, currentDate);
-                prepareStmt.setString(4, goalObject.getCostBenefit());
+                prepareStmt.setString(4, snpshtObject.getCostBenefit());
                 prepareStmt.addBatch();
                 prepareStmt.executeUpdate();
                 CustomerServiceConstant.logger.info("[GOALSNAPSHOTSERVICES]  Data Sucessfully Inserted");
 
                 String latestSnpshtId = "select start_date,enterprise_id, max(snpsht_id) as snpsht_id from goal_snpsht where enterprise_id=?;";
                 PreparedStatement stmt = (PreparedStatement) dbExchange.prepareStatement(latestSnpshtId);
-                stmt.setString(1, goalObject.getEntpId());
+                stmt.setString(1, snpshtObject.getEntpId());
                 ResultSet snpshtSet = stmt.executeQuery();
                 while (snpshtSet.next()) {
                     snpshtId = snpshtSet.getInt("snpsht_id");
@@ -71,13 +71,13 @@ public class GoalSnapshotServices {
                 String tskChkList = "insert into task_chklst (snpsht_id,task_id,goal_id,enterprise_id,apply_date,usr_notes,cost_benefit,sys_notes) values(?,?,?,?,?,?,?,?);";
                 PreparedStatement tskPrepStmt = (PreparedStatement) dbExchange.prepareStatement(tskChkList);
                 tskPrepStmt.setInt(1, snpshtId);
-                tskPrepStmt.setString(2, goalObject.getTaskId());
-                tskPrepStmt.setString(3, goalObject.getGoalId());
-                tskPrepStmt.setString(4, goalObject.getEntpId());
+                tskPrepStmt.setString(2, snpshtObject.getTaskId());
+                tskPrepStmt.setString(3, snpshtObject.getGoalId());
+                tskPrepStmt.setString(4, snpshtObject.getEntpId());
                 tskPrepStmt.setTimestamp(5, startDate);
-                tskPrepStmt.setString(6, goalObject.getUserNotes());
-                tskPrepStmt.setString(7, goalObject.getCostBenefit());
-                tskPrepStmt.setString(8, goalObject.getSysNotes());
+                tskPrepStmt.setString(6, snpshtObject.getUserNotes());
+                tskPrepStmt.setString(7, snpshtObject.getCostBenefit());
+                tskPrepStmt.setString(8, snpshtObject.getSysNotes());
                 tskPrepStmt.addBatch();
                 tskPrepStmt.execute();
                 CustomerServiceConstant.logger
@@ -85,10 +85,10 @@ public class GoalSnapshotServices {
                 // result = "values inserted";
             }
             else {
-                // todo for finalise
+                // for finalise
                 String finalizeSql = "select  max(snpsht_id) as snpsht_id from goal_snpsht where enterprise_id=?";
                 PreparedStatement preparefinlStmt = (PreparedStatement) dbExchange.prepareStatement(finalizeSql);
-                preparefinlStmt.setString(1, goalObject.getEntpId());
+                preparefinlStmt.setString(1, snpshtObject.getEntpId());
                 ResultSet finalizeSnpshtSet = preparefinlStmt.executeQuery();
                 int snshtId = 0;
                 while (finalizeSnpshtSet.next()) {
@@ -99,8 +99,8 @@ public class GoalSnapshotServices {
                 String finalizeUpdateQuery = "update goal_snpsht set end_date=?,notes=? where enterprise_id=? and snpsht_id=?;";
                 PreparedStatement prepStmt = (PreparedStatement) dbExchange.prepareStatement(finalizeUpdateQuery);
                 prepStmt.setTimestamp(1, applyDate);
-                prepStmt.setString(2, goalObject.getNotes());
-                prepStmt.setString(3, goalObject.getEntpId());
+                prepStmt.setString(2, snpshtObject.getNotes());
+                prepStmt.setString(3, snpshtObject.getEntpId());
                 prepStmt.setInt(4, snshtId);
                 prepStmt.executeUpdate();
                 CustomerServiceConstant.logger.info("[GOALSNAPSHOTSERVICES]  Data Sucessfully inserted");

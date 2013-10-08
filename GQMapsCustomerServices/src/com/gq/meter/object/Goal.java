@@ -16,13 +16,16 @@ public class Goal {
     private String chartType;
     private String positionId;
     private String descr;
+    private String perfNotes;
+    private String timeBound;
+    private String goalDescr;
 
     public Goal() {
 
     }
 
     public Goal(String goal_Id, int taskId, CharSequence chartData, double plainData, String plain, String chartType,
-            String positionId, String descr) {
+            String positionId, String descr, String perfNotes, String timeBound, String goalDescr) {
         this.goal_Id = goal_Id;
         this.taskId = taskId;
         this.chartData = chartData;
@@ -31,6 +34,9 @@ public class Goal {
         this.chartType = chartType;
         this.positionId = positionId;
         this.descr = descr;
+        this.perfNotes = perfNotes;
+        this.timeBound = timeBound;
+        this.goalDescr = goalDescr;
     }
 
     /**
@@ -138,6 +144,30 @@ public class Goal {
 
     public void setDescr(String descr) {
         this.descr = descr;
+    }
+
+    public String getPerfNotes() {
+        return perfNotes;
+    }
+
+    public void setPerfNotes(String perfNotes) {
+        this.perfNotes = perfNotes;
+    }
+
+    public String getTimeBound() {
+        return timeBound;
+    }
+
+    public void setTimeBound(String timeBound) {
+        this.timeBound = timeBound;
+    }
+
+    public String getGoalDescr() {
+        return goalDescr;
+    }
+
+    public void setGoalDescr(String goalDescr) {
+        this.goalDescr = goalDescr;
     }
 
 }
