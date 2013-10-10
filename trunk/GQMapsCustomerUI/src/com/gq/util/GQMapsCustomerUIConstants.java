@@ -15,6 +15,9 @@ public class GQMapsCustomerUIConstants {
     //private static String logFilePrefix = "C:/customerUILogs/";
     private static String logFilePrefix = "/opt/gq/maps/logs/";
     private static String logFileName = "CustomerUI.log";
+    public static final String webSvcHost = "localhost";
+//    public static final String webSvcHost = "192.168.8.15";
+
 
     private static final String LOG_FILE_NAME_DATE_PATTERN = "yyyy-MM-dd";
 
