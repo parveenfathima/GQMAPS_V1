@@ -11,6 +11,7 @@ import org.json.JSONObject;
 import com.google.gson.*;
 import com.gq.meter.object.Asset;
 import com.gq.meter.object.DevCtlg;
+import com.gq.util.GQMapsCustomerUIConstants;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
@@ -19,19 +20,19 @@ public class AssetHelper {
 
 	static	Gson gson = new GsonBuilder().setDateFormat("yyyy-mm-dd hh:mm:ss").create();
 	
-	public static void main(String args[]) throws NoSuchElementException,
-			ParseException {
-		List<Asset> la = getAssetList();
-	}
+//	public static void main(String args[]) throws NoSuchElementException,
+//			ParseException {
+//		List<Asset> la = getAssetList();
+//	}
 
-	public static List<Asset> getAssetList() throws NoSuchElementException,
+	public static List<Asset> getAssetList(String enterpriseId) throws NoSuchElementException,
 			ParseException {
 
 		Client client = Client.create();
 
 		WebResource webResourceAsset = client
 		// .resource("http://192.168.1.95:8080/GQMapsCustomerServices/gqm-gqedp/getAssetServices/getAssetData");
-				.resource("http://192.168.1.95:8080/GQMapsCustomerServices/AssetEditServices/getAssetData?enterpriseId=aps");
+				.resource("http://"+GQMapsCustomerUIConstants.webSvcHost+":8080/GQMapsCustomerServices/AssetEditServices/getAssetData?enterpriseId="+ enterpriseId);
 
 		ClientResponse response = webResourceAsset.accept("application/json")
 				.get(ClientResponse.class);
@@ -61,13 +62,13 @@ public class AssetHelper {
 		return assetListDB;
 	} // method ends
 
-	public static List<DevCtlg> getDevCtlgList() throws NoSuchElementException,
+	public static List<DevCtlg> getDevCtlgList(String enterpriseId) throws NoSuchElementException,
 			ParseException {
 
 		Client client = Client.create();
 
 		WebResource webResourceDomain = client
-				.resource("http://192.168.1.95:8080/GQMapsCustomerServices/mapsDomainServices/getMapsDomainData?enterpriseId=aps");
+				.resource("http://"+GQMapsCustomerUIConstants.webSvcHost+":8080/GQMapsCustomerServices/mapsDomainServices/getMapsDomainData?enterpriseId="+enterpriseId);
 
 		String domainDataStr = webResourceDomain.get(String.class);
 
