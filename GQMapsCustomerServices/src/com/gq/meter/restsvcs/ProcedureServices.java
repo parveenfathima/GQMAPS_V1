@@ -28,6 +28,7 @@ import com.mysql.jdbc.Statement;
 @Path("/procedure")
 // no generic code as of now have to write in future
 public class ProcedureServices {
+
     @Path("/getproc")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
@@ -42,6 +43,7 @@ public class ProcedureServices {
         String result = "";
         String tsql = "";
         ResultSet rs = null;
+        double value = 0;
         try {
             // getting database connection to MySQL server
             dbExchange = SqlUtil.getExchangeConnection();
@@ -50,35 +52,31 @@ public class ProcedureServices {
             stmt = (Statement) dbExchange.createStatement();
             // Resultset returned by query
             rs = stmt.executeQuery(sql);
-            CustomerServiceConstant.logger
-                    .info("[DASHBOARDSERVICES]  Query sucessfully Executed from the TaskAsst Table");
+            CustomerServiceConstant.logger.info(" Query sucessfully Executed from the TaskAsst Table");
             while (rs.next()) {
                 tsql = rs.getString("tsql");
             }
-            System.out.println("procedure sql is+" + tsql);
             String charreplace = tsql.replace("__string_in__", "?");
             String finalquery = charreplace.replace("__double_out__", "?");
-            System.out.println("final query is" + finalquery);
             pstmt = (CallableStatement) dbCustomer.prepareCall(finalquery);
             pstmt.setString(1, "all");
             pstmt.registerOutParameter(2, Types.DOUBLE);
-            System.out.println("pstmt" + pstmt);
             rs = pstmt.executeQuery();
             if (rs.next()) {
                 output = rs.getDouble(1);
-                System.out.println("out" + output);
+                value = Math.round(output * 100.0) / 100.0;
             }
             else {
                 System.out.println("nodata");
             }
-            CustomerServiceConstant.logger.error("[PROCEDURESERVICES]  PUE data" + output);
-            result = Double.toString(output);
+            CustomerServiceConstant.logger.error(" PUE data" + output);
+            result = Double.toString(value);
         }
         catch (SQLException e) {
-            CustomerServiceConstant.logger.error("[PROCEDURESERVICES]  Exception Occured during the Connection" + e);
+            CustomerServiceConstant.logger.error(" Exception Occured during the Connection" + e);
         }
         catch (Exception e) {
-            CustomerServiceConstant.logger.error("[PROCEDURESERVICES]  Exception Occured during the Connection" + e);
+            CustomerServiceConstant.logger.error(" Exception Occured during the Connection" + e);
         }
         return Response.ok(result).build();
 
