@@ -22,15 +22,15 @@ public class GoalHelper {
 	static Gson gson = new GsonBuilder().setDateFormat("yyyy-mm-dd hh:mm:ss")
 			.create();
 
-	public GoalHelper() {
+	public GoalHelper(String enterpriseId , String goalId) {
 
 		Client client = Client.create();
 
 		WebResource webResourceAsset = client
-				.resource("http://192.168.1.95:8080/GQMapsCustomerServices/goalServices/goal?goalId=pue&entpId=talk");
+				.resource("http://192.168.8.15:8080/GQMapsCustomerServices/goalServices/goal?goalId="
+							+ goalId + "&entpId=" + enterpriseId);
 
-		ClientResponse response = webResourceAsset.accept("application/json")
-				.get(ClientResponse.class);
+		ClientResponse response = webResourceAsset.accept("application/json").get(ClientResponse.class);
 
 		String jsonString = webResourceAsset.get(String.class);
 
