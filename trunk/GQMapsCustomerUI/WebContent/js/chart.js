@@ -13,7 +13,12 @@ function showBarChart(barData, divId)
 	  {
 		// Instantiate and draw our chart, passing in some options.
 		var chart = new google.visualization.BarChart(document.getElementById(divId));
-		chart.draw(data, barChartOptions);
+		if (divId == 'div_blacklistedSW'){
+			chart.draw(data, barChartOptionsForBL);
+		}
+		else {
+			chart.draw(data, barChartOptions);
+		}	
 	  }
 }
 
@@ -26,7 +31,14 @@ function showPieChart(pieData, divId)
 	  function drawChart() 
 	  {
 			var chart = new google.visualization.PieChart(document.getElementById(divId));
-			chart.draw(data, pieChartOptions);
+			
+			if ( divId == 'div_installedSW' ) {
+				chart.draw(data, pieChartOptionsForIS);
+			}
+			
+			else {
+				chart.draw(data, pieChartOptions);
+			}
 	  }
 }
 
