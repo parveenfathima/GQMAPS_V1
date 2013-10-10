@@ -310,7 +310,7 @@ public class DashboardServices {
                     for (int i = 0; i < cDataList.size(); i++) {
                         String other = cDataList.get(i).getName();
                         int year = Integer.parseInt(other.substring(0, 4));
-                        int month = Integer.parseInt(other.substring(5, 7));
+                        int month = Integer.parseInt(other.substring(5, 7)) - 1;
                         int date = Integer.parseInt(other.substring(8, 10));
                         int hours = Integer.parseInt(other.substring(11, 13));
                         int minutes = Integer.parseInt(other.substring(14, 16));

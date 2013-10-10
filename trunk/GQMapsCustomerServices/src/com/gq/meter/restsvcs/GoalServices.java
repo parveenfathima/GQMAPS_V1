@@ -160,7 +160,6 @@ public class GoalServices {
                     if (goalId.equals("mon")) {
                         String newSql = tsql.replace(" __asset_id__", assetId);
                         goalTaskAsst = newSql.replace("__date__ ", recDtt);
-                        System.out.println("goal asst:" + goalTaskAsst);
                         tsql = goalTaskAsst;
                     }
                     if (dynamicInput.equals("y")) {
@@ -223,7 +222,6 @@ public class GoalServices {
                     List<ChartRowData> cDataList = new ArrayList<ChartRowData>();
                     while (entpResultset.next()) {
                         ChartRowData cData = new ChartRowData();
-                        System.out.println("metadATA" + metaDataColumnCount);
                         for (int i = 1; i <= metaDataColumnCount; i++) {
                             int type = rsMetaData.getColumnType(i);
                             if (type == Types.VARCHAR || type == Types.CHAR) {
