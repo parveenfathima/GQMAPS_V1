@@ -2,20 +2,70 @@ $.jStorage.set("jsMeters", "");
 $.jStorage.set("jsAstCount", 0);
 $.jStorage.set("goalId", "");
 
-
-var vType = "";	
+var vType = "";
 var vUrl = "";
 var assetsDB = { assetDataDB: [] };
-// Set pie chart options
-var pieChartOptions = {'title':'',
-			   'is3D': true,
-			   'width':230,
-			   'height':180};
 
-// Set bar chart options			   
-var barChartOptions = {'title':'',
-   'width':200,
-   'height':180};
+// Set pie chart options
+var pieChartOptions = {
+	'title' : '',
+	'is3D' : true,
+	legend : {
+		position : 'top'
+	},
+	hAxis : {
+		'title' : '',
+		textStyle : {
+			color : '#005500',
+			fontSize : '12',
+			paddingRight : '10',
+			marginRight : '10'
+		}
+	}
+};
+
+//Set pie chart options
+var pieChartOptionsForIS = {
+	'title' : '',
+	'is3D' : true,
+	legend : {
+		position : 'right'
+	},
+	hAxis : {
+		'title' : '',
+		textStyle : {
+			color : '#005500',
+			fontSize : '12',
+			paddingRight : '10',
+			marginRight : '10'
+		}
+	}
+};
+
+// Set bar chart options
+var barChartOptions = {
+		legend : 'none','chartArea':{left:"23%",top:20,width:"70%"}, colors:['#663366'],
+		hAxis : {
+			'title' : '',
+			textStyle : {
+				color : '#005500',
+				fontSize : '12'
+							}
+		}
+	};
+
+var barChartOptionsForBL = {
+		legend : 'none','chartArea':{left:"50%",top:20,width:"70%"},colors:['#990066'],
+		hAxis : {
+			'title' : '',
+			textStyle : {
+				color : '#005500',
+				fontSize : '12'
+							}
+		}
+	};
+
+//var barChartOptions = {'title':title,'width':w,'height':h,'chartArea':{left:0,top:10,width:"100%"}};
 
 // Goal input dialog configuration
 var optGoalInput = {
@@ -71,7 +121,7 @@ $(document).ready(function()
 		
 		$("#btnShowAssets").bind("click", addText);	
 		$("#btnConfAssets").bind("click", goToAssetEdit);	
-		$("#openAsset").bind("click", openAssetList);
+		$("#serverAsset").bind("click", serverList);
 		$("#btnAsset").bind("click", submitGoalInput);
 		
 		
@@ -197,10 +247,10 @@ function loadGoals()
 	});	//end of ajax		
 }
 
-function gotoAssetList(e)
+function serverList()
 {
 	//window.location.href = "server_list.jsp";
-	window.open('server_list.jsp',"serverlist","right=2000,top=20,toolbar=no, " +
+	window.open("server_list.jsp?entpId="+ $.jStorage.get("jsEntpId") ,"serverlist","right=2000,top=20,toolbar=no, " +
 				"status=no,location=no,	menubar=no, scrollbars=yes, resizable=no, width=400, height=400");
 	//ServerLIst.document.write('My PDF File Title');
 }
@@ -243,7 +293,7 @@ function checkGoalInput(goalId)
 				{
 	 				if(json[i]["dtvalue"] === "date")
 					{
-						$("#"+json[i]["descr"]).datetimepicker({ showOn: "button", buttonImage: "images/calendar.gif", buttonImageOnly: true })	   						
+						$("#"+json[i]["descr"]).datetimepicker({ showOn: "button", buttonImage: "images/calendar.gif", buttonImageOnly: true }) ; 						
 					} 
 				});	 				
 	 
@@ -253,7 +303,7 @@ function checkGoalInput(goalId)
 			else
 			{
 				//TODO navigate to goal.jsp page
-				window.location.href = "goal.jsp";
+				window.location.href = "goal.jsp?goalId="+$.jStorage.get("goalId")+"&entpId="+$.jStorage.get("jsEntpId");
 			}
 		
 		},
@@ -265,32 +315,32 @@ function checkGoalInput(goalId)
 }
 
 // opening the asset list dialog to copy the selected assets
-function openAssetList()
-{
-	var vValues = "";
-	
-	$("#txtSelAssets").val("");
-	
-	vValues = vValues + '<table><thead><tr id = "trAssetIdHead"><th>Action</th><th>Asset ID</th></tr></thead><tbody>'
-	$.each(assetsDB.assetDataDB, function(i, n)
-	{
-		vValues = vValues + '<tr id = "trAssetId' + i + '"><td><input type = "checkbox"  id = "chkAssetId' + i + '" value = "' +  assetsDB.assetDataDB[i].assetId  + '"/></td>';
-		vValues = vValues + '<td>' + assetsDB.assetDataDB[i].assetId  + '</td></tr>';							
-	});		
-	
-	vValues = vValues + '</tbody></table>';   
-	
-	$("#spnAssetList").append(vValues);
-	$("#dlgAssetList").dialog(optAssetList).dialog('open');	
-				
-}
+//function openAssetList()
+//{
+//	var vValues = "";
+//	
+//	$("#txtSelAssets").val("");
+//	
+//	vValues = vValues + '<table><thead><tr id = "trAssetIdHead"><th>Action</th><th>Asset ID</th></tr></thead><tbody>'
+//	$.each(assetsDB.assetDataDB, function(i, n)
+//	{
+//		vValues = vValues + '<tr id = "trAssetId' + i + '"><td><input type = "checkbox"  id = "chkAssetId' + i + '" value = "' +  assetsDB.assetDataDB[i].assetId  + '"/></td>';
+//		vValues = vValues + '<td>' + assetsDB.assetDataDB[i].assetId  + '</td></tr>';							
+//	});		
+//	
+//	vValues = vValues + '</tbody></table>';   
+//	
+//	$("#spnAssetList").append(vValues);
+//	$("#dlgAssetList").dialog(optAssetList).dialog('open');	
+//				
+//}
 
 //concatenating asset IDs on selection to copy past from asset list dialog box
 function addText()
 {
 	$("#txtSelAssets").val("");
 	var i =0;
-	var txt = ""
+	var txt = "";
 	var len = assetsDB.assetDataDB.length;
 
 	for(i=0; i<len; i++)
@@ -312,7 +362,7 @@ function submitGoalInput()
 	var vType = "GET";
 	var vUrl = $.jStorage.get("jsDBUrl") + "GoalInputServices/getGoalInput?goalId=" + 	$.jStorage.get("goalId");
 	
-	var vValues = "";
+	//var vValues = "";
 	
 	var aryGoalInputs = [];
 
@@ -342,20 +392,29 @@ function submitGoalInput()
 							text: json[i]["colHoldr"],
 							value: $("#"+json[i]["descr"]).val()
             				});
-					}	
+					}
 				});	 
 				
 				alert("final text length to be submitted is :" + aryGoalInputs.length + "  " + JSON.stringify(aryGoalInputs));
-				if(aryGoalInputs.length > 0)
-				{
-					$("#dlgGoalInput").dialog(optGoalInput).dialog('close');		
-					//window.location.href = "goal.jsp";	
-				}
+				$("#dlgGoalInput").dialog(optGoalInput).dialog('close');		
+				window.location.href = "goal.jsp";
 			}	
 		},
 		error:function(json)
 		{
-			alert("Error from submitting goal input details!");			
+			alert("Error from loading goals list!");			
 		}	 
 	});	//end of ajax		
 }
+
+
+
+//function setGoal(e)
+//{
+//	window
+//	.open(
+//			'goal.jsp',
+//			"GoalTasks",
+//			"right=2000,top=20,toolbar=no, "
+//					+ "status=no,location=no,	menubar=no, scrollbars=yes, resizable=no, width=900, height=900");
+//	}
