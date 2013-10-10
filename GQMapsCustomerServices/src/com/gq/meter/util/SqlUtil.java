@@ -17,7 +17,7 @@ public class SqlUtil {
     public static Connection getExchangeConnection() throws Exception {
         String driver = "com.mysql.jdbc.Driver";
         String dbURL = "jdbc:mysql://localhost:3306/gqexchange";
-        // String dbURL = "jdbc:mysql://192.168.1.95:3306/gqexchange";
+        // String dbURL = "jdbc:mysql://192.168.8.15:3306/gqexchange";
 
         String username = "gqmaps";
         String password = "Ch1ca803ear$";
@@ -31,7 +31,7 @@ public class SqlUtil {
     public static Connection getCustomerConnection(String entpId) throws Exception {
         String driver = "com.mysql.jdbc.Driver";
         String dbURL1 = "jdbc:mysql://localhost:3306/gqm" + entpId;
-        // String dbURL1 = "jdbc:mysql://192.168.1.95:3306/gqm" + entpId;
+        // String dbURL1 = "jdbc:mysql://192.168.8.15:3306/gqm" + entpId;
 
         String username = "gqmaps";
         String password = "Ch1ca803ear$";
@@ -44,7 +44,7 @@ public class SqlUtil {
 
     public static Connection getCustomerConnectionProcedureCall(String entpId) throws Exception {
         String driver = "com.mysql.jdbc.Driver";
-        // String dbURL1 = "jdbc:mysql://192.168.1.95:3306/gqm" + entpId
+        // String dbURL1 = "jdbc:mysql://192.168.8.15:3306/gqm" + entpId
         // + "?user=gqmaps&password=Ch1ca803ear$&noAccessToProcedureBodies=true";
         String dbURL1 = "jdbc:mysql://localhost:3306/gqm" + entpId
                 + "?user=gqmaps&password=Ch1ca803ear$&noAccessToProcedureBodies=true";
