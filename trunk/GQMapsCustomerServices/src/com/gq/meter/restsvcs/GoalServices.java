@@ -72,9 +72,10 @@ public class GoalServices {
 
             String goalSnpshtQuery = "select snpsht_id as SnapshotId, start_date as StartDate, "
                     + " end_date as EndDate, notes as Notes,cost_benefit as RealizedBenefit , pre_result , post_result "
-                    + " from goal_snpsht where goal_id=? and end_date is not NULL ";
+                    + " from goal_snpsht where goal_id=? and enterprise_id=? and end_date is not NULL ";
             prepareStmt = (PreparedStatement) dbExchange.prepareStatement(goalSnpshtQuery);
             prepareStmt.setString(1, goalId);
+            prepareStmt.setString(2, entpId);
 
             ResultSet chkSet = prepareStmt.executeQuery();
             CustomerServiceConstant.logger.info(" Query Sucessfully Executed for the Goal Snapshot");
