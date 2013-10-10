@@ -17,7 +17,7 @@ public class DynamicSessionUtil {
 
         SessionFactory sessionFactory = null;
         String url = "jdbc:mysql://localhost:3306/" + dbInstanceName;
-        // String url = "jdbc:mysql://192.168.1.95:3306/" + dbInstanceName;
+        // String url = "jdbc:mysql://192.168.8.15:3306/" + dbInstanceName;
 
         if (SessionFactoryListMap.containsKey(dbInstanceName)) {
             sessionFactory = SessionFactoryListMap.get(dbInstanceName);
