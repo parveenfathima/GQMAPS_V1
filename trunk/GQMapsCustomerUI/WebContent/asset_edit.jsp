@@ -279,10 +279,10 @@ function getCurrentAssets()
 			//getting the user id of the enterprise
 			entp = request.getParameter("setEntp");
 			System.out
-					.println("\n Enterprise User id is -----------------------------------------: "
+					.println("\n Enterprise User id is ---------------: "
 							+ entp);
 			System.out
-					.println("\n Enterprise User id is -----------------------------------------: "
+					.println("\n Enterprise User id is ---------------: "
 							+ request.getParameter("setEntp"));
 
 			try
