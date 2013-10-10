@@ -48,6 +48,7 @@
 </script>
 
 </head>
+
 <body>
 	<h1>List of Servers</h1>
 <% 	
@@ -56,15 +57,13 @@
  		int j = 0;
  		int cost=0;
 		String ctlgDesc = "";
-				
- 		Asset a = new Asset();
-		// AssetData assetData = new AssetData();
 		
+		String enterpriseId = request.getParameter("entpId") ;
 		// Asset list
-		List<Asset> assetListDB = AssetHelper.getAssetList();
+		List<Asset> assetListDB = AssetHelper.getAssetList(enterpriseId);
 		
 		DevCtlg d =new DevCtlg();
- 		List<DevCtlg> dcListDB = AssetHelper.getDevCtlgList();
+ 		List<DevCtlg> dcListDB = AssetHelper.getDevCtlgList(enterpriseId);
  					
 %>
 
