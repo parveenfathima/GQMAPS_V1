@@ -12,8 +12,13 @@
 <html>
 
 <head>
+
+	<script src="jquery-ui-1.10.2.custom/js/jquery-1.9.1.js"></script>
+	<script src="jquery-ui-1.10.2.custom/js/jquery-ui-1.10.2.custom.js"></script>
+	<script src="js/jstorage.js"> </script>
+		
 	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-	<title></title>
+	<title> Goal Screen </title>
 	<style type="text/css">
 
 			.taskTempltDiv {
@@ -106,15 +111,23 @@
 		    return this.replace(/^\s+|\s+$/g, "");
 		};
 		
+// 		function  Passval(){
+// 			alert('goal id is = '+ $.jStorage.get("goalId") + " , enterprise id = " +$.jStorage.get("jsEntpId"));
+// 		}
+		
 	</script>
 	
 </head>
 
 <body>
 	
+	
 	<%
+		String enterpriseId = request.getParameter("entpId") ;
+		String goalId =  request.getParameter("goalId") ;
+		//System.out.println("g = "+goalId + " , e = "+ enterpriseId);
 		GoalSnpsht a = new GoalSnpsht();
-		GoalHelper gh = new GoalHelper();
+		GoalHelper gh = new GoalHelper(enterpriseId , goalId);
 		List<GoalSnpsht> goalsnapshotList = gh.getGoalSnapshot();
 		Goal g = gh.getGoal();
 		TaskTmplt b = new TaskTmplt();
@@ -205,7 +218,9 @@
 	
 	
 <script >window.onload = DetectChanges('ol');
+
 </script>
+
 </body>
 
 </html>
