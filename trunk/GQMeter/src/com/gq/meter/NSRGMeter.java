@@ -53,6 +53,8 @@ public class NSRGMeter implements GQSNMPMeter {
 
         CommunityTarget target = null;
         HashMap<String, Long> networkBytes = null;
+        
+        NSRGSnapshot nsrgSnapShot = null;
         HashSet<NSRGConnDevice> connectedDevices = null;
         Asset assetObj = null;
 
@@ -155,6 +157,11 @@ public class NSRGMeter implements GQSNMPMeter {
                         errorList.add(assetId + " Root OID : 1.3.6.1.2.1.2.2.1" + " "
                                 + "Unable to get network bandwidth details");
                     }
+                    
+                    nsrgSnapShot = new NSRGSnapshot(id, sysIP, upTime, numberOfPorts, numberOfPortsUp, networkBytesIn,
+                            networkBytesOut, extras);
+                    
+                    continue;
                 } // main if loop ends
 
                 // The following oid's is used to get the devices that are connected to NSRG.
@@ -170,15 +177,15 @@ public class NSRGMeter implements GQSNMPMeter {
                         errorList.add(assetId + " Root OID : 1.3.6.1.2.1.4.22.1.4" + " "
                                 + "Unable to provide list of connected devices");
                     }
+                    continue;
                 } // 1st if loop ends
+                
             }// main for loop ends
+        
         }// try ends
         catch (Exception e) {
             errorList.add(ipAddress + " " + e.getMessage());
         }
-
-        NSRGSnapshot nsrgSnapShot = new NSRGSnapshot(id, sysIP, upTime, numberOfPorts, numberOfPortsUp, networkBytesIn,
-                networkBytesOut, extras);
 
         NSRG nsrg = new NSRG(id, assetObj, nsrgSnapShot, connectedDevices);
 

@@ -92,6 +92,8 @@ public class PrinterMeter implements GQSNMPMeter {
         CommunityTarget target = null;
         HashMap<String, Integer> printerStatus;
         List<String> errorList = new LinkedList<String>();
+        
+        PrinterSnapshot printerSnapShot = null;
         HashSet<PrinterConnDevice> connectedDevices = null;
         Asset assetObj = null;
 
@@ -227,6 +229,11 @@ public class PrinterMeter implements GQSNMPMeter {
                         errorList.add(assetId
                                 + " Root OID : 1.3.6.1.2.1.25.2.3.1 - Unable to get disk and memory details");
                     }
+                    
+                    printerSnapShot = new PrinterSnapshot(id, sysIP, totalMemory, totalDiskSpace, usedMemory,
+                            usedDiskSpace, upTime, tonerStatus, outOfPaperIndicator, printsTakenCount, mfgModel, isColorPrinter,
+                            extras, prntrStatus, auxStatus);
+                    continue;
                 } // if loop ends
 
                 // the following oid's is used to get the ip and port no of devices that is connected.
@@ -242,16 +249,15 @@ public class PrinterMeter implements GQSNMPMeter {
                         errorList.add(assetId + " Root OID : 1.3.6.1.2.1.6.13.1.1" + " "
                                 + "Unable to get port number and ip address of connected devices");
                     }
+                    continue;
                 } // 1st if loop ends
+                
             }// main for loop ends
+        
         }// try ends
         catch (Exception e) {
             errorList.add(ipAddress + " " + e.getMessage());
         }
-
-        PrinterSnapshot printerSnapShot = new PrinterSnapshot(id, sysIP, totalMemory, totalDiskSpace, usedMemory,
-                usedDiskSpace, upTime, tonerStatus, outOfPaperIndicator, printsTakenCount, mfgModel, isColorPrinter,
-                extras, prntrStatus, auxStatus);
 
         Printer printerObject = new Printer(id, assetObj, printerSnapShot, connectedDevices);
 
