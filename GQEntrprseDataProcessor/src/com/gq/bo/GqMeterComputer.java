@@ -38,14 +38,15 @@ public class GqMeterComputer {
             
             // snapshot
             CompSnapshot compSnapshot = computer.getSnapShot();
-            compSnapshot.setId(cid);
-            try {
-                session.save(compSnapshot);
+            if (compSnapshot != null) {
+	            compSnapshot.setId(cid);
+	            try {
+	                session.save(compSnapshot);
+	            }
+	            catch (Exception e) {
+	                GQEDPConstants.logger.error(meterId + " Data failed to save in the Computer Snapshot table ", e);
+	            }
             }
-            catch (Exception e) {
-                GQEDPConstants.logger.error(meterId + " Data failed to save in the Computer Snapshot table ", e);
-            }
-
             // computer installed software
             if (computer.getCompInstSwList() != null) {
                 try {
