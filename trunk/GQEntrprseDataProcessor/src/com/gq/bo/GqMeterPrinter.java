@@ -38,15 +38,16 @@ public class GqMeterPrinter {
 
             // snapshot
             PrinterSnapshot printerSnapshot = printer.getPrinterSnapShot();
-            try {
-                printerSnapshot.setId(cid);
-                session.save(printerSnapshot);
-                GQEDPConstants.logger.info(meterId + " Data successfully saved in the Printer Snapshot table ");
+            if (printerSnapshot != null) {
+	            try {
+	                printerSnapshot.setId(cid);
+	                session.save(printerSnapshot);
+	                GQEDPConstants.logger.info(meterId + " Data successfully saved in the Printer Snapshot table ");
+	            }
+	            catch (Exception e) {
+	                GQEDPConstants.logger.error(meterId + " Data failed to save in the Printer Snapshot table ", e);
+	            }
             }
-            catch (Exception e) {
-                GQEDPConstants.logger.error(meterId + " Data failed to save in the Printer Snapshot table ", e);
-            }
-
             // connected device
             if (printer.getPrinterConnectedDevice() != null) {
                 try {
