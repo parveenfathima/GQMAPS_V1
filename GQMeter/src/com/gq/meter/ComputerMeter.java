@@ -71,6 +71,11 @@ public class ComputerMeter implements GQSNMPMeter {
         String extras = null; // anything device specific but to be discussed v2
         CommunityTarget target = null;
         HashMap<String, String> networkBytes = null;
+        OsType osTypeObj = null;
+        
+        // objects that go in finally
+
+        CompSnapshot snapShot = null;
         ArrayList<CompInstSoftware> installedSwList = null;
         HashSet<CompConnDevice> connectedDevices = null;
         ArrayList<CompProcess> processList = null;
@@ -148,6 +153,7 @@ public class ComputerMeter implements GQSNMPMeter {
             // ASSET ID , RUN ID STARTS HERE.
             id = new CPNId(runId, assetId);
             for (String element : toggleSwitches) { // main for loop starts here
+            	
                 if (element.equalsIgnoreCase(MeterConstants.SNAPSHOT)) { // main if loop starts here
                     sysIP = ipAddress;
                     oidString = "1.3.6.1.2.1.1";
@@ -316,6 +322,15 @@ public class ComputerMeter implements GQSNMPMeter {
                                     + "Unable to get network bandwidth details  and unable to collate asset ID");
                         }
                     } // 1st else loop ends
+                    
+                    osTypeObj = new OsType(osId, sysDescription);
+
+                    snapShot = new CompSnapshot(id, sysIP, osId, totalMemory, usedMemory, totalVirtualMemory,
+                            usedVirtualMemory, totalDiskSpace, usedDiskSpace, cpuLoad, upTime, numLoggedInUsers, numProcesses,
+                            networkBytesIn, networkBytesOut, clockSpeed, extras);
+
+                    continue;
+                    
                 } // main if loop ends here
 
                 // the following oid's is used to get the installed software list
@@ -343,6 +358,8 @@ public class ComputerMeter implements GQSNMPMeter {
                         errorList.add(assetId + " Root OID : 1.3.6.1.2.1.25.6.3.1.4" + " "
                                 + "Unable to get list of installed software");
                     }
+                    continue;
+
                 } // 1st if loop ends.
 
                 // the following oid's is used to get the IP and port number for the devices that is connected.
@@ -361,6 +378,8 @@ public class ComputerMeter implements GQSNMPMeter {
                         errorList.add(assetId + " Root OID : 1.3.6.1.2.1.6.13.1.1" + " "
                                 + "Unable to get port number and ip address of connected devices");
                     }
+                    continue;
+
                 } // 1st if loop ends
 
                 // The following OID is used to get the System run name, CPU and memory share for a particular process .
@@ -390,18 +409,16 @@ public class ComputerMeter implements GQSNMPMeter {
                         errorList.add(assetId + " Root OID : .1.3.6.1.2.1.25" + " "
                                 + "Unable to get the system run name, cpu and memory share");
                     }
+                    continue;
+
                 } // 1st if loop ends
+                
             }// main for loop ends here
+            
         }// try ends
         catch (Exception e) {
             errorList.add(ipAddress + " " + e.getMessage());
         }
-
-        OsType osTypeObj = new OsType(osId, sysDescription);
-
-        CompSnapshot snapShot = new CompSnapshot(id, sysIP, osId, totalMemory, usedMemory, totalVirtualMemory,
-                usedVirtualMemory, totalDiskSpace, usedDiskSpace, cpuLoad, upTime, numLoggedInUsers, numProcesses,
-                networkBytesIn, networkBytesOut, clockSpeed, extras);
 
         Computer compObject = new Computer(id, assetObj, osTypeObj, snapShot, installedSwList, processList,
                 connectedDevices);
@@ -414,6 +431,7 @@ public class ComputerMeter implements GQSNMPMeter {
         long computerendTime = System.currentTimeMillis();
         new MeterUtils().compMeterTime = new MeterUtils().compMeterTime + (computerendTime - computerstartTime);
         return gqMeterObject;
+        
     } // GQMeterData method ends
 
     /**
