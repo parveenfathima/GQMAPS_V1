@@ -14,9 +14,12 @@ public class TemplateTaskDetails {
     private int ts_id;
     private String tooltip;
     private String chartData;
+    private String chartType;
+    private String positionId;
 
     public TemplateTaskDetails(int snpsht_id, Timestamp apply_date, int cost_benefit, String usr_notes,
-            String sys_notes, int task_id, String descr, int ts_id, String tooltip, String chartData) {
+            String sys_notes, int task_id, String descr, int ts_id, String tooltip, String chartData, String chartType,
+            String positionId) {
         super();
         this.snpsht_id = snpsht_id;
         this.apply_date = apply_date;
@@ -28,6 +31,14 @@ public class TemplateTaskDetails {
         this.ts_id = ts_id;
         this.tooltip = tooltip;
         this.chartData = chartData;
+    }
+
+    public String getChartType() {
+        return chartType;
+    }
+
+    public String getPositionId() {
+        return positionId;
     }
 
     public String getChartData() {
