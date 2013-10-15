@@ -25,7 +25,7 @@ import com.google.visualization.datasource.datatable.ColumnDescription;
 import com.google.visualization.datasource.datatable.DataTable;
 import com.google.visualization.datasource.datatable.value.ValueType;
 import com.google.visualization.datasource.render.JsonRenderer;
-import com.gq.meter.object.ChartRowData;
+import com.gq.meter.object.ChartRowHolder;
 import com.gq.meter.object.TaskAssist;
 import com.gq.meter.util.CustomerServiceConstant;
 import com.gq.meter.util.SqlUtil;
@@ -56,13 +56,12 @@ public class DashboardServices {
         String positionId = "";
         String dynamicInput = null;
         String relatedDb = null;
-        List<ChartRowData> chartRowData = null;
         String chartData = "";
         double plainData = 0;
         String lineData = "";
         String plain = "";
         TaskAssist taskAssist = new TaskAssist(taskId, descr, sql, dynamicInput, chartType, columnHeader, relatedDb,
-                positionId, chartRowData, chartData, plainData, lineData, plain);
+                positionId, chartData, plainData, lineData, plain);
         PreparedStatement prepareStmt = null;
         String result = "";
         ResultSet entpResultset;
@@ -149,6 +148,9 @@ public class DashboardServices {
                         CustomerServiceConstant.logger
                                 .info("[DASHBOARDSERVICES]  Query is Executing for the Enterprise");
                         prepareStmt = (PreparedStatement) dbCustomer.prepareStatement(resultString);
+
+                        // based on the query requirement enterprise id positioning is differed.for eg: 1 query may need
+                        // only 1 enterprise id other may need more than 1
                         int number = org.apache.commons.lang.StringUtils.countMatches(resultString, "?");
                         System.out.println("count of ?is\t" + number);
                         for (int i = 1; i <= number; i++) {
@@ -253,34 +255,34 @@ public class DashboardServices {
                     }
                     chartdata.addColumns(lineColumn);
                 }
-                List<ChartRowData> cDataList = new ArrayList<ChartRowData>();
+                List<ChartRowHolder> cDataList = new ArrayList<ChartRowHolder>();
 
                 while (entpResultset.next()) {
                     CustomerServiceConstant.logger.info("[DASHBOARDSERVICES]  Query is Executed for dynamic columns");
-                    ChartRowData cData = new ChartRowData();
+                    ChartRowHolder cData = new ChartRowHolder();
                     for (int i = 1; i <= metaDataColumnCount; i++) {
                         int type = rsMetaData.getColumnType(i);
                         if (type == Types.VARCHAR || type == Types.CHAR) {
                             // str = datavalue.setName(entpResultset.getString(i));
-                            cData.setName(entpResultset.getString(i));
+                            cData.setXaxis(entpResultset.getString(i));
                             // System.out.println("inside if" + cData.setName(entpResultset.getString(i)));
                         }
                         // else if (type == Types.DATE) {
                         else if (type == Types.TIMESTAMP) {
                             // dt = datavalue.setDate(entpResultset.getTimestamp(i));
                             // cData.setDate(entpResultset.getTimestamp(i));
-                            cData.setName(entpResultset.getString(i));
+                            cData.setXaxis(entpResultset.getString(i));
                         }
                         else if (type == Types.DECIMAL) {
                             if (i == 2)
-                                cData.setValue(entpResultset.getDouble(i));
+                                cData.setYaxis(entpResultset.getDouble(i));
                             else
-                                cData.setValue1(entpResultset.getDouble(i));
+                                cData.setZaxis(entpResultset.getDouble(i));
 
                         }
                         else {
                             // val = datavalue.setValue(entpResultset.getDouble(i));
-                            cData.setValue(entpResultset.getDouble(i));
+                            cData.setYaxis(entpResultset.getDouble(i));
                             // System.out.println("inside else" + cData.setValue(entpResultset.getDouble(i)));
                         }
                     }
@@ -294,11 +296,11 @@ public class DashboardServices {
                     CustomerServiceConstant.logger
                             .info("[DASHBOARDSERVICES]  Rows and Columns are being added for BAR/PIE charts");
                     for (int i = 0; i < cDataList.size(); i++) {
-                        chartdata.addRowFromValues(cDataList.get(i).getName(), cDataList.get(i).getValue(), cDataList
-                                .get(i).getValue1());
+                        chartdata.addRowFromValues(cDataList.get(i).getXaxis(), cDataList.get(i).getYaxis(), cDataList
+                                .get(i).getZaxis());
                     }
-                    // System.out.println("\ndata1\t" + cDataList.get(i).getName() + "\tcdata2\t"
-                    // + cDataList.get(i).getValue());
+                    // System.out.println("\ndata1\t" + cDataList.get(i).getXaxis + "\tcdata2\t"
+                    // + cDataList.get(i).getYaxis());
                 }
                 // json.put("chart data", JsonRenderer.renderDataTable(chartdata, true, true));
 
@@ -308,7 +310,7 @@ public class DashboardServices {
                     CustomerServiceConstant.logger
                             .info("[DASHBOARDSERVICES]  Rows and Columns are being added to the Annotated TimeLine Charts");
                     for (int i = 0; i < cDataList.size(); i++) {
-                        String other = cDataList.get(i).getName();
+                        String other = cDataList.get(i).getXaxis();
                         int year = Integer.parseInt(other.substring(0, 4));
                         int month = Integer.parseInt(other.substring(5, 7)) - 1;
                         int date = Integer.parseInt(other.substring(8, 10));
@@ -320,11 +322,11 @@ public class DashboardServices {
                         // + "minutes\t" + minutes + "seconds\t" + seconds);
 
                         calendar.set(year, month, date, hours, minutes, seconds);
-                        chartdata.addRowFromValues(calendar, cDataList.get(i).getValue());
+                        chartdata.addRowFromValues(calendar, cDataList.get(i).getYaxis());
 
                         // JSONObject json = new JSONObject();
-                        // json.put("date", cDataList.get(i).getName());
-                        // json.put("value", cDataList.get(i).getValue());
+                        // json.put("date", cDataList.get(i).getXaxis);
+                        // json.put("value", cDataList.get(i).getYaxis());
                         // chartArray.put(json);
 
                     }
@@ -350,11 +352,11 @@ public class DashboardServices {
                     CustomerServiceConstant.logger
                             .info("[DASHBOARDSERVICES] Dynamic column values which Are in the Form of Plain Text");
                     if (cDataList.size() > 0) {
-                        if (cDataList.get(0).getName() != null && cDataList.get(0).getName() != " ") {
-                            taskAssistObj.setPlain(cDataList.get(0).getName());
+                        if (cDataList.get(0).getXaxis() != null && cDataList.get(0).getXaxis() != " ") {
+                            taskAssistObj.setPlain(cDataList.get(0).getXaxis());
                         }
-                        else if (cDataList.get(0).getValue() != 0) {
-                            taskAssistObj.setPlainData(cDataList.get(0).getValue());
+                        else if (cDataList.get(0).getYaxis() != 0) {
+                            taskAssistObj.setPlainData(cDataList.get(0).getYaxis());
                         }
                     }
                     else {
