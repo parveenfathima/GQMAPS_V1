@@ -1,7 +1,5 @@
 package com.gq.meter.object;
 
-import java.util.List;
-
 /**
  * 
  */
@@ -19,7 +17,6 @@ public class TaskAssist {
     public String[] columnHeader;
     public String relatedDb;
     public String positionId;
-    private List<ChartContainer> chartContainer;
     private CharSequence chartData;
     private double plainData;
     private String plain;
@@ -30,8 +27,7 @@ public class TaskAssist {
     }
 
     public TaskAssist(int taskId, String descr, String sql, String dynamic, String chartType, String[] columnHeader,
-            String relatedDb, String positionId, List<ChartContainer> chartContainer, CharSequence chartData, double plainData,
-            String lineData, String plain) {
+            String relatedDb, String positionId, CharSequence chartData, double plainData, String lineData, String plain) {
         this.taskId = taskId;
         this.descr = descr;
         this.sql = sql;
@@ -40,7 +36,6 @@ public class TaskAssist {
         this.columnHeader = columnHeader;
         this.relatedDb = relatedDb;
         this.positionId = positionId;
-        this.chartContainer = chartContainer;
         this.chartData = chartData;
         this.plainData = plainData;
         this.lineData = lineData;
@@ -159,20 +154,6 @@ public class TaskAssist {
      */
     public void setRelatedDb(String relatedDb) {
         this.relatedDb = relatedDb;
-    }
-
-    /**
-     * @return the chartContainer
-     */
-    public List<ChartContainer> getData() {
-        return chartContainer;
-    }
-
-    /**
-     * @param chartContainer the chartContainer to set
-     */
-    public void setData(List<ChartContainer> chartContainer) {
-        this.chartContainer = chartContainer;
     }
 
     public CharSequence getChartData() {
