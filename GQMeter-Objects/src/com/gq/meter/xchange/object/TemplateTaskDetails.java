@@ -31,6 +31,8 @@ public class TemplateTaskDetails {
         this.ts_id = ts_id;
         this.tooltip = tooltip;
         this.chartData = chartData;
+        this.chartType = chartType;
+        this.positionId = positionId;
     }
 
     public String getChartType() {
