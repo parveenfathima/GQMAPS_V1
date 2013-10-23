@@ -3,6 +3,7 @@ package com.gq.meter.model;
 import org.hibernate.Session;
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 
 import com.gq.meter.util.DynamicSessionUtil;
 import com.gq.meter.util.CustomerServiceConstant;
@@ -27,9 +28,10 @@ public class AssetEditModel {
 
     // Getting asset details
     public GetAsset getAssetDetails(String enterpriseId) {
+        Transaction tx = null;
 
         try {
-            System.out.println("Enterprise Id:" + enterpriseId);
+        	CustomerServiceConstant.logger.debug("Enterprise Id:" + enterpriseId);
             String dbInstanceName = "gqm" + enterpriseId;
 
             // Create a session factory for requesting enterprise
@@ -37,11 +39,11 @@ public class AssetEditModel {
 
             // create a session to start a transaction
             session = sessionFactory.getCurrentSession();
-            session.beginTransaction();
+            tx = session.beginTransaction();
 
             String asset = "FROM Asset";
             Query assetQuery = session.createQuery(asset);
-            List<Asset> assetResult = assetQuery.list();
+            List<Asset> assetResult = (List<Asset>)assetQuery.list();
             getAssetServices = new GetAsset(assetResult);
         }
         catch (Exception e) {
@@ -49,10 +51,8 @@ public class AssetEditModel {
         }
         finally {
             try {
-                if (session.isOpen()) {
-                    session.flush();
-                    session.close();
-                }
+            	// commit the unit of work , meters will have flush only
+                tx.commit();
             }
             catch (Exception e) {
                 e.printStackTrace();
@@ -65,6 +65,7 @@ public class AssetEditModel {
     // updating assets
     public void updateAssets(String enterpriseId, Asset assetObject) throws Exception {
         Date currentDate = null;
+        Transaction tx = null;
 
         try {
             String dbInstanceName = "gqm" + enterpriseId;
@@ -74,7 +75,7 @@ public class AssetEditModel {
 
             // create a session to start a transaction
             session = sessionFactory.getCurrentSession();
-            session.beginTransaction();
+            tx = session.beginTransaction();
 
             Asset oldAssetObject = (Asset) session.load(Asset.class, assetObject.getAssetId());
             oldAssetObject.setIpAddr(assetObject.getIpAddr());
@@ -94,19 +95,17 @@ public class AssetEditModel {
                 oldAssetObject.setInactiveDttm(currentDate);
             }
             oldAssetObject.setTypeId(assetObject.getTypeId());
-            System.out.println("Object updated Successfully");
-            session.getTransaction().commit();
+            CustomerServiceConstant.logger.debug("assset Object updated Successfully");
+            session.flush();
+            
         }
         catch (Exception e) {
-            System.out.println(e);
+        	CustomerServiceConstant.logger.debug(e);
             CustomerServiceConstant.logger.error("Exception occured while Updating the Asset ", e);
             throw e;
         }
         finally {
-            if (session.isOpen()) {
-                session.flush();
-                session.close();
-            }
+            tx.commit();
         }
     }
 }
