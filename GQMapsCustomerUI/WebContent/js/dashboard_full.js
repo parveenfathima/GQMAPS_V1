@@ -27,7 +27,7 @@ var pieChartOptions = {
 //Set pie chart options
 var pieChartOptionsForIS = {
 	'title' : '',
-	'is3D' : true,
+	'is3D' : true,chartArea: {left:0,width:"79%"},
 	legend : {
 		position : 'right'
 	},
@@ -35,9 +35,7 @@ var pieChartOptionsForIS = {
 		'title' : '',
 		textStyle : {
 			color : '#005500',
-			fontSize : '12',
-			paddingRight : '10',
-			marginRight : '10'
+			fontSize : '12'
 		}
 	}
 };
@@ -128,9 +126,9 @@ $(document).ready(function()
 		$("#entpName").text("Customer Dashboard for " + $.jStorage.get("jsEName"));
 		
 		var vType = "GET";						
-		
+		// call to the dashboard services are made
 		var vUrl = $.jStorage.get("jsDBUrl") + "DashboardServices/getdashboard?entpId=" + $.jStorage.get("jsEntpId");
-	
+		//alert(" vurl is " +vUrl);
 		$.ajax
 		({
 			type:vType,
@@ -139,42 +137,57 @@ $(document).ready(function()
 			async:false,
 			dataType: "json",
 			success:function(json)
-			{			
-				$.each(json, function(i, v)
-				{
-					if(json[i]["charttype"] === "pie")
-						showPieChart(json[i]["data"], json[i]["divId"]);
-					else if(json[i]["charttype"] === "bar")
-						showBarChart(json[i]["data"], json[i]["divId"]);
-					else if(json[i]["charttype"] === "line")
-						showLineChart(json[i]["data"], json[i]["divId"]);					
-					else if(json[i]["charttype"] === "plain")
-						showPlainText(json[i]["data"], json[i]["divId"]);
-				});	 	                           
+			{		
 				
+//				 var results = json.allResults;
+//	             alert($(results).size());
+//	             	
+					$.each(json, function(i, v)
+					{
+						
+						if(json[i]["charttype"] == "plain"){
+							showPlainText(json[i]["data"], json[i]["divId"]);
+						}
+						else {
+							var rowLength =  json[i].data.rows.length;
+							//alert("length is = " + rowLength + " div is " + json[i]["divId"] );
+							if(json[i]["charttype"] == "pie" )
+								showPieChart(json[i]["data"], json[i]["divId"],rowLength);			            	  
+							else if(json[i]["charttype"] == "bar")
+								showBarChart(json[i]["data"], json[i]["divId"],rowLength);
+							else if(json[i]["charttype"] == "line")
+								showLineChart(json[i]["data"], json[i]["divId"],rowLength);	
+							}
+					}
+					);	 	                           				
 				
+		
 			},
-			error:function(json)
-			{
+			error : function(json) {
 				var obj = eval('(' + json.responseText + ')');	
 				
 				$.each(obj, function(i, v){
-					if(obj[i]["charttype"] === "pie")
-						showPieChart(obj[i]["data"], obj[i]["divId"]);
-					else if(obj[i]["charttype"] === "bar") 
-						showBarChart(obj[i]["data"], obj[i]["divId"]);
-					else if(obj[i]["charttype"] === "line")
-						showLineChart(obj[i]["data"], obj[i]["divId"]);										 
-					else if(obj[i]["charttype"] === "plain")
-						showPlainText(obj[i]["data"], obj[i]["divId"]);	 
+					
+					if(obj[i]["charttype"] == "plain"){
+						showPlainText(obj[i]["data"], obj[i]["divId"]);
+					}
+					else {
+						var rowLength =  obj[i].data.rows.length;
+						//alert("length is = " + rowLength + " div is " + obj[i]["divId"] );
+						if(obj[i]["charttype"] == "pie" )
+							showPieChart(obj[i]["data"], obj[i]["divId"],rowLength);			            	  
+						else if(obj[i]["charttype"] == "bar")
+							showBarChart(obj[i]["data"], obj[i]["divId"],rowLength);
+						else if(obj[i]["charttype"] == "line")
+							showLineChart(obj[i]["data"], obj[i]["divId"],rowLength);	
+						}
 				});	 
-			}	 
+			}
 		});	//end of ajax
 		
 		getPUE();
 		loadGoals();
-	}
-	
+	}	
 });
 
 
@@ -232,9 +245,14 @@ function loadGoals()
 		success:function(json)
 		{		
 			var vValues = "";
+			// just add a select one from list option 
+			vValues = vValues + '<option value = "'+ "---" + '" >' 
+			+ 'Please choose a Goal from the list' + '</option>';	
+
 			$.each(json[0]["goalData"], function(i,n)
 			{
-				vValues = vValues + '<option value = "'+ json[0]["goalData"][i]["goalId"] + '" >' + json[0]["goalData"][i]["goalDescr"] + '</option>';	
+				vValues = vValues + '<option value = "'+ json[0]["goalData"][i]["goalId"] + '" >' 
+					+ json[0]["goalData"][i]["goalDescr"] + '</option>';	
 			});
 			
 			$("#cmbGoals").append(vValues); 			
@@ -249,6 +267,7 @@ function loadGoals()
 
 function serverList()
 {
+			
 	//window.location.href = "server_list.jsp";
 	window.open("server_list.jsp?entpId="+ $.jStorage.get("jsEntpId") ,"serverlist","right=2000,top=20,toolbar=no, " +
 				"status=no,location=no,	menubar=no, scrollbars=yes, resizable=no, width=400, height=400");
@@ -293,7 +312,8 @@ function checkGoalInput(goalId)
 				{
 	 				if(json[i]["dtvalue"] === "date")
 					{
-						$("#"+json[i]["descr"]).datetimepicker({ showOn: "button", buttonImage: "images/calendar.gif", buttonImageOnly: true }) ; 						
+						$("#"+json[i]["descr"]).datepicker({ dateFormat: 'yy-mm-dd' ,
+							showOn: "button", buttonImage: "images/calendar.gif", buttonImageOnly: true }) ; 						
 					} 
 				});	 				
 	 
@@ -313,6 +333,7 @@ function checkGoalInput(goalId)
 		}	 
 	});	//end of ajax			
 }
+
 
 // opening the asset list dialog to copy the selected assets
 //function openAssetList()
@@ -362,7 +383,7 @@ function submitGoalInput()
 	var vType = "GET";
 	var vUrl = $.jStorage.get("jsDBUrl") + "GoalInputServices/getGoalInput?goalId=" + 	$.jStorage.get("goalId");
 	
-	//var vValues = "";
+	var vGoalInputs = "";
 	
 	var aryGoalInputs = [];
 
@@ -392,12 +413,23 @@ function submitGoalInput()
 							text: json[i]["colHoldr"],
 							value: $("#"+json[i]["descr"]).val()
             				});
+						
+						if ( vGoalInputs == "" ) {
+							vGoalInputs = vGoalInputs + json[i]["colHoldr"] + "=" + $("#"+json[i]["descr"]).val();
+						}
+						else {
+							vGoalInputs = vGoalInputs + "~"+ json[i]["colHoldr"] + "=" + $("#"+json[i]["descr"]).val();	
+						}
+						
 					}
 				});	 
 				
-				alert("final text length to be submitted is :" + aryGoalInputs.length + "  " + JSON.stringify(aryGoalInputs));
+				//alert("final text length to be submitted is :" + aryGoalInputs.length + "  " + JSON.stringify(aryGoalInputs));
+				alert("final text length to be submitted is <" + vGoalInputs +">");
+				
 				$("#dlgGoalInput").dialog(optGoalInput).dialog('close');		
-				window.location.href = "goal.jsp";
+				window.location.href = "goal.jsp?goalId="+$.jStorage.get("goalId")+"&entpId="+$.jStorage.get("jsEntpId")+"&goalInputs="+vGoalInputs;
+				
 			}	
 		},
 		error:function(json)
