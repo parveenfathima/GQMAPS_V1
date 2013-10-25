@@ -17,7 +17,7 @@ import com.gq.meter.object.GoalInput;
 import com.gq.meter.util.CustomerServiceConstant;
 
 /**
- * @author GQ
+ * @author rathish
  * 
  */
 @Path("GoalInputServices")

@@ -22,17 +22,17 @@ import com.gq.meter.util.CustomerServiceConstant;
  * 
  */
 
-// This class is define the services of getting and updating asset(computer,printer,nsrg and storage) data's
+// This class defines the services of getting and updating asset(computer,printer,nsrg and storage) data's.
 @Path("/AssetEditServices")
 public class AssetEditServices {
 
     @Path("/getAssetData")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    // This method is takes care of getting asset details for requesting enterprise Id.
+    // This method takes care of getting asset details for requesting enterprise.
     public String getAllAssetDetails(@QueryParam("enterpriseId") String enterpriseId) {
 
-        CustomerServiceConstant.logger.info("Generating all the Get Asset service list from GQEntrprseDataProcessor");
+        CustomerServiceConstant.logger.info(" Generating all the Asset list for requesting enterprise");
         AssetEditModel getAssetModel = new AssetEditModel();
         GetAsset getAssetResult = getAssetModel.getAssetDetails(enterpriseId);
         // Returning all the Assets in JSON format
@@ -42,7 +42,7 @@ public class AssetEditServices {
     @Path("/updateAssetData")
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
-    // This method is takes care of updating asset details for requesting enterprise Id.
+    // This method takes care of updating asset details for requesting enterprise.
     public Response updateAsset(@QueryParam("enterpriseId") String enterpriseId, String assetObjectString) {
         Asset[] assetObject = null;
         try {
@@ -54,7 +54,7 @@ public class AssetEditServices {
             }
         }
         catch (Exception e) {
-            CustomerServiceConstant.logger.error("Exception occured while updating enterprise", e);
+            CustomerServiceConstant.logger.error(" Exception occured while updating enterprise", e);
             return Response.status(400).build();
         }
         return Response.ok(CustomerServiceConstant.gson.toJson("success")).build();
