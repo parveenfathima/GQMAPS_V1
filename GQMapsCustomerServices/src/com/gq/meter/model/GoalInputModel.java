@@ -16,19 +16,22 @@ import com.mysql.jdbc.PreparedStatement;
  * @author GQ
  * 
  */
+
 public class GoalInputModel {
     public List<GoalInput> getGoalInput(String goalId) throws Exception {
+
         Connection dbExchange = null;
         Connection dbCustomer = null;
         PreparedStatement prepareStmt;
         List<GoalInput> goalList = new ArrayList<GoalInput>();
+
         try {
             dbExchange = SqlUtil.getExchangeConnection();
-            // dbCustomer = SqlUtil.getCustomerConnection(entpId);
             String goalInputQuery = "select * from goal_input where goal_id=?;";
             prepareStmt = (PreparedStatement) dbExchange.prepareStatement(goalInputQuery);
             prepareStmt.setString(1, goalId);
             ResultSet goalInputSet = prepareStmt.executeQuery();
+
             while (goalInputSet.next()) {
                 GoalInput inputObj = new GoalInput();
                 inputObj.setGoalId(goalInputSet.getString("goal_id"));
