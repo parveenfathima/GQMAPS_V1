@@ -1,65 +1,66 @@
-<%@ page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1"%>
-<%@page import="com.gq.meter.xchange.object.GoalSnpsht"%>
-<%@page import="com.gq.meter.xchange.object.Goal"%>
-<%@page import="com.gq.meter.xchange.object.TaskTmplt"%>
+
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+	pageEncoding="ISO-8859-1"%>
+
+<%@page import="com.gq.meter.xchange.object.*"%>
 <%@page import="com.gq.cust.GoalHelper"%>
 <%@page import="java.util.ArrayList"%>
 <%@page import="java.util.List"%>
 
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 
 <html>
 
 <head>
+<script type="text/javascript" src = "http://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.js" charset="utf-8"></script>
 
-	<script src="jquery-ui-1.10.2.custom/js/jquery-1.9.1.js"></script>
-	<script src="jquery-ui-1.10.2.custom/js/jquery-ui-1.10.2.custom.js"></script>
-	<script src="js/jstorage.js"> </script>
-		
-	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-	<title> Goal Screen </title>
+<script type="text/javascript" src="http://www.google.com/jsapi"  charset="utf-8"></script>
+<script type="text/javascript">
+            google.load("visualization", "1", {packages:["piechart", "corechart", "annotatedtimeline", "geomap"]});
+</script>
+<script src="js/goal.js"> </script>
+<script src = "js/jstorage.js"> </script>   
+   
+<script src = "js/rest_service.js"> </script> 
+
+
+
+
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+
+<title>Goal screens for GQMaps</title>
+
 	<style type="text/css">
-
-			.taskTempltDiv {
-			  position: absolute;
-			  left: 5px;
-			  padding: 0px;
-			  width: 150px;
-			}
-			
-			.goalSnapshtDiv{
-			
-			  margin-left: 200px;
-			  padding: 0px;
-			  margin-right: 15px;
-			}
-
-			.bluec
-			{
-				color:#0000aa;
-			}
-
-			.greenc
-			{
-				color:#00aa00;
-			}
-
+		.taskTempltDiv {
+			position: absolute;
+			left: 5px;
+			padding: 0px;
+			width: 150px;
+		}
+		
+		.goalSnapshtDiv {
+			margin-left: 200px;
+			padding: 0px;
+			margin-right: 15px;
+		}
+		
+		.bluec {
+			color: #0000aa;
+		}
+		
+		.greenc {
+			color: #00aa00;
+		}
 	</style>
 
-
-	
-<script>
- 
-
+	<script> 		
+		//function to find number of check boxes selected
 		function processForm(obj) {
 			var cb = document.getElementsByTagName('input');
 			var retStr = "";
 			var cbCount = 0;
 			var cbCheckedCount = 0;
-			
-			//alert("# elements in form = " + cb.length);
-			
+					
 			for ( var i = 0; i < cb.length; i++) {
 				if (cb[i].getAttribute('type') == "checkbox") {
 					cbCount++;
@@ -72,24 +73,18 @@
 			return false;
 		}
 		
-		function DetectChanges(cid)
-		{
-			var cb = document.getElementsByTagName('input');
-			
+		// function to find whether the form is edited by user
+		function DetectChanges(cid){
+			var cb = document.getElementsByTagName('input');			
 			var retStr = "";
 			var hfval = "";
-			//alert("# elements in form = " + cb.length);
 			
 			for ( var i = 0; i < cb.length; i++) {
-				if (cb[i].getAttribute('type') == "text") {
-					
-					//alert ( 'value of text box is ' + cb[i].value);
-					retStr = retStr + cb[i].value.trim();
-									
+				if (cb[i].getAttribute('type') == "text") {					
+					retStr = retStr + cb[i].value.trim();									
 				} 
 			}
-			//alert("num check boxes  = " + cbCount + " , checked = "+ cbCheckedCount);
-			//alert ( 'combined value of text box is ' + retStr);
+			
 			if ( cid == 'ol'){
 				document.getElementById('defval').value = retStr;
 				
@@ -100,43 +95,44 @@
 					alert('form didnt change');
 				}
 				else {
-					alert('form changed y krupa');
+					alert('form changed');
 				}
 			}
 			return false;
 		}
-		
-		
+				
 		String.prototype.trim = function() {
 		    return this.replace(/^\s+|\s+$/g, "");
 		};
 		
-// 		function  Passval(){
-// 			alert('goal id is = '+ $.jStorage.get("goalId") + " , enterprise id = " +$.jStorage.get("jsEntpId"));
-// 		}
-		
 	</script>
-	
+
 </head>
 
 <body>
-	
-	
+
 	<%
-		String enterpriseId = request.getParameter("entpId") ;
-		String goalId =  request.getParameter("goalId") ;
-		//System.out.println("g = "+goalId + " , e = "+ enterpriseId);
-		GoalSnpsht a = new GoalSnpsht();
-		GoalHelper gh = new GoalHelper(enterpriseId , goalId);
-		List<GoalSnpsht> goalsnapshotList = gh.getGoalSnapshot();
+		String enterpriseId = request.getParameter("entpId");
+		String goalId = request.getParameter("goalId");
+		String goalInputs = request.getParameter("goalInputs");
+		
+		System.out.println("inside goal.jsp e <" + enterpriseId +"> , g <" + goalId + "> , i <"+ goalInputs +">");
+		
+		GoalHelper gh = new GoalHelper(enterpriseId, goalId , goalInputs );
+		//GoalHelper gh = new GoalHelper(enterpriseId, goalId , "__date__=10/16/2013 12:0:0~__asset_id__=C-000c293c937a" );
+		
 		Goal g = gh.getGoal();
-		TaskTmplt b = new TaskTmplt();
-		List<TaskTmplt> taskTmpltList = gh.getTaskTmplt();
+		List<GoalSnpsht> goalsnapshotList = gh.getGoalSnapshot();
+		List<TemplateTaskDetails> goalTaskTmpltChkList = gh
+				.getTemplateTaskDetails();
 	%>
-	<h1 align="center"><%=g.getGoalDescr()%></h1>
+
+	<h1 align="center"><%=g.getDescr()%></h1>
 	
-		<form  id="gspform">
-	
+	<!-- form to display goal snapshot history-->
+
+	<form id="gspform">
+
 		<div id="goalSnapshtDiv">
 			<table id="tblGoalsnapsht" border="1">
 				<tr bgcolor="green" style="color: white;">
@@ -146,92 +142,135 @@
 					<th>Notes</th>
 					<th>Realized Benefit</th>
 				</tr>
-				
-					<%
-						for (int i = 0; i < goalsnapshotList.size(); i++) {
-					%>
+
+				<%
+					for (int i = 0; i < goalsnapshotList.size(); i++) {
+				%>
 				<tr>
 					<td><%=goalsnapshotList.get(i).getSnpshtId()%></td>
 					<td><%=goalsnapshotList.get(i).getStartDate()%></td>
+					<td><%=goalsnapshotList.get(i).getNotes()%></td>
 					<td><%=goalsnapshotList.get(i).getEndDate()%></td>
-					<td><%=goalsnapshotList.get(i).getUserNotes()%></td>
 					<td><%=goalsnapshotList.get(i).getCostBenefit()%></td>
-				
 
 					<%
 						}
 					%>
-					
+
 				</tr>
-				
+
 			</table>
 		</div>
 	</form>
-	
-	
-	<form id="tskform">
-	
-		<div id="taskTempltDiv" >
-			  <table id="tblTasktmplt" border ="1">
-			 	<tr bgcolor="green" style="color: white;">
-			 		<th>Task</th>
-			 		<th>UserNotes</th>
-			 		<th>Benefit</th>
-			 		<th>SystemNotes</th>
-			 		<th>Apply</th>
-			 	</tr> 
-			 	
-			 		<%
-						for (int i = 0; i < taskTmpltList.size(); i++) {
-					%>
+
+	<!-- form to display task template -->
+
+	<table id="tblTasktmplt" border="1">
+		<tr bgcolor="green" style="color: white;">
+			<th>Task</th>
+			<th>UserNotes</th>
+			<th>Benefit</th>
+			<th>SystemNotes</th>
+			<th>Apply</th>
+		</tr>
+		
+		<!-- Showing color change for alternative rows  -->
+		<%
+			int i = 0;
+			for (i = 0; i < goalTaskTmpltChkList.size(); i++) {
+				%>
+				<%
+					if (i % 2 == 0) {
+				%>
+		
+				<tr bgcolor="gray">
+		
 					<%
-					  	if ( i % 2 == 0) {
+						} else {
+					%>
+				
+			    <tr bgcolor="beige">
+		
+						<%
+							}
+						%>
+			
+					<td><%=goalTaskTmpltChkList.get(i).getDescr()%></td>
+					
+					<td><input type="text" name="usernotes" id="usrnts" onclick="serverList();" 
+							 value=<%=goalTaskTmpltChkList.get(i).getUsr_notes()%>></td>
+							
+					<td><input type="text" name="benefit" onclick="alert('Click!');"
+							value=<%=goalTaskTmpltChkList.get(i).getCost_benefit()%>></td>
+							
+					<td><input type="text" name="systemnotes"
+							value=<%=goalTaskTmpltChkList.get(i).getSys_notes()%>></td>
+						
+					<!-- Checking applied date is null -->		
+					<%
+						if (goalTaskTmpltChkList.get(i).getApply_date() == null) {
+					%>
+					<td><input type="checkbox" id="chkApply"></td>
+					<%
+						} else {
+					%>
+					<td><input type="checkbox" id="chkApply" checked="checked"></td>
+					<%
+						} // end apply date chek box logic
+					%>
+				</tr> 
+				
+				<!--  this tr is for graph -->
+				<tr>
+					<td>
+					<%
+					if ( goalTaskTmpltChkList.get(i).getChartType().equals("line")) {
+						%>
+						<input type="hidden" id="chartData_<%=i%>" 
+							value='<%=goalTaskTmpltChkList.get(i).getChartData().replaceFirst("string", "datetime")%>'>		
+							<div id='chartDiv_<%=i%>' style = "width :400px; height:200px ;color: #00008a"></div> 					
+						<%	
+					}
+					else {
+						%>
+							<input type="hidden" id="chartData_<%=i%>" 
+									value='<%=goalTaskTmpltChkList.get(i).getChartData()%>'>							
+							<div id='chartDiv_<%=i%>' style = "color: #00008h" ></div>		
+						<%
+					}
 					%>
 					
-			 			<tr bgcolor="gray">
-			 	
-			 		<% } 
-			 			else {
-			 		%>
-			 			<tr bgcolor="beige">
-			 	
-			 		<% } 
-			 		%>
-			 			 	
-			 		<td><%=taskTmpltList.get(i).getDescr()%></td>
-			 		<td><input type="text" name="usernotes" id="usrnts" value=" "></td>
-			 		<td><input type="text" name="benefit"></td>
-			 		<td><input type="text" name="systemnotes"></td>
-			 		<td><input type="checkbox" id = "chkApply"  ></td>
-			 		
-			 		<% } %>
-			 		
-			 	</tr>
-			  </table>
-			  <input type="button" id = "save" value="Save&Exit" onclick="DetectChanges('se')"> 
-			  <input type="button" id = "finalize" value="Finalize" onclick="processForm(this) ">
-			  <input type="text" name="Comments" value=" " >
-			  <input type="hidden" id = "defval" name="defaultVal" value=""> 
-		</div>
-			
-	</form>
+					<input type="hidden" id="chartType_<%=i%>"
+							value='<%=goalTaskTmpltChkList.get(i).getChartType()%>'></td>
+				</tr>
 	
-	
-<script >window.onload = DetectChanges('ol');
+			<%
+				} // end for to display tasks
+			%>
 
-</script>
+			<!-- this used in goal.jsp for-loop -->
+			
+			<tr>
+				<td><input type="hidden" id="taskCount" value=<%=i%>>	</td>
+			</tr>
+
+	</table>
+
+		<input type="button" id="save" value="Save&Exit"
+			onclick="DetectChanges('se')">
+		<input type="button" id="finalize" value="Finalize"
+			onclick="processForm(this) ">
+		<input type="text" name="Comments" value=" ">
+		<input type="hidden" id="defval" name="defaultVal" value="">
+
+	<script>
+//	  alert("inside ol script");
+	  window.onload = showGoalGraphs();	 
+	</script>
 
 </body>
 
 </html>
 
 
-<!-- multiple rows of goal template table with desc from gt table 
-		for each row
-			show the chart based on task asst row entitiy for the g.template table ( button for server list)
-		end for
-	
-	rows from goal snapshot table 
-	
-	2 buttons - save & continue , finalize
-	 -->
+
