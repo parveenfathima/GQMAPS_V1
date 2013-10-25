@@ -31,7 +31,7 @@ public class AssetEditModel {
         Transaction tx = null;
 
         try {
-        	CustomerServiceConstant.logger.debug("Enterprise Id:" + enterpriseId);
+            CustomerServiceConstant.logger.debug("Enterprise Id:" + enterpriseId);
             String dbInstanceName = "gqm" + enterpriseId;
 
             // Create a session factory for requesting enterprise
@@ -43,15 +43,15 @@ public class AssetEditModel {
 
             String asset = "FROM Asset";
             Query assetQuery = session.createQuery(asset);
-            List<Asset> assetResult = (List<Asset>)assetQuery.list();
+            List<Asset> assetResult = (List<Asset>) assetQuery.list();
             getAssetServices = new GetAsset(assetResult);
         }
         catch (Exception e) {
-            CustomerServiceConstant.logger.error("Exception occured while fetching the CustomerServiceDetails ", e);
+            CustomerServiceConstant.logger.error(" Exception occured while fetching the AssetDetails ", e);
         }
         finally {
             try {
-            	// commit the unit of work , meters will have flush only
+                // commit the unit of work , meters will have flush only
                 tx.commit();
             }
             catch (Exception e) {
@@ -95,13 +95,12 @@ public class AssetEditModel {
                 oldAssetObject.setInactiveDttm(currentDate);
             }
             oldAssetObject.setTypeId(assetObject.getTypeId());
-            CustomerServiceConstant.logger.debug("assset Object updated Successfully");
+            CustomerServiceConstant.logger.debug(" Asset Object updated Successfully");
             session.flush();
-            
         }
         catch (Exception e) {
-        	CustomerServiceConstant.logger.debug(e);
-            CustomerServiceConstant.logger.error("Exception occured while Updating the Asset ", e);
+            CustomerServiceConstant.logger.debug(e);
+            CustomerServiceConstant.logger.error(" Exception occured while Updating the Asset ", e);
             throw e;
         }
         finally {

@@ -29,7 +29,7 @@ public class MapsDomainModel {
         SessionFactory sessionFactory = null;
 
         try {
-            System.out.println("Enterprise Id:" + enterpriseId);
+            CustomerServiceConstant.logger.debug("Enterprise Id:" + enterpriseId);
             String dbInstanceName = "gqm" + enterpriseId;
 
             // Create a session factory for requesting enterprise
@@ -75,7 +75,7 @@ public class MapsDomainModel {
                 e.printStackTrace();
             }
         }
-        // To return the domain services
+        // To return the domain service
         return mapsDomainServices;
     }
 }
