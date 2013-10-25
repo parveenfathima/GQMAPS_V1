@@ -37,7 +37,7 @@ public final class MeterUtils {
     public long printMeterTime = 0;
     public long nsrgMeterTime = 0;
     public long storageMeterTime = 0;
-    
+
     // public static final String restURL = "http://localhost:8080/GQGatekeeper/";
     public static Asset sysBasicInfo(String communityString, String ipAddress, String snmpVersion,
             List<String> errorList) {
@@ -95,7 +95,7 @@ public final class MeterUtils {
             else {
                 errorList.add("Root OID : 1.3.6.1.2.1.1" + " " + MeterConstants.STANDARD_SYSTEM_ATTRIBUTES_ERROR);
             }
-            
+
             ipAddr = ipAddress;
             assetObj = new Asset();
             assetObj.setAssetId(assetId);
@@ -126,7 +126,7 @@ public final class MeterUtils {
         CommunityTarget target = MeterUtils.makeTarget(currIp, communityString, snmpVersion);
         OID rootOID = new OID(oidString);
         List<VariableBinding> result = walk(rootOID, target);
-        
+
         if (result == null || result.isEmpty()) {
             // may be the device is serving snmp but not version 2 , so lets try version 1
             snmpVersion = MeterConstants.SNMP_VERSION_1;
@@ -178,13 +178,18 @@ public final class MeterUtils {
                 mProtocol = MeterProtocols.COMPUTER;
 
                 if (result == null || result.size() == 0 || result.isEmpty()) {
-                    mProtocol = MeterProtocols.STORAGE;
+                    // We are here either due to the fact that this asset is not one of the above three.
+                    // or the network speeds were very low and hence check octet call timed out.
+                    // or lastly the device may be a storage device
+                    // for now we will return null;
+                    // mProtocol = MeterProtocols.STORAGE;
+                    mProtocol = null;
+
                 }
             }
         }
         return mProtocol;
     }
-
 
     /**
      * This method used to find an asset is reachable or not from the host where our GQMeter is running.
@@ -253,7 +258,6 @@ public final class MeterUtils {
         ipList.add(ipAddrUpperBound);
         return ipList;
     } // getIpAddressesInInclusiveRange ends
-
 
     /**
      * This method returns a Target, which contains information about where the data should be fetched and how.
@@ -414,7 +418,6 @@ public final class MeterUtils {
         long secs = dayseconds + hourSec + minSec + seconds;
         return secs;
     }
-
 
     /**
      * This method used to convert the given ip address to a numeric value
