@@ -1,17 +1,18 @@
 package com.gq.meter.restsvcs;
 
 import java.sql.Connection;
+import java.util.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.TimeZone;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -32,6 +33,8 @@ import com.gq.meter.object.GoalSnpsht;
 import com.gq.meter.object.TemplateTaskDetails;
 import com.gq.meter.util.CustomerServiceConstant;
 import com.gq.meter.util.SqlUtil;
+import com.ibm.icu.util.GregorianCalendar;
+import com.ibm.icu.util.TimeZone;
 import com.mysql.jdbc.PreparedStatement;
 import com.mysql.jdbc.ResultSetMetaData;
 import com.mysql.jdbc.Statement;
@@ -114,7 +117,7 @@ public class GoalServices {
 
             Statement statement = (Statement) dbExchange.createStatement();
 
-            System.out.println("finaltskquery::" + taskTmpltQuery);
+             CustomerServiceConstant.logger.info("finaltskquery::" + taskTmpltQuery);
             ResultSet taskTmpltset = statement.executeQuery(taskTmpltQuery);
 
             List<TemplateTaskDetails> templateTaskDetails = new ArrayList<TemplateTaskDetails>(10);
@@ -191,7 +194,7 @@ public class GoalServices {
             // from template task table itself
             retCData.add("plain");
             retCData.add("notused");
-            retCData.add("nodata");
+            retCData.add(" ");
 
             return retCData;
         }
@@ -205,7 +208,7 @@ public class GoalServices {
             if (!goalTaskAsstSet.next()) {
                 retCData.add(ctId);
                 retCData.add("notused");
-                retCData.add("nodata");
+                retCData.add(" ");
 
                 return retCData;
             }
@@ -236,15 +239,15 @@ public class GoalServices {
 
         // goal input
         CustomerServiceConstant.logger.info(" Dynamic Inputs passed for processing " + goalInputs);
-
-        String[] inputs = goalInputs.split("~");
-
         Map<String, String> goalInputMap = new HashMap<String, String>(5);
+        if(goalInputs!=" " && goalInputs!=null){
+        String[] inputs = goalInputs.split("~");
+       
         for (String s : inputs) {
             String split[] = s.split("\\=");
             goalInputMap.put(split[0], split[1]);
         }
-
+        }
         // replacing the sql with fillers we have in the hashmap
         if (dynamicInput.equals("y")) {
             Iterator<Entry<String, String>> it = goalInputMap.entrySet().iterator();
@@ -253,7 +256,7 @@ public class GoalServices {
                 CustomerServiceConstant.logger.info(" Input values from map " + pairs.getKey() + " = "
                         + pairs.getValue());
 
-                System.out.println(pairs.getKey() + " = " + pairs.getValue());
+                 CustomerServiceConstant.logger.info(pairs.getKey() + " = " + pairs.getValue());
                 taskSql = taskSql.replaceAll(pairs.getKey(), pairs.getValue());
             }
         }
@@ -270,13 +273,14 @@ public class GoalServices {
             CustomerServiceConstant.logger.info(" Query For non Dynamic value executing for Enterprise" + entpId);
             stmt = (Statement) dbCustomer.prepareStatement(taskSql); // Resultset returned by query
             // entpResultset =
+             CustomerServiceConstant.logger.info("tsql:: " + taskSql);
             entpResultset = stmt.executeQuery(taskSql);
         }
         // determine the number of columns will be used for charts
-        if (!entpResultset.next()) {
-            retCData.add(ctId);
-            retCData.add("notused");
-            retCData.add("nodata");
+        if (!entpResultset.isBeforeFirst()) {
+//            retCData.add(ctId);
+//            retCData.add("notused");
+            retCData.add(" ");
 
             return retCData;
         }
@@ -295,7 +299,7 @@ public class GoalServices {
         else if (ctId.equals("line")) {
             ArrayList<ColumnDescription> lineColumn = new ArrayList<ColumnDescription>();
             CustomerServiceConstant.logger.info(" Columns are being set for Annotated TimeLine charts");
-            lineColumn.add(new ColumnDescription(colHeader[0], ValueType.DATETIME, colHeader[0]));
+            lineColumn.add(new ColumnDescription(colHeader[0], ValueType.TEXT, colHeader[0]));
             lineColumn.add(new ColumnDescription(colHeader[1], ValueType.NUMBER, colHeader[1]));
             dataTable.addColumns(lineColumn);
         }
@@ -327,9 +331,9 @@ public class GoalServices {
         else if (ctId.equals("plain")) {
             CustomerServiceConstant.logger.info(" Dynamic Data Rows with are Plain Text");
             // 3rd arg is the actual google chart json
-            // while (entpResultset.next()) {
+            while (entpResultset.next()) {
             retCData.add(entpResultset.getString(1)); // we expect only one row one column
-            // }
+            }
         }
 
         // adding the rows to the chart
@@ -357,11 +361,15 @@ public class GoalServices {
                 int minutes = Integer.parseInt(other.substring(14, 16));
                 int seconds = Integer.parseInt(other.substring(17, 19));
                 calendar.set(year, month, date, hours, minutes, seconds);
-                dataTable.addRowFromValues(calendar, cDataList.get(i).getYaxis());
+            	DateFormat outputFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//used for converting date to String format
+            	DateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            	Date currDate = inputFormat.parse(other);
+            	String outputText = outputFormat.format(currDate);
+                String newDate="new Date("+outputText+")";
+                dataTable.addRowFromValues(outputText, cDataList.get(i).getYaxis());
             }
             renderchart = JsonRenderer.renderDataTable(dataTable, true, true);
             chartJson = CustomerServiceConstant.gson.toJson(renderchart);
-
             // 3rd arg is the actual google chart json
             retCData.add(chartJson);
         }

@@ -1,5 +1,7 @@
 package com.gq.meter.restsvcs;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -295,6 +297,22 @@ public class DashboardServices {
                 if (chartType.equals("bar") || chartType.equals("pie")) {
                     CustomerServiceConstant.logger
                             .info("[DASHBOARDSERVICES]  Rows and Columns are being added for BAR/PIE charts");
+                    if (positionId.equals("div_connectedWebsites")) {
+                        InetAddress addr;
+                        try {
+                            ChartRowHolder hostname = new ChartRowHolder();
+
+                            for (int j = 0; j < cDataList.size(); j++) {
+                                addr = InetAddress.getByName(cDataList.get(j).getXaxis());// resolving ipaddress to
+                                String host = addr.getCanonicalHostName();
+                                hostname.setXaxis(host);
+                            }
+                            cDataList.add(hostname);
+                        }
+                        catch (UnknownHostException e) {
+                            System.out.println(e);
+                        }
+                    }
                     for (int i = 0; i < cDataList.size(); i++) {
                         chartdata.addRowFromValues(cDataList.get(i).getXaxis(), cDataList.get(i).getYaxis(), cDataList
                                 .get(i).getZaxis());
