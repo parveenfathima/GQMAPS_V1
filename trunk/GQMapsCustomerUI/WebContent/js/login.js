@@ -33,6 +33,7 @@ function userLogin()
 	else 
 	{
 		var vUrl = $.jStorage.get("jsUrl") + "enterprise/getEnterpriseDetails?userId=" + user + "&passwd=" + pwd;
+		
 
 		$.ajax({
 			type : "GET",
