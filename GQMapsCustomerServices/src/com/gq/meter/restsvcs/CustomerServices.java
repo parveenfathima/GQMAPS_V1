@@ -16,6 +16,10 @@ import com.gq.meter.object.AssetLoad;
 import com.gq.meter.object.ProtocolCount;
 import com.gq.meter.util.CustomerServiceConstant;
 
+/**
+ * @author rathish
+ * @change parveen
+ */
 @Path("/customerservices")
 public class CustomerServices {
 
@@ -32,7 +36,7 @@ public class CustomerServices {
         CustomerServiceModel customerServiceModel = new CustomerServiceModel();
         AllCustomerServices customerServiceResult = customerServiceModel.getAllCustomerServiceDetails();
         // Returning all the enterprises in JSON format
-        CustomerServiceConstant.logger.info("Sucessfully Data Received from GQEntrprseDataProcessor");
+        CustomerServiceConstant.logger.info(" Sucessfully Data Received from GQEntrprseDataProcessor");
         return CustomerServiceConstant.gson.toJson(customerServiceResult);
     }
 

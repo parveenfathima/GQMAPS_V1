@@ -25,9 +25,10 @@ import java.sql.Connection;
 import com.mysql.jdbc.Statement;
 
 /**
- * @author GQ
+ * @author rathish
  * 
  */
+
 @Path("/goalmaster")
 public class GoalMasterService {
     @Path("/goals")
@@ -44,7 +45,8 @@ public class GoalMasterService {
             String goalSql = "select goal_id,descr from goal";
             goalStmt = (Statement) dbExchange.createStatement();
             ResultSet goalset = goalStmt.executeQuery(goalSql);
-            CustomerServiceConstant.logger.info("[DASHBOARDSERVICES]  Query sucessfully Executed from the Goal Table");
+            CustomerServiceConstant.logger.info(" Query sucessfully Executed from the Goal Table");
+
             while (goalset.next()) {
                 TaskAssist taskAssistObj = new TaskAssist();
                 String goal_id = goalset.getString("goal_id");
@@ -53,23 +55,26 @@ public class GoalMasterService {
                 taskAssistObj.setDescr(goaldescr);
                 goalArray.add(taskAssistObj);
             }
+
             JSONArray goalJsonArray = new JSONArray();
             JSONObject goalDataTitle = new JSONObject();
+
             for (int i = 0; i < goalArray.size(); i++) {
                 JSONObject assetJson = new JSONObject();
                 assetJson.put("goalId", goalArray.get(i).getPlain());
                 assetJson.put("goalDescr", goalArray.get(i).getDescr());
                 goalJsonArray.put(assetJson);
             }
+
             goalDataTitle.put("goalData", goalJsonArray);
             JSONArray result = new JSONArray();
             result.put(goalDataTitle);
             goalResult = result.toString();
             CustomerServiceConstant.logger
-                    .info("[DASHBOARDSERVICES]  Query sucessfully Executed Objects are constructed for the Goal and added to JSON Array");
+                    .info(" Query sucessfully Executed Objects are constructed for the Goal and added to JSON Array");
         }
         catch (SQLException e) {
-            CustomerServiceConstant.logger.info("[DASHBOARDSERVICES]  Exception Occured while fetching the Goals");
+            CustomerServiceConstant.logger.info(" Exception Occured while fetching the Goals");
         }
         catch (Exception e) {
             // TODO Auto-generated catch block
