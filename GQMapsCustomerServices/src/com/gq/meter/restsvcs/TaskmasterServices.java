@@ -21,6 +21,7 @@ import org.json.JSONObject;
 
 import com.gq.meter.object.TaskMaster;
 import com.gq.meter.util.CustomerServiceConstant;
+import com.gq.meter.util.SqlUtil;
 import com.mysql.jdbc.Statement;
 
 /**
@@ -33,22 +34,19 @@ public class TaskmasterServices {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response gettasks() throws ClassNotFoundException {
-        String dbURL = "jdbc:mysql://192.168.1.95:3306/gqexchange";
-        String username = "gqmaps";
-        String password = "Ch1ca803ear$";
-        Connection dbCon = null;
+        Connection dbExchange = null;
         List<TaskMaster> taskArray = new ArrayList<TaskMaster>();
         String tasks = "";
 
         Statement taskStmt;
         try {
-            Class.forName("com.mysql.jdbc.Driver");
-            dbCon = DriverManager.getConnection(dbURL, username, password);
+            // get db connections
+            dbExchange = SqlUtil.getExchangeConnection();
             String goalSql = "select * from task_tmplt";
-            taskStmt = (Statement) dbCon.createStatement();
+            taskStmt = (Statement) dbExchange.createStatement();
 
             ResultSet taskset = taskStmt.executeQuery(goalSql);
-            CustomerServiceConstant.logger.info("[DASHBOARDSERVICES]  Query sucessfully Executed from the Goal Table");
+            CustomerServiceConstant.logger.info("Query sucessfully Executed from the Goal Table");
             while (taskset.next()) {
                 TaskMaster taskmaster = new TaskMaster();
                 String goal_id = taskset.getString("goal_id");
@@ -76,11 +74,13 @@ public class TaskmasterServices {
             result.put(taskTitle);
             tasks = result.toString();
             CustomerServiceConstant.logger
-                    .info("[DASHBOARDSERVICES]  Query sucessfully Executed Objects are constructed for the Goal and added to JSON Array");
+                    .info("Query sucessfully Executed Objects are constructed for the Goal and added to JSON Array");
         }
         catch (SQLException e) {
-            CustomerServiceConstant.logger.info("[DASHBOARDSERVICES]  Exception Occured while fetching the Goals");
-        }
+            CustomerServiceConstant.logger.info("Exception Occured while fetching the Goals",e);
+        } catch (Exception e) {
+        	  CustomerServiceConstant.logger.info("Exception Occured while fetching DBConnection",e);
+		}
 
         return Response.ok(tasks).build();
     }
