@@ -2,7 +2,7 @@
 <html>
     <head>
          <meta charset="utf-8">
-         <title>Customer Dashboard</title>
+         <title>Customer Dash board</title>
       
         <script type="text/javascript" src = "http://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.js" charset="utf-8"></script>
 		<script type="text/javascript" src = "http://www.google.com/jsapi" charset="utf-8"></script>
@@ -101,34 +101,50 @@
 						<div style="float: left">
 							<!--/first row div starts -->
 	
-							<div class="block-div small-block-div" style="margin-left: 70px">
+							<div class="block-div side-block-div" style="margin-left: 70px">
 	
 								<div class="inner-head">Meter Specifics</div>
-								<br> <span class="span-font span-color" id="div_expiryAlert"></span>
-								<br> <span class="medium-content-div" id="div_assetsScanned"></span>
-								<!-- Comment by kiruba since its not required 18/09/2013
-									<div class="medium-chart-div" id="div_meterCount"></div -->
-								<br> <input type="submit" id="btnConfAssets"
-									name="btnConfAssets" value="Configure Assets" /> <br> <label
-									for="cmbGoals"> Available Goals </label> <br> <select
-									name="cmbGoals" id="cmbGoals">
-								</select> <br> <a href="#">Click here to download the meter jar
-									file</a>
-	
-								<div id="div_pue">your current pue is </div>
-								<div>
+								<div class="inner-content side-block-content-div" style="margin-left: 1px">
+															
+								<div style="background-color:#F0F0F0" style="margin-left: 0px">
 									<input type="button" id="btnPUE" name="btnPUE" value="PUE" onclick ="checkGoalInput('pue')" />
-									<input type="button" id="monitoring" name ="monitoring" value="monitoring" onclick ="checkGoalInput('mon')"/>
+									<input type="button" id="monitoring" name ="monitoring" value="Monitoring" onclick ="checkGoalInput('mon')"/>
+									
 									
 								</div>
+								<div id="div_pue" STYLE="font-family: Arial Black; 
+										font-size: 14px; color: #600000 ; background-color:#F0F0F0"  >your current pue is </div>
+								<br> <span class="span-font span-color" id="div_expiryAlert"></span>
+								<div STYLE="font-family: Arial Black; 
+										font-size: 10px; color: #600000 ; background-color:#F0F0F0" >
+								<br> <span class="medium-content-div" id="div_assetsScanned" STYLE="font-family: Arial Black; font-size: 14px "></span>
+								<!-- Comment by kiruba since its not required 18/09/2013
+									<div class="medium-chart-div" id="div_meterCount"></div -->
+									
+								<br> <input type="submit" id="btnConfAssets"
+									name="btnConfAssets" value="Configure Assets" /> <br>
+									</div>
+									
+									 <label for="cmbGoals"> Available Goals </label> <br> 
+									
+									<select name="cmbGoals" id="cmbGoals"  
+									
+											onchange="alert('combo goal id ='+ this.value); checkGoalInput(this.value);" >
+									</select>
+																		
+									 <br> <a href="#">Click here to download the meter jar file</a>
+	
 							</div>
 	
 	
 						</div>
 	
 						<div class="block-div large-block-div">
-							<div class="inner-head">Performance Charts for Top Loaded
-								Assets Today</div>
+							<div class="inner-head" style= "margin-right: 0px" ; position:"absolute";>Performance Charts for Top Loaded
+								Assets Today
+								
+								</div>
+							
 							<div class="inner-content top-block-content-div">
 								<table>
 									<tr>
@@ -151,7 +167,8 @@
 						<div class="block-div medium-block-div" style="margin-left: 158px">
 							<div class="inner-head">Top Installed Software</div>
 							<div class="inner-content medium-block-content-div">
-								<div id="div_installedSW"></div>
+							
+								<div id="div_installedSW"> </div>
 	                           <div>
 									<input type="button" id="btnPDI" name="btnPDI"
 										value="Personal Device Impact" onClick="checkGoalInput('byod')" />
@@ -172,12 +189,12 @@
 					<div style="float: left">
 						<!--/third row div strats -->
 	
-						<div class="block-div small-block-div" style="margin-left: 137px"
+						<div class="block-div small-block-div" style="margin-left: 139px"
 							style="margin-top: 60px">
 							<div class="inner-head">Least and most Loaded Assets</div>
 							<div class="inner-content medium-block-content-div">
 								<div id="div_mostleastAssets" style="height: 190px;"></div>
-								<script>     </script>
+								
 								<div>
 <!-- 									<input type="button" id="btnVirtualization" -->
 <!-- 										name="btnVirtualization" value="Virtualization" -->
@@ -190,7 +207,7 @@
 							</div>
 						</div>
 	
-						<div class="block-div small-block-div" style="margin-left: 8px">
+						<div class="block-div small-block-div" style="margin-left: 5px">
 							<div class="inner-head">Most Connected Server Assets</div>
 							<div class="inner-content medium-block-content-div" 
 							id="div_connectedServers"></div>
@@ -198,7 +215,7 @@
 							use developers' machine
 						</div>
 	
-						<div class="block-div small-block-div" style="margin-left: 7px">
+						<div class="block-div small-block-div" style="margin-left: 5px">
 							<div class="inner-head">Externally Connected Websites</div>
 							<div class="inner-content medium-block-content-div"
 								id="div_connectedWebsites"></div>
@@ -225,7 +242,6 @@
 	</body>
 	
 	</html>
-
 
 	<!-- Mask to cover the whole screen -->
 <div id="mask"></div>
