@@ -92,7 +92,7 @@ public class PrinterMeter implements GQSNMPMeter {
         CommunityTarget target = null;
         HashMap<String, Integer> printerStatus;
         List<String> errorList = new LinkedList<String>();
-        
+
         PrinterSnapshot printerSnapShot = null;
         HashSet<PrinterConnDevice> connectedDevices = null;
         Asset assetObj = null;
@@ -229,10 +229,10 @@ public class PrinterMeter implements GQSNMPMeter {
                         errorList.add(assetId
                                 + " Root OID : 1.3.6.1.2.1.25.2.3.1 - Unable to get disk and memory details");
                     }
-                    
+
                     printerSnapShot = new PrinterSnapshot(id, sysIP, totalMemory, totalDiskSpace, usedMemory,
-                            usedDiskSpace, upTime, tonerStatus, outOfPaperIndicator, printsTakenCount, mfgModel, isColorPrinter,
-                            extras, prntrStatus, auxStatus);
+                            usedDiskSpace, upTime, tonerStatus, outOfPaperIndicator, printsTakenCount, mfgModel,
+                            isColorPrinter, extras, prntrStatus, auxStatus);
                     continue;
                 } // if loop ends
 
@@ -251,15 +251,19 @@ public class PrinterMeter implements GQSNMPMeter {
                     }
                     continue;
                 } // 1st if loop ends
-                
+
             }// main for loop ends
-        
+
         }// try ends
         catch (Exception e) {
             errorList.add(ipAddress + " " + e.getMessage());
         }
 
         Printer printerObject = new Printer(id, assetObj, printerSnapShot, connectedDevices);
+
+        if (printerObject.getAssetObj().getAssetId().equalsIgnoreCase("P-null")) {
+            errorList.add(ipAddress + " " + "Asset id is null");
+        }
 
         GQErrorInformation gqErrorInfo = null;
 
