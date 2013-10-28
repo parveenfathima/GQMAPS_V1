@@ -17,7 +17,7 @@ import com.gq.util.GQEDPConstants;
 
 public class GqMeterPrinter {
 
-    public  void insertData(Printer printer, GQMeterResponse gqmResponse, Long runId , Session session) {
+    public void insertData(Printer printer, GQMeterResponse gqmResponse, Long runId, Session session) {
 
         String meterId = gqmResponse.getGqmid();
 
@@ -28,49 +28,49 @@ public class GqMeterPrinter {
             cid.setRunId(runId);
 
             // inserting asset
-            try {
-                Asset assetObj = printer.getAssetObj();
-                session.saveOrUpdate(assetObj);
-            }
-            catch (Exception e) {
-                GQEDPConstants.logger.error(meterId + " Printer Data failed to save in the Asset table ", e);
-            }
 
-            // snapshot
-            PrinterSnapshot printerSnapshot = printer.getPrinterSnapShot();
-            if (printerSnapshot != null) {
-	            try {
-	                printerSnapshot.setId(cid);
-	                session.save(printerSnapshot);
-	                GQEDPConstants.logger.info(meterId + " Data successfully saved in the Printer Snapshot table ");
-	            }
-	            catch (Exception e) {
-	                GQEDPConstants.logger.error(meterId + " Data failed to save in the Printer Snapshot table ", e);
-	            }
-            }
-            // connected device
-            if (printer.getPrinterConnectedDevice() != null) {
-                try {
-                    for (PrinterConnDevice printerConnDevice : printer.getPrinterConnectedDevice()) {
-                        printerConnDevice.getId().setRunId(runId);
-                        session.merge(printerConnDevice);
+            Asset assetObj = printer.getAssetObj();
+            if (assetObj.getAssetId() != " " && assetObj.getAssetId() != null
+                    && !assetObj.getAssetId().equalsIgnoreCase("P-null")) {
+                session.saveOrUpdate(assetObj);
+
+                // snapshot
+                PrinterSnapshot printerSnapshot = printer.getPrinterSnapShot();
+                if (printerSnapshot != null) {
+                    try {
+                        printerSnapshot.setId(cid);
+                        session.save(printerSnapshot);
+                        GQEDPConstants.logger.info(meterId + " Data successfully saved in the Printer Snapshot table ");
+                    }
+                    catch (Exception e) {
+                        GQEDPConstants.logger.error(meterId + " Data failed to save in the Printer Snapshot table ", e);
                     }
                 }
-                catch (Exception e) {
-                    GQEDPConstants.logger.error(meterId
-                            + " Data failed to save in the Printer Connected devices table  ", e);
+
+                // connected device
+                if (printer.getPrinterConnectedDevice() != null) {
+                    try {
+                        for (PrinterConnDevice printerConnDevice : printer.getPrinterConnectedDevice()) {
+                            printerConnDevice.getId().setRunId(runId);
+                            session.merge(printerConnDevice);
+                        }
+                    }
+                    catch (Exception e) {
+                        GQEDPConstants.logger.error(meterId
+                                + " Data failed to save in the Printer Connected devices table  ", e);
+                    }
                 }
+                // Actual insertion will happen at this step
+                session.flush();
             }
-            // Actual insertion will happen at this step
-            session.flush();
-        }
+        }// try ends
         catch (Exception e) {
             e.printStackTrace();
         }
         finally {
 
         }// finally ends
-        
+
     }// method ends
-    
+
 }// class ends
