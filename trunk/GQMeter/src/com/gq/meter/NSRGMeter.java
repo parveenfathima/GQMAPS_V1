@@ -53,7 +53,7 @@ public class NSRGMeter implements GQSNMPMeter {
 
         CommunityTarget target = null;
         HashMap<String, Long> networkBytes = null;
-        
+
         NSRGSnapshot nsrgSnapShot = null;
         HashSet<NSRGConnDevice> connectedDevices = null;
         Asset assetObj = null;
@@ -157,10 +157,10 @@ public class NSRGMeter implements GQSNMPMeter {
                         errorList.add(assetId + " Root OID : 1.3.6.1.2.1.2.2.1" + " "
                                 + "Unable to get network bandwidth details");
                     }
-                    
+
                     nsrgSnapShot = new NSRGSnapshot(id, sysIP, upTime, numberOfPorts, numberOfPortsUp, networkBytesIn,
                             networkBytesOut, extras);
-                    
+
                     continue;
                 } // main if loop ends
 
@@ -179,16 +179,18 @@ public class NSRGMeter implements GQSNMPMeter {
                     }
                     continue;
                 } // 1st if loop ends
-                
+
             }// main for loop ends
-        
+
         }// try ends
         catch (Exception e) {
             errorList.add(ipAddress + " " + e.getMessage());
         }
 
         NSRG nsrg = new NSRG(id, assetObj, nsrgSnapShot, connectedDevices);
-
+        if (nsrg.getAssetObj().getAssetId().equalsIgnoreCase("S-null")) {
+            errorList.add(ipAddress + " " + "Asset id is null");
+        }
         GQErrorInformation gqErrorInfo = null;
         if (errorList != null && !errorList.isEmpty()) {
             gqErrorInfo = new GQErrorInformation(assetObj.getDescr(), errorList);
