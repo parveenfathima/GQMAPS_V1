@@ -17,7 +17,7 @@ import com.gq.util.GQEDPConstants;
 
 public class GqMeterNSRG {
 
-    public  void insertData(NSRG nsrg, GQMeterResponse gqmResponse, Long runId , Session session) {
+    public void insertData(NSRG nsrg, GQMeterResponse gqmResponse, Long runId, Session session) {
 
         String meterId = gqmResponse.getGqmid();
 
@@ -27,42 +27,46 @@ public class GqMeterNSRG {
 
             // inserting asset
             Asset assetObj = nsrg.getAssetObj();
-            GQEDPConstants.logger.info(" Session  started for NSRG asset " + assetObj.getAssetId());
-            session.saveOrUpdate(assetObj);
+            if (assetObj.getAssetId() != " " && assetObj.getAssetId() != null
+                    && !assetObj.getAssetId().equalsIgnoreCase("S-null")) {
+                GQEDPConstants.logger.info(" Session  started for NSRG asset " + assetObj.getAssetId());
+                session.saveOrUpdate(assetObj);
 
-            // snapshot
-            NSRGSnapshot nsrgSnapshot = nsrg.getNsrgSnapShot();
-            if (nsrgSnapshot != null) {
-	            try {
-	                nsrgSnapshot.setId(cid);
-	                session.save(nsrgSnapshot);
-	            }
-	            catch (Exception e) {
-	                GQEDPConstants.logger.error(meterId + " Data failed to save in the NSRG Snapshot table ", e);
-	            }
-            }
-            // connected device
-            if (nsrg.getNsrgConnectedDevices() != null) {
-                try {
-                    for (NSRGConnDevice nsrgConnDevice : nsrg.getNsrgConnectedDevices()) {
-                        nsrgConnDevice.getId().setRunId(runId);
-                        session.merge(nsrgConnDevice);
-                    }// for ends
+                // snapshot
+                NSRGSnapshot nsrgSnapshot = nsrg.getNsrgSnapShot();
+                if (nsrgSnapshot != null) {
+                    try {
+                        nsrgSnapshot.setId(cid);
+                        session.save(nsrgSnapshot);
+                    }
+                    catch (Exception e) {
+                        GQEDPConstants.logger.error(meterId + " Data failed to save in the NSRG Snapshot table ", e);
+                    }
                 }
-                catch (Exception e) {
-                    GQEDPConstants.logger.error(meterId + " Data failed to save in the NSRG Connected devices table ", e);
+                // connected device
+                if (nsrg.getNsrgConnectedDevices() != null) {
+                    try {
+                        for (NSRGConnDevice nsrgConnDevice : nsrg.getNsrgConnectedDevices()) {
+                            nsrgConnDevice.getId().setRunId(runId);
+                            session.merge(nsrgConnDevice);
+                        }// for ends
+                    }
+                    catch (Exception e) {
+                        GQEDPConstants.logger.error(meterId
+                                + " Data failed to save in the NSRG Connected devices table ", e);
+                    }
                 }
+                // Actual insertion will happen at this step
+                session.flush();
             }
-            // Actual insertion will happen at this step
-            session.flush();
-        }
+        }// try ends
         catch (Exception e) {
             GQEDPConstants.logger.error(meterId + " Data failed to save in the NSRG exception ", e);
             e.printStackTrace();
         }
         finally {
-        
+
         }// finally ends
     }// method ends
-    
-}
+
+}// class ends

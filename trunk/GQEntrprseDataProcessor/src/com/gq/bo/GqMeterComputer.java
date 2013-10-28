@@ -19,7 +19,7 @@ import com.gq.util.GQEDPConstants;
 // This class takes care of inserting computer switch data's to database
 public class GqMeterComputer {
 
-    public void insertData(Computer computer, GQMeterResponse gqmResponse, Long runId , Session session) {
+    public void insertData(Computer computer, GQMeterResponse gqmResponse, Long runId, Session session) {
 
         String meterId = gqmResponse.getGqmid();
 
@@ -29,75 +29,82 @@ public class GqMeterComputer {
             CPNId cid = computer.getId();
             cid.setRunId(runId);
             computer.setId(cid);
-            
+
             // inserting asset
-            
+
             Asset assetObj = computer.getAssetObj();
-            GQEDPConstants.logger.info(" Session successfully started for GQMeterComputer asset " + assetObj.getAssetId());
-            session.saveOrUpdate(assetObj);
-            
-            // snapshot
-            CompSnapshot compSnapshot = computer.getSnapShot();
-            if (compSnapshot != null) {
-	            compSnapshot.setId(cid);
-	            try {
-	                session.save(compSnapshot);
-	            }
-	            catch (Exception e) {
-	                GQEDPConstants.logger.error(meterId + " Data failed to save in the Computer Snapshot table ", e);
-	            }
-            }
-            // computer installed software
-            if (computer.getCompInstSwList() != null) {
-                try {
-                    for (CompInstSoftware compInsSoftware : computer.getCompInstSwList()) {
-                        compInsSoftware.getId().setRunId(runId);
-                        session.merge(compInsSoftware);
+            if (assetObj.getAssetId() != " " && assetObj.getAssetId() != null
+                    && !assetObj.getAssetId().equalsIgnoreCase("C-null")) {
+                GQEDPConstants.logger.info(" Session successfully started for GQMeterComputer asset "
+                        + assetObj.getAssetId());
+                session.saveOrUpdate(assetObj);
+
+                // snapshot
+                CompSnapshot compSnapshot = computer.getSnapShot();
+                if (compSnapshot != null) {
+                    compSnapshot.setId(cid);
+                    try {
+                        session.save(compSnapshot);
+                        GQEDPConstants.logger
+                                .info(meterId + " Data successfully saved in the Computer Snapshot table ");
+                    }
+                    catch (Exception e) {
+                        GQEDPConstants.logger
+                                .error(meterId + " Data failed to save in the Computer Snapshot table ", e);
                     }
                 }
-                catch (Exception e) {
-                    GQEDPConstants.logger.error(meterId
-                            + " Data failed to save in the Computer Installed software table ", e);
-                }
-            }
-
-            // computer process list
-            if (computer.getCompProcList() != null) {
-                try {
-                    for (CompProcess compProcess : computer.getCompProcList()) {
-                        compProcess.getId().setRunId(runId);
-                        session.merge(compProcess);
+                // computer installed software
+                if (computer.getCompInstSwList() != null) {
+                    try {
+                        for (CompInstSoftware compInsSoftware : computer.getCompInstSwList()) {
+                            compInsSoftware.getId().setRunId(runId);
+                            session.merge(compInsSoftware);
+                        }
+                    }
+                    catch (Exception e) {
+                        GQEDPConstants.logger.error(meterId
+                                + " Data failed to save in the Computer Installed software table ", e);
                     }
                 }
-                catch (Exception e) {
-                    GQEDPConstants.logger.error(meterId + " Data failed to save in the Computer process table ", e);
-                }
-            }
 
-            // connected device
-            if (computer.getCompConnDeviceSet() != null) {
-                try {
-                    for (CompConnDevice compConnDevice : computer.getCompConnDeviceSet()) {
-                        compConnDevice.getId().setRunId(runId);
-                        session.merge(compConnDevice);
-                    }// for ends
-                 }
-                catch (Exception e) {
-                    GQEDPConstants.logger.error(meterId
-                            + " Data failed to save in the Computer Connected devices table ", e);
+                // computer process list
+                if (computer.getCompProcList() != null) {
+                    try {
+                        for (CompProcess compProcess : computer.getCompProcList()) {
+                            compProcess.getId().setRunId(runId);
+                            session.merge(compProcess);
+                        }
+                    }
+                    catch (Exception e) {
+                        GQEDPConstants.logger.error(meterId + " Data failed to save in the Computer process table ", e);
+                    }
                 }
+
+                // connected device
+                if (computer.getCompConnDeviceSet() != null) {
+                    try {
+                        for (CompConnDevice compConnDevice : computer.getCompConnDeviceSet()) {
+                            compConnDevice.getId().setRunId(runId);
+                            session.merge(compConnDevice);
+                        }// for ends
+                    }
+                    catch (Exception e) {
+                        GQEDPConstants.logger.error(meterId
+                                + " Data failed to save in the Computer Connected devices table ", e);
+                    }
+                }
+                // Actual insertion will happen at this step and no need to flush or clear or close since
+                // getcurrentsession
+                // is designed to handle all of these. - ss , oct 4 , 13
+                session.flush();
             }
-            // Actual insertion will happen at this step and no need to flush or clear or close since getcurrentsession 
-            // is designed to handle all of these. - ss , oct 4 , 13
-            session.flush();
-        }
+        }// try ends
         catch (Exception e) {
             e.printStackTrace();
-            GQEDPConstants.logger.error(meterId  + "computer meter edp Exception ", e);
-       }
+            GQEDPConstants.logger.error(meterId + "computer meter edp Exception ", e);
+        }
         finally {
         }// finally ends
 
     }// method ends
-    
 }// class ends
