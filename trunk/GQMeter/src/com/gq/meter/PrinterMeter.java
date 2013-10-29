@@ -332,7 +332,7 @@ public class PrinterMeter implements GQSNMPMeter {
                     memHdd = memHdd + Long.parseLong(mulBytes.trim()) * Long.parseLong(usedMultiply.trim());
                 }
                 else {
-                    errorList.add(MeterConstants.NO_VALUE + memHdd);
+                    errorList.add("RootId: " + rootOid + " Unable to fetch HardDisc Memory");
                 }
             } // 1st if loop ends
         } // 1st for loop ends
