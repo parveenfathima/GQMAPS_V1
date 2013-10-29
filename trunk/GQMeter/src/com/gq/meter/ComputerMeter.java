@@ -127,7 +127,6 @@ public class ComputerMeter implements GQSNMPMeter {
                 if (result != null && !result.isEmpty()) {
                     HashMap<String, String> winNetworkMap = new HashMap<String, String>();
                     networkBytes = winAssetIdCalc(result, rootOID, winNetworkMap);
-
                     assetId = "C-" + networkBytes.get("macWinNetworkValue");
                     assetObj.setAssetId(assetId);
                 }// 2nd if ends
@@ -351,9 +350,16 @@ public class ComputerMeter implements GQSNMPMeter {
                         rootOID = new OID(oidString);
                         List<VariableBinding> dateResult = MeterUtils.walk(rootOID, target);
 
-                        installedSwList = installedSwListCalc(appResult, softwareResult, dateResult, rootOID,
-                                isWindows, isLinux, id);
-
+                        // Here to check count of applicationname,softwarename and date must be equal.
+                        // because due to network speed count of applicationtype,softwarename and date must not be
+                        // equal.
+                        if (appResult.size() == softwareResult.size() && appResult.size() == dateResult.size()) {
+                            installedSwList = installedSwListCalc(appResult, softwareResult, dateResult, rootOID,
+                                    isWindows, isLinux, id);
+                        }
+                        else {
+                            errorList.add(assetId + " Unable to fetch list of installed software due to network speed");
+                        }
                     } // 2nd if loop ends
                     else {
                         errorList.add(assetId + " Root OID : 1.3.6.1.2.1.25.6.3.1.4" + " "
@@ -396,14 +402,16 @@ public class ComputerMeter implements GQSNMPMeter {
                         oidString = ".1.3.6.1.2.1.25.5.1.1.2";
                         rootOID = new OID(oidString);
                         List<VariableBinding> memShareResult = MeterUtils.walk(rootOID, target);
-                        /*
-                         * if (sysRunNameResult.size() == cpuShareResult.size() && sysRunNameResult.size() ==
-                         * memShareResult.size()) {
-                         */
-                        processList = ProcessCalc(result, rootOID, sysRunNameResult, cpuShareResult, memShareResult, id);
-                        /*
-                         * } else { errorList.add(ipAddress + " Unable to get details for process calculations"); }
-                         */
+
+                        if (sysRunNameResult.size() == cpuShareResult.size()
+                                && sysRunNameResult.size() == memShareResult.size()) {
+                            processList = ProcessCalc(result, rootOID, sysRunNameResult, cpuShareResult,
+                                    memShareResult, id);
+                        }
+                        else {
+                            errorList.add(ipAddress + " Unable to get List of process due to network speed ");
+                        }
+
                     } // 2nd if loop ends
                     else {
                         errorList.add(assetId + " Root OID : .1.3.6.1.2.1.25" + " "
@@ -801,7 +809,6 @@ public class ComputerMeter implements GQSNMPMeter {
         CompInstSoftwareId ins = null;
         try {
             if (isWindows) {
-
                 for (int i = 0; i < appResult.size(); i++) { // for loop starts
                     if (appResult.get(i).getVariable().toString().trim().equals("4")) { // 1st if loop starts
                         String softwareName = softwareResult.get(i).getVariable().toString().trim();
@@ -818,8 +825,8 @@ public class ComputerMeter implements GQSNMPMeter {
                     } // 1st if loop ends
                 } // for loop ends
             }
-            else if (isLinux) {
 
+            if (isLinux) {
                 for (int appResultCount = 0; appResultCount < appResult.size(); appResultCount++) { // for loop starts
                     if (appResult.get(appResultCount).getVariable().toString().trim().equals("4")) {
 
@@ -850,7 +857,7 @@ public class ComputerMeter implements GQSNMPMeter {
                         } // 1st if loop ends
                     }
                 }// for ends
-            }// else if ends
+            }// if ends
         }// try ends
         catch (Exception e) {
             e.printStackTrace();
