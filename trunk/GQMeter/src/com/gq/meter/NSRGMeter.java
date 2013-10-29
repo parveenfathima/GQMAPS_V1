@@ -279,9 +279,6 @@ public class NSRGMeter implements GQSNMPMeter {
                         switchNetworkOut = switchNetworkIn + switchNetworkOutValue;
                         switchNetworkMap.put("OutBytes", switchNetworkOut);
                     }
-                    else {
-                        errorList.add(MeterConstants.NO_VALUE + switchNetworkOut);
-                    }
                 }
             } // else if loop ends
         } // for loop ends
