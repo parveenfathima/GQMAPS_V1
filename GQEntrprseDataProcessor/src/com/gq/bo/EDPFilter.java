@@ -23,7 +23,7 @@ import com.gq.util.GQEDPConstants;
 
 /**
  * @author chandru
- * @change parveen
+ * @change parveen,sriram
  */
 
 // this class takes care of validating and distributing incoming requests
@@ -33,7 +33,7 @@ public final class EDPFilter {
 
     public void process(GQMeterResponse gqmResponse) {
 
-    	// extract response
+        // extract response
         String meterId = gqmResponse.getGqmid();
         String enterpriseId = meterId.split("_")[0];
         Long runId = gqmResponse.getRunid();
@@ -42,25 +42,26 @@ public final class EDPFilter {
         short discovered = gqmResponse.getAssetDiscovered();
         long runTimeMs = gqmResponse.getRunTimeMiliSeconds();
         List<ProtocolData> pdList = gqmResponse.getAssetInformationList();
-        
+
         Session session = null;
         MeterRun meterRun = null;
         SessionFactory sessionFactory = null;
         Transaction tx = null;
-        
+
         GQEDPConstants.logger.debug("************* EDP STARTED - BEGINNING RUN " + runId + " ***********");
 
         meterId = meterId.split("_")[1];
 
         try {
             String dbInstanceName = "gqm" + enterpriseId;
-            GQEDPConstants.logger.debug("Enterprise id : <" + enterpriseId + "> , Meter id : <" + meterId + "> dbInstanceName : <" + dbInstanceName +">");
+            GQEDPConstants.logger.debug("Enterprise id : <" + enterpriseId + "> , Meter id : <" + meterId
+                    + "> dbInstanceName : <" + dbInstanceName + ">");
 
             // This step will read hibernate.cfg.xml and prepare hibernate for use
             sessionFactory = DynamicSessionUtil.getSessionFactory(dbInstanceName);
-            GQEDPConstants.logger.debug("Start to create a Session for requested Enterprise in GQEDPFilter");
+            GQEDPConstants.logger.debug("Start to create a Session for requested Enterprise in EDPFilter");
             session = sessionFactory.getCurrentSession();
-            GQEDPConstants.logger.debug("Session Created Successfully for GQEDPFilter");
+            GQEDPConstants.logger.debug("Session Created Successfully for EDPFilter");
 
             tx = session.beginTransaction();
 
@@ -82,7 +83,7 @@ public final class EDPFilter {
 
                 case COMPUTER:
                     Computer computerObj = gson.fromJson(pdData.getData(), Computer.class);
-                    new GqMeterComputer().insertData(computerObj, gqmResponse, meterRun.getRunId() , session);
+                    new GqMeterComputer().insertData(computerObj, gqmResponse, meterRun.getRunId(), session);
                     break;
 
                 case PRINTER:
@@ -96,8 +97,8 @@ public final class EDPFilter {
                     break;
 
                 case STORAGE:
-//                    Storage storageData = gson.fromJson(pdData.getData(), Storage.class);
-//                    GqMeterStorage.insertData(storageData, gqmResponse, meterRun.getRunId());
+                    // Storage storageData = gson.fromJson(pdData.getData(), Storage.class);
+                    // GqMeterStorage.insertData(storageData, gqmResponse, meterRun.getRunId());
                     break;
 
                 case AIR:
@@ -110,33 +111,33 @@ public final class EDPFilter {
             }
             // commit the unit of work , meters will have flush only
             tx.commit();
-            
+
             GQEDPConstants.logger.debug("************* DATA SUCCESSFULLY SAVED - END OF RUN  ***********");
         }
         catch (Exception e) {
-        	
-        	GQEDPConstants.logger.error("EDPFilter exception " + e.getMessage() + "for meter " + meterId );
-        	if (tx != null) {
-        		tx.rollback();
-        	}
+
+            GQEDPConstants.logger.error("EDPFilter exception " + e.getMessage() + "for meter " + meterId);
+            if (tx != null) {
+                tx.rollback();
+            }
             e.printStackTrace();
         }
         finally {
-        	// i dont believe the following lines are reqd since current session will hold one for the thread and need not be closed
-        	// sriram , oct 3, 2013
+            // i dont believe the following lines are read since current session will hold one for the thread and need
+            // not be closed
+            // sriram , oct 3, 2013
 
-        	//            try {
-			//                if (session.isOpen()) {
-			//                    session.flush();
-			//                    session.clear();
-			//                    session.close();
-			//                }
-			//            }
-			//            catch (Exception e) {
-			//                e.printStackTrace();
-			//            }
-         }// finally ends
+            // try {
+            // if (session.isOpen()) {
+            // session.flush();
+            // session.clear();
+            // session.close();
+            // }
+            // }
+            // catch (Exception e) {
+            // e.printStackTrace();
+            // }
+        }// finally ends
     } // method ends
-    
 } // class ends
 

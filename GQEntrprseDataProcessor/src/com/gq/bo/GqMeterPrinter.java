@@ -12,8 +12,10 @@ import com.gq.meter.object.PrinterSnapshot;
 import com.gq.util.GQEDPConstants;
 
 /**
- * @author parveen
+ * @author yogalakshmi
+ * @change	parveen
  */
+
 
 public class GqMeterPrinter {
 
@@ -22,16 +24,14 @@ public class GqMeterPrinter {
         String meterId = gqmResponse.getGqmid();
 
         try {
-            GQEDPConstants.logger.info("Session Successfully started for Printer");
-
             CPNId cid = printer.getId();
             cid.setRunId(runId);
 
             // inserting asset
-
             Asset assetObj = printer.getAssetObj();
             if (assetObj.getAssetId() != " " && assetObj.getAssetId() != null
                     && !assetObj.getAssetId().equalsIgnoreCase("P-null")) {
+            	GQEDPConstants.logger.info(" Session  started for Printer asset " + assetObj.getAssetId());
                 session.saveOrUpdate(assetObj);
 
                 // snapshot
@@ -40,7 +40,7 @@ public class GqMeterPrinter {
                     try {
                         printerSnapshot.setId(cid);
                         session.save(printerSnapshot);
-                        GQEDPConstants.logger.info(meterId + " Data successfully saved in the Printer Snapshot table ");
+                        GQEDPConstants.logger.debug(meterId + " Data successfully saved in the Printer Snapshot table ");
                     }
                     catch (Exception e) {
                         GQEDPConstants.logger.error(meterId + " Data failed to save in the Printer Snapshot table ", e);
@@ -53,7 +53,8 @@ public class GqMeterPrinter {
                         for (PrinterConnDevice printerConnDevice : printer.getPrinterConnectedDevice()) {
                             printerConnDevice.getId().setRunId(runId);
                             session.merge(printerConnDevice);
-                        }
+                           }
+                        GQEDPConstants.logger.debug(meterId + " Data successfully saved in the Printer Connected Device table ");
                     }
                     catch (Exception e) {
                         GQEDPConstants.logger.error(meterId
@@ -70,7 +71,5 @@ public class GqMeterPrinter {
         finally {
 
         }// finally ends
-
     }// method ends
-
 }// class ends

@@ -12,7 +12,8 @@ import com.gq.meter.object.NSRGSnapshot;
 import com.gq.util.GQEDPConstants;
 
 /**
- * @author parveen
+ * @author yogalakshmi
+ * @change	parveen
  */
 
 public class GqMeterNSRG {
@@ -38,6 +39,7 @@ public class GqMeterNSRG {
                     try {
                         nsrgSnapshot.setId(cid);
                         session.save(nsrgSnapshot);
+                        GQEDPConstants.logger.debug(meterId + " Data successfully to save in the NSRG Snapshot table ");
                     }
                     catch (Exception e) {
                         GQEDPConstants.logger.error(meterId + " Data failed to save in the NSRG Snapshot table ", e);
@@ -49,7 +51,8 @@ public class GqMeterNSRG {
                         for (NSRGConnDevice nsrgConnDevice : nsrg.getNsrgConnectedDevices()) {
                             nsrgConnDevice.getId().setRunId(runId);
                             session.merge(nsrgConnDevice);
-                        }// for ends
+                            }// for ends
+                        GQEDPConstants.logger.debug(meterId + " Data successfully to save in the NSRG Connected devices table ");
                     }
                     catch (Exception e) {
                         GQEDPConstants.logger.error(meterId
@@ -65,8 +68,7 @@ public class GqMeterNSRG {
             e.printStackTrace();
         }
         finally {
-
+        	
         }// finally ends
     }// method ends
-
 }// class ends

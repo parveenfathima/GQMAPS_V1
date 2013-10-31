@@ -16,7 +16,8 @@ import com.gq.util.DynamicSessionUtil;
 import com.gq.util.GQEDPConstants;
 
 /**
- * @author parveen
+ * @author yogalakshmi
+ * @change	parveen
  */
 
 public class GqMeterStorage {
@@ -29,9 +30,7 @@ public class GqMeterStorage {
         SessionFactory sessionFactory = null;
 
         try {
-
-            GQEDPConstants.logger.debug("Start a process to read a HIBERNATE xml file in GQMeterStorage ");
-            String dbInstanceName = "gqm" + enterpriseId;
+        	String dbInstanceName = "gqm" + enterpriseId;
 
             // This step will read hibernate.cfg.xml and prepare hibernate for use
             sessionFactory = DynamicSessionUtil.getSessionFactory(dbInstanceName);
