@@ -14,7 +14,8 @@ import com.gq.meter.object.Computer;
 import com.gq.util.GQEDPConstants;
 
 /**
- * @author parveen
+ * @author yogalakshmi
+ * @change	parveen
  */
 // This class takes care of inserting computer switch data's to database
 public class GqMeterComputer {
@@ -46,7 +47,7 @@ public class GqMeterComputer {
                     try {
                         session.save(compSnapshot);
                         GQEDPConstants.logger
-                                .info(meterId + " Data successfully saved in the Computer Snapshot table ");
+                                .debug(meterId + " Data successfully saved in the Computer Snapshot table ");
                     }
                     catch (Exception e) {
                         GQEDPConstants.logger
@@ -59,7 +60,9 @@ public class GqMeterComputer {
                         for (CompInstSoftware compInsSoftware : computer.getCompInstSwList()) {
                             compInsSoftware.getId().setRunId(runId);
                             session.merge(compInsSoftware);
-                        }
+                          }
+                        GQEDPConstants.logger
+                        .debug(meterId + " Data successfully saved in the Computer Installed Software table ");
                     }
                     catch (Exception e) {
                         GQEDPConstants.logger.error(meterId
@@ -74,6 +77,7 @@ public class GqMeterComputer {
                             compProcess.getId().setRunId(runId);
                             session.merge(compProcess);
                         }
+                        GQEDPConstants.logger.debug(meterId + " Data successfully to save in the Computer process table ");
                     }
                     catch (Exception e) {
                         GQEDPConstants.logger.error(meterId + " Data failed to save in the Computer process table ", e);
@@ -86,7 +90,8 @@ public class GqMeterComputer {
                         for (CompConnDevice compConnDevice : computer.getCompConnDeviceSet()) {
                             compConnDevice.getId().setRunId(runId);
                             session.merge(compConnDevice);
-                        }// for ends
+                        	}// for ends
+                        GQEDPConstants.logger.debug(meterId + " Data successfully to save in the Computer Connected Devices table ");
                     }
                     catch (Exception e) {
                         GQEDPConstants.logger.error(meterId
