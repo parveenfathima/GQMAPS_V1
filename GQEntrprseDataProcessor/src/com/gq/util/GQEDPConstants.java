@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Date;
 
 import org.apache.log4j.FileAppender;
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
 
@@ -11,6 +12,7 @@ import org.apache.log4j.PatternLayout;
  * @author yogalakshmi.s
  * 
  */
+
 public class GQEDPConstants {
 
     // logger specifics
@@ -23,6 +25,7 @@ public class GQEDPConstants {
     private static final String LOG_FILE_NAME_DATE_PATTERN = "yyyy-MM-dd";
 
     static {
+    	//logger.setLevel(Level.INFO);
         logger.info("Inside create logger method");
         GQEDPConstants.logger.info("initializing gqmaps EntrprseDataProcessor logger..."); // ???? !!!!!!
         String logFile = logFilePrefix + logFileName;

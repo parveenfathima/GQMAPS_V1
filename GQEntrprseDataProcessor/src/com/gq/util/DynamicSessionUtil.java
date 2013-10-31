@@ -37,9 +37,8 @@ public class DynamicSessionUtil {
                 }
                 catch(HibernateException he1){
                 	he.printStackTrace();
-                    GQEDPConstants.logger.debug("HibernateException createSessionFactory .." + dbInstanceName);
+                    GQEDPConstants.logger.error("HibernateException createSessionFactory .." + dbInstanceName);
                 }
-
             }
         }
         else {
@@ -56,8 +55,7 @@ public class DynamicSessionUtil {
 		    configuration.setProperty("hibernate.connection.url", url);
 		    configuration.configure();
 		    SessionFactory sessionFactory = configuration.buildSessionFactory();
-		    GQEDPConstants.logger.debug("Session Factory created");
+		    GQEDPConstants.logger.debug(" Session Factory created for "+dbInstanceName);
 		    SessionFactoryListMap.put(dbInstanceName, sessionFactory);
     } // method ends
-
-}
+}//class ends
