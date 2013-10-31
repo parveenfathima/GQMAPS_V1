@@ -36,7 +36,7 @@ public class GateKeeper {
         	
             GQEDPConstants.logger.debug("\n******************** NEW EDP WS REQUEST BEGINS *************************************\n");
 
-            GQEDPConstants.logger.debug("Incoming json is => " + gqMeterResponseString);
+            GQEDPConstants.logger.debug(" Incoming json is => " + gqMeterResponseString);
 
             Gson gson = new GsonBuilder().create();
 
@@ -49,7 +49,7 @@ public class GateKeeper {
         }
         catch (JsonSyntaxException e) {
             e.printStackTrace();
-            GQEDPConstants.logger.debug("Start a process to read a HIBERNATE xml file in GQMeterComputer ");
+            GQEDPConstants.logger.error(" Exception received from json " + e);
         }
         finally {
             GQEDPConstants.logger.debug("\n******************** EDP WS REQUEST ENDS *************************************\n");
