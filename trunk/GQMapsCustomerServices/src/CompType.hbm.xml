@@ -4,7 +4,7 @@
 <!-- Generated Aug 1, 2013 4:22:41 PM by Hibernate Tools 3.4.0.CR1 -->
 <hibernate-mapping>
     <class name="com.gq.meter.object.CompType" table="comp_type">
-        <id name="typeId" type="string">
+        <id name="type_id" type="string">
             <column name="type_id" length="20" />
             <generator class="assigned" />
         </id>
