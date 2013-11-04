@@ -94,7 +94,7 @@ public class AssetData {
 		return assetImpLevelListDB;
 	}
 
-	// asset importance level list generation from the total domain data
+	// Type Id list generation from the total domain data
 	public List<DomainData> getCompType() throws NoSuchElementException,
 			ParseException {
 
@@ -133,19 +133,18 @@ public class AssetData {
 				jsnobject = new JSONObject(domainDataStr);
 		} catch (ParseException e) {
 
-			System.out.println("\nNo domain data\n");
+			
 			GQMapsCustomerUIConstants.logger.error("Error loading domain data is:\t" + "and the domainDataStr is : " + domainDataStr);
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
 		GQMapsCustomerUIConstants.logger.info("Domain data is:\t" + domainDataStr);
-		System.out.println("\nDomainData String: " + domainDataStr);
+		
 
 		List<DomainData> domainDataListDB = new ArrayList<DomainData>();
 
 		JSONArray jsonCtlgArray = jsnobject.getJSONArray("devCtlgResult");
-		System.out.println("Catalog length: " + jsonCtlgArray.length());
 
 		// adding catalog details to the domain data object
 		for (int i = 0; i < jsonCtlgArray.length(); i++) {
@@ -167,7 +166,7 @@ public class AssetData {
 		}
 
 		JSONArray jsonSrvrArray = jsnobject.getJSONArray("srvrAppType");
-		System.out.println("Server length: " + jsonSrvrArray.length());
+		//System.out.println("Server length: " + jsonSrvrArray.length());
 
 		// adding server type details to the domain data object
 		for (int j = 0; j < jsonSrvrArray.length(); j++) {
@@ -188,15 +187,15 @@ public class AssetData {
 		}
 
 		JSONArray jsonCompArray = jsnobject.getJSONArray("compType");
-		System.out.println("Comp type length: " + jsonCompArray.length());
+		
 
 		// adding computer type details to the domain data object
 		for (int k = 0; k < jsonCompArray.length(); k++) {
 
 			DomainData comp = new DomainData();
 
-			if (jsonCompArray.getJSONObject(k).has("typeId")) {
-				comp.setId(jsonCompArray.getJSONObject(k).getString("typeId"));
+			if (jsonCompArray.getJSONObject(k).has("type_id")) {
+				comp.setId(jsonCompArray.getJSONObject(k).getString("type_id"));
 			}
 
 			if (jsonCompArray.getJSONObject(k).has("descr")) {
@@ -207,7 +206,6 @@ public class AssetData {
 		}
 
 		JSONArray jsonImplArray = jsnobject.getJSONArray("assetImp");
-		System.out.println("Impl length: " + jsonImplArray.length());
 
 		// adding asset level details to the domain data object
 		for (int l = 0; l < jsonImplArray.length(); l++) {
@@ -236,7 +234,6 @@ public class AssetData {
 		String url = "http://"+GQMapsCustomerUIConstants.webSvcHost+":8080/GQMapsCustomerServices/AssetEditServices/getAssetData?enterpriseId="	+ entpId;
 		//url = url + "AssetEditServices/getAssetData?enterpriseId=" + entpId;
 		
-		System.out.println("URL::::::::::::::::::: " + url);
 		WebResource webResourceAsset = client.resource(url);
 
 		String assetStr = webResourceAsset.get(String.class);
@@ -254,7 +251,6 @@ public class AssetData {
 		}
 		
 		GQMapsCustomerUIConstants.logger.info("Asset data is:\t" + assetStr);
-		System.out.println("\nAssetData String: " + assetStr);
 		
 		JSONArray jsonAssetArray = jsnobject.getJSONArray("assetResult");
 
@@ -270,6 +266,7 @@ public class AssetData {
 
 			if (asset.getIpAddr() == null)
 				asset.setIpAddr("0.0.0.0");
+			
 			if (asset.getCtlgId() == null
 					&& asset.getProtocolId().equals("computer"))
 				asset.setCtlgId("default_computer");
