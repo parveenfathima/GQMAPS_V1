@@ -55,7 +55,7 @@
                 <comment>if assets are made inactive then capture date</comment>
             </column>
         </property>
-        <property name="typeId" type="string">
+        <property name="type_id" type="string">
             <column name="type_id" length="20" />
         </property>
     </class>
