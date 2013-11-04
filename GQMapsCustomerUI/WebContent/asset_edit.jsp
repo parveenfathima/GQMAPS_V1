@@ -95,7 +95,7 @@ function updateAsset(count)
 			"ownership": vOwnership,
 			"dcEnt": vLocation,
 			"active": vActive, 
-			"typeId": vCompType        
+			"type_id": vCompType        
 	    });
 	}
 	
@@ -113,7 +113,7 @@ function updateAsset(count)
 			 assets.assetData[i].ownership != assetsDB.assetDataDB[i].ownership ||
 			 assets.assetData[i].dcEnt != assetsDB.assetDataDB[i].dcEnt ||
 			 assets.assetData[i].active != assetsDB.assetDataDB[i].active ||
-			 assets.assetData[i].typeId != assetsDB.assetDataDB[i].typeId)
+			 assets.assetData[i].type_id != assetsDB.assetDataDB[i].type_id)
 		 {
 		 	assetsForUpdate.assetUpdateData.push(assets.assetData[i]);
 		 }
@@ -188,7 +188,7 @@ function getCurrentAssets()
 					"ownership": response["assetResult"][i]["ownership"],
 					"dcEnt": response["assetResult"][i]["dcEnt"],
 					"active": response["assetResult"][i]["active"], 
-					"typeId": response["assetResult"][i]["typeId"]        
+					"type_id": response["assetResult"][i]["type_id"]        
 	    		});
 			
 			});
@@ -310,7 +310,7 @@ function getCurrentAssets()
 			//computer catalog domain list
 			List<DomainData> compCatalogListDB = new ArrayList<DomainData>();
 			compCatalogListDB = assetData.getCatalogList("computer");
-
+			
 			//printer catalog domain list
 			List<DomainData> printerCatalogListDB = new ArrayList<DomainData>();
 			printerCatalogListDB = assetData.getCatalogList("printer");
@@ -379,8 +379,8 @@ function getCurrentAssets()
 					style="width: 150px">
 						<%
 							for (int catalog = 0; catalog < compCatalogListDB.size(); catalog++) {
-														if (assetListDB.get(i).getCtlgId() == compCatalogListDB
-																.get(catalog).getId()) {
+														if (assetListDB.get(i).getCtlgId().equals(compCatalogListDB
+																.get(catalog).getId())) {
 						%>
 						<option value="<%=compCatalogListDB.get(catalog).getId()%>"
 							selected="selected"><%=compCatalogListDB.get(catalog).getDesc()%></option>
@@ -454,7 +454,7 @@ function getCurrentAssets()
 					id=<%="cmbLocation" + i%>>
 						<%
 							for (int loc = 0; loc < aryLocation.length; loc++) {
-														if (assetListDB.get(i).getLocation() == aryLocation[loc]) {
+														if (assetListDB.get(i).getDcEnt().equals(aryLocation[loc])) {
 						%>
 						<option value="<%=aryLocation[loc]%>" selected="selected"><%=aryLocation[loc]%></option>
 						<%
@@ -537,8 +537,8 @@ function getCurrentAssets()
 					id=<%="cmbCatalog" + i%>>
 						<%
 							for (int catalog = 0; catalog < printerCatalogListDB.size(); catalog++) {
-														if (assetListDB.get(i).getCtlgId() == printerCatalogListDB
-																.get(catalog).getId()) {
+														if (assetListDB.get(i).getCtlgId().equals(printerCatalogListDB
+																.get(catalog).getId())) {
 						%>
 						<option value="<%=printerCatalogListDB.get(catalog).getId()%>"
 							selected="selected"><%=printerCatalogListDB.get(catalog)
@@ -602,7 +602,7 @@ function getCurrentAssets()
 					id=<%="cmbLocation" + i%>>
 						<%
 							for (int loc = 0; loc < aryLocation.length; loc++) {
-														if (assetListDB.get(i).getLocation() == aryLocation[loc]) {
+														if (assetListDB.get(i).getDcEnt().equals(aryLocation[loc])) {
 						%>
 						<option value="<%=aryLocation[loc]%>" selected="selected"><%=aryLocation[loc]%></option>
 						<%
@@ -670,8 +670,8 @@ function getCurrentAssets()
 					style="width: 300px;">
 						<%
 							for (int catalog = 0; catalog < nsrgCatalogListDB.size(); catalog++) {
-														if (assetListDB.get(i).getCtlgId() == nsrgCatalogListDB
-																.get(catalog).getId()) {
+														if (assetListDB.get(i).getCtlgId().equals(nsrgCatalogListDB
+																.get(catalog).getId())) {
 						%>
 						<option value="<%=nsrgCatalogListDB.get(catalog).getId()%>"
 							selected="selected"><%=nsrgCatalogListDB.get(catalog).getDesc()%></option>
@@ -718,7 +718,7 @@ function getCurrentAssets()
 					id=<%="cmbLocation" + i%> style="width: 100px;">
 						<%
 							for (int loc = 0; loc < aryLocation.length; loc++) {
-														if (assetListDB.get(i).getLocation() == aryLocation[loc]) {
+														if (assetListDB.get(i).getDcEnt().equals(aryLocation[loc])) {
 						%>
 						<option value="<%=aryLocation[loc]%>" selected="selected"><%=aryLocation[loc]%></option>
 						<%
