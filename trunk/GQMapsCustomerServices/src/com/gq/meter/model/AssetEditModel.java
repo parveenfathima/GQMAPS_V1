@@ -94,7 +94,7 @@ public class AssetEditModel {
             else {
                 oldAssetObject.setInactiveDttm(currentDate);
             }
-            oldAssetObject.setTypeId(assetObject.getTypeId());
+            oldAssetObject.setType_id(assetObject.getType_id());
             CustomerServiceConstant.logger.debug(" Asset Object updated Successfully");
             session.flush();
         }

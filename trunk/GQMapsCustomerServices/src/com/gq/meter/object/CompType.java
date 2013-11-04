@@ -11,26 +11,26 @@ import java.util.Set;
  */
 public class CompType implements java.io.Serializable {
 
-    private String typeId;
+    private String type_id;
     private String descr;
 
     public CompType() {
     }
 
-    public CompType(String typeId, String descr) {
-        this.typeId = typeId;
+    public CompType(String type_id, String descr) {
+        this.type_id = type_id;
         this.descr = descr;
     }
 
-    public String getTypeId() {
-        return this.typeId;
-    }
+    public String getType_id() {
+		return type_id;
+	}
 
-    public void setTypeId(String typeId) {
-        this.typeId = typeId;
-    }
+	public void setType_id(String type_id) {
+		this.type_id = type_id;
+	}
 
-    public String getDescr() {
+	public String getDescr() {
         return this.descr;
     }
 
