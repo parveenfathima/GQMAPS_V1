@@ -25,14 +25,14 @@ public class Asset implements java.io.Serializable {
     private String dcEnt;
     private Character active;
     private Date inactiveDttm;
-    private String typeId;
+    private String type_id;
 
     public Asset() {
     }
 
     public Asset(String assetId, String protocolId, String name, String descr, String contact, String ipAddr,
             String location, String ctlgId, Short srvrAppId, String assetUsg, Byte impLvl, String ownership,
-            String dcEnt, Character active, Date inactiveDttm, String typeId) {
+            String dcEnt, Character active, Date inactiveDttm, String type_id) {
         super();
         this.assetId = assetId;
         this.protocolId = protocolId;
@@ -49,7 +49,7 @@ public class Asset implements java.io.Serializable {
         this.dcEnt = dcEnt;
         this.active = active;
         this.inactiveDttm = inactiveDttm;
-        this.typeId = typeId;
+        this.type_id = type_id;
     }
 
     public String getAssetId() {
@@ -172,11 +172,13 @@ public class Asset implements java.io.Serializable {
         this.inactiveDttm = inactiveDttm;
     }
 
-    public String getTypeId() {
-        return this.typeId;
-    }
+	public String getType_id() {
+		return type_id;
+	}
 
-    public void setTypeId(String typeId) {
-        this.typeId = typeId;
-    }
+	public void setType_id(String type_id) {
+		this.type_id = type_id;
+	}
+
+   
 }
