@@ -280,7 +280,7 @@ public class GoalServices {
         if (!entpResultset.isBeforeFirst()) {
 //            retCData.add(ctId);
 //            retCData.add("notused");
-            retCData.add(" ");
+            retCData.add("");
 
             return retCData;
         }
