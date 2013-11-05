@@ -9,6 +9,8 @@ import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -27,6 +29,7 @@ import com.google.visualization.datasource.datatable.ColumnDescription;
 import com.google.visualization.datasource.datatable.DataTable;
 import com.google.visualization.datasource.datatable.value.ValueType;
 import com.google.visualization.datasource.render.JsonRenderer;
+import com.gq.meter.model.IpAddresValidator;
 import com.gq.meter.object.ChartRowHolder;
 import com.gq.meter.object.TaskAssist;
 import com.gq.meter.util.CustomerServiceConstant;
@@ -199,25 +202,6 @@ public class DashboardServices {
                         entpResultset = stmt.executeQuery(sql);
                         CustomerServiceConstant.logger
                                 .info("[DASHBOARDSERVICES]  Query sucessfully Executed for gqexchange with no Dynamic value");
-                        // if (dynamic.equals("y")) {
-                        // System.out.println("dynamic queryis :\t" + entpquery + "entpid is::::\t" + entpId);
-                        // dynamicChar = entpquery.replace("__filter", "?");
-                        // String finalString = dynamicChar.replaceAll("[-+.^:']", "");
-                        // System.out.println("after replace:::::\t" + finalString);
-                        // pstmt = (PreparedStatement) dbCon1.prepareStatement(finalString);
-                        // System.out.println("before setstring:::");
-                        // pstmt.setString(1, entpId);
-                        // System.out.println("after setstring" + pstmt);
-                        // entpResultset = pstmt.executeQuery();
-                        // }
-                        // else {
-                        // System.out.println("after constructed" + pstmt);
-                        // stmt = (Statement) dbExchange.prepareStatement(entpquery);
-                        // System.out.println("pstmt" + pstmt);
-                        // // Resultset returned by query
-                        // entpResultset = stmt.executeQuery(entpquery);
-                        // System.out.println("query executed");
-                        // }
                     }
                 }
                 // find col count c =2;
@@ -266,14 +250,22 @@ public class DashboardServices {
                         int type = rsMetaData.getColumnType(i);
                         if (type == Types.VARCHAR || type == Types.CHAR) {
                             // str = datavalue.setName(entpResultset.getString(i));
+                        	if(positionId.equalsIgnoreCase("div_connectedWebsites")){
+                        	    InetAddress addr = InetAddress.getByName(entpResultset.getString(i));// resolving ipaddress to
+                                String host = addr.getCanonicalHostName();
+                                host=IpAddresValidator.validateIpAddress(host);//validating the ipaddress
+                                cData.setXaxis(host);
+                        	}else{
                             cData.setXaxis(entpResultset.getString(i));
                             // System.out.println("inside if" + cData.setName(entpResultset.getString(i)));
+                        	}
                         }
                         // else if (type == Types.DATE) {
                         else if (type == Types.TIMESTAMP) {
                             // dt = datavalue.setDate(entpResultset.getTimestamp(i));
                             // cData.setDate(entpResultset.getTimestamp(i));
                             cData.setXaxis(entpResultset.getString(i));
+                            
                         }
                         else if (type == Types.DECIMAL) {
                             if (i == 2)
@@ -297,22 +289,6 @@ public class DashboardServices {
                 if (chartType.equals("bar") || chartType.equals("pie")) {
                     CustomerServiceConstant.logger
                             .info("[DASHBOARDSERVICES]  Rows and Columns are being added for BAR/PIE charts");
-                    if (positionId.equals("div_connectedWebsites")) {
-                        InetAddress addr;
-                        try {
-                            ChartRowHolder hostname = new ChartRowHolder();
-
-                            for (int j = 0; j < cDataList.size(); j++) {
-                                addr = InetAddress.getByName(cDataList.get(j).getXaxis());// resolving ipaddress to
-                                String host = addr.getCanonicalHostName();
-                                hostname.setXaxis(host);
-                            }
-                            cDataList.add(hostname);
-                        }
-                        catch (UnknownHostException e) {
-                            System.out.println(e);
-                        }
-                    }
                     for (int i = 0; i < cDataList.size(); i++) {
                         chartdata.addRowFromValues(cDataList.get(i).getXaxis(), cDataList.get(i).getYaxis(), cDataList
                                 .get(i).getZaxis());
@@ -335,33 +311,11 @@ public class DashboardServices {
                         int hours = Integer.parseInt(other.substring(11, 13));
                         int minutes = Integer.parseInt(other.substring(14, 16));
                         int seconds = Integer.parseInt(other.substring(17, 19));
-                        // System.out.println("year\t" + year + "month\t" + month + "date\t" + date + "hours\t" +
-                        // hours
-                        // + "minutes\t" + minutes + "seconds\t" + seconds);
 
                         calendar.set(year, month, date, hours, minutes, seconds);
                         chartdata.addRowFromValues(calendar, cDataList.get(i).getYaxis());
-
-                        // JSONObject json = new JSONObject();
-                        // json.put("date", cDataList.get(i).getXaxis);
-                        // json.put("value", cDataList.get(i).getYaxis());
-                        // chartArray.put(json);
-
                     }
-                    // datavalue.setChartData(JsonRenderer.renderDataTable(chartdata, true, true));
                 }
-
-                // if (chartType.equals("bar") || chartType.equals("pie")) {
-                // renderchart = JsonRenderer.renderDataTable(chartdata, true, true);
-                // obj.setChartData(renderchart);
-                // }
-                // else if (chartType.equals("line")) {
-                // System.out.println("line values: before adding to obj:::\t" + chartArray.toString());
-                // renderchart = JsonRenderer.renderDataTable(chartdata, true, true);
-                // obj.setChartData(renderchart);
-                // // obj.setLineData(chartArray.toString());
-                // // System.out.println("getlinedata: \t" + obj.getLineData());
-                // }
                 CustomerServiceConstant.logger
                         .info("[DASHBOARDSERVICES]  ROWS and COLUMNS are Added to the objects in the Arrow Format");
                 renderchart = JsonRenderer.renderDataTable(chartdata, true, true);
@@ -402,11 +356,6 @@ public class DashboardServices {
                         json.put("data", sqllist.get(i).getPlainData());
                     }
                 }
-                // else if (sqllist.get(i).getChartType().equals("line")) {
-                // json.put("data", sqllist.get(i).getLineData());
-                // System.out.println("chart type in last for" + json.get("charttype") + "linedata inside json::::\t"
-                // + sqllist.get(i).getLineData());
-                // }
                 else if ((sqllist.get(i).getChartData().equals(null)) || sqllist.get(i).getChartData().equals("")) {
                     json.put("data", "nodata");
                 }
@@ -417,7 +366,6 @@ public class DashboardServices {
             }
             CustomerServiceConstant.logger
                     .info("[DASHBOARDSERVICES]  Complete JSON is Constructed for the Dashboard Data");
-            // chartTitle.put("chartData", chartArray);
             JSONArray finalResult = new JSONArray();
             finalResult.put(chartTitle);
             CustomerServiceConstant.logger
@@ -449,4 +397,5 @@ public class DashboardServices {
         }
         return Response.ok().entity(result).build();
     }
+
 }
