@@ -87,6 +87,8 @@ public class FinalizeGoalModel {
             
             }
             preparegoalStmt.executeUpdate();
+            CustomerServiceConstant.logger.info(" Data is inserted into GoalSnapshot");
+
             //}
             // fetching the recently added goalsnpsht_id for the enterprise
             String latestSnpshtId = "select start_date,enterprise_id, max(snpsht_id) as snpsht_id from goal_snpsht where enterprise_id=? and end_date is null;";
@@ -97,6 +99,7 @@ public class FinalizeGoalModel {
                 snpshtId = snpshtSet.getInt("snpsht_id");
                 entpId = snpshtSet.getString("enterprise_id");
             }
+            CustomerServiceConstant.logger.info(" selected max snapshotid from  GoalSnapshot");
 
             // fetching the task details fr snpsht id
             String snpShtquery = "SELECT * FROM task_chklst where  snpsht_id = ? ";
@@ -148,6 +151,8 @@ public class FinalizeGoalModel {
 
                 }
             }
+            CustomerServiceConstant.logger.info(" inserting into task checklist");
+
         }
         catch (SQLException e) {
             CustomerServiceConstant.logger.error("Exception occured while inserting the Data",e);//fuctionality blk
@@ -171,6 +176,7 @@ public class FinalizeGoalModel {
         try {
             int snshtId = 0;
             dbExchange = (Connection) SqlUtil.getExchangeConnection();
+            CustomerServiceConstant.logger.info(" finalize operation started");
 
             // fetching the recently added goalsnpsht_id for the enterprise
             String finalizeSql = "select  max(snpsht_id) as snpsht_id from goal_snpsht where enterprise_id=?";
@@ -191,6 +197,8 @@ public class FinalizeGoalModel {
             prepStmt.setString(3, goalmaster.getGoalSnpshtList().get(0).getEntpId());
             prepStmt.setInt(4, snshtId);
             prepStmt.executeUpdate();
+            CustomerServiceConstant.logger.info(" sucessfully updated the table ");
+
         }
         catch (Exception e) {
             e.printStackTrace();
