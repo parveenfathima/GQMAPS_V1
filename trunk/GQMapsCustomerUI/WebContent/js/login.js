@@ -34,7 +34,6 @@ function userLogin()
 	{
 		var vUrl = $.jStorage.get("jsUrl") + "enterprise/getEnterpriseDetails?userId=" + user + "&passwd=" + pwd;
 		
-
 		$.ajax({
 			type : "GET",
 			contentType: "application/json",
@@ -59,14 +58,14 @@ function userLogin()
 							$.jStorage.set("jsTimeout", 180);							
 							return false;
 						}
-				
-					});		
-					
+					});	
 					if(isValid === 1)
 					{		
 						window.location.href = "dashboard_full.html";	
 					}
-					else
+				}
+					
+					if(vRecLen==0)
 					{
 						alert("Invalid user credential!");
 						$.jStorage.set("jsUserId", "");
@@ -75,9 +74,6 @@ function userLogin()
 						$('#pwdPassword').val("");	
 						$('#txtUserId').focus();
 					}
-					
-				}
-				
 			}, //end of success
 			error : function(json) 
 			{
