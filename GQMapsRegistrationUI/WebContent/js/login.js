@@ -27,7 +27,6 @@ function userLogin()
 	else 
 	{
 		var vUrl = $.jStorage.get("jsUrl") + "enterprise/getEnterpriseDetails?userId=" + user + "&passwd=" + pwd;
-
 		$.ajax({
 			type : "GET",
 			contentType: "application/json",
@@ -59,17 +58,15 @@ function userLogin()
 					{		
 							window.location.href = "edit_registration.html";	
 					}
-					else
-					{
+				}
+				if(vRecLen==0){
 						alert("Invalid user credential!");
 						$.jStorage.set("jsUserId", "");
 						$.jStorage.set("jsPwd", "");	
 						$('#txtUserId').val("");
 						$('#pwdPassword').val("");	
 						$('#txtUserId').focus();
-					}
-				}
-				
+					}	
 			}, //end of success
 			error : function(json) 
 			{
