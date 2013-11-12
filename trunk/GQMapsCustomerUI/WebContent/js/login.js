@@ -33,6 +33,7 @@ function userLogin()
 	else 
 	{
 		var vUrl = $.jStorage.get("jsUrl") + "enterprise/getEnterpriseDetails?userId=" + user + "&passwd=" + pwd;
+		//alert("vurl>" + vUrl);
 		
 		$.ajax({
 			type : "GET",
@@ -42,8 +43,10 @@ function userLogin()
 			success : function(json) 
 			{
 				var vRecLen = json.length;
-				//var vFwdStore = "";	
+
 				var vActive = "n";		
+
+				//alert("on success json is >" + json);
 				if(vRecLen > 0)
 				{
 					$.each(json, function(i,n)
@@ -65,15 +68,15 @@ function userLogin()
 					}
 				}
 					
-					if(vRecLen==0)
-					{
-						alert("Invalid user credential!");
-						$.jStorage.set("jsUserId", "");
-						$.jStorage.set("jsPwd", "");	
-						$('#txtUserId').val("");
-						$('#pwdPassword').val("");	
-						$('#txtUserId').focus();
-					}
+				if(vRecLen==0)
+				{
+					alert("Invalid user credentials!");
+					$.jStorage.set("jsUserId", "");
+					$.jStorage.set("jsPwd", "");	
+					$('#txtUserId').val("");
+					$('#pwdPassword').val("");	
+					$('#txtUserId').focus();
+				}
 			}, //end of success
 			error : function(json) 
 			{
