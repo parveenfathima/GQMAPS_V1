@@ -107,20 +107,29 @@
 		    for (i = 0; i < benefitsList.length; i++){
 		    	totalBenefit = totalBenefit + parseFloat(benefitsList[i].value);
 		    }
-		    alert("totalBenefit " + totalBenefit);
+		   // alert("totalBenefit " + totalBenefit);
 		    document.getElementById('gs_cost_benefit').value = totalBenefit;
 		}
 		else {
 			// save
 			//alert('our checkbox status = '+ JSON.stringify(jsonObject));
 		}
-			
-		alert ( 'gspform on submit = ' + JSON.stringify($('form').serializeObject()) );
+		var formJson = JSON.stringify($('form').serializeObject());
 		
-       return false;
+		document.getElementById('jsonFormData').value = formJson;
+		
+		//alert ( 'gspform on submit = ' + formJson );
+		
+	  // lets trigger a form submit
+	  // construct an HTTP request
+	  //alert ( 'gspform method = ' + ttform.method + " , act = " + ttform.action);
+
+	  document.ttform.submit();
+	  
+      return true;
 	}
 	
-
+//---------------------
 		
 	//function to find number of check boxes selected
 	function processForm(obj) {
@@ -137,7 +146,7 @@
 				}
 			}
 		}
-		alert("num check boxes  = " + cbCount + " , checked = "+ cbCheckedCount);
+		//alert("num check boxes  = " + cbCount + " , checked = "+ cbCheckedCount);
 		return false;
 	}
 		
@@ -236,7 +245,8 @@ if(g.getTimeBound().equals("y")){ %>
 if(g.getTimeBound().equals("y")){ %>
 <h1 align="center"> Tasks</h1>
 <a id = "serverAsset" href = "#" onclick="serverList();">Asset List</a> <% } %>
-<form name="ttform" action="goal.jsp" method="POST">
+
+<form name="ttform" action="/GQMapsCustomerServices/saveAndFinalize/submit" method="POST">
 	<table id="tblTasktmplt" border="1">
 		<tr bgcolor="green" style="color: white;">
 			<%
@@ -344,6 +354,10 @@ if(g.getTimeBound().equals("y")){ %>
 		
 		<!-- mention what action is this -->
 		<input type="hidden" name="actionName" id="actionName" >
+
+		<!-- a dummy field to hold the json string -->
+		<input type="hidden" name="jsonFormData" id="jsonFormData" >
+
 		<% 
 		} 
 		%>
