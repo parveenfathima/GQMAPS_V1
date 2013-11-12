@@ -80,6 +80,7 @@
 	function goalSubmit(actionName) {
 
 		// if a check box is checked , set the corresponding hidden box to 1
+		
 		document.getElementById('actionName').value = actionName;
 
 		// this is for the checkbox
@@ -99,6 +100,14 @@
 		});
 
 		if ( actionName == 'finalize') {
+			//to check if all the tasks are applied
+			
+			if( ! processForm() ) {
+				alert(" Please apply all the tasks ");
+				return false;
+			}
+			
+			
 			// finalize 
 			// calculate cost benefit by adding all the entered cost benefits
 			var benefitsList = document.getElementsByName('cost_benefit');
@@ -114,9 +123,9 @@
 			// save
 			//alert('our checkbox status = '+ JSON.stringify(jsonObject));
 		}
-		var formJson = JSON.stringify($('form').serializeObject());
+		//var formJson = JSON.stringify($('form').serializeObject());
 		
-		document.getElementById('jsonFormData').value = formJson;
+		//document.getElementById('jsonFormData').value = formJson;
 		
 		//alert ( 'gspform on submit = ' + formJson );
 		
@@ -147,7 +156,15 @@
 			}
 		}
 		//alert("num check boxes  = " + cbCount + " , checked = "+ cbCheckedCount);
-		return false;
+		if(cbCount == cbCheckedCount){
+			return true;
+		}
+		else
+		{ 
+			return false;
+		}
+		
+		
 	}
 		
 	
@@ -221,9 +238,11 @@ if(g.getTimeBound().equals("y")){ %>
 
 				<%
 					for (int i = 0; i < goalsnapshotList.size(); i++) {
+						String goalSPLink = "goal_snapshot.jsp?snapShotId=" + goalsnapshotList.get(i).getSnpshtId() ;
 				%>
 				<tr>
-					<td><%=goalsnapshotList.get(i).getSnpshtId()%></td>
+					<td><a href='<%=goalSPLink%>'>
+										<%=goalsnapshotList.get(i).getSnpshtId()%></a></td>
 					<td><%=goalsnapshotList.get(i).getStartDate()%></td>
 					<td><%=goalsnapshotList.get(i).getNotes()%></td>
 					<td><%=goalsnapshotList.get(i).getEndDate()%></td>
@@ -273,15 +292,28 @@ if(g.getTimeBound().equals("y")){ %>
 							 value=<%=goalTaskTmpltChkList.get(i).getTask_id() %>>
 					</td>
 					<%
-					if(g.getTimeBound().equals("y")){ %>
+					if(g.getTimeBound().equals("y")){  
+					
+					String usrNotes = goalTaskTmpltChkList.get(i).getUsr_notes();
+					if ( usrNotes == null ) {
+						usrNotes = "";
+					}
+					%>
 					<td><input type="text" name="usernotes" id="usrnts" 
-							 value=<%=goalTaskTmpltChkList.get(i).getUsr_notes()%>></td>
+							 value=<%=usrNotes%>></td>
 							
 					<td><input type="text" name="cost_benefit" id ="cost_benefit" 
 							value=<%=goalTaskTmpltChkList.get(i).getCost_benefit()%>></td>
 							
+					<%
+				
+					String sysNotes = goalTaskTmpltChkList.get(i).getSys_notes();
+					if ( sysNotes == null ) {
+						sysNotes = "";
+					}
+					%>
 					<td><input type="text" name="systemnotes" id ="sysnotes"
-							value=<%=goalTaskTmpltChkList.get(i).getSys_notes()%>></td>
+							value=<%=sysNotes%>></td>
 						
 					<!-- Checking applied date is null -->		
 					<%
@@ -355,9 +387,9 @@ if(g.getTimeBound().equals("y")){ %>
 		<!-- mention what action is this -->
 		<input type="hidden" name="actionName" id="actionName" >
 
-		<!-- a dummy field to hold the json string -->
+		<!-- a dummy field to hold the json string
 		<input type="hidden" name="jsonFormData" id="jsonFormData" >
-
+ -->
 		<% 
 		} 
 		%>
@@ -366,7 +398,8 @@ if(g.getTimeBound().equals("y")){ %>
 </form>
 
 	<script>
-	  	window.onload = showGoalGraphs();	 
+	  	window.onload = showGoalGraphs();	
+	  	
 	</script>
 
 </body>
