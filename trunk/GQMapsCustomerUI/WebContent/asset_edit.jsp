@@ -747,8 +747,8 @@ function getCurrentAssets()
 </body>
 </html>
 
-
 </div>
+
 <!-- Mask to cover the whole screen -->
 <div id="mask"></div>
 
