@@ -22,6 +22,7 @@ public class GoalHelper {
 	
 	static Gson gson = new GsonBuilder().setDateFormat("yyyy-mm-dd hh:mm:ss").create();
 
+	// this is for the goal screen
 	public GoalHelper(String enterpriseId , String goalId, String goalInputs) {
 		
 		Client client = Client.create();
@@ -53,22 +54,35 @@ public class GoalHelper {
 		System.out.println("kb jsaon resp:::"+svcOutput);
 		
 		gm = gson.fromJson(svcOutput , GoalMaster.class);
+	}
+
+	// this is for the goal snapshot screen
+	public GoalHelper( String snapshotId ) {
 		
-		//------------------
-//		Client client = Client.create();
-//
-//		WebResource webResourceAsset = client
-//				.resource("http://"+GQMapsCustomerUIConstants.webSvcHost+":8080/GQMapsCustomerServices/goalServices/goal?goalId="
-//							+ goalId + "&entpId=" + enterpriseId+"&goalInputs=__ent__=" + enterpriseId );
-//
-//		//ClientResponse response = webResourceAsset.accept("application/json").get(ClientResponse.class);
-//
-//		String jsonString = webResourceAsset.get(String.class);
+		Client client = Client.create();
+		WebResource service;
+		ClientResponse response;
+		
+		service = client.resource("http://"+GQMapsCustomerUIConstants.webSvcHost+":8080/GQMapsCustomerServices/");
 
-		//System.out.println("AssetData String: " + jsonString);
-
-//		gm = gson.fromJson(response. , GoalMaster.class);
-
+		//http://192.168.8.15:8080/GQMapsCustomerServices/getGoalSnapshot/goalSnapshot?snapShtId=17
+			
+		response = service.path("getGoalSnapshot").path("goalSnapshot")
+								.queryParam("snapShtId",snapshotId )
+								.get(ClientResponse.class);
+		
+		System.out.println("snapshotId = <" +snapshotId+ "> , uri = <"+response+">");
+		
+		if (response.getStatus() != 200) {
+			   throw new RuntimeException("Failed : HTTP error code : " + response.getStatus());
+		}
+		else {
+			System.out.println(" successful response from the client");
+		}
+		String svcOutput = response.getEntity(String.class);
+		System.out.println("kb jsaon resp:::"+svcOutput);
+		
+		gm = gson.fromJson(svcOutput , GoalMaster.class);
 	}
 
 	public List<GoalSnpsht> getGoalSnapshot() throws NoSuchElementException,
@@ -83,19 +97,8 @@ public class GoalHelper {
 	}
 
 	public List<TemplateTaskDetails> getTemplateTaskDetails() throws NoSuchElementException,
-	ParseException {
-//		System.out.println("num gcd records = "+gm.getTemplateTaskDetails().size());
-//		
-//		for (int i = 0; i < gm.getTemplateTaskDetails().size(); i++) {
-//			
-//			System.out.println("gcd.java.type = "+gm.getTemplateTaskDetails().get(i).getChartType());
-//			if ( gm.getTemplateTaskDetails().get(i).getChartType().equals("line")) {
-//				System.out.println("gcd.java for line before = "+gm.getTemplateTaskDetails().get(i).getChartData());
-//				
-//				System.out.println("gcd.java for line after = "+gm.getTemplateTaskDetails().get(i).getChartData().replaceFirst("string", "datetime"));
-//			}
-//		}
-		
+			ParseException {
+	
 		return gm.getTemplateTaskDetails();
 	}
 
