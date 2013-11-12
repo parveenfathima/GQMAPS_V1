@@ -128,7 +128,7 @@ $(document).ready(function()
 		var vType = "GET";						
 		// call to the dashboard services are made
 		var vUrl = $.jStorage.get("jsDBUrl") + "DashboardServices/getdashboard?entpId=" + $.jStorage.get("jsEntpId");
-		//alert(" vurl is " +vUrl);
+
 		$.ajax
 		({
 			type:vType,
@@ -425,7 +425,7 @@ function submitGoalInput()
 				});	 
 				
 				//alert("final text length to be submitted is :" + aryGoalInputs.length + "  " + JSON.stringify(aryGoalInputs));
-				alert("final text length to be submitted is <" + vGoalInputs +">");
+				//alert("final text length to be submitted is <" + vGoalInputs +">");
 				
 				$("#dlgGoalInput").dialog(optGoalInput).dialog('close');		
 				window.location.href = "goal.jsp?goalId="+$.jStorage.get("goalId")+"&entpId="+$.jStorage.get("jsEntpId")+"&goalInputs="+vGoalInputs;
