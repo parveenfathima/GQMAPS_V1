@@ -123,19 +123,21 @@
 			// save
 			//alert('our checkbox status = '+ JSON.stringify(jsonObject));
 		}
-		//var formJson = JSON.stringify($('form').serializeObject());
+		var formJson = JSON.stringify($('form').serializeObject());
 		
-		//document.getElementById('jsonFormData').value = formJson;
+		document.getElementById('jsonFormData').value = formJson;
 		
-		//alert ( 'gspform on submit = ' + formJson );
+		alert ( 'gspform on submit = ' + formJson );
 		
 	  // lets trigger a form submit
 	  // construct an HTTP request
-	  //alert ( 'gspform method = ' + ttform.method + " , act = " + ttform.action);
+	 //alert ( 'gspform method = ' + ttform+ " , act = " + ttform.action);
 
 	  document.ttform.submit();
 	  
       return true;
+      // window.location.href = "dashboard_full.html";
+      
 	}
 	
 //---------------------
@@ -388,8 +390,9 @@ if(g.getTimeBound().equals("y")){ %>
 		<input type="hidden" name="actionName" id="actionName" >
 
 		<!-- a dummy field to hold the json string
-		<input type="hidden" name="jsonFormData" id="jsonFormData" >
+		
  -->
+	<input type="hidden" name="jsonFormData" id="jsonFormData" >
 		<% 
 		} 
 		%>
