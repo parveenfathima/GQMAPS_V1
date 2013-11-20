@@ -157,7 +157,6 @@ public class DashboardServices {
                         // based on the query requirement enterprise id positioning is differed.for eg: 1 query may need
                         // only 1 enterprise id other may need more than 1
                         int number = org.apache.commons.lang.StringUtils.countMatches(resultString, "?");
-                        System.out.println("count of ?is\t" + number);
                         for (int i = 1; i <= number; i++) {
                             prepareStmt.setString(i, entpId);
                         }
@@ -172,7 +171,6 @@ public class DashboardServices {
                         prepareStmt = (PreparedStatement) dbExchange.prepareStatement(resultString);
                         int number = org.apache.commons.lang.StringUtils.countMatches(resultString, "?");
 
-                        System.out.println("count of ?is\t" + number);
                         for (int i = 1; i <= number; i++) {
                             prepareStmt.setString(i, entpId);
                         }

@@ -26,7 +26,7 @@ import com.mysql.jdbc.PreparedStatement;
 public class FinalizeGoalModel {
     Connection dbExchange = null;
 
-    public void CompleteGoal(GoalMaster goalmaster) {
+    public void CompleteGoal(GoalMaster goalmaster, String string) {
 
         PreparedStatement preStmt;
         Connection dbExchange = null;
@@ -35,13 +35,13 @@ public class FinalizeGoalModel {
         String tskChkList = "";
         String entpId = "";
         int snpshtId = 0;
-
         Timestamp currentDate = new Timestamp(new Date().getTime());
         CustomerServiceConstant.logger.info(" Current Date is" + currentDate);
         CustomerServiceConstant.logger.info(" Data is Inserting into GoalSnapshot");
         try {
         	  dbExchange = (Connection) SqlUtil.getExchangeConnection();
               PreparedStatement preparegoalStmt = null;
+              JSONObject json = new JSONObject(string);
 
         	  
             // intial check to the goal snpsht
@@ -86,6 +86,7 @@ public class FinalizeGoalModel {
            
             
             }
+            
             preparegoalStmt.executeUpdate();
             CustomerServiceConstant.logger.info(" Data is inserted into GoalSnapshot");
 
@@ -116,6 +117,10 @@ public class FinalizeGoalModel {
                 tskChkList = "UPDATE task_chklst SET snpsht_id= ?, task_id = ?, apply_date = ? ,  usr_notes = ? , cost_benefit = ? ,"
                         + " sys_notes = ?  WHERE snpsht_id = ? and task_id = ? ";
                 tskPrepStmt = (PreparedStatement) dbExchange.prepareStatement(tskChkList);
+                if(json.getString("actionName").equals("finalize")){
+                	
+                	snpshtId=goalmaster.getTemplateTaskDetails().get(i).getSnpsht_id();
+                }
                 tskPrepStmt.setInt(1, snpshtId);
                 tskPrepStmt.setInt(2, goalmaster.getTemplateTaskDetails().get(i).getTask_id());
                 Timestamp applyDate =null;
@@ -123,7 +128,7 @@ public class FinalizeGoalModel {
                 	 applyDate =goalmaster.getTemplateTaskDetails().get(i).getApply_date();   
                 }
                 tskPrepStmt.setTimestamp(3, applyDate);
-                tskPrepStmt.setString(4, goalmaster.getTemplateTaskDetails().get(i).getUsr_notes());// need to remove
+                tskPrepStmt.setString(4, goalmaster.getTemplateTaskDetails().get(i).getUsr_notes());
                 tskPrepStmt.setInt(5, goalmaster.getTemplateTaskDetails().get(i).getCost_benefit());
                 tskPrepStmt.setString(6, goalmaster.getTemplateTaskDetails().get(i).getSys_notes());
                 tskPrepStmt.setInt(7, snpshtId);
@@ -142,7 +147,6 @@ public class FinalizeGoalModel {
                 tskPrepStmt = (PreparedStatement) dbExchange.prepareStatement(tskChkList);
                 tskPrepStmt.setInt(1, snpshtId);
                 tskPrepStmt.setInt(2, goalmaster.getTemplateTaskDetails().get(i).getTask_id());
-                Timestamp applyDate = new Timestamp(new Date().getTime());// settting the Current date and time
                 tskPrepStmt.setTimestamp(3, goalmaster.getTemplateTaskDetails().get(i).getApply_date());
                 tskPrepStmt.setString(4, goalmaster.getTemplateTaskDetails().get(i).getUsr_notes());// need to remove
                 tskPrepStmt.setInt(5, goalmaster.getTemplateTaskDetails().get(i).getCost_benefit());
@@ -152,7 +156,32 @@ public class FinalizeGoalModel {
                 }
             }
             CustomerServiceConstant.logger.info(" inserting into task checklist");
+            if(json.getString("actionName").equals("finalize")){
+            	
+            	if(goalmaster.getGoalSnpshtList().get(0).getSnpshtId()==0){
+            	 String finalizeSql = "select  max(snpsht_id) as snpsht_id from goal_snpsht where enterprise_id=?";
+                 PreparedStatement preparefinlStmt = (PreparedStatement) dbExchange.prepareStatement(finalizeSql);
+                 preparefinlStmt.setString(1, goalmaster.getGoalSnpshtList().get(0).getEntpId());
+                 ResultSet finalizeSnpshtSet = preparefinlStmt.executeQuery();
+                 while (finalizeSnpshtSet.next()) {
+                	 snpshtId = finalizeSnpshtSet.getInt("snpsht_id");
+                 }
+            	}else{
+            		snpshtId=goalmaster.getGoalSnpshtList().get(0).getSnpshtId();
+            	}
+                 // updating the goalSnpsht with the end date and the sys notes
+                 Timestamp applyDate = new Timestamp(new Date().getTime());
+                 CustomerServiceConstant.logger.info(" Apply date is " + applyDate);
+                String finalizeUpdateQuery = "update goal_snpsht set end_date=?,notes=? where enterprise_id=? and snpsht_id=?;";
+                preparegoalStmt = (PreparedStatement) dbExchange.prepareStatement(finalizeUpdateQuery);
+                
+                preparegoalStmt.setTimestamp(1, applyDate);
+                preparegoalStmt.setString(2, goalmaster.getGoalSnpshtList().get(0).getNotes());
+                preparegoalStmt.setString(3, goalmaster.getGoalSnpshtList().get(0).getEntpId());
+                preparegoalStmt.setInt(4, snpshtId);
+                preparegoalStmt.executeUpdate();
 
+            }
         }
         catch (SQLException e) {
             CustomerServiceConstant.logger.error("Exception occured while inserting the Data",e);//fuctionality blk
@@ -169,59 +198,17 @@ public class FinalizeGoalModel {
 
     }
 
-    public void FinalizeGoal(GoalMaster goalmaster) {
-
-        // for finalise
-
-        try {
-            int snshtId = 0;
-            dbExchange = (Connection) SqlUtil.getExchangeConnection();
-            CustomerServiceConstant.logger.info(" finalize operation started");
-
-            // fetching the recently added goalsnpsht_id for the enterprise
-            String finalizeSql = "select  max(snpsht_id) as snpsht_id from goal_snpsht where enterprise_id=?";
-            PreparedStatement preparefinlStmt = (PreparedStatement) dbExchange.prepareStatement(finalizeSql);
-            preparefinlStmt.setString(1, goalmaster.getGoalSnpshtList().get(0).getEntpId());
-            ResultSet finalizeSnpshtSet = preparefinlStmt.executeQuery();
-            while (finalizeSnpshtSet.next()) {
-                snshtId = finalizeSnpshtSet.getInt("snpsht_id");
-            }
-
-            // updating the goalSnpsht with the end date and the sys notes
-            Timestamp applyDate = new Timestamp(new Date().getTime());
-            CustomerServiceConstant.logger.info(" Apply date is " + applyDate);
-            String finalizeUpdateQuery = "update goal_snpsht set end_date=?,notes=? where enterprise_id=? and snpsht_id=?;";
-            PreparedStatement prepStmt = (PreparedStatement) dbExchange.prepareStatement(finalizeUpdateQuery);
-            prepStmt.setTimestamp(1, applyDate);
-            prepStmt.setString(2, goalmaster.getGoalSnpshtList().get(0).getNotes());
-            prepStmt.setString(3, goalmaster.getGoalSnpshtList().get(0).getEntpId());
-            prepStmt.setInt(4, snshtId);
-            prepStmt.executeUpdate();
-            CustomerServiceConstant.logger.info(" sucessfully updated the table ");
-
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
-
-    	try {
-			dbExchange.close();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();//db close
-		}
-    
-    }
-
-	public GoalMaster buildGoalMasterObj(String jsonString) {
+	public GoalMaster buildGoalMasterObj(String string) {
 		GoalMaster gm = new GoalMaster();
 		List<GoalSnpsht> gslist = new ArrayList<GoalSnpsht>(1);
 		try {
+			  dbExchange = (Connection) SqlUtil.getExchangeConnection();
 			//getting the snapshot id
 			// get the submitted form json into one container json object.
-			JSONObject json = new JSONObject(jsonString);
+			JSONObject json = new JSONObject(string);
 			int snpshtId=0;
 			//getting the snapshot id
+			CustomerServiceConstant.logger.info("processing the data");
 			if(json.getInt("gs_id")	== 0){
 				String snpshtIdQuery="select max(snpsht_id) as snpsht_id from goal_snpsht;";
 				Statement createStmt = (Statement) dbExchange.createStatement();
@@ -232,9 +219,25 @@ public class FinalizeGoalModel {
 			}else{
 				snpshtId = json.getInt("gs_id");
 			}
-			 Timestamp	startDate = new Timestamp(new Date().getTime());
+			 Timestamp	startDate = null;
+				String startTest = "SELECT start_date FROM goal_snpsht where snpsht_id = ?";
+				PreparedStatement startStmt= (PreparedStatement) dbExchange.prepareStatement(startTest);
+				startStmt.setInt(1, snpshtId);
+				ResultSet startSet = startStmt.executeQuery();
+				if(startSet.next() && startSet.getTime(1)!=null){
+					startDate=startSet.getTimestamp(1);
+				}else{
+					startDate = new Timestamp(new Date().getTime());
+				}
+			 int costBenefit=0;
+			 if(json.getString("gs_cost_benefit").length()==0){
+				 costBenefit=0;
+			 }else{
+				 costBenefit=json.getInt("gs_cost_benefit");
+
+			 }
 			// end date is null because cannot set enddate nw will be handledwhen finalize is called
-				gslist.add(new GoalSnpsht(snpshtId, json.getString("gs_entpid"), json.getString("gs_goalid"), json.getString("gs_notes"), json.getInt("gs_cost_benefit"),
+				gslist.add(new GoalSnpsht(snpshtId, json.getString("gs_entpid"), json.getString("gs_goalid"), json.getString("gs_notes"), costBenefit,
 						null, null/* pre result and post resultfield is not used as of now  */, 
 						startDate, null/* end date */));
 			gm.setGoalSnpshtList(gslist);
@@ -249,17 +252,27 @@ public class FinalizeGoalModel {
 
 			for(int i =0;i< ttdArrayLength ; i++) {
 				Timestamp applyDate = null;
+				int taskId=json.getJSONArray("taskid").getInt(i);
 				if (json.getJSONArray("hd_chkApply").get(i).equals("on")) {
+					
+					String applytest = "SELECT apply_date FROM task_chklst where snpsht_id = ? and task_id= ?";
+					PreparedStatement applyStmt= (PreparedStatement) dbExchange.prepareStatement(applytest);
+					applyStmt.setInt(1, snpshtId);
+					applyStmt.setInt(2, taskId);
+					ResultSet applySet = applyStmt.executeQuery();
+					if(applySet.next() && applySet.getTime(1)!=null){
+						applyDate=applySet.getTimestamp(1);
+					}else{
 					applyDate = new Timestamp(new Date().getTime());
+					}
 				}
-				int s =gm.getGoalSnpshtList().get(0).getSnpshtId();
 				ttdList.add(new TemplateTaskDetails(snpshtId , applyDate,  json.getJSONArray("cost_benefit").getInt(i),
-						json.getJSONArray("usernotes").get(i).toString() ,json.getJSONArray("systemnotes").get(i).toString() , json.getJSONArray("taskid").getInt(i),
+						json.getJSONArray("usernotes").get(i).toString() ,json.getJSONArray("systemnotes").get(i).toString() ,taskId,
 	                    null /* since this is a save , tdescr is not reqd */, 0/* since this is a save , ts_id is not reqd */ , null , null,null,null));
 			}
 			
 			gm.setTemplateTaskDetails(ttdList);
-			
+		
 		} catch (NoSuchElementException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -269,8 +282,15 @@ public class FinalizeGoalModel {
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} catch (Exception e) {//connection
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-	
+		try{
+			dbExchange.close();
+		}catch(Exception e){
+			CustomerServiceConstant.logger.error("exception occuered wile closing the session in building goalmaster object",e);
+		}
 		
 		return gm;
 	}
