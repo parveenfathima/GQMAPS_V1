@@ -45,8 +45,6 @@ function userLogin()
 				var vRecLen = json.length;
 
 				var vActive = "n";		
-
-				//alert("on success json is >" + json);
 				if(vRecLen > 0)
 				{
 					$.each(json, function(i,n)
@@ -70,7 +68,7 @@ function userLogin()
 					
 				if(vRecLen==0)
 				{
-					alert("Invalid user credentials!");
+					alert("User credentials are wrong/Your Meter was Expired");
 					$.jStorage.set("jsUserId", "");
 					$.jStorage.set("jsPwd", "");	
 					$('#txtUserId').val("");
