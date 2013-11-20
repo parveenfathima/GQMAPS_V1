@@ -418,8 +418,8 @@ public class EnterpriseModel {
         try {
             session = HibernateUtil.getSessionFactory().getCurrentSession();
             session.beginTransaction();
-
-            String hql = "FROM Enterprise where  user_id=:UID and passwd=:PWD";
+            String hql = " from Enterprise e where userId = :UID and passwd = :PWD and exists ( select 1 from GateKeeper g where g.enterpriseId = e.enterpriseId  and DATE(NOW()) <= DATE(g.expDttm) )";
+            //String hql = "FROM Enterprise where  user_id=:UID and passwd=:PWD";
             Query query = session.createQuery(hql);
             query.setParameter("UID", userId);
             query.setParameter("PWD", passwd);
