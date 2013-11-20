@@ -233,8 +233,8 @@ if(g.getTimeBound().equals("y")){ %>
 				<tr bgcolor="green" style="color: white;">
 					<th>Snapshot Id</th>
 					<th>Start Date</th>
-					<th>End Date</th>
 					<th>Notes</th>
+					<th>End Date</th>
 					<th>Realized Benefit</th>
 				</tr>
 
