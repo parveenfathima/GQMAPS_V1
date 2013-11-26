@@ -72,14 +72,16 @@ public class FinalizeGoalModel {
 
 
                 // first step inserting into the goal snpsht
-            goalSnpshtSql = "insert into goal_snpsht (goal_id,enterprise_id,start_date,cost_benefit,notes) values(?,?,?,?,?);";
+            goalSnpshtSql = "insert into goal_snpsht (snpsht_id,goal_id,enterprise_id,start_date,cost_benefit,notes) values(?,?,?,?,?,?);";
             //for(int i=1;i<goalmaster.getGoalSnpshtList().size();i++){
             preparegoalStmt = (PreparedStatement) dbExchange.prepareStatement(goalSnpshtSql);
-            preparegoalStmt.setString(1, goalmaster.getGoalSnpshtList().get(0).getGoalId());
-            preparegoalStmt.setString(2, goalmaster.getGoalSnpshtList().get(0).getEntpId());
-            preparegoalStmt.setTimestamp(3, goalmaster.getGoalSnpshtList().get(0).getStartDate());
-            preparegoalStmt.setInt(4, goalmaster.getGoalSnpshtList().get(0).getCostBenefit());
-            preparegoalStmt.setString(5, goalmaster.getGoalSnpshtList().get(0).getNotes());
+            preparegoalStmt.setInt(1, goalmaster.getGoalSnpshtList().get(0).getSnpshtId());
+
+            preparegoalStmt.setString(2, goalmaster.getGoalSnpshtList().get(0).getGoalId());
+            preparegoalStmt.setString(3, goalmaster.getGoalSnpshtList().get(0).getEntpId());
+            preparegoalStmt.setTimestamp(4, goalmaster.getGoalSnpshtList().get(0).getStartDate());
+            preparegoalStmt.setInt(5, goalmaster.getGoalSnpshtList().get(0).getCostBenefit());
+            preparegoalStmt.setString(6, goalmaster.getGoalSnpshtList().get(0).getNotes());
           //preresult and post result is not used now 28-10-2013
 //            preparegoalStmt.setString(5, goalmaster.getGoalSnpshtList().get(0).getPreResult());
 //            preparegoalStmt.setString(6, goalmaster.getGoalSnpshtList().get(0).getPostResult());
