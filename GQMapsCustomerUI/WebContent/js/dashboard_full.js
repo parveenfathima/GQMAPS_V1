@@ -42,11 +42,10 @@ var pieChartOptionsForIS = {
 
 // Set bar chart options
 var barChartOptions = {
-		legend : 'none','chartArea':{left:"23%",top:20,width:"70%"}, colors:['#663366'],
+		legend : 'none','chartArea':{left:"23%",top:20,width:"70%"}, 
 		hAxis : {
 			'title' : '',
 			textStyle : {
-				color : '#005500',
 				fontSize : '12'
 							}
 		}
@@ -101,7 +100,9 @@ var optAssetList = {
 // Ajax call to get all the dashboard services
 $(document).ready(function() 
 {
-	if($.jStorage.get("jsUserId") === "" || $.jStorage.get("jsUserId") === null || $.jStorage.get("jsPwd") === "" || $.jStorage.get("jsPwd") === null)
+	
+	if(($.jStorage.get("jsUserId") === "" || $.jStorage.get("jsUserId") === null || $.jStorage.get("jsPwd") === "" 
+		|| $.jStorage.get("jsPwd") === null)&& ($.jStorage.get("jsEntpId")=== "" || $.jStorage.get("jsEntpId")=== null ))
 	{
 		window.location.href = "login.html";
 	}
@@ -138,11 +139,7 @@ $(document).ready(function()
 			dataType: "json",
 			success:function(json)
 			{		
-				
-//				 var results = json.allResults;
-//	             alert($(results).size());
-//	             	
-					$.each(json, function(i, v)
+				    $.each(json, function(i, v)
 					{
 						
 						if(json[i]["charttype"] == "plain"){
@@ -150,7 +147,6 @@ $(document).ready(function()
 						}
 						else {
 							var rowLength =  json[i].data.rows.length;
-							//alert("length is = " + rowLength + " div is " + json[i]["divId"] );
 							if(json[i]["charttype"] == "pie" )
 								showPieChart(json[i]["data"], json[i]["divId"],rowLength);			            	  
 							else if(json[i]["charttype"] == "bar")
@@ -173,7 +169,6 @@ $(document).ready(function()
 					}
 					else {
 						var rowLength =  obj[i].data.rows.length;
-						//alert("length is = " + rowLength + " div is " + obj[i]["divId"] );
 						if(obj[i]["charttype"] == "pie" )
 							showPieChart(obj[i]["data"], obj[i]["divId"],rowLength);			            	  
 						else if(obj[i]["charttype"] == "bar")
@@ -218,7 +213,6 @@ function getPUE()
 		dataType: "json",
 		success:function(json)
 		{		
-			//alert("inside PUE success");	
 			$("#div_pue").text("Current month PUE is " + json);			
 		},
 		error:function(json)
@@ -267,11 +261,10 @@ function loadGoals()
 
 function serverList()
 {
-			
-	//window.location.href = "server_list.jsp";
+  
 	window.open("server_list.jsp?entpId="+ $.jStorage.get("jsEntpId") ,"serverlist","right=2000,top=20,toolbar=no, " +
 				"status=no,location=no,	menubar=no, scrollbars=yes, resizable=no, width=400, height=400");
-	//ServerLIst.document.write('My PDF File Title');
+  
 }
 
 
@@ -423,10 +416,7 @@ function submitGoalInput()
 						
 					}
 				});	 
-				
-				//alert("final text length to be submitted is :" + aryGoalInputs.length + "  " + JSON.stringify(aryGoalInputs));
-				//alert("final text length to be submitted is <" + vGoalInputs +">");
-				
+								
 				$("#dlgGoalInput").dialog(optGoalInput).dialog('close');		
 				window.location.href = "goal.jsp?goalId="+$.jStorage.get("goalId")+"&entpId="+$.jStorage.get("jsEntpId")+"&goalInputs="+vGoalInputs;
 				

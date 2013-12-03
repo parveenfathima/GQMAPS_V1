@@ -73,7 +73,7 @@ $(document).ready(function()
 			
 			$("#tblCString").append(vRows);
 			
-			gCSArray
+			gCSArray;
 		}
 	});	
 	
@@ -171,7 +171,6 @@ function checkForIPAdd()
 		}
 		else
 		{
-			//alert("true");	
 			return true;
 		}
 	}

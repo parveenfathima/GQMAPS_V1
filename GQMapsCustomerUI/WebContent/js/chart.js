@@ -16,8 +16,8 @@ function showBarChart(barData,divId,rowLength)
 		}
 		return;
 	}
-	//alert("divId "+divID);
-	 // Set a callback to run when the Google Visualization API is loaded.
+	
+	// Set a callback to run when the Google Visualization API is loaded.
 	google.setOnLoadCallback(drawChart);
 	var data = new google.visualization.DataTable(barData);
 	  
@@ -55,7 +55,7 @@ function showPieChart(pieData,divId,rowLength){
 		}
 		return;
 	}
-		//alert(" divId" + divID + " have data");
+	
 	google.setOnLoadCallback(drawChart);
 	var data = new google.visualization.DataTable(pieData);
 	function drawChart(){

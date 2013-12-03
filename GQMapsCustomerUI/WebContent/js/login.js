@@ -22,18 +22,17 @@ function userLogin()
 
 	if (user.length === 0) 
 	{
-		alert("Enter Username");
+		alert("Please Enter Username");
 		$('#txtUserId').focus();
 	} 
 	else if (pwd.length === 0) 
 	{
-		alert("Enter Password");
+		alert("Please Enter Password");
 		$('#pwdPassword').focus();
 	} 
 	else 
 	{
 		var vUrl = $.jStorage.get("jsUrl") + "enterprise/getEnterpriseDetails?userId=" + user + "&passwd=" + pwd;
-		//alert("vurl>" + vUrl);
 		
 		$.ajax({
 			type : "GET",
@@ -68,7 +67,7 @@ function userLogin()
 					
 				if(vRecLen==0)
 				{
-					alert("User credentials are wrong/Your Meter was Expired");
+					alert("Either User credentials are invalid or Your meters have expired.");
 					$.jStorage.set("jsUserId", "");
 					$.jStorage.set("jsPwd", "");	
 					$('#txtUserId').val("");
@@ -78,7 +77,6 @@ function userLogin()
 			}, //end of success
 			error : function(json) 
 			{
-				//alert("Invalid User Credentials" + json.status + " " + json.responseText);
 				alert("Error from loading user credentials!");
 			}
 		});
@@ -94,7 +92,7 @@ function checkForValue()
 	{
 		alert("Please enter your userid");
 			
-		window.location.href = "login.html"
+		window.location.href = "login.html";
 		$("#txtUserId").focus();
 	} 
 	else 
@@ -104,3 +102,10 @@ function checkForValue()
 		window.location.href = "change_password.html";
 	}
 }
+
+//function to redirect new enterprise registration process
+function addRegistration()
+{
+	$.jStorage.set("jsTimeout",180);
+	window.location.href="add_registration.html";
+	}

@@ -10,7 +10,7 @@ function logout()
 
 function convertToTwoDigit(no)
 {
-		return (no >=0 && no <10 ? ("0"+ no) : no)
+		return (no >=0 && no <10 ? ("0"+ no) : no);
 }
 
 function getDtTime()
