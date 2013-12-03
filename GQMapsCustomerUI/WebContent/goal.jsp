@@ -6,6 +6,7 @@
 <%@page import="com.gq.cust.GoalHelper"%>
 <%@page import="java.util.ArrayList"%>
 <%@page import="java.util.List"%>
+<%@page import="java.util.Date"%>
 
 <html>
 	
@@ -57,8 +58,8 @@
 		}
 	</style>
 
-	<script> 		
-		
+	<script type="text/javascript"> 		
+	 
 	$.fn.serializeObject = function()
 	{
 	    var o = {};
@@ -76,27 +77,66 @@
 	    return o;
 	};
 
+	//function to accept numbers only.
+	function isNumberKey(evt)
+    {
+       var charCode = (evt.which) ? evt.which : event.keyCode;
+       var cost_benefit=document.getElementById('cost_benefit');
+
+       if (charCode != 46 && charCode > 31 
+         && (charCode < 48 || charCode > 57)) {
+          return false;
+       }
+       return true;
+    }
+
+	//function to length validation for cost benefit
+	function isLengthCheck() {
+
+		var cost_benefit=document.getElementById('cost_benefit').value;
+		if(cost_benefit.length >9) {
+			return false;
+			}
+		}
+
 
 	function goalSubmit(actionName) {
+	
 
 		// if a check box is checked , set the corresponding hidden box to 1
 		
 		document.getElementById('actionName').value = actionName;
 
+
+		//this is for costbenefit textbox
+		var cost_benefit_value;
+		var fields1 = document.ttform.elements["cost_benefit"];
+		
+		$('.input-row').each(function(index, row) {
+		    var innerObject = {};
+		    $(':text', row).each(function(index, text) {
+			    
+		    	if(text.value.length == 0) {
+			    	cost_benefit_value=0;
+			    	}
+		    	else {
+			    	cost_benefit_value=text.value;
+			    	}
+		    });
+		    fields1[index].value = cost_benefit_value;
+		});
+		
 		// this is for the checkbox
 		var onOff;
 
 		var fields = document.ttform.elements["hd_chkApply"];
-	    
+	   
 		$('.input-row').each(function(index, row) {
-	    	//alert('cb index = ' + index);
 		    var innerObject = {};
 		    $(':checkbox', row).each(function(index, checkbox) {
 		    	onOff = checkbox.checked ? 'on' : 'off';
-			    //alert('cb status  val = '+ onOff);
 		    });
 		    fields[index].value = onOff;
-		   
 		});
 
 		if ( actionName == 'finalize') {
@@ -116,39 +156,49 @@
 		    for (i = 0; i < benefitsList.length; i++){
 		    	totalBenefit = totalBenefit + parseFloat(benefitsList[i].value);
 		    }
-		   // alert("totalBenefit " + totalBenefit);
 		    document.getElementById('gs_cost_benefit').value = totalBenefit;
 		}
 		else {
-			// save
-			//alert('our checkbox status = '+ JSON.stringify(jsonObject));
+			
 		}
-		var formJson = JSON.stringify($('form').serializeObject());
 		
-		document.getElementById('jsonFormData').value = formJson;
-		
-		alert ( 'gspform on submit = ' + formJson );
-		
-	  // lets trigger a form submit
-	  // construct an HTTP request
-	 //alert ( 'gspform method = ' + ttform+ " , act = " + ttform.action);
+ var formJson=JSON.stringify($('form').serializeObject());
+ 
+		//we are here to construct a ajax call for invoking save and finalize operation. 
+		  var vType = "POST";
+		  var SUrl=$.jStorage.get("jsDBUrl")+"saveAndFinalize/submit";
+		  $.ajax
+			({
+				type:vType,
+				contentType: "application/json",
+				url:SUrl,
+				data: JSON.stringify($('form').serializeObject()),
+				async:false,
+				dataType: "json",
+				
+				success:function(response)
+				{
+		 			window.location.href="dashboard_full.html";
+				},
+				error:function(json)
+				{
+					window.location.href="Error.jsp";
+				} 
+			});	
 
-	  document.ttform.submit();
-	  
-      return true;
-      // window.location.href = "dashboard_full.html";
-      
-	}
+		 	  
+	 }
 	
 //---------------------
 		
+			
 	//function to find number of check boxes selected
 	function processForm(obj) {
 		var cb = document.getElementsByTagName('input');
 		var retStr = "";
 		var cbCount = 0;
 		var cbCheckedCount = 0;
-				
+						
 		for ( var i = 0; i < cb.length; i++) {
 			if (cb[i].getAttribute('type') == "checkbox") {
 				cbCount++;
@@ -157,16 +207,15 @@
 				}
 			}
 		}
-		//alert("num check boxes  = " + cbCount + " , checked = "+ cbCheckedCount);
+
 		if(cbCount == cbCheckedCount){
 			return true;
 		}
+
 		else
 		{ 
 			return false;
 		}
-		
-		
 	}
 		
 	
@@ -202,7 +251,8 @@
 </head>
 
 <body>
-  <div id="idletimeout" style="top: 150px; margin-left: 215px; margin-right: 200px; ">
+
+    <div id="idletimeout" style="top: 150px; margin-left: 215px; margin-right: 200px; ">
         Logging off in <span><!-- countdown place holder --></span>&nbsp;seconds due to inactivity.
         <a id="idletimeout-resume" href="#">Click here to continue</a>.
     </div>  
@@ -211,74 +261,39 @@
 		String goalId = request.getParameter("goalId");
 		String goalInputs = request.getParameter("goalInputs");
 		
-		System.out.println("inside goal.jsp e <" + enterpriseId +"> , g <" + goalId + "> , i <"+ goalInputs +">");
 		
 		GoalHelper gh = new GoalHelper(enterpriseId, goalId , goalInputs );
-		//GoalHelper gh = new GoalHelper(enterpriseId, goalId , "__date__=10/16/2013 12:0:0~__asset_id__=C-000c293c937a" );
 		
 		Goal g = gh.getGoal();
 		List<GoalSnpsht> goalsnapshotList = gh.getGoalSnapshot();
 		List<TemplateTaskDetails> goalTaskTmpltChkList = gh.getTemplateTaskDetails();
+		Date startDate=null;
+		Date endDate=null;
+		int year,month,date;
 	%>
 
 	<h1 align="center"><%=g.getDescr()%></h1>
 	
-	<!-- form to display goal snapshot history-->
-<%
-if(g.getTimeBound().equals("y")){ %>
-	<form id='gsform' method="post" >
-
-		<div id="goalSnapshtDiv">
-			<table id="tblGoalsnapsht" border="1">
-				<tr bgcolor="green" style="color: white;">
-					<th>Snapshot Id</th>
-					<th>Start Date</th>
-					<th>Notes</th>
-					<th>End Date</th>
-					<th>Realized Benefit</th>
-				</tr>
-
-				<%
-					for (int i = 0; i < goalsnapshotList.size(); i++) {
-						String goalSPLink = "goal_snapshot.jsp?snapShotId=" + goalsnapshotList.get(i).getSnpshtId() ;
-				%>
-				<tr>
-					<td><a href='<%=goalSPLink%>'>
-										<%=goalsnapshotList.get(i).getSnpshtId()%></a></td>
-					<td><%=goalsnapshotList.get(i).getStartDate()%></td>
-					<td><%=goalsnapshotList.get(i).getNotes()%></td>
-					<td><%=goalsnapshotList.get(i).getEndDate()%></td>
-					<td><%=goalsnapshotList.get(i).getCostBenefit()%></td>
-
-					<%
-						}
-					%>
-
-				</tr>
-
-			</table>
-		</div>
 	
-	</form>
-<%} %>
 	<!-- form to display task template -->
 <%
 if(g.getTimeBound().equals("y")){ %>
 <h1 align="center"> Tasks</h1>
 <a id = "serverAsset" href = "#" onclick="serverList();">Asset List</a> <% } %>
 
-<form name="ttform" action="/GQMapsCustomerServices/saveAndFinalize/submit" method="POST">
+<form name="ttform" action="/GQMapsCustomerServices/saveAndFinalize/submit" method="post">
 	<table id="tblTasktmplt" border="1">
 		<tr bgcolor="green" style="color: white;">
 			<%
 					if(g.getTimeBound().equals("y")){ %>
 			<th>Task</th>
 			<th>UserNotes</th>
-			<th>Benefit</th>
+			<th>Benefit  (Only Numeric)</th>
 			<th>SystemNotes</th>
 			<th>Apply</th>
 			<% } %>
 		</tr>
+		
 		
 		<!-- Showing color change for alternative rows  -->
 		<%
@@ -286,7 +301,7 @@ if(g.getTimeBound().equals("y")){ %>
 			for (i = 0; i < goalTaskTmpltChkList.size(); i++) {
 				%>
 
-				<tr bgcolor="pink" class="input-row">
+				<tr bgcolor="#FFFFCC" class="input-row">
 		
 					<td><%=goalTaskTmpltChkList.get(i).getDescr()%>
 					<!--  we will just store the task id in a hidden field as well -->
@@ -301,11 +316,12 @@ if(g.getTimeBound().equals("y")){ %>
 						usrNotes = "";
 					}
 					%>
-					<td><input type="text" name="usernotes" id="usrnts" 
-							 value=<%=usrNotes%>></td>
+					<td><textarea rows="3" cols="30" maxlength="198" name="usernotes" id="usrnts"><%=usrNotes%></textarea></td>
 							
-					<td><input type="text" name="cost_benefit" id ="cost_benefit" 
-							value=<%=goalTaskTmpltChkList.get(i).getCost_benefit()%>></td>
+					<td><input type="text" name="cost_benefit" id ="cost_benefit" onkeypress="return isNumberKey(event)" 
+					maxlength="11" onkeyup="return isLengthCheck()" value=<%=goalTaskTmpltChkList.get(i).getCost_benefit()%>>
+					<input type="hidden" name="hdcost_benefit">
+					</td>
 							
 					<%
 				
@@ -314,8 +330,7 @@ if(g.getTimeBound().equals("y")){ %>
 						sysNotes = "";
 					}
 					%>
-					<td><input type="text" name="systemnotes" id ="sysnotes"
-							value=<%=sysNotes%>></td>
+					<td><textarea rows="3" cols="30" maxlength="198" name="systemnotes" id ="sysnotes"><%=sysNotes%></textarea></td>
 						
 					<!-- Checking applied date is null -->		
 					<%
@@ -375,12 +390,27 @@ if(g.getTimeBound().equals("y")){ %>
 			</tr>
 
 	</table>
+	<br>
+	<%
+					if(g.getTimeBound().equals("n")){
+	%>
+	<table>
+	<td><input type=button value="Take me to Dashboard" onclick="gotoDashboard()"/></td>
+	</table>
+	<% } %>
+	<br>
    <% if(g.getTimeBound().equals("y")){ %>
-		<input type="button" id="save" value="Save&Exit" onclick="goalSubmit('save')">
-		<input type="button" id="finalize" value="Finalize" onclick="goalSubmit('finalize') ">
+   <table>
+   <tr>
+		<td><input type="button" id="save" value="Save&Exit" onclick="goalSubmit('save')"></td>
+		<td><input type="button" id="finalize" value="Finalize" onclick="goalSubmit('finalize') "></td>
 			
 		<!--  the following entries are for providing the goal snapshot entry -->
-		<input type="text" name="gs_notes" value="please enter a snapshot note">
+		<td><input type="text" name="gs_notes" value="please enter a snapshot note" maxlength="50"></td>
+		<td width="650"/>
+		<td><input type="button" value="Take me to DASHBOARD" onclick="gotoDashboard()"></td>
+		</tr>
+		</table>
 		<input type="hidden" name="gs_cost_benefit" id="gs_cost_benefit" >
 		<input type="hidden" name="gs_id" value="<%=goalTaskTmpltChkList.get(0).getSnpsht_id() %>">
 		<input type="hidden" name="gs_entpid" value="<%=enterpriseId %>">
@@ -400,6 +430,55 @@ if(g.getTimeBound().equals("y")){ %>
 		
 </form>
 
+<!-- form to display goal snapshot history-->
+<%
+if(g.getTimeBound().equals("y")){ %>
+<h1 align="center">Goal History</h1>
+	<form id='gsform' method="post" >
+
+		<div id="goalSnapshtDiv">
+			<table width="800" id="tblGoalsnapsht" border="1">
+				<tr bgcolor="green" style="color: white;">
+					<th>Snapshot Id</th>
+					<th>Start Date</th>
+					<th>Notes</th>
+					<th>End Date</th>
+					<th>Realized Benefit</th>
+				</tr>
+
+				<%
+					for (i = 0; i < goalsnapshotList.size(); i++) {
+						String goalSPLink = "goal_snapshot.jsp?snapShotId=" + goalsnapshotList.get(i).getSnpshtId() ;
+				%>
+				<tr>
+					<td><a href='<%=goalSPLink%>'>
+										<%=goalsnapshotList.get(i).getSnpshtId()%></a></td>
+					<% startDate=new Date(goalsnapshotList.get(i).getStartDate().getTime());
+					year=startDate.getYear()+1900;
+					month=startDate.getMonth()+1;
+					date=startDate.getDate();
+					%>
+					<td><%=year%>-<%=month%>-<%=date%></td>
+					<td><%=goalsnapshotList.get(i).getNotes()%></td>
+					<% endDate=new Date(goalsnapshotList.get(i).getEndDate().getTime());
+					year=endDate.getYear()+1900;
+					month=endDate.getMonth()+1;
+					date=endDate.getDate();
+					%>
+					<td><%=year%>-<%=month%>-<%=date%></td>
+					<td><%=goalsnapshotList.get(i).getCostBenefit()%></td>
+
+					<%
+						}
+					%>
+
+				</tr>
+
+			</table>
+		</div>
+	
+	</form>
+<%} %>
 	<script>
 	  	window.onload = showGoalGraphs();	
 	  	
@@ -408,3 +487,40 @@ if(g.getTimeBound().equals("y")){ %>
 </body>
 
 </html>
+
+<!-- Mask to cover the whole screen -->
+<div id="mask"></div>
+
+<script src="js/jquery.idletimer.js" type="text/javascript"></script>
+<script src="js/jquery.idletimeout.js" type="text/javascript"></script>
+
+<!--jQuery plugin to set session timeout -->
+<script type="text/javascript">
+    $.idleTimeout('#idletimeout', '#idletimeout a', {
+		idleAfter : $.jStorage.get("jsTimeout"),
+        onTimeout : function() {
+            $(this).slideUp();
+            window.location = "login.html";
+        },
+        onIdle : function() {
+            var maskHeight = $(document).height();
+            var maskWidth = $(window).width();
+            $('#mask').css({'width':maskWidth,'height':maskHeight});
+            $('#mask').fadeIn(1000);	
+            $('#mask').fadeTo("slow",0.8);	
+            $(this).slideDown(); // show the warning bar
+        },
+        onCountdown : function(counter) {
+            $(this).find("span").html(counter); // update the counter
+        },
+        onResume : function() {
+            $(this).slideUp(); // hide the warning bar
+            $('#mask').hide();
+            $('.window').hide();
+        }
+    });
+</script>		
+
+
+
+

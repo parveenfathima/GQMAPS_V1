@@ -21,6 +21,8 @@
 
 <script src="jquery-ui-1.10.2.custom/js/jquery-1.9.1.js"></script>
 <script src="jquery-ui-1.10.2.custom/js/jquery-ui-1.10.2.custom.js"></script>
+<script src = "js/jstorage.js"> </script>   
+<script src = "js/dashboard_full.js"> </script>
 <script> 
 
 	function handleClick(){
@@ -29,29 +31,57 @@
 		var chk_arr =  document.getElementsByName("chkApply");
 		var total = 0;
 		var ipaddresses = '';
-		//alert('row count including header = ' + assetTable.rows.length );
 		
 		for (var i = 1 ; i < assetTable.rows.length ; i++) {
 			row = assetTable.rows[i];
 
  		    if ( row.getElementsByTagName('td')[0].getElementsByTagName('input')[0].checked ) {
-//  		    	alert(  "ip = " +row.cells[2].innerHTML 
-//  		    			+ ", cost = " + row.cells[3].innerHTML);
 	    
  		     	total = total+ parseInt(row.cells[3].innerHTML);
  		     	ipaddresses = ipaddresses + ',' + row.cells[2].innerHTML;
  		  	} 
 		}//for ends
-		//alert("total = " + total + ' , ip addr ' + ipaddresses);
+
 		document.getElementById('consolidateResult').innerHTML 
 					= "Total value = " + total + ' , Ip Addr(s) ' + ipaddresses;
 	} 	
 	
 </script>
+<!--timeout css -->
+<style type="text/css">
+#idletimeout {
+	background: #4E4E4E;
+	border: 3px solid #4E4E4E;
+	color: #fff;
+	font-family: arial, sans-serif;
+	text-align: center;
+	font-size: 15px;
+	padding: 10px;
+	position: relative;
+	top: 0px;
+	left: 0;
+	right: 0;
+	z-index: 100000;
+	display: none;
+}
+
+#idletimeout a {
+	color: #fff;
+	font-weight: bold
+}
+
+#idletimeout span {
+	font-weight: bold
+}
+</style>
 
 </head>
 
 <body>
+<div id="idletimeout" style="top: 150px; margin-left: 215px; margin-right: 200px; ">
+        Logging off in <span><!-- countdown place holder --></span>&nbsp;seconds due to inactivity.
+        <a id="idletimeout-resume" href="#">Click here to continue</a>.
+    </div>  
 	<h1>List of Servers</h1>
 	<br> <h5> Please choose the asset and click on submit, copy the result and paste in the places wherever required</h5>
 <% 	
@@ -119,4 +149,37 @@
 
 </body>
 
-</html>	
+</html>
+
+<!-- Mask to cover the whole screen -->
+<div id="mask"></div>
+
+<script src="js/jquery.idletimer.js" type="text/javascript"></script>
+<script src="js/jquery.idletimeout.js" type="text/javascript"></script>
+
+<!--jQuery plugin to set session timeout -->
+<script type="text/javascript">
+    $.idleTimeout('#idletimeout', '#idletimeout a', {
+		idleAfter : $.jStorage.get("jsTimeout"),
+        onTimeout : function() {
+            $(this).slideUp();
+            window.location = "login.html";
+        },
+        onIdle : function() {
+            var maskHeight = $(document).height();
+            var maskWidth = $(window).width();
+            $('#mask').css({'width':maskWidth,'height':maskHeight});
+            $('#mask').fadeIn(1000);	
+            $('#mask').fadeTo("slow",0.8);	
+            $(this).slideDown(); // show the warning bar
+        },
+        onCountdown : function(counter) {
+            $(this).find("span").html(counter); // update the counter
+        },
+        onResume : function() {
+            $(this).slideUp(); // hide the warning bar
+            $('#mask').hide();
+            $('.window').hide();
+        }
+    });
+</script>			
