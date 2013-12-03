@@ -4,12 +4,13 @@ import java.text.ParseException;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-import com.google.gson.*;
-
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.gq.meter.xchange.object.Goal;
 import com.gq.meter.xchange.object.GoalMaster;
 import com.gq.meter.xchange.object.GoalSnpsht;
 import com.gq.meter.xchange.object.TemplateTaskDetails;
+
 import com.gq.util.GQMapsCustomerUIConstants;
 
 import com.sun.jersey.api.client.Client;
@@ -19,9 +20,7 @@ import com.sun.jersey.api.client.WebResource;
 public class GoalHelper {
 
 	GoalMaster gm;
-	
-	static Gson gson = new GsonBuilder().setDateFormat("yyyy-mm-dd hh:mm:ss").create();
-
+	static final Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm:ss").create();
 	// this is for the goal screen
 	public GoalHelper(String enterpriseId , String goalId, String goalInputs) {
 		
@@ -44,15 +43,11 @@ public class GoalHelper {
 								.queryParam("goalInputs",goalInputs)
 								.get(ClientResponse.class);
 		
-		System.out.println("ks enterpriseId = <" +enterpriseId+ "> , uri = <"+response+">");
-		
 		if (response.getStatus() != 200) {
 			   throw new RuntimeException("Failed : HTTP error code : " + response.getStatus());
 		}
 	 
 		String svcOutput = response.getEntity(String.class);
-		System.out.println("kb jsaon resp:::"+svcOutput);
-		
 		gm = gson.fromJson(svcOutput , GoalMaster.class);
 	}
 
@@ -71,17 +66,14 @@ public class GoalHelper {
 								.queryParam("snapShtId",snapshotId )
 								.get(ClientResponse.class);
 		
-		System.out.println("snapshotId = <" +snapshotId+ "> , uri = <"+response+">");
-		
 		if (response.getStatus() != 200) {
 			   throw new RuntimeException("Failed : HTTP error code : " + response.getStatus());
 		}
 		else {
-			System.out.println(" successful response from the client");
+			GQMapsCustomerUIConstants.logger.info(" Successful response from the client");
 		}
-		String svcOutput = response.getEntity(String.class);
-		System.out.println("kb jsaon resp:::"+svcOutput);
 		
+		String svcOutput = response.getEntity(String.class);
 		gm = gson.fromJson(svcOutput , GoalMaster.class);
 	}
 
