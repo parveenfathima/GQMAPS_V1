@@ -12,6 +12,7 @@ import com.google.gson.*;
 import com.gq.meter.object.Asset;
 import com.gq.meter.object.DevCtlg;
 import com.gq.util.GQMapsCustomerUIConstants;
+
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
@@ -20,10 +21,6 @@ public class AssetHelper {
 
 	static	Gson gson = new GsonBuilder().setDateFormat("yyyy-mm-dd hh:mm:ss").create();
 	
-//	public static void main(String args[]) throws NoSuchElementException,
-//			ParseException {
-//		List<Asset> la = getAssetList();
-//	}
 
 	public static List<Asset> getAssetList(String enterpriseId) throws NoSuchElementException,
 			ParseException {
@@ -39,20 +36,14 @@ public class AssetHelper {
 
 		String assetStr = webResourceAsset.get(String.class);
 
-		System.out.println("AssetData String: " + assetStr);
-
 		JSONObject jsnobject = new JSONObject(assetStr);
 		JSONArray jsonAssetArray = jsnobject.getJSONArray("assetResult");
 		List<Asset> assetListDB = new ArrayList<Asset>();
-
-		System.out.println("length: " + jsonAssetArray.length());
 
 		for (int i = 0; i < jsonAssetArray.length(); i++) {
 
 			Asset asset = gson.fromJson(jsonAssetArray.getJSONObject(i)
 					.toString(), Asset.class);
-
-			System.out.println("IP: " + asset.getInactiveDttm());
 
 			if (asset.getProtocolId().equals("computer")) {
 				assetListDB.add(asset);
@@ -73,12 +64,8 @@ public class AssetHelper {
 		String domainDataStr = webResourceDomain.get(String.class);
 
 		JSONObject jsnobject = new JSONObject(domainDataStr);
-
-		System.out.println("\nDomainData String: " + domainDataStr);
-
 		JSONArray jsonCtlgArray = jsnobject.getJSONArray("devCtlgResult");
-		System.out.println("Catalog length: " + jsonCtlgArray.length());
-
+		
 		List<DevCtlg> dcListDB = new ArrayList<DevCtlg>();
 		
 		// adding catalog details to the domain data object
