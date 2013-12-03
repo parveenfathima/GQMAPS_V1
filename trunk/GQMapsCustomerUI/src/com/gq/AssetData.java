@@ -166,8 +166,7 @@ public class AssetData {
 		}
 
 		JSONArray jsonSrvrArray = jsnobject.getJSONArray("srvrAppType");
-		//System.out.println("Server length: " + jsonSrvrArray.length());
-
+		
 		// adding server type details to the domain data object
 		for (int j = 0; j < jsonSrvrArray.length(); j++) {
 
@@ -295,7 +294,7 @@ public class AssetData {
 			assetListDB.add(asset);
 		}
 
-		System.out.println("Length of assetListDB is : " + assetListDB.size());
+		GQMapsCustomerUIConstants.logger.debug("Length of assetListDB is : " + assetListDB.size());
 
 		return assetListDB;
 	}
