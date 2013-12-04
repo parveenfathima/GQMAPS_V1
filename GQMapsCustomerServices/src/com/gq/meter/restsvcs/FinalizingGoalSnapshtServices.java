@@ -1,16 +1,10 @@
 package com.gq.meter.restsvcs;
 
-import java.net.URLDecoder;
-import java.text.ParseException;
-
 import javax.ws.rs.Consumes;
-import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-
-import org.json.JSONObject;
 
 import com.gq.meter.model.FinalizeGoalModel;
 import com.gq.meter.object.GoalMaster;
@@ -21,19 +15,13 @@ public class FinalizingGoalSnapshtServices {
 
     @Path("/submit")
     @POST
-    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-    public Response finalizetasks(@FormParam("jsonFormData")String string) {
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response finalizetasks(String string) {
     	
         CustomerServiceConstant.logger.info(" entered rest svc............. Goalmaster object"+string);
-
         GoalMaster goalmaster = new GoalMaster();
         FinalizeGoalModel goalModel = new FinalizeGoalModel();
 		try {
-			String result = URLDecoder.decode(string, "UTF-8");
-			CustomerServiceConstant.logger.info("before converting to json"+result);
-			JSONObject json = new JSONObject(result);
-			CustomerServiceConstant.logger.info("before converting to json"+json);
-
         CustomerServiceConstant.logger.info(" Building Goalmaster object"+string);
 
         goalmaster = goalModel.buildGoalMasterObj(string);
@@ -43,7 +31,7 @@ public class FinalizingGoalSnapshtServices {
         //if (json.getString("actionName").equals("save")) {
     		CustomerServiceConstant.logger.info("before save");
 
-            goalModel.CompleteGoal(goalmaster,string);
+    	 goalModel.CompleteGoal(goalmaster,string);
             CustomerServiceConstant.logger.info("sucessfully completed the save operation");
 
         //}
@@ -54,10 +42,8 @@ public class FinalizingGoalSnapshtServices {
        // }
 		} catch (Exception e) {
 			CustomerServiceConstant.logger.error("exception occured while processing the data",e);
+			return Response.status(400).build();
 		}
-		
-        return Response.ok("sucess").build();
-
-        
+		return Response.ok(CustomerServiceConstant.gson.toJson("success")).build();
     }// end of method
 }// end of class
