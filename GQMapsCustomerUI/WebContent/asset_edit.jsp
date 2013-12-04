@@ -21,7 +21,6 @@
 
 <script src="js/jstorage.js"> </script>
 <script src="js/rest_service.js"> </script>
-<script src="js/asset_edit.js"> </script>
 <script src = "js/general.js"> </script>    
 
 <script type="text/javascript">
@@ -69,7 +68,6 @@ function updateAsset(count)
 		else if(vUsage.length > 50)
 		{
 			$("#txtAssetUsage"+j).select();
-			//alert("Please enter Asset Usage within 50 characters");
 			return false;
 		}
 		
@@ -278,32 +276,22 @@ function getCurrentAssets()
 
 			//getting the user id of the enterprise
 			entp = request.getParameter("setEntp");
-			System.out
-					.println("\n Enterprise User id is ---------------: "
-							+ entp);
-			System.out
-					.println("\n Enterprise User id is ---------------: "
-							+ request.getParameter("setEntp"));
-
+			
 			try
 			{
 				assetListDB = assetData.getAssetList(entp);
-				System.out.println("Total assets: " + assetListDB.size());
 			}
 			catch(Exception e)
 			{
-				System.out.println("\nError loading asset data... ");
 				e.printStackTrace();
 			}
 			
 			try
 			{
 				domainDataListDB = assetData.getDomainDataList(entp);
-				System.out.println("Total Domain Data: " + domainDataListDB.size());
 			}
 			catch(Exception e)
 			{
-				System.out.println("\nError loading domain data... ");
 				e.printStackTrace();
 			}
 			
@@ -747,8 +735,8 @@ function getCurrentAssets()
 </body>
 </html>
 
-</div>
 
+</div>
 <!-- Mask to cover the whole screen -->
 <div id="mask"></div>
 
