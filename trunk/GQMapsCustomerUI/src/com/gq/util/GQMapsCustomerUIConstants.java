@@ -1,8 +1,9 @@
 package com.gq.util;
 
-
 import java.io.IOException;
+
 import java.util.Date;
+
 import org.apache.log4j.FileAppender;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
@@ -12,14 +13,12 @@ public class GQMapsCustomerUIConstants {
     public static final Logger logger = Logger.getLogger("GQMapsCustomerConstants.class");
 
     private static FileAppender fileappender;
-    //private static String logFilePrefix = "C:/customerUILogs/";
     private static String logFilePrefix = "/opt/gq/maps/logs/";
     private static String logFileName = "customerui.log";
     public static final String webSvcHost = "localhost";
-//    public static final String webSvcHost = "192.168.8.15";
-
-
+    //public static final String webSvcHost = "192.168.8.15";
     private static final String LOG_FILE_NAME_DATE_PATTERN = "yyyy-MM-dd";
+    
 
     static {
         logger.info("Inside create logger method");
@@ -38,6 +37,5 @@ public class GQMapsCustomerUIConstants {
         logger.addAppender(fileappender);
         logger.info("after creating CustomerUI logger method");
     }
-
 }
 
