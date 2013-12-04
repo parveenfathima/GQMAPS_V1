@@ -5,16 +5,14 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.text.ParseException;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 
-import com.google.gson.JsonArray;
-import com.gq.meter.object.Goal;
 import com.gq.meter.object.GoalMaster;
 import com.gq.meter.object.GoalSnpsht;
 import com.gq.meter.object.TemplateTaskDetails;
@@ -26,7 +24,7 @@ import com.mysql.jdbc.PreparedStatement;
 public class FinalizeGoalModel {
     Connection dbExchange = null;
 
-    public void CompleteGoal(GoalMaster goalmaster, String string) {
+    public void CompleteGoal(GoalMaster goalmaster, String string) throws Exception {
 
         PreparedStatement preStmt;
         Connection dbExchange = null;
@@ -187,8 +185,10 @@ public class FinalizeGoalModel {
         }
         catch (SQLException e) {
             CustomerServiceConstant.logger.error("Exception occured while inserting the Data",e);//fuctionality blk
+            throw new SQLException(e);
         } catch (Exception e) {
             CustomerServiceConstant.logger.error("Exception occured",e);//fuctionality blk
+            throw new Exception(e);
 		}
         finally{
         	try {
