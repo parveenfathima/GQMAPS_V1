@@ -1,284 +1,489 @@
-<!doctype html>
-<html>
-    <head>
-         <meta charset="utf-8">
-         <title>Customer Dash board</title>
-      
-        <script type="text/javascript" src = "http://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.js" charset="utf-8"></script>
-		<script type="text/javascript" src = "http://www.google.com/jsapi" charset="utf-8"></script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
 
-		<script type="text/javascript">
-            google.load("visualization", "1", {packages:["piechart", "corechart", "annotatedtimeline", "geomap"]});
-        </script>
-        
-        <link type="text/css" href = "css/gqmaps.css" rel="stylesheet" />
-        <link type="text/css" href="css/gqhome.css" rel="stylesheet" />                     
-        <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
-        
-        <script src = "jquery-ui-1.10.2.custom/js/jquery-1.9.1.js" ></script>
-                     
-        <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?key=AIzaSyBGIi2rSK9Qp2dY1EewX-JUsK0sjQsxAak&sensor=false"></script>  
-        <script src="jquery-ui-1.10.2.custom/js/jquery-ui-1.10.0.custom.js"></script>   
-     	<script type="text/javascript" src="js/DateTimePickerJS/DateTimePicker.js"></script>  
-                
-        <!--/custom scripts -->             
-         <script src = "js/jstorage.js"> </script>             
-         <script src = "js/rest_service.js"> </script>              
-         <script src = "js/dashboard_full.js"> </script>   
-         <script src = "js/general.js"> </script>    
-         <script src = "js/chart.js"> </script>         
-           
-        <!--dialog css -->
-        <style>
-			body { font-size: 62.5%; }
-			label, input { display:block; }
-			input.text { margin-bottom:12px; width:95%; padding: .4em; }
-			fieldset { padding:0; border:0; margin-top:25px; }
-			h1 { font-size: 1.2em; margin: .6em 0; }
-			div#users-contain { width: 350px; margin: 20px 0; }
-			div#users-contain table { margin: 1em 0; border-collapse: collapse; width: 100%; }
-			div#users-contain table td, div#users-contain table th { border: 1px solid #eee; padding: .6em 10px; text-align: left; }
-			.ui-dialog .ui-state-error { padding: .3em; }
-			.validateTips { border: 1px solid transparent; padding: 0.3em; }
-        </style>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+<title>GQMaps </title>
+<link href="css/dashboard.css" rel="stylesheet" type="text/css" />
+<link href='http://fonts.googleapis.com/css?family=Open+Sans:400,600,700' rel='stylesheet' type='text/css'>
+<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
 
-        <!--timeout css -->
-		<style type="text/css">
-            #idletimeout { background:#4E4E4E; border:3px solid #4E4E4E; color:#fff; font-family:arial, sans-serif; text-align:center; font-size:15px; padding:10px; position:relative; top:0px; left:0; right:0; z-index:100000; display:none; }
-            #idletimeout a { color:#fff; font-weight:bold }
-            #idletimeout span { font-weight:bold }
-        </style>  
-                   
-    </head>
-    
-    <body class="body">
-    <script>
-window.history.forward(1);
-</script>
-    	<form name = "frmAssetEdit"  id = "frmAssetEdit" method = "post" action = "asset_edit.jsp">
-		<input type = "hidden" name ="setEntp" id = "setEntp"  />
-        <div class="main-div"> <!--main div-->
-            <div class="header"><!--header -->
-            	<img src="theme/images/gquotient_logo.png"  style = "padding-top:25px; padding-left:25px" width="161" height="53" align="left"/>
-                <p id = "entpName" class="hesder-font" style = "padding-top:38px; padding-left:250px;">  </p> 
-                <p align="right" style="padding-right:10px; " > <a href="login.html" onClick="logout();"> <font style ="font-size:15px;">Logout</font> </a></p>
-            
-            </div><!--/header -->
+<script type="text/javascript" src = "http://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.js" charset="utf-8"></script>
+<script type="text/javascript" src = "http://www.google.com/jsapi" charset="utf-8"></script>
 
-			<!--div for session timeout -->
-            <div id="idletimeout" style="top: 150px; margin-left: 215px; margin-right: 200px; ">
-                Logging off in <span><!-- countdown place holder --></span>&nbsp;seconds due to inactivity.
-                <a id="idletimeout-resume" href="#">Click here to continue</a>.
-            </div>       
-            
-              
-	<!--Goal input dialog box     -->
-            <div id="dlgGoalInput" style="display:none;title="Goal Input">
-                  <form id ="frmGoalInput" style = "top:100px;">
-                      <fieldset>   
-                          <a id = "serverAsset" href = "#">Asset List</a>
-                          <span id = "addElements"> </span>
-                          <br><br>
-                          <input type="button" id = "btnAsset" value="Submit" />
-                      </fieldset>
-                  </form>           
-            </div>       
-
-			<!-- Asset list dialog box -->
-            <div  id="dlgAssetList" style="display: none;" title="Asset List">
-                  <form id ="frmAssetList">
-                  <fieldset>
-                    <span id = "spnAssetList" class="clsSpan"> </span>
-                    <input type = "button" name = "btnShowAssets" id="btnShowAssets"  value = "Show Selected Assets" />
-                    <input type = "text" name = "txtSelAssets" id = "txtSelAssets" />
-                    </fieldset>          
-                  </form>         
-            </div>
-	
-				<div id="dlgAssetSample"></div>
-				<div class="content-div">
-					<!--content div-->
-					<div class="plain-div">
-						<!--plain div -->
-	
-						<div style="float: left">
-							<!--/first row div starts -->
-	
-							<div class="block-div side-block-div" style="margin-left: 70px">
-	
-								<div class="inner-head">Meter Specifics</div>
-								<div class="inner-content side-block-content-div" style="margin-left: 1px">
-															
-								<div style="background-color:#F0F0F0" style="margin-left: 0px">
-									<input type="button" id="btnPUE" name="btnPUE" value="PUE" onclick ="checkGoalInput('pue')" />
-									<input type="button" id="monitoring" name ="monitoring" value="Monitoring" onclick ="checkGoalInput('mon')"/>
-									
-									
-								</div>
-								<div id="div_pue" STYLE="font-family: Arial Black; 
-										font-size: 14px; color: #600000 ; background-color:#F0F0F0"  >your current pue is </div>
-								<br> <span class="span-font span-color" id="div_expiryAlert"></span>
-								<div STYLE="font-family: Arial Black; 
-										font-size: 10px; color: #600000 ; background-color:#F0F0F0" >
-								<br> <span class="medium-content-div" id="div_assetsScanned" STYLE="font-family: Arial Black; font-size: 14px "></span>
-								<!-- Comment by kiruba since its not required 18/09/2013
-									<div class="medium-chart-div" id="div_meterCount"></div -->
-									
-								<br> <input type="submit" id="btnConfAssets"
-									name="btnConfAssets" value="Configure Assets" /> <br>
-									</div>
-									
-									 <label for="cmbGoals"> Available Goals </label> <br> 
-									
-									<select name="cmbGoals" id="cmbGoals"  
-									
-											onchange="alert('combo goal id ='+ this.value); checkGoalInput(this.value);" >
-									</select>
-																		
-									 <br> <a href="#">Click here to download the meter jar file</a>
-	
-							</div>
-	
-	
-						</div>
-	
-						<div class="block-div large-block-div">
-							<div class="inner-head" style= "margin-right: 0px" ; position:"absolute";>Performance Charts for Top Loaded
-								Assets Today								
-							</div>
-							<div id =div_todaysTopAsset style = "font-family:Arial";>  </div>
-							
-							<div class="inner-content top-block-content-div">
-								<table>
-									<tr>
-										<td><div id="div_topcpuLoad"
-												style="width: 400px; height: 200px;"></div></td>
-										<td><div id="div_topmemoryLoad"
-												style="width: 390px; height: 200px; padding-left: 2px"></div></td>
-									</tr>
-									
-								</table>
-							</div>
-						</div>
-					
-						<!--/first row div ends -->
-	
-	
-					<div style="float: left">
-						<!--/second row div starts -->
-	
-						<div class="block-div medium-block-div" style="margin-left: 158px">
-							<div class="inner-head">Top Installed Software</div>
-							<div class="inner-content medium-block-content-div">
-							
-								<div id="div_installedSW"> </div>
-	                           <div>
-									<input type="button" id="btnPDI" name="btnPDI"
-										value="Personal Device Impact" onClick="checkGoalInput('byod')" />
-								</div>
-							</div>
-						</div>
-	
-						<div class="block-div medium-block-div" style="margin-left: 20px">
-							<div class="inner-head">Top Black Listed Software</div>
-							<div class="inner-content medium-block-content-div"
-								id="div_blacklistedSW"></div>
-						
-						</div>
-	
-					</div>
-					<!--/second row div ends -->
-	
-					<div style="float: left">
-						<!--/third row div strats -->
-	
-						<div class="block-div small-block-div" style="margin-left: 139px"
-							style="margin-top: 60px">
-							<div class="inner-head">Least and most Loaded Assets</div>
-							<div class="inner-content medium-block-content-div">
-								<div id="div_mostleastAssets" style="height: 190px;"></div>
-								
-								<div>
-<!-- 									<input type="button" id="btnVirtualization" -->
-<!-- 										name="btnVirtualization" value="Virtualization" -->
-<!-- 										onclick="openAssetList();" /> -->
-										 <input type="button" id="btnVir"
-										name="btnVir" value="Take me to Virtualization Goal" onclick="checkGoalInput('vir');" />
-									<!-- onclick="setGoal(1, 'virtualization');" /> -->
-	
-								</div>
-							</div>
-						</div>
-	
-						<div class="block-div small-block-div" style="margin-left: 5px">
-							<div class="inner-head">Most Connected Server Assets</div>
-							<div class="inner-content medium-block-content-div" 
-							id="div_connectedServers"></div>
-							<span class="span-font span-color"> * </span>To get the result,
-							use developers' machine
-						</div>
-	
-						<div class="block-div small-block-div" style="margin-left: 5px">
-							<div class="inner-head">Externally Connected Websites</div>
-							<div class="inner-content medium-block-content-div"
-								id="div_connectedWebsites"></div>
-							<span class="span-font span-color"> * </span>To get the result,
-							use developers' machine
-						</div>
-					</div>
-					<!--/third row div ends -->
-	
-	
-	
-				</div> <!--/plain div -->
-				</div> 	<!--/content div -->
-			
-	
-			</div>
-			<!--/main div -->
-	
-			<div class="footer">
-				<!--<font class="Copyrights-font">© Copyright 2012 Gquotient</font> -->
-			</div>
-			<!--/main div -->
-		</form>
-	</body>
-	
-	</html>
-
-	<!-- Mask to cover the whole screen -->
-<div id="mask"></div>
-
-<script src="js/jquery.idletimer.js" type="text/javascript"></script>
-<script src="js/jquery.idletimeout.js" type="text/javascript"></script>
-
-<!--jQuery plugin to set session timeout -->
 <script type="text/javascript">
-    $.idleTimeout('#idletimeout', '#idletimeout a', {
-		idleAfter : $.jStorage.get("jsTimeout"),
-        onTimeout : function() {
-            $(this).slideUp();
-            window.location = "login.html";
-        },
-        onIdle : function() {
-            var maskHeight = $(document).height();
-            var maskWidth = $(window).width();
-            $('#mask').css({'width':maskWidth,'height':maskHeight});
-            $('#mask').fadeIn(1000);	
-            $('#mask').fadeTo("slow",0.8);	
-            $(this).slideDown(); // show the warning bar
-        },
-        onCountdown : function(counter) {
-            $(this).find("span").html(counter); // update the counter
-        },
-        onResume : function() {
-            $(this).slideUp(); // hide the warning bar
-            $('#mask').hide();
-            $('.window').hide();
-        }
-    });
-</script>		
+   google.load("visualization", "1", {packages:["piechart", "corechart", "annotatedtimeline", "geomap"]});
+</script>
+             
+<script src="jquery-ui-1.10.2.custom/js/jquery-ui-1.10.0.custom.js"></script>  
+<script src = "jquery-ui-1.10.2.custom/js/jquery-1.9.1.js" ></script>
+<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?key=AIzaSyBGIi2rSK9Qp2dY1EewX-JUsK0sjQsxAak&sensor=false"></script>
+  
 
+<script type="text/javascript" src="js/DateTimePickerJS/DateTimePicker.js"></script>  
+<script type="text/javascript" src="js/plugins/tables/jquery.dataTables.min.js"></script>
+ 
+<!-- <script type="text/javascript" src="js/files/bootstrap.min.js"></script>
+<script type="text/javascript" src="js/files/functions.js"></script>      -->  
+
+<!--/custom scripts -->             
+<script src = "js/jstorage.js"> </script>             
+<script src = "js/rest_service.js"> </script>              
+<script src = "js/dashboard_full.js"> </script>   
+<script src = "js/general.js"> </script>    
+<script src = "js/chart.js"> </script> 
+
+
+<script type="text/javascript" src="js/charts/graph.js"></script>
+<script type="text/javascript" src="js/charts/chart1.js"></script>
+<script type="text/javascript" src="js/charts/chart2.js"></script>
+<script type="text/javascript" src="js/charts/chart3.js"></script>
+<script type="text/javascript" src="js/plotgraph.js"></script> 
+
+
+
+<!-- 
+
+
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<script type="text/javascript" src = "http://www.google.com/jsapi" charset="utf-8"></script>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js"></script>
+<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?key=AIzaSyDY0kkJiTPVd2U7aTOAwhc9ySH6oHxOIYM&amp;sensor=false"></script>
+
+
+<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+<script type="text/javascript" src="js/plugins/charts/excanvas.min.js"></script>
+<script type="text/javascript" src="js/plugins/charts/jquery.flot.js"></script>
+<script type="text/javascript" src="js/plugins/charts/jquery.flot.resize.js"></script>
+<script type="text/javascript" src="js/plugins/charts/jquery.sparkline.min.js"></script>
+
+<script type="text/javascript" src="js/plugins/ui/jquery.easytabs.min.js"></script>
+<script type="text/javascript" src="js/plugins/ui/jquery.collapsible.min.js"></script>
+<script type="text/javascript" src="js/plugins/ui/jquery.mousewheel.js"></script>
+<script type="text/javascript" src="js/plugins/ui/prettify.js"></script>
+<script type="text/javascript" src="js/plugins/ui/jquery.bootbox.min.js"></script>
+<script type="text/javascript" src="js/plugins/ui/jquery.colorpicker.js"></script>
+<script type="text/javascript" src="js/plugins/ui/jquery.timepicker.min.js"></script>
+<script type="text/javascript" src="js/plugins/ui/jquery.jgrowl.js"></script>
+<script type="text/javascript" src="js/plugins/ui/jquery.fancybox.js"></script>
+<script type="text/javascript" src="js/plugins/ui/jquery.fullcalendar.min.js"></script>
+<script type="text/javascript" src="js/plugins/ui/jquery.elfinder.js"></script>
+
+<script type="text/javascript" src="js/plugins/uploader/plupload.js"></script>
+<script type="text/javascript" src="js/plugins/uploader/plupload.html4.js"></script>
+<script type="text/javascript" src="js/plugins/uploader/plupload.html5.js"></script>
+<script type="text/javascript" src="js/plugins/uploader/jquery.plupload.queue.js"></script>
+
+<script type="text/javascript" src="js/plugins/forms/jquery.uniform.min.js"></script>
+<script type="text/javascript" src="js/plugins/forms/jquery.autosize.js"></script>
+<script type="text/javascript" src="js/plugins/forms/jquery.inputlimiter.min.js"></script>
+<script type="text/javascript" src="js/plugins/forms/jquery.tagsinput.min.js"></script>
+<script type="text/javascript" src="js/plugins/forms/jquery.inputmask.js"></script>
+<script type="text/javascript" src="js/plugins/forms/jquery.select2.min.js"></script>
+<script type="text/javascript" src="js/plugins/forms/jquery.listbox.js"></script>
+<script type="text/javascript" src="js/plugins/forms/jquery.validation.js"></script>
+<script type="text/javascript" src="js/plugins/forms/jquery.validationEngine-en.js"></script>
+<script type="text/javascript" src="js/plugins/forms/jquery.form.wizard.js"></script>
+<script type="text/javascript" src="js/plugins/forms/jquery.form.js"></script>
+ -->
+
+
+<script type="text/javascript">
+
+       
+  
+	function show(ele) {
+         var srcElement = document.getElementById(ele);
+         if(srcElement != null) {
+	   if(srcElement.style.display == "block") {
+     		  srcElement.style.display= 'none';
+   	    }
+            else {
+                   srcElement.style.display="block";
+            }
+            
+       }
+
+  }
+</script>
+<!-- Timepass Script-->
+
+<script type="text/javascript">
+
+window.document.onkeydown = function (e)
+{
+    if (!e){
+        e = event;
+    }
+    if (e.keyCode == 27){
+        lightbox_close();
+    }
+}
+function lightbox_open(){
+    window.scrollTo(0,0);
+    document.getElementById('light').style.display='block';
+    document.getElementById('fade').style.display='block';  
+}
+
+function lightbox_close(){
+    document.getElementById('light').style.display='none';
+    document.getElementById('fade').style.display='none';
+}
+</script>
+
+
+
+<!--     <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <script type="text/javascript">
+
+    // Load the Visualization API and the piechart package.
+      google.load('visualization', '1.0', {'packages':['corechart']});
+
+      // Set a callback to run when the Google Visualization API is loaded.
+      google.setOnLoadCallback(drawChart);
+
+      // Callback that creates and populates a data table,
+      // instantiates the pie chart, passes in the data and
+      // draws it.
+      function drawChart() {
+
+        // Create the data table.
+        var data = new google.visualization.DataTable();
+        data.addColumn('string', 'Topping');
+        data.addColumn('number', 'Slices');
+        data.addColumn('number', 'Slices1');
+        
+        data.addRows([
+          ['Servers', 8,null],
+          ['Printers/Networking', 1,null],
+          ['Air Conditioning', 36,null],
+          ['Desktops', 4,null],
+          ['Misc', 17,null]
+        ]);
+
+        // Set chart options
+        var options = {'title':'Power consumption by asset type',
+                       'width':600,
+                       'height':250,
+                       colors:['green','violet'],
+                       // turn off the legend
+        		legend: {
+            		position: 'none', 
+        		}
+        };
+
+        // Instantiate and draw our chart, passing in some options.
+    //     var chart = new google.visualization.PieChart(document.getElementById('pie-chart_div'));
+//         chart.draw(data, options);
+
+        var chart = new google.visualization.BarChart(document.getElementById('bar-chart_div'));
+//        chart.draw(data, options);
+
+        data.addRows([
+          ['ss', null,4],
+          ['kk', null, 17]
+        ]);
+
+        chart.draw(data, options);
+
+      } 
+    </script> -->  
+<!--/Timepass script-->
+<body>
+
+	<!-- Fixed top -->
+	<div id="top">
+		<div class="fixed">
+			<a href="index.html" title="" class="logo"><!--logo in <img>--></a>
+			<ul class="top-menu">
+				<li class="dropdown">
+					<a href="#" class="user-menu" data-toggle="dropdown"><i class="icon-remove"></i><span>Logout </span></a>
+					
+				</li>
+			</ul>
+		</div>
+	</div>
+	<!-- /fixed top -->
+
+
+	<!-- Content container -->
+	<div id="container">
+
+		<!-- Sidebar -->
+		<div id="sidebar">
+
+			<div class="sidebar-tabs">
+			        
+		        <div id="general">
+
+			        <!-- Sidebar user -->
+			        <div class="sidebar-user widget">
+						<div class="navbar"><div class="navbar-inner"><h6>Hello Client</h6></div></div>
+			            
+			        </div>
+			        <!-- /sidebar user -->
+
+			        <!-- Main navigation -->
+			        <ul class="navigation widget">
+			            <li class="active"><a href="index.html" title=""><i class="icon-home"></i>Home</a></li>
+			            <li class="active"><a href="#" title=""><i class="icon-edit"></i>Assets</a>
+				            <ul>
+				            	<li><a href="#" title="">Configure</a></li>
+				            </ul>
+			            </li>
+			            
+			           
+			                			            
+			            <li class="active"><a href="#" title="" class="expand"><i class="icon-tasks"></i>Goals<!--<strong>4</strong>--></a>
+			                <ul>
+			                    <li><a href="#" title="">Personal Device Impact</a></li>
+			                    <li><a href="#" title="">Monitoring</a></li>
+			                    <li><a href="#" title="">PUE</a></li>
+			                    <li><a href="#" title="">Virtualization</a></li>
+
+			                </ul>
+			            </li>
+			        <!-- /main navigation -->
+
+		        </div>
+
+		        
+		    </div>
+		</div>
+		<!-- /sidebar -->
+				
+
+		<!-- Content -->
+		<div id="content">
+		     <div class="pointer-awesome"> </div>
+		    <!-- Content wrapper -->
+		    <div class="wrapper">
+
+			    <!-- Page header -->
+			    <div class="page-header">
+			    	<div class="page-title">
+					    	<span>GQMaps Dashboard</span>
+			    	</div>
+
+			    	<ul class="page-stats">
+			    		<li>
+			    			<div class="showcase">
+			    				<i class="icon-bell"></i> <span>Alerts</span>
+			    				<h2>##</h2>
+
+			    			</div>
+			    			
+			    		</li>
+			    		<li>
+			    			<div class="showcase">
+			    				<span>Assets Under Management</span>
+			    				<h2>##</h2>
+			    			</div>
+			    			<div id="balance" class="chart">41,22,31,19,12, 28, 21</div>
+			    		</li>
+
+			    		<li>
+			    			<div class="showcase">
+			    				<span>Current PUE</span>
+			    				<h2>##</h2>
+			    			</div>
+			    			<div id="total-visits" class="chart">10,14,8,45,23,41,28</div>
+			    		</li>
+			    	</ul>
+			    </div>
+			    <!-- /page header -->
+
+			    <!-- Action tabs -->
+			    <div class="actions-wrapper">
+				    <div class="actions">
+
+				    	
+
+				    	<div id="quick-actions">
+				    		<ul class="statistics">
+				    			<li>
+				    				<div class="top-info">
+					    				<a href="#" onclick="show('loaded-assets')" title="" class="blue-square" ><i class="icon-inbox"></i></a>
+					    				
+					    				<strong>Loaded <br/>Assets</strong>
+					    			</div>
+									<div class="progress progress-micro"><div class="bar" style="width: 60%;"></div></div>
+									<div id="light">
+										<!-- paste the chart div here-->
+										<div id="bar-chart_div"></div>
+
+									</div>
+									<div id="fade" onClick="lightbox_close();"></div> 
+									
+									
+								</li>
+				    			<li>
+				    				<div class="top-info">
+					    				<a href="#" onclick="lightbox_open();" title="" class="red-square"><i class="icon-gift"></i></a>
+					    				<strong>INSTALLED <br/>SOFTWARES</strong>
+					    			</div>
+									<div class="progress progress-micro"><div class="bar" style="width: 20%;"></div></div>
+									<div id="light"><div id="bar-chart_div"></div></div>
+									<div id="fade" onClick="lightbox_close();"></div> 
+									
+				    			</li>
+				    			<li>
+				    				<div class="top-info">
+					    				<a href="#" onclick="lightbox_open();" title="" class="black-square"><i class="icon-exclamation-sign"></i></a>
+					    				<strong>BLACKLISTED <br/>SOFTWARES</strong>
+					    			</div>
+									<div class="progress progress-micro"><div class="bar" style="width: 40%;"></div></div>
+									<div id="light">
+										<!-- paste the chart div here-->
+										<div id="bar-chart_div"></div>
+
+									</div>
+									<div id="fade" onClick="lightbox_close();"></div>
+									
+				    			</li>
+				    			<li>
+				    				<div class="top-info">
+					    				<a href="#"  onclick="lightbox_open();" title="" class="green-square"><i class="icon-signal"></i></a>
+					    				<strong>LEAST AND MOST <br/>LOADED ASSETS</strong>
+					    			</div>
+									<div class="progress progress-micro"><div class="bar" style="width: 70%;"></div></div>
+									<div id="light">
+										<!-- paste the chart div here-->
+										<div id="bar-chart_div"></div>
+
+									</div>
+									<div id="fade" onClick="lightbox_close();"></div>
+									
+				    			</li>
+				    			<li>
+				    				<div class="top-info">
+					    				<a href="#"  onclick="lightbox_open();" title="" class="sea-square"><i class="icon-list-alt"></i></a>
+					    				<strong>SERVER <br/>SOFTWARES</strong>
+					    			</div>
+									<div class="progress progress-micro"><div class="bar" style="width: 50%;"></div></div>
+									<div id="light">
+										<!-- paste the chart div here-->
+										<div id="bar-chart_div"></div>
+
+									</div>
+									<div id="fade" onClick="lightbox_close();"></div>
+									
+				    			</li>
+				    			<li>
+				    				<div class="top-info">
+					    				<a href="#"  onclick="lightbox_open();" title="" class="dark-blue-square"><i class="icon-globe"></i></a>
+					    				<strong>CONNECTED <br/>WEBSITES</strong>
+					    			</div>
+									<div class="progress progress-micro"><div class="bar" style="width: 93%;"></div></div>
+									<div id="light">
+										<!-- paste the chart div here-->
+										<div id="bar-chart_div"></div>
+
+									</div>
+									<div id="fade" onClick="lightbox_close();"></div>
+									<img class="indicator" src="img/indicator.png">
+				    			</li>
+
+				    			
+				    		</ul>
+				    	</div>
+							
+				    	
+
+				    	
+				    </div>
+				</div>
+			    <!-- /action tabs -->
+				<img class="indicator" src="img/indicator.png">
+
+		    	<!-- Graph  -->
+		    	<div class="row-fluid">
+
+		    		<div class="span6" id="user_defnd" >
+				        <div class="widget">
+							<div class="navbar"><div class="navbar-inner"><h6>Loaded Assets</h6></div></div>
+				            <div class="well body">
+				            	
+				            	<div id="div_topcpuLoad"></div>
+				            </div>
+				        </div>
+		    		</div>
+
+		    		<div class="span6" >
+				        <div class="widget">
+							<div class="navbar"><div class="navbar-inner"><h6>Installed Softwares</h6></div></div>
+				            <div class="well body">
+				            	
+				            	<div id="div_installedSW" ></div>
+				            	<!--Paste Installed Softwares div from google charts here-->
+				            </div>
+				        </div>
+		    		</div>
+		    	</div>
+
+			    <div class="row-fluid">
+		    		<div class="span6" >
+				        <div class="widget">
+							<div class="navbar"><div class="navbar-inner"><h6>Blacklisted Software</h6></div></div>
+				            <div class="well body">
+				            	
+				            	<div id="div_blacklistedSW"></div>
+				            	<!--Paste Blacklisted Softwares div from google charts here-->
+				            </div>
+				        </div>
+		    		</div>
+
+		    		<div class="span6">
+				        <div class="widget">
+							<div class="navbar"><div class="navbar-inner"><h6>Least and Most Loaded Assets</h6></div></div>
+				            <div class="well body">
+				            	
+				            	<div  id="div_mostleastAssets" ></div>
+				            	<!--Paste Least and Most Loaded assets div from google charts here-->
+				            </div>
+				        </div>
+		    		</div>
+		    	</div>
+					<div class="row-fluid">
+		    		<div class="span6">
+				        <div class="widget">
+							<div class="navbar"><div class="navbar-inner"><h6>Server Assets</h6></div></div>
+				            <div class="well body">
+				            	
+				            	<div  id="div_connectedServers" ></div>
+				            	<!--Paste Server assets div from google charts here-->
+				            </div>
+				        </div>
+		    		</div>
+
+		    		<div class="span6" >
+				        <div class="widget">
+							<div class="navbar"><div class="navbar-inner"><h6>Externally Connected Websites</h6></div></div>
+				            <div class="well body">
+				            	
+				            	<div id="div_connectedWebsites"></div>
+				            	<!--Paste Externally Connected websites div from google charts here-->
+				            </div>
+				        </div>
+		    		</div>
+
+		    	</div>
+		    	</div>
+		    	
+		    	<!--/Graphs-->
+
+		    </div>
+		    <!-- /content wrapper -->
+
+		</div>
+		<!-- /content -->
+
+	
+	<!-- /content container -->
 
 
 	
+</body>
+</html>
