@@ -26,22 +26,5 @@
         <property name="location" type="string">
             <column name="location" length="45" />
         </property>
-        <property name="ctlgId" type="string">
-            <column name="ctlg_id" length="20" />
-        </property>
-        <property name="srvrAppId" type="java.lang.Short">
-            <column name="srvr_app_id" length="6"/>
-        </property>
-        <property name="assetUsg" type="string">
-            <column name="asset_usg" length="50" />
-        </property>
-        <property name="inactiveDttm" type="timestamp">
-            <column name="inactive_dttm" length="19">
-                <comment>if assets are made inactive then capture date</comment>
-            </column>
-        </property>
-        <property name="type_id" type="string">
-            <column name="type_id" length="20" />
-        </property>
     </class>
 </hibernate-mapping>
