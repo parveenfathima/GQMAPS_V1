@@ -7,7 +7,7 @@
 //binding the click event to the submit button
 $(document).ready(function() 
 {
-	$("#submit").bind("click", userLogin);
+	$("#submitLogin").bind("click", userLogin);
 });
 
 // login validation for both admin and customers
