@@ -458,14 +458,14 @@ if(g.getTimeBound().equals("y")){ %>
 					month=startDate.getMonth()+1;
 					date=startDate.getDate();
 					%>
-					<td><%=year%>-<%=month%>-<%=date%></td>
+					<td><%=year%>-<%if(month<10)out.println("0"+month);else out.println(month);%>-<%if(date<10)out.println("0"+date);else out.println(date);%></td>
 					<td><%=goalsnapshotList.get(i).getNotes()%></td>
 					<% endDate=new Date(goalsnapshotList.get(i).getEndDate().getTime());
 					year=endDate.getYear()+1900;
 					month=endDate.getMonth()+1;
 					date=endDate.getDate();
 					%>
-					<td><%=year%>-<%=month%>-<%=date%></td>
+					<td><%=year%>-<%if(month<10)out.println("0"+month);else out.println(month);%>-<%if(date<10)out.println("0"+date);else out.println(date);%></td>
 					<td><%=goalsnapshotList.get(i).getCostBenefit()%></td>
 
 					<%
