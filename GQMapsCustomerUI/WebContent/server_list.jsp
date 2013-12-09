@@ -31,6 +31,7 @@
 		var chk_arr =  document.getElementsByName("chkApply");
 		var total = 0;
 		var ipaddresses = '';
+		var assetIds = '';
 		
 		for (var i = 1 ; i < assetTable.rows.length ; i++) {
 			row = assetTable.rows[i];
@@ -39,11 +40,13 @@
 	    
  		     	total = total+ parseInt(row.cells[3].innerHTML);
  		     	ipaddresses = ipaddresses + ',' + row.cells[2].innerHTML;
+ 		     	assetIds = assetIds + ',' + row.cells[1].innerHTML;
+ 		     	
  		  	} 
 		}//for ends
 
 		document.getElementById('consolidateResult').innerHTML 
-					= "Total value = " + total + ' , Ip Addr(s) ' + ipaddresses;
+					= "Total Benefits = " + total + ' , Ip Addr(s) ' + ipaddresses + ' , Asset Id(s) ' + assetIds;
 	} 	
 	
 </script>
@@ -83,7 +86,7 @@
         <a id="idletimeout-resume" href="#">Click here to continue</a>.
     </div>  
 	<h1>List of Servers</h1>
-	<br> <h5> Please choose the asset and click on submit, copy the result and paste in the places wherever required</h5>
+	<br> <h5> If you are choosing one asset to be monitored, Copy asset id and paste to the form manually. If you want to calculate benefits choose multiple assets.</h5>
 <% 	
 
  		int i = 0;
