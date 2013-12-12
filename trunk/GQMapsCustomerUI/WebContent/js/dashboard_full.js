@@ -100,7 +100,6 @@ var optAssetList = {
 // Ajax call to get all the dashboard services
 $(document).ready(function() 
 {
-	
 	if(($.jStorage.get("jsUserId") === "" || $.jStorage.get("jsUserId") === null || $.jStorage.get("jsPwd") === "" 
 		|| $.jStorage.get("jsPwd") === null)&& ($.jStorage.get("jsEntpId")=== "" || $.jStorage.get("jsEntpId")=== null ))
 	{
@@ -124,7 +123,7 @@ $(document).ready(function()
 		$("#btnAsset").bind("click", submitGoalInput);
 		
 		
-		$("#entpName").text("Customer Dashboard for " + $.jStorage.get("jsEName"));
+		$("#entpName").text( " Hello " + $.jStorage.get("jsEName"));
 		
 		var vType = "GET";						
 		// call to the dashboard services are made
@@ -213,7 +212,7 @@ function getPUE()
 		dataType: "json",
 		success:function(json)
 		{		
-			$("#div_pue").text("Current month PUE is " + json);			
+			$("#div_pue").text(json);			
 		},
 		error:function(json)
 		{
@@ -239,14 +238,17 @@ function loadGoals()
 		success:function(json)
 		{		
 			var vValues = "";
-			// just add a select one from list option 
-			vValues = vValues + '<option value = "'+ "---" + '" >' 
-			+ 'Please choose a Goal from the list' + '</option>';	
-
+		
 			$.each(json[0]["goalData"], function(i,n)
 			{
-				vValues = vValues + '<option value = "'+ json[0]["goalData"][i]["goalId"] + '" >' 
-					+ json[0]["goalData"][i]["goalDescr"] + '</option>';	
+				//vValues = vValues + '<option value = "'+ json[0]["goalData"][i]["goalId"] + '" >' 
+					//+ json[0]["goalData"][i]["goalDescr"] + '</option>';	
+				
+				vValues = vValues + '<li><a href="#" onClick="checkGoalInput(\''+ json[0]["goalData"][i]["goalId"] +"')\">"
+						 + json[0]["goalData"][i]["goalDescr"] + "</a></li>";
+				
+
+                
 			});
 			
 			$("#cmbGoals").append(vValues); 			
@@ -305,6 +307,7 @@ function checkGoalInput(goalId)
 				{
 	 				if(json[i]["dtvalue"] === "date")
 					{
+	 					alert('hai');
 						$("#"+json[i]["descr"]).datepicker({ dateFormat: 'yy-mm-dd' ,
 							showOn: "button", buttonImage: "images/calendar.gif", buttonImageOnly: true }) ; 						
 					} 
