@@ -12,7 +12,7 @@
 html { height: 100%; background: url(../images/backgrounds/main.png); font-size: 100%; -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
 body { margin: 0; min-height: 100%; background-image: url(../images/backgrounds/body_line.png); background-repeat: repeat-y; background-position: 0 0; font-family: Arial, Helvetica, sans-serif; font-size: 12px; line-height: 10px; color: #555; position: relative; }
 
-#map_canvas images, .google-maps images { max-width: none; }
+#map_canvas img, .google-maps img { max-width: none; }
 
 a { color: #1D8EC7; text-decoration: none; }
 a:hover { color: #E03D22; }
@@ -21,7 +21,7 @@ a:hover, a:active, a:focus { outline: 0; }
 sub, sup { position: relative; font-size: 75%; line-height: 0; vertical-align: baseline; }
 sup { top: -0.5em; }
 sub { bottom: -0.25em; }
-images { width: auto\9; height: 150px; max-width: 100%; border: 0; position:absolute; left:800px; top:55px; z-ex:-1;-ms-interpolation-mode: bicubic; }
+img { width: auto\9; height: 150px; max-width: 100%; border: 0; position:absolute; left:800px; top:55px; z-index:-1; -ms-interpolation-mode: bicubic; }
 
 button, input, select, textarea { margin: 0; font-size: 100%; }
 button, input { *overflow: visible; line-height: normal; }
@@ -455,7 +455,7 @@ span.green { background-color: #41CA83; }
 /*===== Top =====*/
 
 #top { height: 48px; display: block; }
-.fixed { position: fixed; height: 48px; width: 100%; z-ex: 1039; background: url(../images/backgrounds/dark.png); padding: 0 20px; border-bottom: 4px solid #ef705b; -webkit-box-sizing: border-box; -moz-box-sizing: border-box; -ms-box-sizing: border-box; box-sizing: border-box; }
+.fixed { position: fixed; height: 48px; width: 100%; z-index:1000; background: url(../images/backgrounds/dark.png); padding: 0 20px; border-bottom: 4px solid #ef705b; -webkit-box-sizing: border-box; -moz-box-sizing: border-box; -ms-box-sizing: border-box; box-sizing: border-box; }
 #top:after { content: ""; display: block; clear: both; }
 .logo { display: block; padding: 11px 0; float: left; }
 
@@ -2791,7 +2791,7 @@ input:focus:invalid:focus, textarea:focus:invalid:focus, select:focus:invalid:fo
 
 .awesome{
   
-  background-color: red;
+  
   position: absolute;
   width:300px;
   height:4px;
@@ -2800,8 +2800,9 @@ input:focus:invalid:focus, textarea:focus:invalid:focus, select:focus:invalid:fo
   top:70px;
 }
 
-images .icator{
+.indicator{
   position: absolute;
+  
   height:150px;
   left:800px;
   top:55px;
@@ -2809,7 +2810,7 @@ images .icator{
 }
 
 
-#fade{
+/* #fade{
     display: none;
     position: fixed;
     top: 0%;
@@ -2836,7 +2837,7 @@ images .icator{
     
     z-ex:1002;
     overflow:visible;
-}
+} */
 
 #bar-chart_div{
     display:block;
