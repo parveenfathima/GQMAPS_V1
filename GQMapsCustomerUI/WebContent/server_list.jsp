@@ -18,11 +18,54 @@
 	href="jquery-ui-1.10.2.custom/css/blitzer/jquery-ui-1.10.2.custom.css"
 	rel="stylesheet" />
 <link type="text/css" href="css/gqmaps.css" rel="stylesheet" />
+<link href="css/dashboard.css" rel="stylesheet" type="text/css" />
+<link href='http://fonts.googleapis.com/css?family=Open+Sans:400,600,700' rel='stylesheet' type='text/css'>
+<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
 
+<script type="text/javascript" src = "http://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.js" charset="utf-8"></script>
+<script type="text/javascript" src = "http://www.google.com/jsapi" charset="utf-8"></script>
 <script src="jquery-ui-1.10.2.custom/js/jquery-1.9.1.js"></script>
 <script src="jquery-ui-1.10.2.custom/js/jquery-ui-1.10.2.custom.js"></script>
-<script src = "js/jstorage.js"> </script>   
-<script src = "js/dashboard_full.js"> </script>
+<script src = "js/jstorage.js"> </script>             
+<script src = "js/rest_service.js"> </script>              
+<script src = "js/dashboard_full.js"> </script>   
+<script src = "js/general.js"> </script>    
+<script src = "js/chart.js"> </script> 
+
+
+
+
+
+<script type="text/javascript" src="js/plugins/charts/jquery.sparkline.min.js"></script>
+
+<script type="text/javascript" src="js/plugins/ui/jquery.easytabs.min.js"></script>
+<script type="text/javascript" src="js/plugins/ui/jquery.collapsible.min.js"></script>
+<script type="text/javascript" src="js/plugins/ui/jquery.mousewheel.js"></script>
+<script type="text/javascript" src="js/plugins/ui/prettify.js"></script>
+<script type="text/javascript" src="js/plugins/ui/jquery.bootbox.min.js"></script>
+<script type="text/javascript" src="js/plugins/ui/jquery.jgrowl.js"></script>
+<script type="text/javascript" src="js/plugins/ui/jquery.fancybox.js"></script>
+<script type="text/javascript" src="js/plugins/ui/jquery.elfinder.js"></script>
+
+
+<script type="text/javascript" src="js/plugins/forms/jquery.uniform.min.js"></script>
+<script type="text/javascript" src="js/plugins/forms/jquery.autosize.js"></script>
+<script type="text/javascript" src="js/plugins/forms/jquery.inputlimiter.min.js"></script>
+<script type="text/javascript" src="js/plugins/forms/jquery.tagsinput.min.js"></script>
+<script type="text/javascript" src="js/plugins/forms/jquery.inputmask.js"></script>
+<script type="text/javascript" src="js/plugins/forms/jquery.select2.min.js"></script>
+<script type="text/javascript" src="js/plugins/forms/jquery.listbox.js"></script>
+<script type="text/javascript" src="js/plugins/forms/jquery.validation.js"></script>
+<script type="text/javascript" src="js/plugins/forms/jquery.validationEngine-en.js"></script>
+
+
+<script type="text/javascript" src="js/plugins/tables/jquery.dataTables.min.js"></script>
+
+<script type="text/javascript" src="js/files/bootstrap.min.js"></script>
+
+<script type="text/javascript" src="js/files/functions.js"></script>
+
+
 <script> 
 
 	function handleClick(){
@@ -80,13 +123,56 @@
 
 </head>
 
-<body>
+<body id="table-body">
+<form>
 <div id="idletimeout" style="top: 150px; margin-left: 215px; margin-right: 200px; ">
         Logging off in <span><!-- countdown place holder --></span>&nbsp;seconds due to inactivity.
         <a id="idletimeout-resume" href="#">Click here to continue</a>.
     </div>  
-	<h1>List of Servers</h1>
-	<br> <h5> If you are choosing one asset to be monitored, Copy asset id and paste to the form manually. If you want to calculate benefits choose multiple assets.</h5>
+	
+
+	
+
+	<!-- Fixed top -->
+	<div id="top">
+		<div class="fixed">
+			<a href="#" title="" class="logo"></a>
+			
+		</div>
+	</div>
+	<!-- /fixed top -->
+
+
+	<!-- Content container -->
+	<div id="container">
+
+		<!-- Content -->
+		<div id="content">
+
+		    <!-- Content wrapper -->
+		    <div class="wrapper">
+		    	<br/>
+		    	<br/>
+
+			    <h5 class="widget-name"><i class="icon-columns"></i>Server List</h5>
+			    <p>If you are choosing one asset to be monitored, Copy asset id and paste to the form manually. If you want to calculate benefits choose multiple assets.</p>
+	                	
+                <!-- Table with checkboxes -->
+                <div class="widget">
+                	
+                    <div class="table-overflow">
+                        <table id="tblComputerList" class="table table-bordered table-checks" >
+                          <thead>
+                              <tr>
+                                  <th style="font-size:80%;">Apply</th>
+                                  <th style="font-size:80%;">Asset ID</th>
+                                  <th style="font-size:80%;">IP Address</th>
+                                  <th style="font-size:80%;">Cost</th>
+                                  <th style="font-size:80%;">Description</th>
+                                  
+                              </tr>
+                          </thead>
+                           
 <% 	
 
  		int i = 0;
@@ -103,19 +189,9 @@
  					
 %>
 
-<form>
-<div id="myDiv">
-	<table id="tblComputerList" border="0">
-		<tr bgcolor="green" style="color: white;">
-			<th>Apply</th>
-			<th>Asset ID</th>
-			<th>IP Address</th>
-			<th>Cost</th>
-			<th>Descr</th>		
-			
-		</tr>
 		
-	<%
+
+<%
 		for (i = 0; i < assetListDB.size(); i++) {
 				  
 			for (j = 0;j < dcListDB.size(); j++) {
@@ -132,28 +208,54 @@
 			}
 			 
 		%>
-		
+		<tbody>
 		<tr>
-			<td><input type="checkbox" id = "chkApply" ></td>
-			<td><%=assetListDB.get(i).getAssetId()%></td>
-			<td><%=assetListDB.get(i).getIpAddr()%></td>
-			<td><%= cost %></td>
-			<td><%= ctlgDesc %> </td>
+			<td><input type="checkbox" id = "chkApply" class="styled"  ></td>
+			<td style="font-size:80%;"><%=assetListDB.get(i).getAssetId()%></td>
+			<td style="font-size:80%;"><%=assetListDB.get(i).getIpAddr()%></td>
+			<td style="font-size:80%;"><%= cost %></td>
+			<td style="font-size:80%;"><%= ctlgDesc %> </td>
 
  <% 
 	}		
 %>
 </tr>
-	</table>
-</div>
-		<input type="button" value="Submit" onclick="handleClick()"> 
-		<label id="consolidateResult"> </label>
-	</form>
 
+
+		</tbody>	
+		
+		</table>
+                    </div>
+                </div>
+                <!-- /table with checkboxes -->
+
+                <div class="span6 well body " style="height:70px;">
+            
+		            <button class="btn btn-success" type="button" style="position:relative; top:-10px; left:0px;" onclick="handleClick()">Submit</button>
+		            <label id="consolidateResult" class="control-label" style="position:relative; top:-45px; left:80px; width:400px; line-height:20px;""> </label>
+		            <!--<button class="btn btn-warning" type="button" style="position:absolute; top:5px; left:1100px;"> Back to Dashboard </button>
+					
+			
+          		--></div>   
+		    </div>
+		    <!-- /content wrapper -->
+
+		</div>
+		<!-- content -->
+
+	</div>
+	<!-- /content container -->
+
+</form>
 </body>
-
 </html>
 
+
+		
+	
+		
+		
+	
 <!-- Mask to cover the whole screen -->
 <div id="mask"></div>
 
