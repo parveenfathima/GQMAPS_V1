@@ -6,3 +6,10 @@ $(document).ready(function()
 		window.location.href = "login.html";
 	}
 });
+
+//function to redirect Dashboard screen    
+function gotoDashboard() {
+
+	window.location.href="dashboard_full.html";
+
+		}

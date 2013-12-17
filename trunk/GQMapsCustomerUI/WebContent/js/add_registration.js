@@ -2,6 +2,7 @@
 //binding the click event to the submit button
 $(document).ready(function()
 {
+	
 		$("#submit").bind("click", validateForm);
 		
 		$("#txtPhone, #txtESqft, #txtEAsset, #txtDCSqft, #txtDCAsset, #txtDCUsed, #txtDCTemp").keypress(function (e) {
@@ -22,7 +23,7 @@ $(document).ready(function()
 function validateForm()
 {
 		//declaring and initializing form variables
-
+		
 		var vEName = $.trim($('#txtEName').val()); //mandatory field
 		var vBusCat = $('#cmbBusCategory option:selected').val(); //mandatory field
 		var vPhone = $.trim($('#txtPhone').val()); //mandatory field
@@ -170,6 +171,7 @@ function validateForm()
 		}					
 		else 
 		{	
+			
 			var vQuery = "";
 			var vEId = generateEntpID("eid");
 			var vUId = generateEntpID("uid");

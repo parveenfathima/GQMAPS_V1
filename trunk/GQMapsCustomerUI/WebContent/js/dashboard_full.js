@@ -100,6 +100,8 @@ var optAssetList = {
 // Ajax call to get all the dashboard services
 $(document).ready(function() 
 {
+	//$("#datepick").datepicker();
+	 $("#div_topcpuLoad").height(200);
 	if(($.jStorage.get("jsUserId") === "" || $.jStorage.get("jsUserId") === null || $.jStorage.get("jsPwd") === "" 
 		|| $.jStorage.get("jsPwd") === null)&& ($.jStorage.get("jsEntpId")=== "" || $.jStorage.get("jsEntpId")=== null ))
 	{
@@ -296,9 +298,9 @@ function checkGoalInput(goalId)
 					vValues = vValues + ' <label for = "' + json[i]["descr"] + '" > ' + json[i]["descr"] + ' </label> ';
 					
 	 				if(json[i]["dtvalue"] === "date")
-						vValues = vValues + ' <input type="text" name="' + json[i]["descr"] + '" id="' + json[i]["descr"] + '" disabled="disabled"  /> ';	   						
+						vValues = vValues + ' <input class="datepicker" type="text" name="' + json[i]["descr"] + '" id="' + json[i]["descr"] + '"  /> ';	   						
 					else					
-						vValues = vValues + ' <input type="text" name="' + json[i]["descr"] + '" id="' + json[i]["descr"] + '"  /> ';
+						vValues = vValues + ' <input class="datepicker" type="text" name="' + json[i]["descr"] + '" id="' + json[i]["descr"] + '"  /> ';
 				});	 
 
 				$("#addElements").append(vValues);	
@@ -307,20 +309,22 @@ function checkGoalInput(goalId)
 				{
 	 				if(json[i]["dtvalue"] === "date")
 					{
-	 					alert('hai');
-						$("#"+json[i]["descr"]).datepicker({ dateFormat: 'yy-mm-dd' ,
-							showOn: "button", buttonImage: "images/calendar.gif", buttonImageOnly: true }) ; 						
+	 					alert('hai thr');
+	 					//$("#"+json[i]["descr"]).datepicker();
+						//$("#"+json[i]["descr"]).datepicker({ showOn: "button",
+							//buttonImage: "images/calendar.gif",
+							//buttonImageOnly: true}) ; 						
 					} 
-				});	 				
+				});	 	
 	 
-				$("#dlgGoalInput").dialog(optGoalInput).dialog('open');		
+				$("#dlgGoalInput").dialog(optGoalInput).dialog('open');	
 				
 			}
 			else
 			{
 				//TODO navigate to goal.jsp page
 				window.location.href = "goal.jsp?goalId="+$.jStorage.get("goalId")+"&entpId="+$.jStorage.get("jsEntpId");
-			}
+}
 		
 		},
 		error:function(json)
