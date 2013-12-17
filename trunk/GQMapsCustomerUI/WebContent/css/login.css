@@ -438,6 +438,17 @@ address {
 .btn.btn-info {
   background-color: #3498db;
 }
+.btn-info {
+  color: #ffffff;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+  background: #389ebc;
+  background: -moz-linear-gradient(top, #53b8d6, #389ebc);
+  background: -webkit-gradient(linear, 0 0, 0 100%, from(#53b8d6), to(#389ebc));
+  background: -webkit-linear-gradient(top, #53b8d6, #389ebc);
+  background: -o-linear-gradient(top, #53b8d6, #389ebc);
+  background: linear-gradient(to bottom, #53b8d6, #389ebc);
+  border-color: #389ebc;
+}
 .btn.btn-info:hover,
 .btn.btn-info:focus,
 .btn-group:focus .btn.btn-info.dropdown-toggle {
@@ -1015,21 +1026,41 @@ footer p {
     position: relative;
     text-align: center;
     height:20px;
-    top:30px;
+    top:-15px;
     width:160px;
     left:887px;
 
 }
 
+/* Forget userid text message css*/
+
+.forgetuserid {
+	top:50px;
+	height:50px;
+	left:680px;
+	position:relative;
+	color: #FFFFFF;
+	font-size: 15px;
+	}
+	
 /*This is download jar button css*/
 .downloadjar{
     
   height:100px;
   width:120px;
   position: absolute;
-  left: 85px;
+  left: 35px;
   bottom: -60px
 }
+
+/*This is signup button css*/
+.signup {
+	height:100px;
+	width:100px;
+	position:absolute;
+	left:160px;
+	bottom:-60px;
+	}
 
 /*This background image outer div container css*/
 .backimg{
