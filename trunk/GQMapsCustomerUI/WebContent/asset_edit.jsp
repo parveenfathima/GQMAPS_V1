@@ -10,18 +10,80 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<title>Insert title here</title>
+<title>Configure Assets</title>
 <link type="text/css"
 	href="jquery-ui-1.10.2.custom/css/blitzer/jquery-ui-1.10.2.custom.css"
 	rel="stylesheet" />
 <link type="text/css" href="css/gqmaps.css" rel="stylesheet" />
+<link href="css/dashboard.css" rel="stylesheet" type="text/css" />
+<link href='http://fonts.googleapis.com/css?family=Open+Sans:400,600,700' rel='stylesheet' type='text/css'>
+<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
 
 <script src="jquery-ui-1.10.2.custom/js/jquery-1.9.1.js"></script>
 <script src="jquery-ui-1.10.2.custom/js/jquery-ui-1.10.2.custom.js"></script>
+<script type="text/javascript" src = "http://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.js" charset="utf-8"></script>
+<script type="text/javascript" src = "http://www.google.com/jsapi" charset="utf-8"></script>
+<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?key=AIzaSyBGIi2rSK9Qp2dY1EewX-JUsK0sjQsxAak&sensor=false"></script>
+  
+
+<script type="text/javascript" src="js/DateTimePickerJS/DateTimePicker.js"></script>  
+<script type="text/javascript" src="js/plugins/tables/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js"></script> 
 
 <script src="js/jstorage.js"> </script>
 <script src="js/rest_service.js"> </script>
-<script src = "js/general.js"> </script>    
+<script src = "js/general.js"> </script>  
+<script src="js/asset_edit.js"></script>  
+
+
+
+<script type="text/javascript" src="js/charts/graph.js"></script>
+<script type="text/javascript" src="js/charts/chart1.js"></script>
+<script type="text/javascript" src="js/charts/chart2.js"></script>
+<script type="text/javascript" src="js/charts/chart3.js"></script>
+<script type="text/javascript" src="js/plotgraph.js"></script> 
+
+
+<script type="text/javascript" src="js/plugins/charts/excanvas.min.js"></script>
+<script type="text/javascript" src="js/plugins/charts/jquery.flot.js"></script>
+<script type="text/javascript" src="js/plugins/charts/jquery.flot.resize.js"></script>
+<script type="text/javascript" src="js/plugins/charts/jquery.sparkline.min.js"></script>
+
+<script type="text/javascript" src="js/plugins/ui/jquery.easytabs.min.js"></script>
+<script type="text/javascript" src="js/plugins/ui/jquery.collapsible.min.js"></script>
+<script type="text/javascript" src="js/plugins/ui/jquery.mousewheel.js"></script>
+<script type="text/javascript" src="js/plugins/ui/prettify.js"></script>
+<script type="text/javascript" src="js/plugins/ui/jquery.bootbox.min.js"></script>
+<script type="text/javascript" src="js/plugins/ui/jquery.colorpicker.js"></script>
+<script type="text/javascript" src="js/plugins/ui/jquery.timepicker.min.js"></script>
+<script type="text/javascript" src="js/plugins/ui/jquery.jgrowl.js"></script>
+<script type="text/javascript" src="js/plugins/ui/jquery.fancybox.js"></script>
+<script type="text/javascript" src="js/plugins/ui/jquery.fullcalendar.min.js"></script>
+<script type="text/javascript" src="js/plugins/ui/jquery.elfinder.js"></script>
+
+<script type="text/javascript" src="js/plugins/uploader/plupload.js"></script>
+<script type="text/javascript" src="js/plugins/uploader/plupload.html4.js"></script>
+<script type="text/javascript" src="js/plugins/uploader/plupload.html5.js"></script>
+<script type="text/javascript" src="js/plugins/uploader/jquery.plupload.queue.js"></script>
+
+<script type="text/javascript" src="js/plugins/forms/jquery.uniform.min.js"></script>
+<script type="text/javascript" src="js/plugins/forms/jquery.autosize.js"></script>
+<script type="text/javascript" src="js/plugins/forms/jquery.inputlimiter.min.js"></script>
+<script type="text/javascript" src="js/plugins/forms/jquery.tagsinput.min.js"></script>
+<script type="text/javascript" src="js/plugins/forms/jquery.inputmask.js"></script>
+<script type="text/javascript" src="js/plugins/forms/jquery.select2.min.js"></script>
+<script type="text/javascript" src="js/plugins/forms/jquery.listbox.js"></script>
+<script type="text/javascript" src="js/plugins/forms/jquery.validation.js"></script>
+<script type="text/javascript" src="js/plugins/forms/jquery.validationEngine-en.js"></script>
+<script type="text/javascript" src="js/plugins/forms/jquery.form.wizard.js"></script>
+<script type="text/javascript" src="js/plugins/forms/jquery.form.js"></script>
+
+<script type="text/javascript" src="js/plugins/tables/jquery.dataTables.min.js"></script>
+
+<script type="text/javascript" src="js/files/bootstrap.min.js"></script>
+
+<script type="text/javascript" src="js/files/functions.js"></script>
 
 <script type="text/javascript">
 
@@ -233,29 +295,14 @@ function getCurrentAssets()
 
 </head>
 <body>
-
+<body id="table-body">
 
     <div id="idletimeout" style="top: 150px; margin-left: 215px; margin-right: 200px; ">
         Logging off in <span><!-- countdown place holder --></span>&nbsp;seconds due to inactivity.
         <a id="idletimeout-resume" href="#">Click here to continue</a>.
     </div>  
-            
-	<form id="frmAsset" name="frmAsset">
-		<table>
-			<tr>
-				<td><label><h1>
-							Asset Edit for&nbsp;
-							<%=request.getParameter("setEntp")%></h1>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
-				</td>
-				<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-					<a href="dashboard_full.html"> Back</a>
-				</td>
-
-			</tr>
-		</table>
-		<%
+    
+    <%
 			int i = 0;
 			int j = 0;
 			int k = 0;
@@ -319,35 +366,70 @@ function getCurrentAssets()
 			List<DomainData> compTypeListDB = new ArrayList<DomainData>();
 			compTypeListDB = assetData.getCompType();
 		%>
+            
+	<form id="frmAsset" name="frmAsset">
+	
+	<!-- Fixed top -->
+	<div id="top">
+		<div class="fixed">
+			<a href="#" title="" class="logo"></a>
+			
+		</div>
+	</div>
+	<!-- /fixed top -->
 
-		<h4>Computer Asset List</h4>
 
-		<table id="tblComputerList" border="1">
-			<tr bgcolor="green" style="color: white;">
-				<th>S.#</th>
-				<th style="width: 50px;">Asset Active</th>
-				<th style="width: 150px;">Asset ID</th>
-				<th>IP Address</th>
-				<th>Catalog</th>
-				<th>Server Type</th>
-				<th>Asset Usage</th>
-				<th>Asset Importance</th>
-				<th>Ownership</th>
-				<th>Location</th>
-				<th style="width: 100px;">Comp. Type</th>
-			</tr>
-			<%
+	<!-- Content container -->
+	<div id="container">
+
+		<!-- Content -->
+		<div id="content">
+
+		    <!-- Content wrapper -->
+		    <div class="wrapper">
+		    	<br/>
+		    	<br/>
+
+			    <h5 class="widget-name"><i class="icon-file"></i>Asset Edit for <%=entp%></h5>
+			    <p>Computer Asset list</p>
+	                	
+                <!-- Table with checkboxes -->
+                <div class="widget">
+                	
+                    <div class="table-overflow">
+                        <table id="tblComputerList" class="table table-bordered table-checks" >
+                          <thead>
+                              <tr style="font-size:80%;">
+                                  <th style="width:20px;">S.No</th>
+                                  <th>Asset Active</th>
+                                  <th>Asset Id</th>
+                                  <th>IP Address</th>
+                                  <th>Catalog</th>
+                                  <th>Server Type</th>
+                                  <th>Asset Usage</th>
+                                  <th>Asset Importance</th>
+                                  <th>Ownership</th>
+                                  <th>Location</th>
+                                  <th>Comp. type</th>
+                                  
+                              </tr>
+                          </thead>
+                          <tbody>
+                          <%
 				for (i = 0; i < assetListDB.size(); i++) {
 						if (assetListDB.get(i).getProtocolId().equals("computer")) {
 			%>
-			<tr>
-				<td><%=j = j + 1%></td>
-				<td><select name=<%="cmbStatus" + i%> id=<%="cmbStatus" + i%>>
-						<%
+                              <tr style="font-size:80%;">
+                                  <td style="width:20px;"><%=j = j + 1%></td>
+                                  <td style="width:50px;">
+                                    
+                                  	
+                                  	<select name=<%="cmbStatus" + i%> id=<%="cmbStatus" + i%> class="styled" style="width:50px; height:20px;" >
+                                  	<%
 							for (int status = 0; status < aryStatus.length; status++) {
 														if (assetListDB.get(i).getActive() == aryStatus[status]) {
 						%>
-						<option value="<%=(char) aryStatus[status]%>" selected="selected"><%=(char) aryStatus[status]%></option>
+                                        <option value="<%=(char) aryStatus[status]%>" selected="selected"><%=(char) aryStatus[status]%></option>
 						<%
 							} else {
 						%>
@@ -356,16 +438,23 @@ function getCurrentAssets()
 							}
 													}
 						%>
-				</select></td>
+                                    </select>
 
-				<td style="width: 150px;"><span id=<%="assetID" + i%>
-					name=<%="assetID" + i%>> <%=assetListDB.get(i).getAssetId()%>
-				</span></td>
-				<td><span id=<%="ipAddr" + i%> name=<%="ipAddr" + i%>> <%=assetListDB.get(i).getIpAddr()%>
-				</span></td>
-				<td><select name=<%="cmbCatalog" + i%> id=<%="cmbCatalog" + i%>
-					style="width: 150px">
-						<%
+                                
+                                  </td>
+                                  <td style="width:100px; ">
+                                  <span id=<%="assetID" + i%>
+									name=<%="assetID" + i%>> <%=assetListDB.get(i).getAssetId()%>
+									</span></td>
+									<td style="width:90px; ">
+                                    <span id=<%="ipAddr" + i%> name=<%="ipAddr" + i%>> <%=assetListDB.get(i).getIpAddr()%>
+									</span>
+                                  </td>
+                                  <td style="width:70px;height:20px;">
+                                   
+                                    
+                                    <select name=<%="cmbCatalog" + i%> id=<%="cmbCatalog" + i%> class="styled" style="width:110px;height:20px;" >
+                                        <%
 							for (int catalog = 0; catalog < compCatalogListDB.size(); catalog++) {
 														if (assetListDB.get(i).getCtlgId().equals(compCatalogListDB
 																.get(catalog).getId())) {
@@ -380,10 +469,14 @@ function getCurrentAssets()
 							}
 													}
 						%>
-				</select></td>
-				<td><select name=<%="cmbSrvrApp" + i%> id=<%="cmbSrvrApp" + i%>
-					style="width: 100px;">
-						<%
+                                    </select>                                  
+
+                                  </td>
+                                  <td style="width:80px;height:20px;">
+                                    
+                                    
+                                    <select name=<%="cmbSrvrApp" + i%> id=<%="cmbSrvrApp" + i%> class="styled" style="width:110px;height:20px;" >
+                                       <%
 							for (int srvr = 0; srvr < srvrAppListDB.size(); srvr++) {
 														if (assetListDB.get(i).getSrvrAppId() == Byte
 																.parseByte(srvrAppListDB.get(srvr).getId())) {
@@ -398,13 +491,22 @@ function getCurrentAssets()
 							}
 													}
 						%>
-				</select></td>
-				<td><input type="text" id=<%="txtAssetUsage" + i%>
-					name=<%="txtAssetUsage" + i%>
-					value="<%=assetListDB.get(i).getAssetUsg()%>" width="50px" maxlength="50"/></td>
-				<td><select name=<%="cmbImpLevel" + i%>
-					id=<%="cmbImpLevel" + i%> style="width: 100px;">
-						<%
+                                    </select>
+
+                                  </td>
+
+                                  <td style="width:100px;height:20px;">
+                                    <input type="text" id=<%="txtAssetUsage" + i%> name=<%="txtAssetUsage" + i%>
+									value="<%=assetListDB.get(i).getAssetUsg()%>" maxlength="50"  class="input-small" placeholder="Asset Usage">
+
+                                  </td>
+
+                                  <td style="width:60px;height:20px;">
+                                    
+                                    
+                                    <select name=<%="cmbImpLevel" + i%>
+									id=<%="cmbImpLevel" + i%> class="styled" style="width:100px;height:20px;" >
+                                        <%
 							for (int impl = 0; impl < assetImpLevelListDB.size(); impl++) {
 														if ((byte) assetListDB.get(i).getImpLvl() == Byte
 																.valueOf(assetImpLevelListDB.get(impl).getId())) {
@@ -419,10 +521,16 @@ function getCurrentAssets()
 							}
 													}
 						%>
-				</select></td>
-				<td><select name=<%="cmbOwnership" + i%>
-					id=<%="cmbOwnership" + i%>>
-						<%
+                                    </select>
+
+                                  </td>
+
+                                  <td style="width:80px;height:20px;">
+                                   
+                                    
+                                    <select name=<%="cmbOwnership" + i%>
+									id=<%="cmbOwnership" + i%> class="styled" style="width:70px;height:20px;" >
+                                       <%
 							for (int ownership = 0; ownership < aryOwnership.length; ownership++) {
 														if (assetListDB.get(i).getOwnership()
 																.equals(aryOwnership[ownership])) {
@@ -437,10 +545,16 @@ function getCurrentAssets()
 							}
 													}
 						%>
-				</select></td>
-				<td><select name=<%="cmbLocation" + i%>
-					id=<%="cmbLocation" + i%>>
-						<%
+                                    </select>
+
+                                  </td>
+
+                                  <td style="width:60px;height:20px;">
+                                   
+                                    
+                                    <select name=<%="cmbLocation" + i%>
+									id=<%="cmbLocation" + i%> class="styled" style="width:70px;height:20px;" >
+                                        <%
 							for (int loc = 0; loc < aryLocation.length; loc++) {
 														if (assetListDB.get(i).getDcEnt().equals(aryLocation[loc])) {
 						%>
@@ -453,10 +567,16 @@ function getCurrentAssets()
 							}
 													}
 						%>
-				</select></td>
-				<td><select name=<%="cmbCompType" + i%>
-					id=<%="cmbCompType" + i%>>
-						<%
+                                    </select>
+
+                                  </td>
+
+                                  <td style="width:70px;height:20px;">
+                                    
+                                    
+                                    <select name=<%="cmbCompType" + i%>
+									id=<%="cmbCompType" + i%> class="styled" style="width:70px;height:20px;" >
+                                        <%
 							for (int comp = 0; comp < compTypeListDB.size(); comp++) {
 														if (assetListDB.get(i).getType_id()
 																.equals(compTypeListDB.get(comp).getId())) {
@@ -471,37 +591,56 @@ function getCurrentAssets()
 							}
 													}
 						%>
-				</select></td>
-			</tr>
-			<%
+                                    </select>
+
+                                  </td>
+                                  
+                              </tr>
+                             
+                          </tbody>
+                           <%
 				}
 					}
 			%>
-		</table>
-
-		<h4>Printer Asset List</h4>
-		<table id="tblPrinterList" border="1">
-			<tr bgcolor="green" style="color: white;">
-				<th>S.#</th>
-				<th style="width: 50px;">Asset Active</th>
-				<th style="width: 150px;">Asset ID</th>
-				<th style="width: 130px;">IP Address</th>
-				<th style="width: 150px;">Catalog</th>
-				<th style="width: 100px; display: none;">Server Type</th>
-				<th style="width: 100px;">Asset Usage</th>
-				<th>Asset Importance</th>
-				<th>Ownership</th>
-				<th>Location</th>
-				<th style="width: 100px; display: none;">Comp. Type</th>
-			</tr>
-			<%
+                        </table>
+                    </div>
+                </div>
+                <!-- /table with checkboxes -->
+                
+                <p>Printer Asset list</p>
+	                	
+                <!-- Table with checkboxes -->
+                <div class="widget">
+                	
+                    <div class="table-overflow">
+                        <table style="width:1000px;" id="tblPrinterList" class="table table-bordered table-checks" >
+                          <thead>
+                              <tr style="font-size:80%;">
+                                  <th style="width:20px;">S.No</th>
+                                  <th>Asset Active</th>
+                                  <th>Asset Id</th>
+                                  <th>IP Address</th>
+                                  <th>Catalog</th>
+                                  <th>Asset Usage</th>
+                                  <th>Asset Importance</th>
+                                  <th>Ownership</th>
+                                  <th>Location</th>
+                                  
+                                  
+                              </tr>
+                          </thead>
+                          <tbody>
+                			<%
 				for (i = 0; i < assetListDB.size(); i++) {
 						if (assetListDB.get(i).getProtocolId().equals("printer")) {
 			%>
-			<tr>
-				<td><%=k = k + 1%></td>
-				<td><select name=<%="cmbStatus" + i%> id=<%="cmbStatus" + i%>>
-						<%
+                <tr style="font-size:80%;">
+                                  <td style="width:20px;"><%=k = k + 1%></td>
+                                  <td style="width:50px;">
+                                    
+                                  	
+                                  	<select name=<%="cmbStatus" + i%> id=<%="cmbStatus" + i%> class="styled" style="width:50px; height:20px;" >
+                                  	<%
 							for (int status = 0; status < aryStatus.length; status++) {
 														if (assetListDB.get(i).getActive() == aryStatus[status]) {
 						%>
@@ -514,16 +653,23 @@ function getCurrentAssets()
 							}
 													}
 						%>
-				</select></td>
-				<td style="width: 150px;"><span id=<%="assetID" + i%>
-					name=<%="assetID" + i%>> <%=assetListDB.get(i).getAssetId()%>
-				</span></td>
-				<td style="width: 130px;"><span id=<%="ipAddr" + i%>
-					name=<%="ipAddr" + i%>> <%=assetListDB.get(i).getIpAddr()%>
-				</span></td>
-				<td style="width: 150px;"><select name=<%="cmbCatalog" + i%>
-					id=<%="cmbCatalog" + i%>>
-						<%
+                                    </select>
+
+                                
+                                  </td>
+                                  <td style="width:120px; ">
+                                  <span id=<%="assetID" + i%>
+									name=<%="assetID" + i%>> <%=assetListDB.get(i).getAssetId()%>
+									</span></td>
+									<td style="width:110px; ">
+                                    <span id=<%="ipAddr" + i%> name=<%="ipAddr" + i%>> <%=assetListDB.get(i).getIpAddr()%>
+									</span>
+                                  </td>
+                                  <td style="width:90px;height:20px;">
+                                   
+                                    
+                                    <select  name=<%="cmbCatalog" + i%> id=<%="cmbCatalog" + i%> class="styled" style="width:110px;height:20px;" >
+                                        <%
 							for (int catalog = 0; catalog < printerCatalogListDB.size(); catalog++) {
 														if (assetListDB.get(i).getCtlgId().equals(printerCatalogListDB
 																.get(catalog).getId())) {
@@ -540,37 +686,49 @@ function getCurrentAssets()
 							}
 													}
 						%>
-				</select></td>
-				<td style="width: 100px; display: none;"><input type="text"
+                                    </select>                                  
+
+                                  </td>
+                                  <td style="width: 60px; display: none;"><input type="text"
 					id=<%="cmbSrvrApp" + i%> name=<%="cmbSrvrApp" + i%>
-					disabled="disabled" value="null" style="width: 100px;" /></td>
+					disabled="disabled" hidden="hidden" value="null" style="width: 100px;" /></td>
+                <td style="width:100px;height:20px;">
+                                    <input type="text" id=<%="txtAssetUsage" + i%> name=<%="txtAssetUsage" + i%>
+									value="<%=assetListDB.get(i).getAssetUsg()%>" maxlength="50"  class="input-small" placeholder="Asset Usage">
 
-				<td style="width: 100px;"><input type="text"
-					id=<%="txtAssetUsage" + i%> name=<%="txtAssetUsage" + i%>
-					value="<%=assetListDB.get(i).getAssetUsg()%>" width="100px" maxlength="50"/></td>
+                                  </td>
 
+                                  <td style="width:100px;height:20px;">
+                                    
+                                    
+                                    <select name=<%="cmbImpLevel" + i%>
+					id=<%="cmbImpLevel" + i%> class="styled" style="width:100px;height:20px;" >
+                                        <%
+                                      
+            							for (int impl = 0; impl < assetImpLevelListDB.size(); impl++) {
+            														if ((byte) assetListDB.get(i).getImpLvl() == Byte
+            																.valueOf(assetImpLevelListDB.get(impl).getId())) {
+            						%>
+            						<option value="<%=assetImpLevelListDB.get(impl).getId()%>"
+            							selected="selected"><%=assetImpLevelListDB.get(impl).getDesc()%></option>
+            						<%
+            							} else {
+            						%>
+            						<option value="<%=assetImpLevelListDB.get(impl).getId()%>"><%=assetImpLevelListDB.get(impl).getDesc()%></option>
+            						<%
+            							}
+            													}
+            						%>
+                                    </select>
 
-				<td><select name=<%="cmbImpLevel" + i%>
-					id=<%="cmbImpLevel" + i%>>
-						<%
-							for (int impl = 0; impl < assetImpLevelListDB.size(); impl++) {
-														if ((byte) assetListDB.get(i).getImpLvl() == Byte
-																.valueOf(assetImpLevelListDB.get(impl).getId())) {
-						%>
-						<option value="<%=assetImpLevelListDB.get(impl).getId()%>"
-							selected="selected"><%=assetImpLevelListDB.get(impl).getDesc()%></option>
-						<%
-							} else {
-						%>
-						<option value="<%=assetImpLevelListDB.get(impl).getId()%>"><%=assetImpLevelListDB.get(impl).getDesc()%></option>
-						<%
-							}
-													}
-						%>
-				</select></td>
-				<td><select name=<%="cmbOwnership" + i%>
-					id=<%="cmbOwnership" + i%>>
-						<%
+                                  </td>
+
+                                  <td style="width:60px;height:20px;">
+                                   
+                                    
+                                    <select name=<%="cmbOwnership" + i%>
+									id=<%="cmbOwnership" + i%> class="styled" style="width:60px;height:20px;" >
+                                       <%
 							for (int ownership = 0; ownership < aryOwnership.length; ownership++) {
 														if (assetListDB.get(i).getOwnership()
 																.equals(aryOwnership[ownership])) {
@@ -585,10 +743,16 @@ function getCurrentAssets()
 							}
 													}
 						%>
-				</select></td>
-				<td><select name=<%="cmbLocation" + i%>
-					id=<%="cmbLocation" + i%>>
-						<%
+                                    </select>
+
+                                  </td>
+
+                                  <td style="width:60px;height:20px;">
+                                   
+                                    
+                                    <select name=<%="cmbLocation" + i%>
+									id=<%="cmbLocation" + i%> class="styled" style="width:60px;height:20px;" >
+                                       <%
 							for (int loc = 0; loc < aryLocation.length; loc++) {
 														if (assetListDB.get(i).getDcEnt().equals(aryLocation[loc])) {
 						%>
@@ -601,41 +765,58 @@ function getCurrentAssets()
 							}
 													}
 						%>
-				</select></td>
-				<td style="width: 100px; display: none;"><input type="text"
+                                    </select>
+
+                                  </td>
+                                  <td style="width: 100px; display: none;"><input type="text"
 					name=<%="cmbCompType" + i%> id=<%="cmbCompType" + i%>
-					disabled="disabled" value="null" style="width: 100px;" /></td>
-			</tr>
-			<%
+					disabled="disabled" hidden="hidden" value="null" style="width: 100px;" /></td>
+                   </tr>
+                             
+                          </tbody>
+                           <%
 				}
 					}
 			%>
-
-		</table>
-
-		<h4>Network, Switch, Router and Gateway List</h4>
-		<table id="tblNsrg" border="1">
-			<tr bgcolor="green" style="color: white;">
-				<th>S.#</th>
-				<th style="width: 50px;">Asset Active</th>
-				<th style="width: 150px;">Asset ID</th>
-				<th style="width: 100px;">IP Address</th>
-				<th style="width: 300px;">Catalog</th>
-				<th style="display: none;">Server Type</th>
-				<th style="width: 100px; display: none;">Asset Usage</th>
-				<th style="display: none;">Asset Importance</th>
-				<th style="width: 100px;">Ownership</th>
-				<th style="width: 100px;">Location</th>
-				<th style="width: 100px; display: none;">Comp. Type</th>
-			</tr>
-			<%
+                        </table>
+                    </div>
+                </div>
+                <!-- /table with checkboxes -->
+                
+                
+                
+                
+                <p>Network, Switch, Router and Gateway List</p>
+	                	
+                <!-- Table with checkboxes -->
+                <div class="widget">
+                	
+                    <div class="table-overflow">
+                        <table id="tblNsrg" class="table table-bordered table-checks" style="width:800px;" >
+                          <thead>
+                              <tr style="font-size:80%;">
+                                  <th style="width:20px;">S.No</th>
+                                  <th>Asset Active</th>
+                                  <th>Asset Id</th>
+                                  <th>IP Address</th>
+                                  <th>Catalog</th>
+                                  <th>Ownership</th>
+                                  <th>Location</th>
+                              </tr>
+                          </thead>
+                          <tbody>
+                		<tbody>
+                			<%
 				for (i = 0; i < assetListDB.size(); i++) {
 						if (assetListDB.get(i).getProtocolId().equals("nsrg")) {
 			%>
-			<tr>
-				<td><%=l = l + 1%></td>
-				<td><select name=<%="cmbStatus" + i%> id=<%="cmbStatus" + i%>>
-						<%
+                <tr style="font-size:80%;">
+                                  <td style="width:20px;"><%=l = l + 1%></td>
+                                  <td style="width:50px;">
+                                    
+                                  	
+                                  	<select name=<%="cmbStatus" + i%> id=<%="cmbStatus" + i%> class="styled" style="width:50px; height:20px;" >
+                                  	<%
 							for (int status = 0; status < aryStatus.length; status++) {
 														if (assetListDB.get(i).getActive() == aryStatus[status]) {
 						%>
@@ -648,15 +829,23 @@ function getCurrentAssets()
 							}
 													}
 						%>
-				</select></td>
-				<td style="width: 150px;"><span id=<%="assetID" + i%>
-					name=<%="assetID" + i%>><%=assetListDB.get(i).getAssetId()%>
-				</span></td>
-				<td style="width: 150px;"><span id=<%="ipAddr" + i%>
-					name=<%="ipAddr" + i%>><%=assetListDB.get(i).getIpAddr()%> </span></td>
-				<td ><select name=<%="cmbCatalog" + i%> id=<%="cmbCatalog" + i%>
-					style="width: 300px;">
-						<%
+                                    </select>
+
+                                
+                                  </td>
+                                  <td style="width:110px; ">
+                                  <span id=<%="assetID" + i%>
+									name=<%="assetID" + i%>> <%=assetListDB.get(i).getAssetId()%>
+									</span></td>
+									<td style="width:90px; ">
+                                    <span id=<%="ipAddr" + i%> name=<%="ipAddr" + i%>> <%=assetListDB.get(i).getIpAddr()%>
+									</span>
+                                  </td>
+                                  <td style="width:100px;height:20px;">
+                                   
+                                    
+                                    <select  name=<%="cmbCatalog" + i%> id=<%="cmbCatalog" + i%> class="styled" style="width:110px;height:20px;" >
+                                      <%
 							for (int catalog = 0; catalog < nsrgCatalogListDB.size(); catalog++) {
 														if (assetListDB.get(i).getCtlgId().equals(nsrgCatalogListDB
 																.get(catalog).getId())) {
@@ -671,8 +860,10 @@ function getCurrentAssets()
 							}
 													}
 						%>
-				</select></td>
-				<td style="display: none;"><input type="text"
+                                    </select>                                  
+
+                                  </td>
+                                  <td style="display: none;"><input type="text"
 					id=<%="cmbSrvrApp" + i%> name=<%="cmbSrvrApp" + i%>
 					disabled="disabled" value="null" hidden="hidden"
 					style="width: 100px;" /></td>
@@ -684,9 +875,12 @@ function getCurrentAssets()
 					id=<%="cmbImpLevel" + i%> name=<%="cmbImpLevel" + i%>
 					disabled="disabled" value="null" hidden="hidden"
 					style="width: 100px;" /></td>
-				<td><select name=<%="cmbOwnership" + i%>
-					id=<%="cmbOwnership" + i%> style="width: 100px">
-						<%
+                		<td style="width:70px;height:20px;">
+                                   
+                                    
+                                    <select name=<%="cmbOwnership" + i%>
+									id=<%="cmbOwnership" + i%> class="styled" style="width:70px;height:20px;" >
+                                      <%
 							for (int ownership = 0; ownership < aryOwnership.length; ownership++) {
 														if (assetListDB.get(i).getOwnership()
 																.equals(aryOwnership[ownership])) {
@@ -701,10 +895,16 @@ function getCurrentAssets()
 							}
 													}
 						%>
-				</select></td>
-				<td ><select name=<%="cmbLocation" + i%>
-					id=<%="cmbLocation" + i%> style="width: 100px;">
-						<%
+                                    </select>
+
+                                  </td>
+
+                                  <td style="width:70px;height:20px;">
+                                   
+                                    
+                                    <select name=<%="cmbLocation" + i%>
+									id=<%="cmbLocation" + i%> class="styled" style="width:70px;height:20px;" >
+                                    <%
 							for (int loc = 0; loc < aryLocation.length; loc++) {
 														if (assetListDB.get(i).getDcEnt().equals(aryLocation[loc])) {
 						%>
@@ -717,26 +917,59 @@ function getCurrentAssets()
 							}
 													}
 						%>
-				</select></td>
-				<td style="display: none;"><input type="text"
+                                    </select>
+
+                                  </td>
+                	<td style="display: none;"><input type="text"
 					name=<%="cmbCompType" + i%> id=<%="cmbCompType" + i%>
 					disabled="disabled" value="null" style="width: 100px;" /></td>
-			</tr>
-			<%
+                	 </tr>
+                             
+                          </tbody>
+                           <%
 				}
 					}
 			%>
+                        </table>
+                    </div>
+                </div>
+                <!-- /table with checkboxes -->
+                
+                
+                
+                
+                
+                
+                
 
-		</table>
+                <div class="span6 well body " style="height:50px;">
+            
+		            <button class="btn btn-success" type="button" id="submit" name="submit" style="position:relative; top:-10px; left:0px;" onClick="updateAsset(<%=assetListDB.size()%>);">Submit</button>
+		            <button class="btn btn-warning" type="button" style="position:relative; top:-10px; left:10px;" onClick="gotoDashboard()"> Back to Dashboard </button>
 
-		<br> <br> <input type="button" id="submit" name="submit"
-			value="Save" onClick="updateAsset(<%=assetListDB.size()%>);" />
+          		</div>   
+	                        
+                
+
+		    </div>
+		    <!-- /content wrapper -->
+
+		</div>
+		<!-- content -->
+
+	</div>
+	<!-- /content container -->
+
+
 	</form>
+
 </body>
 </html>
+	
+	
 
 
-</div>
+
 <!-- Mask to cover the whole screen -->
 <div id="mask"></div>
 
