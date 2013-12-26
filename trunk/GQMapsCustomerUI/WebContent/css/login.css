@@ -1037,7 +1037,7 @@ footer p {
 .forgetuserid {
 	top:50px;
 	height:50px;
-	left:680px;
+	left:720px;
 	position:relative;
 	color: #FFFFFF;
 	font-size: 15px;
@@ -1049,7 +1049,7 @@ footer p {
   height:100px;
   width:120px;
   position: absolute;
-  left: 35px;
+  left: 25px;
   bottom: -60px
 }
 
@@ -1058,7 +1058,7 @@ footer p {
 	height:100px;
 	width:100px;
 	position:absolute;
-	left:160px;
+	left:170px;
 	bottom:-60px;
 	}
 
