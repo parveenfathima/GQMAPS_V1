@@ -1,0 +1,164 @@
+<!doctype html>  
+<!--[if IE 6 ]><html lang="en-us" class="ie6"> <![endif]-->
+<!--[if IE 7 ]><html lang="en-us" class="ie7"> <![endif]-->
+<!--[if IE 8 ]><html lang="en-us" class="ie8"> <![endif]-->
+<!--[if (gt IE 7)|!(IE)]><!-->
+<html lang="en-us"><!--<![endif]-->
+<head>
+	<meta charset="utf-8">
+	
+	<title>GQMap Download Jar</title>
+	
+	<link href="http://fonts.googleapis.com/css?family=Cuprum" rel="stylesheet" type="text/css" />
+	<link rel="stylesheet" href="css/documenter_style.css" media="all">
+	<link rel="stylesheet" href="css/custom.css" media="screen">
+    <link rel="stylesheet" href="css/downloadjar.css" media="all">
+    
+
+	<script src="js/downloadjar/jquery.1.6.4.js"></script>
+	<script src="js/downloadjar/jquery.scrollTo-1.4.2-min.js"></script>
+	<script src="js/downloadjar/jquery.easing.js"></script>
+	
+	<link rel="stylesheet" href="css/downloadjar/shDocumenter.css" media="screen">
+	<script src="js/downloadjar/shCore.js"></script>
+	<script src="js/downloadjar/shBrushAS3.js"></script>
+	<script src="js/downloadjar/shBrushCss.js"></script>
+	<script src="js/downloadjar/shBrushXml.js"></script>
+	<script src="js/downloadjar/shBrushJScript.js"></script>
+	<script src="js/downloadjar/shBrushPhp.js"></script>
+	<script src="js/downloadjar/shBrushPlain.js"></script>
+	<script>SyntaxHighlighter.defaults['toolbar'] = false;SyntaxHighlighter.all();</script>
+
+	<script>document.createElement('section');var duration=450,easing='easeOutExpo';</script>
+	<script src="js/script.js"></script>
+	<script type="text/javascript" language="javascript">
+    function ShowPanel(val)
+    {
+     var pnl= document.getElementById("pnlDetail");
+  pnl.style.display="block";
+  pnl.innerHTML=val;
+    }
+    function HidePanel()
+  
+  {
+    var pnl= document.getElementById("pnlDetail");
+  pnl.style.display="none";
+    }
+  
+</script>
+	<style>
+		html{background-color:#F3F3F3;color:#585858;background-image:url(assets/images/image_15.png);background-repeat:repeat;background-attachment:fixed;}
+		::-moz-selection{background:#111111;color:#F1F1F1;}
+		::selection{background:#111111;color:#F1F1F1;}
+		
+		a{color:#111111;}
+		table td { padding: 10px; }
+		hr{border-top:1px solid #E5E5E5;border-bottom:1px solid #F9F9F9; margin-bottom: 40px;}
+		
+		
+		table { background: #fafafa; border-left: 1px solid #d5d5d5; border-right: 1px solid #d5d5d5; border-bottom: 1px solid #d5d5d5; }
+		table th { background: #f5f5f5; font-weight: bold; padding: 10px; white-space: nowrap; } 
+	</style>
+    <style type="text/css">
+.syntaxhighlighter { overflow-y: hidden !important; overflow-x:hidden !important;  }
+</style>
+
+	
+</head>
+<body>
+    <div id="top">
+        <div class="fixed">
+            <a href="#" title="" class="logo"><!--<img src="img/logo.png" alt="" />--></a>
+            
+        </div>
+    </div>
+	
+	<div id="documenter_content" style="width:70%; height:100%;">
+    
+        <section id="documenter_cover" style="position:relative; top:0px;">
+            
+            <h1 style=" font-family: 'Cuprum', sans-serif; font-weight: normal; padding-bottom: 5px; color: #b55d5c; font-size:40px;">GQMaps-Manage your data</h1>
+            <button class="btn btn-inverse" type="button">Download GQMaps Jar</button>
+            
+        </section>
+        
+        <section id="features">
+            <h3 style=" font-family: 'Cuprum', sans-serif; font-weight: normal; padding-bottom: 5px; color: #b55d5c; font-size:40px;">Pre-requisites</h3><hr class="notop">
+            
+           
+            <ul>	
+                <li>Get a list of ip assets.(Ip address you want to scan)</li>
+                <li>Enable SNMP V2 or if not supported enable V1 and get the community string from system admin. </li>
+                <li>Please make sure you want to use java version 7 on the macine where you want to run the meter.</li>
+                <li>To run the meter please type the following command:		<code>java -jar gqmeter.jar  &lt;path to input asset file&gt;</code></li>
+                <li>Please follow the steps described below to create the input asset file. </li>
+            </ul>
+            
+
+        </section>
+        
+
+        <section id="htmlStructure">
+            <h3 style=" font-family: 'Cuprum', sans-serif; font-weight: normal; padding-bottom: 5px; color: #b55d5c; font-size:40px;">Asset File Creation</h3><hr class="notop">
+            <h3>Hover over the lines below to view the detailed meaning.</h3>
+            
+            <p>Entries above the $$ mark the header section. Please choose appropriate switches as required. </p>
+            
+            
+        <div class="row-fluid" >
+            <div class="span6" >
+                <div onmouseover="ShowPanel('<p>1.$meterid should present in the input file </p> <p>2.gqmaps1 is the example meter given , you should enter the meterid which was given by the gquotient team </p><p></p>' );" onmouseout="HidePanel();"><pre>$meterid gqmaps1</pre></div>
+
+                <div onmouseover="ShowPanel('<p>1.@ computer should present in the input file </p><p>2.snapshot is used to get the details of total memory,used memory,cpu load,up time, no of users logged in , etc </P><p>3.conn_devices is used to get the details of connected device for the given ip with port number</p><p>4.inst_sw is used to get the software names which was installed in given ip address</p><p>5.process is used to get the details of process name, cpu share ,and memory share in kb</p>');"onmouseout="HidePanel();"><pre>@computer     snap_shot|conn_devices|process|inst_sw</pre></div>
+
+                <div onmouseover="ShowPanel('<p>1.@Printer should present in the input file </p><p>2.snap_shot is used to get the details of printer total memory,used memory,up time,tonar_status,printer status etc</p><p>3.conn_devices is used to get the details of device which was connected to the printer');" onmouseout="HidePanel();"><pre>@printer      snap_shot|conn_devices</pre></div>
+
+                <div onmouseover="ShowPanel('<p>1.@nsrg should present in the input file  </p><p>2.snap_shot is used to get the details of up time, no of ports,no of ports up,network bytes in,network bytes out</p>');" onmouseout="HidePanel();" ><pre>@nsrg         snap_shot|conn_devices</pre></div>
+
+                <div onmouseover="ShowPanel('<p>1.@storage should present in the input file</p>');" onmouseout="HidePanel();" ><pre>@storage      snap_shot</pre></div>
+
+                <div onmouseover="ShowPanel('<p>1.$$ is a delimeter, it should present in the input file without space between the $</p>');" onmouseout="HidePanel();"><pre> $$ </pre></div>
+
+                <div onmouseover="ShowPanel('<p>1.gqmaps is the community string of ip 192.168.1.14, Like this you can give the community string and ip address of machine you want to scan </p><p>2.Please make sure always a valid ip must be given</p>');"onmouseout="HidePanel();" ><pre>gqmaps 192.168.1.14</pre></div>
+
+                <div onmouseover="ShowPanel('<p>1.gqmaps is the community string and 192.168.8.128  &nbsp;    192.168.8.130 is the ip upperbound and the lower bound ip address <p></p>2.If you want to scan more number of ip means youu can use like this format</p><p>3.Please make sure always a valid ip must be given</p>');"onmouseout="HidePanel();"><pre>gqmaps 192.168.8.128  192.168.8.130</pre></div>               
+            	                    
+            
+            </div>
+            <div class="span6" id="pnlDetail" ></div>
+        </div>
+        </section>
+
+        <section id="features">
+            <h3 style=" font-family: 'Cuprum', sans-serif; font-weight: normal; padding-bottom: 5px; color: #b55d5c; font-size:40px;">Samples</h3><hr class="notop">
+            
+            <h4>Sample1 - File with all switches available.</h4>
+            	<pre>
+            	$meterid gqmaps1 
+            	@computer     snap_shot|conn_devices|process|inst_sw 
+            	@printer      snap_shot|conn_devices 
+            	@nsrg         snap_shot|conn_devices 
+            	@storage      snap_shot 
+            	$$ 
+            	gqmaps 192.168.1.14 
+            	gqmaps 192.168.8.128  192.168.8.130
+				</pre>
+				 <h4>Sample2 - File with required switches only.</h4>
+            	<pre>
+            	$meterid gqmaps1 
+            	@computer     process|inst_sw 
+            	@printer      snap_shot 
+            	@nsrg         conn_devices 
+            	@storage      snap_shot 
+            	$$ 
+            	gqmaps 192.168.1.14 
+            	gqmaps 192.168.8.128  192.168.8.130
+				</pre>
+        </section>
+        <hr>
+
+
+
+	</div>
+</body>
+</html>

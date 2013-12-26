@@ -47,15 +47,6 @@
 <script type="text/javascript" src="js/plotgraph.js"></script> 
 
 
-<!--<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-<script type="text/javascript" src = "http://www.google.com/jsapi" charset="utf-8"></script>
-<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
-<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js"></script>
-<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?key=AIzaSyDY0kkJiTPVd2U7aTOAwhc9ySH6oHxOIYM&amp;sensor=false"></script>
--->
-
-
-
 <script type="text/javascript" src="js/plugins/charts/excanvas.min.js"></script>
 <script type="text/javascript" src="js/plugins/charts/jquery.flot.js"></script>
 <script type="text/javascript" src="js/plugins/charts/jquery.flot.resize.js"></script>
@@ -320,7 +311,8 @@
 </head>
 
 <body id="table-body">
-
+	<div id="wrap">
+<img class="mergedimg" src="images/grey.png"> 
   <div id="idletimeout" style="top: 150px; margin-left: 215px; margin-right: 200px; ">
         Logging off in <span><!-- countdown place holder --></span>&nbsp;seconds due to inactivity.
         <a id="idletimeout-resume" href="#">Click here to continue</a>.
@@ -341,6 +333,16 @@
 		Date endDate=null;
 		int year,month,date;
 	%>
+	
+	<!-- Fixed top -->
+	<div id="top">
+		<div class="fixed">
+			<a href="#" title="" class="logo"></a>
+			
+		</div>
+	</div>
+	<!-- /fixed top -->
+	
 	
 	<!-- form to display task template -->
 	<form name="ttform" action="/GQMapsCustomerServices/saveAndFinalize/submit" method="post">
@@ -382,7 +384,7 @@
 								int i = 0;
 								for (i = 0; i < goalTaskTmpltChkList.size(); i++) {
 						  		%>
-						  		<tr><td><input type="hidden" name="taskid" value="<%=goalTaskTmpltChkList.get(i).getTask_id()%>"></td>
+						  		<input type="hidden" name="taskid" value="<%=goalTaskTmpltChkList.get(i).getTask_id()%>">
 						  		<%if(i%2==0){ %>
                               	<tr class="success input-row">
                               	<%}else { %>
@@ -400,29 +402,27 @@
 								}
 								
 								%>
-                                  <td style="width:42%;"> <span class="label label-info" style="line-height:20px;"><%=goalTaskTmpltChkList.get(i).getDescr()%> </span> <br/><br/>
+                                  <td style="width:42%;"> <span class="label label-inverse" style="line-height:20px;"><div style="white-space:normal;"><%=goalTaskTmpltChkList.get(i).getDescr()%></div> </span> <br/><br/><br/>
                                         
-                                        	<div>		                  
+                                        	<div style="width:190px; position:relative;">		                  
                                         <label class="control-label" style="font-size:80%;"><i class="icon-list-alt"></i>System Notes</label>
         						                    <div class="controls">
-        						                    <textarea style="resize:none;" rows="1" cols="25" maxlength="198" name="systemnotes" id ="sysnotes"><%=sysNotes%></textarea></div>
+        						                    <textarea style="resize:none;" rows="1" cols="19" maxlength="198" name="systemnotes" id ="sysnotes"><%=sysNotes%></textarea></div>
+        						             </div>
                                       				
                                       	
-                                         
-                                        <label class="control-label" style="font-size:80%;position:relative; width:150px; bottom:55px;left:200px;"><i class="icon-pencil"></i>Benefit</label>
-                                        			<div class="controls" style="position:relative; width:150px; bottom:55px;left:200px;">
-                                        			<input class="input-small" type="text" placeholder="Numbers only" name="cost_benefit" id ="cost_benefit" onkeypress="return isNumberKey(event)" 
-													maxlength="11" onkeyup="return isLengthCheck()" value="<%=goalTaskTmpltChkList.get(i).getCost_benefit()%>" />
+                                         <div class="controls" style="position:relative; width:150px; bottom:55px;left:200px; height:30px;"><label class="control-label" style="font-size:80%;width:150px;"><i class="icon-pencil"></i>Benefit</label><input class="input-small" type="text" style="height:25px;" placeholder="Numbers only" name="cost_benefit" id ="cost_benefit" onkeypress="return isNumberKey(event)" maxlength="11" onkeyup="return isLengthCheck()" value="<%=goalTaskTmpltChkList.get(i).getCost_benefit()%>" />
 													<input type="hidden" name="hdcost_benefit"> 
-													</div>
+										 </div>
 					
 
-                                      	</div>
+                                      	
                                       
-                                        <div style="position:relative; top:-40px;">           
+                                        <div style="position:relative; top:-25px;">           
 
                                         <label class="control-label" style="font-size:80%;"><i class="icon-user"></i>User Notes</label>
-                                        <div class="controls"><textarea rows="1" cols="25" maxlength="198" name="usernotes" id="usrnts"><%=usrNotes%></textarea></div>
+                                        <div class="controls"><textarea rows="1" cols="19" maxlength="198" name="usernotes" id="usrnts"><%=usrNotes%></textarea></div>
+                                        </div>
 
                                         
                                         
@@ -433,16 +433,18 @@
 					
 										if (goalTaskTmpltChkList.get(i).getApply_date() == null ) {
 										%>
-										<label class="control-label checkbox " style="font-size:80%; position:relative; width:150px; bottom:35px; left:200px;">
-										 <input type="checkbox" id="inlineCheckbox1" class="styled" name="chkApply"><i class="icon-ok-sign"></i>Apply</label>
+										 <div class="controls" style="position:relative;width:150px; bottom:60px; left:200px;" >
+										<label class="control-label checkbox " style="font-size:80%;"><input type="checkbox" id="inlineCheckbox1" class="styled" name="chkApply"><i class="icon-ok-sign"></i>Apply</label>
 										<input type="hidden" name="hd_chkApply" >
+									    </div>
 										
 										<%
 										} else {
 										%>
-										<label class="control-label checkbox " style="font-size:80%; position:relative; width:150px; bottom:35px; left:200px;">
-										<input type="checkbox" id="inlineCheckbox1" class="styled" name="chkApply"  checked="checked"><i class="icon-ok-sign"></i>Apply</label>
+										<div class="controls" style="position:relative;width:150px; bottom:60px; left:200px;" >
+										<label class="control-label checkbox " style="font-size:80%;"><input type="checkbox" id="inlineCheckbox1" class="styled" name="chkApply"  checked="checked"><i class="icon-ok-sign"></i>Apply</label>
 										<input type="hidden" name="hd_chkApply" >
+									    </div>
 										<%
 											} 
 										}// end apply date chek box logic 
@@ -455,7 +457,7 @@
                                        
                                   </td>
                                   
-                                  <td style="width:80%;">
+                                  <td>
                                   	
                                   	
                                     
@@ -493,9 +495,9 @@
 
 							<!-- this used in goal.jsp for-loop -->
 			
-								<tr>
-								<td><input type="hidden" id="taskCount" value=<%=i%>>	</td>
-								</tr>
+								
+								<input type="hidden" id="taskCount" value=<%=i%>>	
+								
                          </tbody>
                      </table>
                  </div>
@@ -547,6 +549,7 @@
 	<script>
 	  	window.onload = showGoalGraphs();	
 	</script>
+</div>
 </body>
 </html>
 

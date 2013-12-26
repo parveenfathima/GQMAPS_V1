@@ -124,6 +124,7 @@
 </head>
 
 <body id="table-body">
+<div id="wrap">
 <form>
 <div id="idletimeout" style="top: 150px; margin-left: 215px; margin-right: 200px; ">
         Logging off in <span><!-- countdown place holder --></span>&nbsp;seconds due to inactivity.
@@ -247,6 +248,7 @@
 	<!-- /content container -->
 
 </form>
+</div>
 </body>
 </html>
 

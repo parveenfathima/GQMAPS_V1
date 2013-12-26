@@ -11,8 +11,9 @@
 <link rel="stylesheet" type="text/css" href="css/thickbox.css">
 
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-<script src="//code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
-<script type="text/javascript" src = "http://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.js" charset="utf-8"></script>
+<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+<script type="text/javascript" src = "http://ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.js" charset="utf-8"></script>
 <script type="text/javascript" src = "http://www.google.com/jsapi" charset="utf-8"></script>
 <script type="text/javascript" src="js/thickbox.js"></script>
 
@@ -90,7 +91,7 @@
 <!--/Timepass script-->
 
 <body>
-
+    
 	<!-- Fixed top -->
 	<div id="top">
 		<div class="fixed">
@@ -104,20 +105,22 @@
 		</div>
 	</div>
 	<!-- /fixed top -->
-
-	<!--Goal input dialog box     -->
+	
+	
+ <!--Goal input dialog box     -->
             <div id="dlgGoalInput" style="display:none;title="Goal Input">
                   <form id ="frmGoalInput" style = "top:100px;">
                       <fieldset>   
-                          <a id = "serverAsset" href = "#">Asset List</a>
-                          <br><br>
+                          <a id = "serverAsset" href = "#"><h6 align="right">Asset List</h6></a>
                           <span id = "addElements"> </span>
-                          
                           <br><br>
                           <input type="button" id = "btnAsset" value="Submit" />
                       </fieldset>
                   </form>           
-            </div>       
+            </div>    
+	
+	
+	
 
 			<!-- Asset list dialog box -->
             <div  id="dlgAssetList" style="display: none;" title="Asset List">
@@ -132,13 +135,17 @@
 	
 	<!-- Content container -->
 	<div id="container">
-
+	
+		  	
+            
 		<!-- Sidebar -->
 		<div id="sidebar">
-
+			 
 			<div class="sidebar-tabs">
-			        
+			        		
 		        <div id="general">
+		           
+		          
 
 			        <!-- Sidebar user -->
 			        <div class="sidebar-user widget">
@@ -160,9 +167,11 @@
 			                     -->
 			                </ul>
 			            </li>
+			           
 			        <!-- /main navigation --><br><br>
 							<div class="span6 left-alligned">
 							<form name = "frmAssetEdit"  id = "frmAssetEdit" method = "post" action = "asset_edit.jsp">
+								
 							<input type = "hidden" name ="setEntp" id = "setEntp"  />
        						<button class="btn btn-inverse" type="submit" id="btnConfAssets"
 									name="btnConfAssets" style="width:210px;">Configure Assets</button>
@@ -176,12 +185,17 @@
 		<!-- /sidebar -->
 				
 
+	
+	
 		<!-- Content -->
 		<div id="content">
 		    
 		    <!-- Content wrapper -->
 		    <div class="wrapper">
 
+		
+            
+            
 			    <!-- Page header -->
 			    <div class="page-header">
 			    	<div class="page-title">
@@ -360,7 +374,7 @@
 		    		</div>
 
 		    	</div>
-		    	</div>
+		    	
 		    	
 		    	<!--/Graphs-->
 
@@ -370,7 +384,7 @@
 		</div>
 		<!-- /content -->
 
-	
+	</div>
 	<!-- /content container -->
 
 

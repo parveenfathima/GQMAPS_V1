@@ -297,6 +297,7 @@ function getCurrentAssets()
 <body>
 <body id="table-body">
 
+    <div id="wrap">
     <div id="idletimeout" style="top: 150px; margin-left: 215px; margin-right: 200px; ">
         Logging off in <span><!-- countdown place holder --></span>&nbsp;seconds due to inactivity.
         <a id="idletimeout-resume" href="#">Click here to continue</a>.
@@ -382,8 +383,7 @@ function getCurrentAssets()
 	<!-- Content container -->
 	<div id="container">
 
-		<!-- Content -->
-		<div id="content">
+		
 
 		    <!-- Content wrapper -->
 		    <div class="wrapper">
@@ -949,20 +949,14 @@ function getCurrentAssets()
 
           		</div>   
 	                        
-                
-
 		    </div>
 		    <!-- /content wrapper -->
-
-		</div>
-		<!-- content -->
-
 	</div>
 	<!-- /content container -->
 
 
 	</form>
-
+</div>
 </body>
 </html>
 	
