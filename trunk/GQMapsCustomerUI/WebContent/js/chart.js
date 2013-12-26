@@ -42,11 +42,13 @@ function showBarChart(barData,divId,rowLength)
 function showPieChart(pieData,divId,rowLength){
 	
 	if( rowLength == 0){
+		
 		if ( divId == 'div_installedSW' ){
 			document.getElementById(divId).innerHTML = " To get the data you must run the meter with inst_sw switch" +
 														" and make sure the compute duration is set to your requirement";
 		}
 		else if(divId == 'div_topmemoryLoad'){
+			
 			document.getElementById(divId).innerHTML = "To get the data you must run the meter everyday with process switch";
 		}
 		else if(divId == 'div_connectedWebsites'){
@@ -81,6 +83,7 @@ function showLineChart(lineData,divId,rowLength)
 		}
 	  function drawATLChart() 
 	  {
+		  
 		  var data = new google.visualization.DataTable(lineData);
 
 		  var annotatedtimeline = new google.visualization.AnnotatedTimeLine(document.getElementById(divId));

@@ -10,6 +10,8 @@ var assetsDB = { assetDataDB: [] };
 var pieChartOptions = {
 	'title' : '',
 	'is3D' : true,
+	
+	backgroundColor: '#F4F4F4',
 	legend : {
 		position : 'top'
 	},
@@ -27,7 +29,9 @@ var pieChartOptions = {
 //Set pie chart options
 var pieChartOptionsForIS = {
 	'title' : '',
-	'is3D' : true,chartArea: {left:0,width:"79%"},
+	'is3D' : true,
+	chartArea: {left:0,width:"79%"},
+	backgroundColor: '#F4F4F4',
 	legend : {
 		position : 'right'
 	},
@@ -80,11 +84,12 @@ var optGoalInput = {
 	
 // Asset list dialog configuration	
 var optAssetList = {
+		 
 		  autoOpen: false,
 		  height: 400,
 		  width: 300,
 		  modal: true ,
-		  position: "center",
+		  position: "center" ,	  
 		  close: function () {
 					
 				$("#trAssetIdHead").remove();			
@@ -100,7 +105,6 @@ var optAssetList = {
 // Ajax call to get all the dashboard services
 $(document).ready(function() 
 {
-	//$("#datepick").datepicker();
 	 $("#div_topcpuLoad").height(200);
 	if(($.jStorage.get("jsUserId") === "" || $.jStorage.get("jsUserId") === null || $.jStorage.get("jsPwd") === "" 
 		|| $.jStorage.get("jsPwd") === null)&& ($.jStorage.get("jsEntpId")=== "" || $.jStorage.get("jsEntpId")=== null ))
@@ -130,7 +134,8 @@ $(document).ready(function()
 		var vType = "GET";						
 		// call to the dashboard services are made
 		var vUrl = $.jStorage.get("jsDBUrl") + "DashboardServices/getdashboard?entpId=" + $.jStorage.get("jsEntpId");
-
+		
+		
 		$.ajax
 		({
 			type:vType,
@@ -140,13 +145,13 @@ $(document).ready(function()
 			dataType: "json",
 			success:function(json)
 			{		
+				
 				    $.each(json, function(i, v)
 					{
-						
 						if(json[i]["charttype"] == "plain"){
 							showPlainText(json[i]["data"], json[i]["divId"]);
 						}
-						else {
+					else {
 							var rowLength =  json[i].data.rows.length;
 							if(json[i]["charttype"] == "pie" )
 								showPieChart(json[i]["data"], json[i]["divId"],rowLength);			            	  
@@ -204,7 +209,7 @@ function getPUE()
 {
 	var vType = "GET";
 	var vUrl = $.jStorage.get("jsDBUrl") + "procedure/getproc?entpId=" + $.jStorage.get("jsEntpId");
-
+	
 	$.ajax
 	({
 		type:vType,
@@ -213,11 +218,12 @@ function getPUE()
 		async:false,
 		dataType: "json",
 		success:function(json)
-		{		
+		{	
 			$("#div_pue").text(json);			
 		},
 		error:function(json)
 		{
+			
 			alert("Error loading PUE data!");			
  
 		}	 
@@ -298,9 +304,9 @@ function checkGoalInput(goalId)
 					vValues = vValues + ' <label for = "' + json[i]["descr"] + '" > ' + json[i]["descr"] + ' </label> ';
 					
 	 				if(json[i]["dtvalue"] === "date")
-						vValues = vValues + ' <input class="datepicker" type="text" name="' + json[i]["descr"] + '" id="' + json[i]["descr"] + '"  /> ';	   						
+						vValues = vValues + ' <input id="datepick" type="text" name="' + json[i]["descr"] + '" /> ';	   						
 					else					
-						vValues = vValues + ' <input class="datepicker" type="text" name="' + json[i]["descr"] + '" id="' + json[i]["descr"] + '"  /> ';
+						vValues = vValues + ' <input type="text" name="' + json[i]["descr"] + '" id="' + json[i]["descr"] + '"  /> ';
 				});	 
 
 				$("#addElements").append(vValues);	
@@ -310,8 +316,9 @@ function checkGoalInput(goalId)
 	 				if(json[i]["dtvalue"] === "date")
 					{
 	 					alert('hai thr');
-	 					//$("#"+json[i]["descr"]).datepicker();
-						//$("#"+json[i]["descr"]).datepicker({ showOn: "button",
+	 					$("#datepick").datepicker();
+	 					
+						//$("#datepick").datepicker({ showOn: "button",
 							//buttonImage: "images/calendar.gif",
 							//buttonImageOnly: true}) ; 						
 					} 
