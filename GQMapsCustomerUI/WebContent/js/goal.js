@@ -29,6 +29,9 @@ function showGoalGraphs(){
 		else  if ( document.getElementById(cdType).value == "plain"){
 			showGoalPlainChart(document.getElementById(cdData).value , document.getElementById(cdDiv).id);
 		}
+		else  if ( document.getElementById(cdType).value == "html"){
+			showGoalHTML(document.getElementById(cdData).value , document.getElementById(cdDiv).id);
+		}
 		else {
 			
 		}
@@ -96,6 +99,13 @@ function showGoalPlainChart(plainText, divId)
 {
 	document.getElementById(divId).innerHTML = plainText;	 
 }
+
+// function to display html sent from service
+function showGoalHTML(htmlText, divId)
+{
+	document.getElementById(divId).innerHTML = htmlText;	 
+}
+
 
 //function to redirect Dashboard screen    
 function gotoDashboard() {
