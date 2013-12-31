@@ -117,13 +117,15 @@ public class GoalServices {
 
             Statement statement = (Statement) dbExchange.createStatement();
 
-             CustomerServiceConstant.logger.info("finaltskquery::" + taskTmpltQuery);
+            CustomerServiceConstant.logger.info("finaltskquery::" + taskTmpltQuery);
             ResultSet taskTmpltset = statement.executeQuery(taskTmpltQuery);
 
             List<TemplateTaskDetails> templateTaskDetails = new ArrayList<TemplateTaskDetails>(10);
 
             while (taskTmpltset.next()) {
 
+                CustomerServiceConstant.logger.info("ss1 === taskTmpltset.getInt(ts_id) = " + taskTmpltset.getInt("ts_id") + 
+                		" , goialid = "+ goalId + " , eid = " + entpId + " , ginputs = " + goalInputs);
                 List<String> cddetails = getChartData(taskTmpltset.getInt("ts_id"), goalId, entpId, goalInputs,
                         dbExchange, dbCustomer);
 
@@ -325,19 +327,27 @@ public class GoalServices {
             }
         }
         else if (ctId.equals("html")) {			// todo - make all these html / plain etc to constants - ss dec 31,2013
-            CustomerServiceConstant.logger.info(" Dynamic Data Rows with html chosen");
+            CustomerServiceConstant.logger.info(" Dynamic Data Rows with html chosen - ss ");
             // 3rd arg is the actual google chart json
             ResultSetMetaData rsmd = entpResultset.getMetaData();
 
+            if ( rsmd == null ) {
+            	retCData.add("no result to be returned from html type.."); 
+            	return retCData;
+            }
+            
             int columnsNumber = rsmd.getColumnCount();
             CustomerServiceConstant.logger.info(" Dynamic Data Rows with html chosen , columns found - "+ columnsNumber);
 
             StringBuilder sb = new StringBuilder(2000);
-            sb.append("<table>");
+            sb.append("<table border=1>");
             while (entpResultset.next()) {
+            	CustomerServiceConstant.logger.info("===ss inside result set while loop ");
                 sb.append("<tr>");
             	
-            	for (int i=0;i<columnsNumber;i++){
+            	for (int i=1 ; i < columnsNumber+1 ;i++){    // IMPORTANT : RESULT SET COLUMNS START WITH 1 AS FIRST SUBSCRIPT
+            		CustomerServiceConstant.logger.info("columns - "+ i);
+            		
                     sb.append("<td>");
 
             		if ( ( rsmd.getColumnType(i) == Types.VARCHAR ) ||  ( rsmd.getColumnType(i) == Types.CHAR ) ) {
@@ -349,15 +359,24 @@ public class GoalServices {
                		else if ( rsmd.getColumnType(i) == Types.DATE ) {
             			sb.append(entpResultset.getDate(i));
             		}
+               		else if ( rsmd.getColumnType(i) == Types.TIMESTAMP ) {
+            			sb.append(entpResultset.getTimestamp(i));
+            		}
             		else if ( rsmd.getColumnType(i) == Types.DOUBLE ) {
             			sb.append(entpResultset.getDouble(i));
+            		}
+            		else if ( rsmd.getColumnType(i) == Types.LONGNVARCHAR ) {
+            			sb.append(entpResultset.getString(i));
+            		}
+            		else {
+            			sb.append("Unknown data type <"+  rsmd.getColumnType(i) +">");
             		}
                     sb.append("</td>");
             	}
                 sb.append("</tr>");
             }
             sb.append("</table>");
-
+            CustomerServiceConstant.logger.info("===ss html string is === " + sb.toString());
             retCData.add(sb.toString()); // we send the table
         } // html type ends
         
@@ -399,11 +418,6 @@ public class GoalServices {
             // 3rd arg is the actual google chart json
             retCData.add(chartJson);
         }
-
-        // append chart type and div id to the result json
-
-        // dataTable.addRowFromValues("charttype", ctId);
-        // dataTable.addRowFromValues("positionId", "notused");
 
         CustomerServiceConstant.logger.info(" ArrowFormat data's are being constructed");
 
