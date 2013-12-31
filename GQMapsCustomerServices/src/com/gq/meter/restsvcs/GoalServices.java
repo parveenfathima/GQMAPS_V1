@@ -3,6 +3,7 @@ package com.gq.meter.restsvcs;
 import java.sql.Connection;
 import java.util.Date;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.text.DateFormat;
@@ -36,7 +37,6 @@ import com.gq.meter.util.SqlUtil;
 import com.ibm.icu.util.GregorianCalendar;
 import com.ibm.icu.util.TimeZone;
 import com.mysql.jdbc.PreparedStatement;
-import com.mysql.jdbc.ResultSetMetaData;
 import com.mysql.jdbc.Statement;
 
 @Path("/goalServices")
@@ -164,14 +164,6 @@ public class GoalServices {
 
     } // end of method
 
-    // private String getChartData(int ts_id, String goalId, String entpId, String goalInputs, Connection dbExchange,
-    // Connection dbCustomer) throws Exception {
-    //
-    // return
-    // "{\"data\":{\"cols\":[{\"id\":\"ip\",\"label\":\"ip\",\"type\":\"string\",\"pattern\":\"\"},{\"id\":\"nul-most\",\"label\":\"nul-most\",\"type\":\"number\",\"pattern\":\"\"},{\"id\":\"nul-least\",\"label\":\"nul-least\",\"type\":\"number\",\"pattern\":\"\"}],\"rows\":[{\"c\":[{\"v\":\"192.168.8.209\"},{\"v\":11.1667},{\"v\":0.0}]},{\"c\":[{\"v\":\"192.168.1.100\"},{\"v\":6.5},{\"v\":0.0}]},{\"c\":[{\"v\":\"192.168.8.15\"},{\"v\":4.625},{\"v\":0.0}]},{\"c\":[{\"v\":\"192.168.1.26\"},{\"v\":4.0},{\"v\":0.0}]},{\"c\":[{\"v\":\"192.168.8.207\"},{\"v\":2.8571},{\"v\":0.0}]},{\"c\":[{\"v\":\"192.168.1.33\"},{\"v\":0.0},{\"v\":0.0}]},{\"c\":[{\"v\":\"192.168.1.24\"},{\"v\":0.0},{\"v\":0.0}]},{\"c\":[{\"v\":\"192.168.1.80\"},{\"v\":0.0},{\"v\":1.0}]},{\"c\":[{\"v\":\"192.168.1.125\"},{\"v\":0.0},{\"v\":1.0}]},{\"c\":[{\"v\":\"192.168.1.110\"},{\"v\":0.0},{\"v\":1.0}]}]},\"charttype\":\"bar\",\"divId\":\"div_mostleastAssets\"}";
-    //
-    // }
-
     private List<String> getChartData(int ts_id, String goalId, String entpId, String goalInputs,
             Connection dbExchange, Connection dbCustomer) throws Exception {
 
@@ -272,14 +264,11 @@ public class GoalServices {
         else {
             CustomerServiceConstant.logger.info(" Query For non Dynamic value executing for Enterprise" + entpId);
             stmt = (Statement) dbCustomer.prepareStatement(taskSql); // Resultset returned by query
-            // entpResultset =
-             CustomerServiceConstant.logger.info("tsql:: " + taskSql);
+            CustomerServiceConstant.logger.info("tsql:: " + taskSql);
             entpResultset = stmt.executeQuery(taskSql);
         }
         // determine the number of columns will be used for charts
         if (!entpResultset.isBeforeFirst()) {
-//            retCData.add(ctId);
-//            retCData.add("notused");
             retCData.add("");
 
             return retCData;
@@ -332,9 +321,46 @@ public class GoalServices {
             CustomerServiceConstant.logger.info(" Dynamic Data Rows with are Plain Text");
             // 3rd arg is the actual google chart json
             while (entpResultset.next()) {
-            retCData.add(entpResultset.getString(1)); // we expect only one row one column
+            	retCData.add(entpResultset.getString(1)); // we expect only one row one column
             }
         }
+        else if (ctId.equals("html")) {			// todo - make all these html / plain etc to constants - ss dec 31,2013
+            CustomerServiceConstant.logger.info(" Dynamic Data Rows with html chosen");
+            // 3rd arg is the actual google chart json
+            ResultSetMetaData rsmd = entpResultset.getMetaData();
+
+            int columnsNumber = rsmd.getColumnCount();
+            CustomerServiceConstant.logger.info(" Dynamic Data Rows with html chosen , columns found - "+ columnsNumber);
+
+            StringBuilder sb = new StringBuilder(2000);
+            sb.append("<table>");
+            while (entpResultset.next()) {
+                sb.append("<tr>");
+            	
+            	for (int i=0;i<columnsNumber;i++){
+                    sb.append("<td>");
+
+            		if ( ( rsmd.getColumnType(i) == Types.VARCHAR ) ||  ( rsmd.getColumnType(i) == Types.CHAR ) ) {
+            			sb.append(entpResultset.getString(i));
+            		}
+            		else if ( rsmd.getColumnType(i) == Types.INTEGER ) {
+            			sb.append(entpResultset.getLong(i));
+            		}
+               		else if ( rsmd.getColumnType(i) == Types.DATE ) {
+            			sb.append(entpResultset.getDate(i));
+            		}
+            		else if ( rsmd.getColumnType(i) == Types.DOUBLE ) {
+            			sb.append(entpResultset.getDouble(i));
+            		}
+                    sb.append("</td>");
+            	}
+                sb.append("</tr>");
+            }
+            sb.append("</table>");
+
+            retCData.add(sb.toString()); // we send the table
+        } // html type ends
+        
 
         // adding the rows to the chart
         if (ctId.equals("bar") || ctId.equals("pie")) {
