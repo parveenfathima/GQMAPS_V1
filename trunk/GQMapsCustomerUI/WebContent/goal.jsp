@@ -452,7 +452,7 @@
                                           
                                          
 										
-                                        </div>
+                                       
                                       
                                        
                                   </td>
@@ -464,12 +464,13 @@
                                       <div class="well body">
   				            	
   				            			             <!-- Paste Chart div here-->
+  				            			             
   				            			             <%
 													if ( goalTaskTmpltChkList.get(i).getChartType().equals("line")) {
 														%>
 													<input type="hidden" id="chartData_<%=i%>" 
 													value='<%=goalTaskTmpltChkList.get(i).getChartData().replaceFirst("string", "datetime")%>'>		
-													<div id='chartDiv_<%=i%>' style = "width :400px; height:200px ;color: #00008a"></div> 					
+													<div id='chartDiv_<%=i%>' style = "width :500px; height:200px ;color: #00008a"></div> 					
 													<%	
 													}
 													else {
@@ -526,16 +527,14 @@
 
 					<!-- a dummy field to hold the json string-->
 					<input type="hidden" name="jsonFormData" id="jsonFormData" >
+					<p class="widget-name"></p>
 					</div>   
+					
 				<% 
 					} 
 				%>
           			    
-			</div>
-			<!-- /content wrapper -->
-		
-	</div>  
-	<!-- /content container -->
+			
 	<br>
 	<%
 					if(g.getTimeBound().equals("n")){
@@ -544,11 +543,73 @@
 	<tr><td><button class="btn btn-warning" type="button" style="position:relative; top:-64px; left:1013px;" onclick="gotoDashboard()"> Back to Dashboard </button>
 	</table>
 	<% } %>
-	<br>
+		</div>
+		<!-- Content Wrapper ends -->
+	</div>
+	<!-- Content Container ends  -->
+	
   </form>
+  
+  <!-- form to display goal snapshot history-->
+<%
+if(g.getTimeBound().equals("y")){ %>
+
+ <h4 style="font-family: 'Open Sans', sans-serif; font-weight: 400; text-shadow: 0 1px 1px #fff; margin: 0; color: #303030;" align="center">Goal History</h4>
+<br>
+	<form id='gsform' method="post" >
+
+
+		<div class="widget">
+                	
+                    <div class="table-overflow">
+                        <table align="center" style="width:600px;" id="tblGoalsnapsht" class="table table-bordered table-checks" >
+                          <thead>
+                              <tr style="font-size:80%;">
+                                 
+                                  <th>Snapshot Id</th>
+                                  <th>Start Date</th>
+									<th>Notes</th>
+									<th>End Date</th>
+									<th>Realized Benefit</th>
+                                  
+                                  
+                              </tr>
+                          </thead>
+				<%
+					for (i = 0; i < goalsnapshotList.size(); i++) {
+						String goalSPLink = "goal_snapshot.jsp?snapShotId=" + goalsnapshotList.get(i).getSnpshtId() ;
+				%>
+				<tr style="font-size:80%;">
+					<td style="width:20px;"><a href='<%=goalSPLink%>'>
+										<%=goalsnapshotList.get(i).getSnpshtId()%></a></td>
+					<% startDate=new Date(goalsnapshotList.get(i).getStartDate().getTime());
+					year=startDate.getYear()+1900;
+					month=startDate.getMonth()+1;
+					date=startDate.getDate();
+					%>
+					<td style="width:50px;"><%=year%>-<%if(month<10)out.println("0"+month);else out.println(month);%>-<%if(date<10)out.println("0"+date);else out.println(date);%></td>
+					<td style="width:50px;"><%=goalsnapshotList.get(i).getNotes()%></td>
+					<% endDate=new Date(goalsnapshotList.get(i).getEndDate().getTime());
+					year=endDate.getYear()+1900;
+					month=endDate.getMonth()+1;
+					date=endDate.getDate();
+					%>
+					<td style="width:50px;"><%=year%>-<%if(month<10)out.println("0"+month);else out.println(month);%>-<%if(date<10)out.println("0"+date);else out.println(date);%></td>
+					<td style="width:50px;"><%=goalsnapshotList.get(i).getCostBenefit()%></td>
+					</tr>
+					<%
+						}
+					%>				
+
+			</table>
+		</div>
+	</div>
+	</form>
+	<%}%> 
 	<script>
 	  	window.onload = showGoalGraphs();	
 	</script>
+	
 </div>
 </body>
 </html>
