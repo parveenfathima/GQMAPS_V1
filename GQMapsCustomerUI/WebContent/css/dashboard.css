@@ -14,7 +14,8 @@ body { margin: 0; min-height: 100%;  background-repeat: repeat-y; background-pos
 
 #map_canvas img, .google-maps img { max-width: none; }
 
-a { color: #1D8EC7; text-decoration: none; }
+a {color: #1D8EC7; text-decoration: none;}
+.link_style { color : #1464F4; text-decoration: underline;}
 a:hover { color: #E03D22; }
 a:hover, a:active, a:focus { outline: 0; }
 
