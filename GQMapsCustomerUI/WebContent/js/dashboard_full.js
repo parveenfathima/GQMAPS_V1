@@ -46,6 +46,7 @@ var pieChartOptionsForIS = {
 
 // Set bar chart options
 var barChartOptions = {
+		backgroundColor: '#F4F4F4',
 		legend : 'none','chartArea':{left:"23%",top:20,width:"70%"}, 
 		hAxis : {
 			'title' : '',
@@ -56,6 +57,7 @@ var barChartOptions = {
 	};
 
 var barChartOptionsForBL = {
+		backgroundColor: '#F4F4F4',
 		legend : 'none','chartArea':{left:"50%",top:20,width:"70%"},colors:['#990066'],
 		hAxis : {
 			'title' : '',
@@ -75,6 +77,7 @@ var optGoalInput = {
 		  width: 300,
 		  modal: true ,
 		  position: "center",
+		  title: "Goal Input Dialog",
 		  close: function () {
 			
 			  $("#addElements").children(this).remove();
@@ -301,29 +304,17 @@ function checkGoalInput(goalId)
 				
 				$.each(json, function(i, v)
 				{
-					vValues = vValues + ' <label for = "' + json[i]["descr"] + '" > ' + json[i]["descr"] + ' </label> ';
+					vValues = vValues + '<tr><td width="200%"> <label for = "' + json[i]["descr"] + '" > ' + json[i]["descr"] + ' </label></td> ';
 					
 	 				if(json[i]["dtvalue"] === "date")
-						vValues = vValues + ' <input id="datepick" type="text" name="' + json[i]["descr"] + '" /> ';	   						
+						vValues = vValues + '<td> <input type="date" name="' + json[i]["descr"] + '"  id="' + json[i]["descr"] + '" /></td></tr> ';	   						
 					else					
-						vValues = vValues + ' <input type="text" name="' + json[i]["descr"] + '" id="' + json[i]["descr"] + '"  /> ';
+						vValues = vValues + '<td> <input type="text" name="' + json[i]["descr"] + '" id="' + json[i]["descr"] + '"  /></td></tr> ';
 				});	 
 
 				$("#addElements").append(vValues);	
 				
-				$.each(json, function(i, v)
-				{
-	 				if(json[i]["dtvalue"] === "date")
-					{
-	 					alert('hai thr');
-	 					$("#datepick").datepicker();
-	 					
-						//$("#datepick").datepicker({ showOn: "button",
-							//buttonImage: "images/calendar.gif",
-							//buttonImageOnly: true}) ; 						
-					} 
-				});	 	
-	 
+				
 				$("#dlgGoalInput").dialog(optGoalInput).dialog('open');	
 				
 			}
@@ -408,6 +399,7 @@ function submitGoalInput()
 			{		
 				$.each(json, function(i, v)
 				{
+					
 					if($.trim($("#"+json[i]["descr"]).val()) === "")
 					{
 						alert("Enter all input values");
