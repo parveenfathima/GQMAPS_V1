@@ -24,17 +24,17 @@ public class CustomerServiceModel {
             String protocol = "FROM Protocol";
             Query protocolQuery = session.createQuery(protocol);
             List<Protocol> protocolResult = protocolQuery.list();
-            CustomerServiceConstant.logger.info(" protocolResult : " + protocolResult);
+            CustomerServiceConstant.logger.debug(" protocolResult : " + protocolResult);
 
             String srvrAppType = "FROM SrvrAppType";
             Query srvrAppTypeQuery = session.createQuery(srvrAppType);
             List<SrvrAppType> srvrAppTypeResult = srvrAppTypeQuery.list();
-            CustomerServiceConstant.logger.info(" srvrAppTypeResult : " + srvrAppTypeResult);
+            CustomerServiceConstant.logger.debug(" srvrAppTypeResult : " + srvrAppTypeResult);
 
             String deviceCatalog = "FROM DeviceCatalog";
             Query deviceCatalogQuery = session.createQuery(deviceCatalog);
             List<DevCtlg> deviceCatalogResult = deviceCatalogQuery.list();
-            CustomerServiceConstant.logger.info(" deviceCatalogResult : " + deviceCatalogResult);
+            CustomerServiceConstant.logger.debug(" deviceCatalogResult : " + deviceCatalogResult);
 
             allCustomerServices = new AllCustomerServices(protocolResult, srvrAppTypeResult, deviceCatalogResult);
 
@@ -53,7 +53,7 @@ public class CustomerServiceModel {
                 e.printStackTrace();
             }
         }
-        CustomerServiceConstant.logger.info(" Sucessfully returned the CusomerDetails");
+        CustomerServiceConstant.logger.debug(" Sucessfully returned the CusomerDetails");
         return allCustomerServices;
     }
 }

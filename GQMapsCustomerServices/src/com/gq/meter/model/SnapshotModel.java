@@ -65,7 +65,7 @@ public class SnapshotModel {
 		 prepareStmt.setInt(1, snpshtId);
 
          ResultSet chkSet = prepareStmt.executeQuery();
-         CustomerServiceConstant.logger.info(" Query Sucessfully Executed for the Goal Snapshot");
+         CustomerServiceConstant.logger.debug(" Query Sucessfully Executed for the Goal Snapshot");
 
          while (chkSet.next()) {
         	 goalId = chkSet.getString("goal_id");
@@ -97,7 +97,7 @@ public class SnapshotModel {
         PreparedStatement prepareStmt = (PreparedStatement) dbExchange.prepareStatement(GoalSql);
          prepareStmt.setString(1, goalId);
         ResultSet rs = prepareStmt.executeQuery();
-         CustomerServiceConstant.logger.info(" Query Executed for the Goal Table");
+         CustomerServiceConstant.logger.debug(" Query Executed for the Goal Table");
 
          if (rs.next()) {
 
