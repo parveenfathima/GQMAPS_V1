@@ -46,7 +46,7 @@ public class TaskmasterServices {
             taskStmt = (Statement) dbExchange.createStatement();
 
             ResultSet taskset = taskStmt.executeQuery(goalSql);
-            CustomerServiceConstant.logger.info("Query sucessfully Executed from the Goal Table");
+            CustomerServiceConstant.logger.debug("Query sucessfully Executed from the Goal Table");
             while (taskset.next()) {
                 TaskMaster taskmaster = new TaskMaster();
                 String goal_id = taskset.getString("goal_id");
@@ -74,12 +74,12 @@ public class TaskmasterServices {
             result.put(taskTitle);
             tasks = result.toString();
             CustomerServiceConstant.logger
-                    .info("Query sucessfully Executed Objects are constructed for the Goal and added to JSON Array");
+                    .debug("Query sucessfully Executed Objects are constructed for the Goal and added to JSON Array");
         }
         catch (SQLException e) {
-            CustomerServiceConstant.logger.info("Exception Occured while fetching the Goals",e);
+            CustomerServiceConstant.logger.error("Exception Occured while fetching the Goals",e);
         } catch (Exception e) {
-        	  CustomerServiceConstant.logger.info("Exception Occured while fetching DBConnection",e);
+        	  CustomerServiceConstant.logger.error("Exception Occured while fetching DBConnection",e);
 		}
 
         return Response.ok(tasks).build();

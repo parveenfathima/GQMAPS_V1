@@ -28,7 +28,7 @@ public class MapsDomainServices {
     // This method takes care of getting all domain details
     public String getAllDomainDetails(@QueryParam("enterpriseId") String enterpriseId) {
 
-        CustomerServiceConstant.logger.info("Generating all Domain service list from gqm" + enterpriseId);
+        CustomerServiceConstant.logger.debug("Generating all Domain service list from gqm" + enterpriseId);
         MapsDomainModel mapsDomainModel = new MapsDomainModel();
         MapsDomainBean mapsDomainResult = mapsDomainModel.getAllMapsDomainDetails(enterpriseId);
         // Returning all the domain list in JSON format
