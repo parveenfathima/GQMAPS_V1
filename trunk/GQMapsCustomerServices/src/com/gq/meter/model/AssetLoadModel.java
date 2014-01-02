@@ -27,7 +27,7 @@ public class AssetLoadModel {
             session.beginTransaction();
             String hql1 = "SELECT value From SysProfile where keyy = 'COMPUTE_DURATION'";
             Query query1 = session.createQuery(hql1);
-            CustomerServiceConstant.logger.info(" AssetLoad is executing the query");
+            CustomerServiceConstant.logger.debug(" AssetLoad is executing the query");
             Collection<? extends String> keyresult = query1.list();
             // converting list to string
             ArrayList<String> list1 = new ArrayList<String>();
@@ -41,10 +41,10 @@ public class AssetLoadModel {
                     + val
                     + "') AND curdate() AND m.runId = c.id.runId GROUP BY c.id.assetId ORDER BY AVG(c.cpuLoad) DESC LIMIT 5";
             Query query = session.createQuery(hql);
-            CustomerServiceConstant.logger.info(" keyresult value" + keyresult);
+            CustomerServiceConstant.logger.debug(" keyresult value" + keyresult);
             // query.setParameter("NAME", keyresult.get(0).getKeyy());
             List<Object[]> assetResult = query.list();
-            CustomerServiceConstant.logger.info(" Maximum AssetLoad");
+            CustomerServiceConstant.logger.debug(" Maximum AssetLoad");
             List<AssetLoad> assetLoad = new ArrayList<AssetLoad>();
 
             for (Object[] list : assetResult) {
@@ -61,11 +61,11 @@ public class AssetLoadModel {
                     a.setLoadAvg(((AssetLoad) assetLoad.get(i)).getLoadAvg());
                     finalAssetLoad.add(a);
                 }
-                CustomerServiceConstant.logger.info(" AssetLoad For Top 5 Assets is more than 5");
+                CustomerServiceConstant.logger.debug(" AssetLoad For Top 5 Assets is more than 5");
                 return finalAssetLoad;
             }
             else {
-                CustomerServiceConstant.logger.info(" AssetLoad For Top 5 Assets is less than 5");
+                CustomerServiceConstant.logger.debug(" AssetLoad For Top 5 Assets is less than 5");
                 return assetLoad;
             }
         }
@@ -111,7 +111,7 @@ public class AssetLoadModel {
 
             // query.setParameter("NAME", keyresult.get(0).getKeyy());
             List<Object[]> assetResult = query.list();
-            CustomerServiceConstant.logger.info(" AssetLoad For Least 5 Assets is Sucessfully Executed");
+            CustomerServiceConstant.logger.debug(" AssetLoad For Least 5 Assets is Sucessfully Executed");
             List<AssetLoad> assetLoad = new ArrayList<AssetLoad>();
             for (Object[] list : assetResult) {
                 AssetLoad asstLoad = new AssetLoad((String) list[0], (String) list[1], (Double) list[2]);
@@ -127,11 +127,11 @@ public class AssetLoadModel {
                     a.setLoadAvg(((AssetLoad) assetLoad.get(i)).getLoadAvg());
                     finalAssetLoad.add(a);
                 }
-                CustomerServiceConstant.logger.info(" AssetLoad For Least 5 Assets is more than 5");
+                CustomerServiceConstant.logger.debug(" AssetLoad For Least 5 Assets is more than 5");
                 return finalAssetLoad;
             }
             else {
-                CustomerServiceConstant.logger.info(" AssetLoad For Top 5 Assets is less than 5");
+                CustomerServiceConstant.logger.debug(" AssetLoad For Top 5 Assets is less than 5");
                 return assetLoad;
             }
         }

@@ -28,7 +28,7 @@ public class AssetModel {
             String hql = "select count(assetId) FROM Asset";
             Query query = session.createQuery(hql);
             List<Asset> assetresult = query.list();
-            CustomerServiceConstant.logger.info(" Asset Count sucessfully Executed");
+            CustomerServiceConstant.logger.debug(" Asset Count sucessfully Executed");
             return assetresult;
         }
         catch (Exception e) {
@@ -60,7 +60,7 @@ public class AssetModel {
             // List<ProtocolCount> assetResult = query.list();
 
             List<Object[]> queryresult = query.list();
-            CustomerServiceConstant.logger.info(" Getting the ProtocolCount and ProtocolId is sucessfully Executed");
+            CustomerServiceConstant.logger.debug(" Getting the ProtocolCount and ProtocolId is sucessfully Executed");
             List<ProtocolCount> protocolresult = new ArrayList<ProtocolCount>();
             for (Object[] list : queryresult) {
                 ProtocolCount assetlist = new ProtocolCount();
@@ -68,7 +68,7 @@ public class AssetModel {
                 assetlist.setPcount((Long) list[1]);
                 protocolresult.add(assetlist);
             }
-            CustomerServiceConstant.logger.info(" Protocol Count is sucessfully returned");
+            CustomerServiceConstant.logger.debug(" Protocol Count is sucessfully returned");
             return protocolresult;
         }
         catch (Exception e) {
