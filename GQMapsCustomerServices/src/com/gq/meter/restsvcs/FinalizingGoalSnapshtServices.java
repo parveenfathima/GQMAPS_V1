@@ -18,21 +18,21 @@ public class FinalizingGoalSnapshtServices {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response finalizetasks(String string) {
     	
-        CustomerServiceConstant.logger.info(" entered rest svc............. Goalmaster object"+string);
+        CustomerServiceConstant.logger.debug(" entered rest svc............. Goalmaster object"+string);
         GoalMaster goalmaster = new GoalMaster();
         FinalizeGoalModel goalModel = new FinalizeGoalModel();
 		try {
-        CustomerServiceConstant.logger.info(" Building Goalmaster object"+string);
+        CustomerServiceConstant.logger.debug(" Building Goalmaster object"+string);
 
         goalmaster = goalModel.buildGoalMasterObj(string);
-		CustomerServiceConstant.logger.info("Data before processing snapshot"+goalmaster.getGoalSnpshtList().size()+"task template details"+goalmaster.getTemplateTaskDetails().size());
+		CustomerServiceConstant.logger.debug("Data before processing snapshot"+goalmaster.getGoalSnpshtList().size()+"task template details"+goalmaster.getTemplateTaskDetails().size());
 
         //goalmaster = CustomerServiceConstant.gson.fromJson(jsonString, GoalMaster.class);
         //if (json.getString("actionName").equals("save")) {
-    		CustomerServiceConstant.logger.info("before save");
+    		CustomerServiceConstant.logger.debug("before save");
 
     	 goalModel.CompleteGoal(goalmaster,string);
-            CustomerServiceConstant.logger.info("sucessfully completed the save operation");
+            CustomerServiceConstant.logger.debug("sucessfully completed the save operation");
 
         //}
         //else if(json.getString("actionName").equals("finalize")) {

@@ -32,7 +32,7 @@ public class AssetEditServices {
     // This method takes care of getting asset details for requesting enterprise.
     public String getAllAssetDetails(@QueryParam("enterpriseId") String enterpriseId) {
 
-        CustomerServiceConstant.logger.info(" Generating all the Asset list for requesting enterprise");
+        CustomerServiceConstant.logger.debug(" Generating all the Asset list for requesting enterprise");
         AssetEditModel getAssetModel = new AssetEditModel();
         GetAsset getAssetResult = getAssetModel.getAssetDetails(enterpriseId);
         // Returning all the Assets in JSON format

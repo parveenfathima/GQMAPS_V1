@@ -38,7 +38,7 @@ public class SnapshotServices {
     	//1. taskchk list for retrieving the details based on the snapshotid
     	List<TemplateTaskDetails> chkList = snpshtModel.getSnapshot(snpshtId);
     	goalMaster.setTemplateTaskDetails(chkList);
-    	CustomerServiceConstant.logger.info("TaskchkList Data sucessfully set to the GoalMaster");
+    	CustomerServiceConstant.logger.debug("TaskchkList Data sucessfully set to the GoalMaster");
     	
     	 // 2.build goal snapshot
     	List<GoalSnpsht> snpshtList = snpshtModel.getGoalSnapshot(snpshtId);
