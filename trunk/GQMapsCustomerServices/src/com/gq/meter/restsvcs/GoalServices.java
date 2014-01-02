@@ -67,7 +67,7 @@ public class GoalServices {
             prepareStmt = (PreparedStatement) dbExchange.prepareStatement(masterGoalSql);
             prepareStmt.setString(1, goalId);
             rs = prepareStmt.executeQuery();
-            CustomerServiceConstant.logger.debug(" Query Executed for the Goal Table");
+            CustomerServiceConstant.logger.info(" Query Executed for the Goal Table");
             Goal goal = null;
 
             if (rs.next()) {
@@ -92,7 +92,7 @@ public class GoalServices {
             prepareStmt.setString(2, entpId);
 
             ResultSet chkSet = prepareStmt.executeQuery();
-            CustomerServiceConstant.logger.debug(" Query Sucessfully Executed for the Goal Snapshot");
+            CustomerServiceConstant.logger.info(" Query Sucessfully Executed for the Goal Snapshot");
             List<GoalSnpsht> gsList = new ArrayList<GoalSnpsht>(20);
 
             while (chkSet.next()) {
@@ -117,14 +117,14 @@ public class GoalServices {
 
             Statement statement = (Statement) dbExchange.createStatement();
 
-            CustomerServiceConstant.logger.debug("finaltskquery::" + taskTmpltQuery);
+            CustomerServiceConstant.logger.info("finaltskquery::" + taskTmpltQuery);
             ResultSet taskTmpltset = statement.executeQuery(taskTmpltQuery);
 
             List<TemplateTaskDetails> templateTaskDetails = new ArrayList<TemplateTaskDetails>(10);
 
             while (taskTmpltset.next()) {
 
-                CustomerServiceConstant.logger.debug("ss1 === taskTmpltset.getInt(ts_id) = " + taskTmpltset.getInt("ts_id") + 
+                CustomerServiceConstant.logger.info("ss1 === taskTmpltset.getInt(ts_id) = " + taskTmpltset.getInt("ts_id") + 
                 		" , goialid = "+ goalId + " , eid = " + entpId + " , ginputs = " + goalInputs);
                 List<String> cddetails = getChartData(taskTmpltset.getInt("ts_id"), goalId, entpId, goalInputs,
                         dbExchange, dbCustomer);
@@ -138,7 +138,7 @@ public class GoalServices {
 
             goalMaster.setTemplateTaskDetails(templateTaskDetails);
 
-            CustomerServiceConstant.logger.debug("Asset JSON is Constructed");
+            CustomerServiceConstant.logger.info("Asset JSON is Constructed");
 
             result = CustomerServiceConstant.gson.toJson(goalMaster);
 
@@ -161,7 +161,7 @@ public class GoalServices {
 
             CustomerServiceConstant.logger.info("Session Closed sucessfully");
         }
-        CustomerServiceConstant.logger.debug("GOAL Services Executed Sucessfully");
+        CustomerServiceConstant.logger.info("GOAL Services Executed Sucessfully");
         return Response.ok().entity(result).build();
 
     } // end of method
@@ -196,7 +196,7 @@ public class GoalServices {
             String goalTaskAsstSql = "select * from task_asst where ts_id = ?;";
             prepareStmt = (PreparedStatement) dbExchange.prepareStatement(goalTaskAsstSql);
             prepareStmt.setInt(1, ts_id);
-            CustomerServiceConstant.logger.debug(" Query Executed for the TaskAsst Table for " + goalId + " Goal");
+            CustomerServiceConstant.logger.info(" Query Executed for the TaskAsst Table for " + goalId + " Goal");
             goalTaskAsstSet = prepareStmt.executeQuery();
 
             if (!goalTaskAsstSet.next()) {
@@ -232,7 +232,7 @@ public class GoalServices {
         }
 
         // goal input
-        CustomerServiceConstant.logger.debug(" Dynamic Inputs passed for processing " + goalInputs);
+        CustomerServiceConstant.logger.info(" Dynamic Inputs passed for processing " + goalInputs);
         Map<String, String> goalInputMap = new HashMap<String, String>(5);
         if(goalInputs!=" " && goalInputs!=null){
         String[] inputs = goalInputs.split("~");
@@ -247,10 +247,10 @@ public class GoalServices {
             Iterator<Entry<String, String>> it = goalInputMap.entrySet().iterator();
             while (it.hasNext()) {
                 Map.Entry<String, String> pairs = (Map.Entry<String, String>) it.next();
-                CustomerServiceConstant.logger.debug(" Input values from map " + pairs.getKey() + " = "
+                CustomerServiceConstant.logger.info(" Input values from map " + pairs.getKey() + " = "
                         + pairs.getValue());
 
-                 CustomerServiceConstant.logger.debug(pairs.getKey() + " = " + pairs.getValue());
+                 CustomerServiceConstant.logger.info(pairs.getKey() + " = " + pairs.getValue());
                 taskSql = taskSql.replaceAll(pairs.getKey(), pairs.getValue());
             }
         }
@@ -258,15 +258,15 @@ public class GoalServices {
         // check whether dynamic input is required for the task
 
         if (relatedDb.equalsIgnoreCase("e")) {
-            CustomerServiceConstant.logger.debug(" Query for non Dynamic value executing for Exchange");
+            CustomerServiceConstant.logger.info(" Query for non Dynamic value executing for Exchange");
             stmt = (Statement) dbExchange.prepareStatement(taskSql);
             // Resultset returned by query entpResultset = stmt.executeQuery(tsql); } }
             entpResultset = stmt.executeQuery(taskSql);
         }
         else {
-            CustomerServiceConstant.logger.debug(" Query For non Dynamic value executing for Enterprise" + entpId);
+            CustomerServiceConstant.logger.info(" Query For non Dynamic value executing for Enterprise" + entpId);
             stmt = (Statement) dbCustomer.prepareStatement(taskSql); // Resultset returned by query
-            CustomerServiceConstant.logger.debug("tsql:: " + taskSql);
+            CustomerServiceConstant.logger.info("tsql:: " + taskSql);
             entpResultset = stmt.executeQuery(taskSql);
         }
         // determine the number of columns will be used for charts
@@ -282,14 +282,14 @@ public class GoalServices {
 
         if (ctId.equals("bar") || ctId.equals("pie")) {
             ArrayList<ColumnDescription> pieBarColumn = new ArrayList<ColumnDescription>();
-            CustomerServiceConstant.logger.debug(" Columns are being set for BAR/PIE charts");
+            CustomerServiceConstant.logger.info(" Columns are being set for BAR/PIE charts");
             pieBarColumn.add(new ColumnDescription(colHeader[0], ValueType.TEXT, colHeader[0]));
             pieBarColumn.add(new ColumnDescription(colHeader[1], ValueType.NUMBER, colHeader[1]));
             dataTable.addColumns(pieBarColumn);
         }
         else if (ctId.equals("line")) {
             ArrayList<ColumnDescription> lineColumn = new ArrayList<ColumnDescription>();
-            CustomerServiceConstant.logger.debug(" Columns are being set for Annotated TimeLine charts");
+            CustomerServiceConstant.logger.info(" Columns are being set for Annotated TimeLine charts");
             lineColumn.add(new ColumnDescription(colHeader[0], ValueType.TEXT, colHeader[0]));
             lineColumn.add(new ColumnDescription(colHeader[1], ValueType.NUMBER, colHeader[1]));
             dataTable.addColumns(lineColumn);
@@ -315,19 +315,19 @@ public class GoalServices {
                         cData.setYaxis(entpResultset.getDouble(i));
                     }
                 }
-                CustomerServiceConstant.logger.debug(" Dynamic Column data's are added to the List ");
+                CustomerServiceConstant.logger.info(" Dynamic Column data's are added to the List ");
                 cDataList.add(cData);
             }
         }
         else if (ctId.equals("plain")) {
-            CustomerServiceConstant.logger.debug(" Dynamic Data Rows with are Plain Text");
+            CustomerServiceConstant.logger.info(" Dynamic Data Rows with are Plain Text");
             // 3rd arg is the actual google chart json
             while (entpResultset.next()) {
             	retCData.add(entpResultset.getString(1)); // we expect only one row one column
             }
         }
         else if (ctId.equals("html")) {			// todo - make all these html / plain etc to constants - ss dec 31,2013
-            CustomerServiceConstant.logger.debug(" Dynamic Data Rows with html chosen - ss ");
+            CustomerServiceConstant.logger.info(" Dynamic Data Rows with html chosen - ss ");
             // 3rd arg is the actual google chart json
             ResultSetMetaData rsmd = entpResultset.getMetaData();
 
@@ -337,7 +337,7 @@ public class GoalServices {
             }
             
             int columnsNumber = rsmd.getColumnCount();
-            CustomerServiceConstant.logger.debug(" Dynamic Data Rows with html chosen , columns found - "+ columnsNumber);
+            CustomerServiceConstant.logger.info(" Dynamic Data Rows with html chosen , columns found - "+ columnsNumber);
 
             StringBuilder sb = new StringBuilder(2000);
             sb.append("<table border=1>");
@@ -352,18 +352,18 @@ public class GoalServices {
             sb.append("</tr>");
             
             while (entpResultset.next()) {
-            	CustomerServiceConstant.logger.debug("===ss inside result set while loop ");
+            	CustomerServiceConstant.logger.info("===ss inside result set while loop ");
                 sb.append("<tr>");
             	
             	for (int i=1 ; i < columnsNumber+1 ;i++){    // IMPORTANT : RESULT SET COLUMNS START WITH 1 AS FIRST SUBSCRIPT
-            		CustomerServiceConstant.logger.debug("columns - "+ i);
+            		// CustomerServiceConstant.logger.info("columns - "+ i);
             		
                     sb.append("<td>");
 
             		if ( ( rsmd.getColumnType(i) == Types.VARCHAR ) ||  ( rsmd.getColumnType(i) == Types.CHAR ) ) {
             			sb.append(entpResultset.getString(i));
             		}
-            		else if ( rsmd.getColumnType(i) == Types.INTEGER ) {
+            		else if ( ( rsmd.getColumnType(i) == Types.INTEGER ) || ( rsmd.getColumnType(i) == Types.BIGINT ) ) {
             			sb.append(entpResultset.getLong(i));
             		}
                		else if ( rsmd.getColumnType(i) == Types.DATE ) {
@@ -376,6 +376,7 @@ public class GoalServices {
             			sb.append(entpResultset.getDouble(i));
             		}
             		else if ( rsmd.getColumnType(i) == Types.LONGNVARCHAR ) {
+            			CustomerServiceConstant.logger.info("columns - "+ i+" , got a longvarchar.....");
             			sb.append(entpResultset.getString(i));
             		}
             		else {
@@ -386,14 +387,14 @@ public class GoalServices {
                 sb.append("</tr>");
             }
             sb.append("</table>");
-            CustomerServiceConstant.logger.debug("===ss html string is === " + sb.toString());
+            CustomerServiceConstant.logger.info("===ss html string is === " + sb.toString());
             retCData.add(sb.toString()); // we send the table
         } // html type ends
         
 
         // adding the rows to the chart
         if (ctId.equals("bar") || ctId.equals("pie")) {
-            CustomerServiceConstant.logger.debug(" Rows are being set for BAR/PIE charts");
+            CustomerServiceConstant.logger.info(" Rows are being set for BAR/PIE charts");
             for (int i = 0; i < cDataList.size(); i++) {
                 dataTable.addRowFromValues(cDataList.get(i).getXaxis(), cDataList.get(i).getYaxis());
             }
@@ -404,7 +405,7 @@ public class GoalServices {
             retCData.add(chartJson);
         }
         else if (ctId.equals("line")) {
-            CustomerServiceConstant.logger.debug(" Rows are being set for AnnotatedTimeLine charts");
+            CustomerServiceConstant.logger.info(" Rows are being set for AnnotatedTimeLine charts");
             GregorianCalendar calendar = new GregorianCalendar();
             calendar.setTimeZone(TimeZone.getTimeZone("GMT"));
             for (int i = 0; i < cDataList.size(); i++) {
@@ -429,7 +430,7 @@ public class GoalServices {
             retCData.add(chartJson);
         }
 
-        CustomerServiceConstant.logger.debug(" ArrowFormat data's are being constructed");
+        CustomerServiceConstant.logger.info(" ArrowFormat data's are being constructed");
 
         return retCData;
 
