@@ -341,6 +341,16 @@ public class GoalServices {
 
             StringBuilder sb = new StringBuilder(2000);
             sb.append("<table border=1>");
+            
+            // lets add the table header from the result set meta data
+            sb.append("<tr bgcolor='#FF0000'>");
+            for (int i=1 ; i < columnsNumber+1 ;i++){
+            	sb.append("<td>");
+            	sb.append(rsmd.getColumnLabel(i));
+            	sb.append("</td>");
+            }
+            sb.append("</tr>");
+            
             while (entpResultset.next()) {
             	CustomerServiceConstant.logger.info("===ss inside result set while loop ");
                 sb.append("<tr>");
