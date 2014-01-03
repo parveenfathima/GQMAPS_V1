@@ -30,7 +30,7 @@ public class CustomerServiceConstant {
         String logFile = logFilePrefix + logFileName;
         try {
             fileappender = new org.apache.log4j.DailyRollingFileAppender(new PatternLayout(
-                    "  %-15C{1} | %d{MMM dd HH:mm} | %5p | %m%n"), logFile, LOG_FILE_NAME_DATE_PATTERN);
+                    "%d{MMM dd HH:mm} | %-15F(%L) | %5p | %m%n"), logFile, LOG_FILE_NAME_DATE_PATTERN);
 
         }
         catch (IOException e) {
