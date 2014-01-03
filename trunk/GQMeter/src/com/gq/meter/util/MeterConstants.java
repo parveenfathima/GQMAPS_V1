@@ -5,6 +5,10 @@ import java.util.HashMap;
 public class MeterConstants {
 
     public static final String restURL = "http://cloud.gqexchange.com:8080/GQGatekeeper/";
+    
+    public static final String localIPAddress="127.0.0.1";
+    
+    public static final int SPEEDTEST_TRIES=3;
 
     public static final String STATUS_PASS = "pass";
 
@@ -49,9 +53,12 @@ public class MeterConstants {
     public static final String NSRG_SWITCH =  "@nsrg";
 
     public static final String STORAGE_SWITCH = "@storage";
+    
+    public static final String SPEEDTEST_SWITCH = "@speedtest";
+    
+    public static final String SPEEDTEST_STATUS = "on";
 
     public static final String METER_ID = "$meterid";
-
 
     public static final String NO_VALUE = "No value is found";
 
@@ -64,6 +71,8 @@ public class MeterConstants {
     public static final String NSRG_PROTOCOL = "nsrg";
 
     public static final String STORAGE_PROTOCOL = "storage";
+    
+    public static final String SPEEDTEST_PROTOCOL = "speedtest";
 
     public static final String IT_PROTOCOL = "it";
 
