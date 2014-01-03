@@ -337,10 +337,10 @@ public class GoalServices {
             }
             
             int columnsNumber = rsmd.getColumnCount();
-            CustomerServiceConstant.logger.debug(" Dynamic Data Rows with html chosen , columns found - "+ columnsNumber);
+            CustomerServiceConstant.logger.debug("Dynamic Data Rows with html chosen , columns found - "+ columnsNumber);
 
             StringBuilder sb = new StringBuilder(2000);
-            sb.append("<table border=1>");
+            sb.append("<table>");
             
             // lets add the table header from the result set meta data
             // having either a single quote or double quote around the bgcolor value or any tag screws up the html - IMPORTANT
