@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.Date;
 
 import org.apache.log4j.FileAppender;
-import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
 
@@ -31,7 +30,7 @@ public class GQEDPConstants {
         String logFile = logFilePrefix + logFileName;
         try {
             fileappender = new org.apache.log4j.DailyRollingFileAppender(new PatternLayout(
-                    "  %-15C{1} | %d{MMM dd HH:mm} | %5p | %m%n"), logFile, LOG_FILE_NAME_DATE_PATTERN);
+                    "  %d{MMM dd HH:mm} | %-15F(%L) | %5p | %m%n"), logFile, LOG_FILE_NAME_DATE_PATTERN);
         }
         catch (IOException e) {
             e.printStackTrace();
