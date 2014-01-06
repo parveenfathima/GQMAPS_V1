@@ -452,7 +452,6 @@ public final class MeterUtils {
 	// 3.localhost for 127.0.0.1 related strings
 	// 4.null for null
 	public static String getTrimmedHostName(String ipAddress) {
-		System.out.println("incoming ip address  = "+ ipAddress );
 		if ( ( ipAddress == null ) || ( ipAddress.trim().equals("") ) ) {
 			return null;
 		}
