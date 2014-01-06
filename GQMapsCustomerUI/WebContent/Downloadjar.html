@@ -44,6 +44,12 @@
     var pnl= document.getElementById("pnlDetail");
   pnl.style.display="none";
     }
+
+    function DownloadJar()
+    {
+    window.location.href="http://192.168.8.15:8080/downloads/gqmeter.jar";    
+    //window.location.href="http://localhost:8080/downloads/gqmeter.jar";
+    }
   
 </script>
 	<style>
@@ -78,7 +84,7 @@
         <section id="documenter_cover" style="position:relative; top:0px;">
             
             <h1 style=" font-family: 'Cuprum', sans-serif; font-weight: normal; padding-bottom: 5px; color: #b55d5c; font-size:40px;">GQMaps-Manage your data</h1>
-            <button class="btn btn-inverse" type="button">Download GQMaps Jar</button>
+            <button class="btn btn-inverse" type="button" onclick="DownloadJar()">Download GQMaps Jar</button>
             
         </section>
         
