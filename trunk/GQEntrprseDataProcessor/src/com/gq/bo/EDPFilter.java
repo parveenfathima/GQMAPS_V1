@@ -17,6 +17,7 @@ import com.gq.meter.object.Computer;
 import com.gq.meter.object.MeterRun;
 import com.gq.meter.object.NSRG;
 import com.gq.meter.object.Printer;
+import com.gq.meter.object.SpeedTestSnpsht;
 
 import com.gq.util.DynamicSessionUtil;
 import com.gq.util.GQEDPConstants;
@@ -100,6 +101,11 @@ public final class EDPFilter {
                     // Storage storageData = gson.fromJson(pdData.getData(), Storage.class);
                     // GqMeterStorage.insertData(storageData, gqmResponse, meterRun.getRunId());
                     break;
+                
+                case SPEEDTEST:
+                	SpeedTestSnpsht speedTestData = gson.fromJson(pdData.getData(), SpeedTestSnpsht.class);
+                    new GqMeterSpeedTest().insertData(speedTestData, gqmResponse, meterRun.getRunId(), session);
+                	break;
 
                 case AIR:
                 case POWER:
