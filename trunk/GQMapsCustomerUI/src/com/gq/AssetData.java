@@ -139,7 +139,7 @@ public class AssetData {
 			e.printStackTrace();
 		}
 		
-		GQMapsCustomerUIConstants.logger.info("Domain data is:\t" + domainDataStr);
+		GQMapsCustomerUIConstants.logger.debug("Domain data is:\t" + domainDataStr);
 		
 
 		List<DomainData> domainDataListDB = new ArrayList<DomainData>();
