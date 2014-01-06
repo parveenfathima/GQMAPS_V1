@@ -15,8 +15,12 @@
                 <column name="ip_addr" length="15" />
             </key-property>
             <key-property name="port" type="int">
-            <column name="port" length="11"/>
+            	<column name="port" length="11"/>
             </key-property>
         </composite-id>
+            <key-property name="hostName" type="string">
+            	<column name="host_name" length="55"/>
+            </key-property>
+        
     </class>
 </hibernate-mapping>
