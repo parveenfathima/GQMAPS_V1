@@ -310,8 +310,10 @@ function getCurrentAssets()
 			int l = 0;
 			String entp = "";
 			char aryStatus[] = { 'y', 'n' };
+			String activeStatus[]={"Yes","No"};
 			String aryOwnership[] = { "Own", "Lease" };
 			String aryLocation[] = { "dc", "ep" };
+			String activeLocation[]={"Datacenter","Enterprise"};
 
 			Asset a = new Asset();
 			AssetData assetData = new AssetData();
@@ -429,11 +431,11 @@ function getCurrentAssets()
 							for (int status = 0; status < aryStatus.length; status++) {
 														if (assetListDB.get(i).getActive() == aryStatus[status]) {
 						%>
-                                        <option value="<%=(char) aryStatus[status]%>" selected="selected"><%=(char) aryStatus[status]%></option>
+                                        <option value="<%=(char) aryStatus[status]%>" selected="selected"><%=activeStatus[status]%></option>
 						<%
 							} else {
 						%>
-						<option value="<%=(char) aryStatus[status]%>"><%=(char) aryStatus[status]%></option>
+						<option value="<%=(char) aryStatus[status]%>"><%=activeStatus[status]%></option>
 						<%
 							}
 													}
@@ -558,11 +560,11 @@ function getCurrentAssets()
 							for (int loc = 0; loc < aryLocation.length; loc++) {
 														if (assetListDB.get(i).getDcEnt().equals(aryLocation[loc])) {
 						%>
-						<option value="<%=aryLocation[loc]%>" selected="selected"><%=aryLocation[loc]%></option>
+						<option value="<%=aryLocation[loc]%>" selected="selected"><%=activeLocation[loc]%></option>
 						<%
 							} else {
 						%>
-						<option value="<%=aryLocation[loc]%>"><%=aryLocation[loc]%></option>
+						<option value="<%=aryLocation[loc]%>"><%=activeLocation[loc]%></option>
 						<%
 							}
 													}
@@ -644,18 +646,17 @@ function getCurrentAssets()
 							for (int status = 0; status < aryStatus.length; status++) {
 														if (assetListDB.get(i).getActive() == aryStatus[status]) {
 						%>
-						<option value="<%=(char) aryStatus[status]%>" selected="selected"><%=(char) aryStatus[status]%></option>
+						<option value="<%=(char) aryStatus[status]%>" selected="selected"><%=activeStatus[status]%></option>
 						<%
 							} else {
 						%>
-						<option value="<%=(char) aryStatus[status]%>"><%=(char) aryStatus[status]%></option>
+						<option value="<%=(char) aryStatus[status]%>"><%=activeStatus[status]%></option>
 						<%
 							}
 													}
 						%>
                                     </select>
 
-                                
                                   </td>
                                   <td style="width:120px; ">
                                   <span id=<%="assetID" + i%>
@@ -756,11 +757,11 @@ function getCurrentAssets()
 							for (int loc = 0; loc < aryLocation.length; loc++) {
 														if (assetListDB.get(i).getDcEnt().equals(aryLocation[loc])) {
 						%>
-						<option value="<%=aryLocation[loc]%>" selected="selected"><%=aryLocation[loc]%></option>
+						<option value="<%=aryLocation[loc]%>" selected="selected"><%=activeLocation[loc]%></option>
 						<%
 							} else {
 						%>
-						<option value="<%=aryLocation[loc]%>"><%=aryLocation[loc]%></option>
+						<option value="<%=aryLocation[loc]%>"><%=activeLocation[loc]%></option>
 						<%
 							}
 													}
@@ -820,11 +821,11 @@ function getCurrentAssets()
 							for (int status = 0; status < aryStatus.length; status++) {
 														if (assetListDB.get(i).getActive() == aryStatus[status]) {
 						%>
-						<option value="<%=(char) aryStatus[status]%>" selected="selected"><%=(char) aryStatus[status]%></option>
+						<option value="<%=(char) aryStatus[status]%>" selected="selected"><%=activeStatus[status]%></option>
 						<%
 							} else {
 						%>
-						<option value="<%=(char) aryStatus[status]%>"><%=(char) aryStatus[status]%></option>
+						<option value="<%=(char) aryStatus[status]%>"><%=activeStatus[status]%></option>
 						<%
 							}
 													}
@@ -908,11 +909,11 @@ function getCurrentAssets()
 							for (int loc = 0; loc < aryLocation.length; loc++) {
 														if (assetListDB.get(i).getDcEnt().equals(aryLocation[loc])) {
 						%>
-						<option value="<%=aryLocation[loc]%>" selected="selected"><%=aryLocation[loc]%></option>
+						<option value="<%=aryLocation[loc]%>" selected="selected"><%=activeLocation[loc]%></option>
 						<%
 							} else {
 						%>
-						<option value="<%=aryLocation[loc]%>"><%=aryLocation[loc]%></option>
+						<option value="<%=aryLocation[loc]%>"><%=activeLocation[loc]%></option>
 						<%
 							}
 													}
@@ -934,13 +935,6 @@ function getCurrentAssets()
                     </div>
                 </div>
                 <!-- /table with checkboxes -->
-                
-                
-                
-                
-                
-                
-                
 
                 <div class="span6 well body " style="height:50px;">
             
