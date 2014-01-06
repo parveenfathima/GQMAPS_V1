@@ -446,4 +446,48 @@ public final class MeterUtils {
         }
     };
 
+	// this method returns
+	// 1.ip address , if cant resolve it to hostname
+	// 2.trimmed to last domain name in case of valid host resolution
+	// 3.localhost for 127.0.0.1 related strings
+	// 4.null for null
+	public static String getTrimmedHostName(String ipAddress) {
+		System.out.println("incoming ip address  = "+ ipAddress );
+		if ( ( ipAddress == null ) || ( ipAddress.trim().equals("") ) ) {
+			return null;
+		}
+		
+		ipAddress = ipAddress.trim();
+		
+		if ( ipAddress.contains("127.0.0.1")) {
+			return "localhost";
+		}
+		else { // probably a good ip
+	        InetAddress addr;
+			try {
+				addr = InetAddress.getByName(ipAddress);
+			} catch (UnknownHostException e) {
+				return "unknown-host";
+			}
+			
+	        String cnName = addr.getCanonicalHostName();
+
+	        if ( cnName.equals(ipAddress)) {
+	        	return ipAddress;
+	        }
+	        else {
+		   	    String[] hostNameParts = cnName.split("\\.");
+		   	       
+		   	    //to trim the unwanted characters and to display a valid domain names like google.co.in..
+		   	    if(hostNameParts.length >= 3) {
+		   	    	return hostNameParts[hostNameParts.length-3]+"."+hostNameParts[hostNameParts.length-2]+"."+hostNameParts[hostNameParts.length-1];
+		   	    } 
+		   	    else {// to display a completely qualified domain names
+		   	    	return hostNameParts[hostNameParts.length-2]+"."+hostNameParts[hostNameParts.length-1];
+		   	    }
+	        }
+		}
+	} // getTrimmedHostName ends
+	
+
 } // class ends
