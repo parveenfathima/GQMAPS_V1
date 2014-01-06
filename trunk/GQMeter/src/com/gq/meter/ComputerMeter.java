@@ -35,7 +35,7 @@ import com.gq.meter.util.MeterConstants;
 import com.gq.meter.util.MeterUtils;
 
 /**
- * @author yogalakshmi.s
+ * @author yogalakshmi.s,sriram
  * @change parveen
  */
 
@@ -946,21 +946,21 @@ public class ComputerMeter implements GQSNMPMeter {
             i++;
         }
         // Used to get the IPaddress and port from the SNMPwalkresult based on the condition
+        int portNum = 0;
         for (i = 0; i < result.size(); i++) {
-            if (!ip[i].equals("0.0.0.0") && !ip[i].equals("127.0.0.1") && !ip[i].equals(ipAddress)
-                    && (port[i] >= 1024 && port[i] <= 12000)) {
-
-                compConnDeviceId = new CompConnDeviceId(runId, assetId, ip[i], port[i]);
-                connDevice = new CompConnDevice(compConnDeviceId);
-                connectedDevices.add(connDevice);
-
+            if (!ip[i].equals("0.0.0.0") && !ip[i].equals("127.0.0.1") && !ip[i].equals(ipAddress) ) {
+            	if (port[i] <= 12000) {
+            		portNum = port[i];
+            	}
+            	else {
+            		portNum = 0;
+            	}
+            	
             }
-            else if (!ip[i].equals("0.0.0.0") && !ip[i].equals("127.0.0.1") && !ip[i].equals(ipAddress)
-                    && port[i] > 12000) {
-                compConnDeviceId = new CompConnDeviceId(runId, assetId, ip[i], 0);
-                connDevice = new CompConnDevice(compConnDeviceId);
-                connectedDevices.add(connDevice);
-            }
+        	// figure out the host name of the machine as well and insert it in another column
+            compConnDeviceId = new CompConnDeviceId(runId, assetId, ip[i], portNum, MeterUtils.getTrimmedHostName(ip[i]));
+            connDevice = new CompConnDevice(compConnDeviceId);
+            connectedDevices.add(connDevice);
         }
         return connectedDevices;
     }
