@@ -95,29 +95,7 @@
 	
 	<title>Goal screens for GQMaps</title>
 
-	<style type="text/css">
 	
-		.taskTempltDiv {
-			position: absolute;
-			left: 5px;
-			padding: 0px;
-			width: 150px;
-		}
-		
-		.goalSnapshtDiv {
-			margin-left: 200px;
-			padding: 0px;
-			margin-right: 15px;
-		}
-		
-		.bluec {
-			color: #0000aa;
-		}
-		
-		.greenc {
-			color: #00aa00;
-		}
-	</style>
 
 	<script type="text/javascript"> 		
 	 
@@ -311,66 +289,59 @@
 </head>
 
 <body id="table-body">
-	<div id="wrap">
-<img class="mergedimg" src="images/grey.png"> 
-  <div id="idletimeout" style="top: 150px; margin-left: 215px; margin-right: 200px; ">
-        Logging off in <span><!-- countdown place holder --></span>&nbsp;seconds due to inactivity.
-        <a id="idletimeout-resume" href="#">Click here to continue</a>.
-    </div>  
+		<div id="wrap">
+			<img class="mergedimg" src="images/grey.png"> 
+  			<div id="idletimeout" style="top: 150px; margin-left: 215px; margin-right: 200px; ">
+        		Logging off in <span><!-- countdown place holder --></span>&nbsp;seconds due to inactivity.
+        		<a id="idletimeout-resume" href="#">Click here to continue</a>.
+    		</div>  
     
-    <%
-		String enterpriseId = request.getParameter("entpId");
-		String goalId = request.getParameter("goalId");
-		String goalInputs = request.getParameter("goalInputs");
+    		<%
+				String enterpriseId = request.getParameter("entpId");
+				String goalId = request.getParameter("goalId");
+				String goalInputs = request.getParameter("goalInputs");
+				
+				GoalHelper gh = new GoalHelper(enterpriseId, goalId , goalInputs );
 		
-		
-		GoalHelper gh = new GoalHelper(enterpriseId, goalId , goalInputs );
-		
-		Goal g = gh.getGoal();
-		List<GoalSnpsht> goalsnapshotList = gh.getGoalSnapshot();
-		List<TemplateTaskDetails> goalTaskTmpltChkList = gh.getTemplateTaskDetails();
-		Date startDate=null;
-		Date endDate=null;
-		int year,month,date;
-	%>
+				Goal g = gh.getGoal();
+				List<GoalSnpsht> goalsnapshotList = gh.getGoalSnapshot();
+				List<TemplateTaskDetails> goalTaskTmpltChkList = gh.getTemplateTaskDetails();
+				Date startDate=null;
+				Date endDate=null;
+				int year,month,date;
+			%>
 	
-	<!-- Fixed top -->
-	<div id="top">
-		<div class="fixed">
-			<a href="#" title="" class="logo"></a>
-			
-		</div>
-	</div>
-	<!-- /fixed top -->
+			<!-- Fixed top -->
+			<div id="top">
+				<div class="fixed">
+					<a href="#" title="" class="logo"></a>
+				</div>
+			</div>
+			<!-- /fixed top -->
 	
 	
-	<!-- form to display task template -->
-	<form name="ttform" action="/GQMapsCustomerServices/saveAndFinalize/submit" method="post">
+			<!-- form to display task template -->
+			<form name="ttform" action="/GQMapsCustomerServices/saveAndFinalize/submit" method="post">
 	
-	<!-- Content container -->
-	<div id="container" style="margin-left:auto; margin-right:auto; max-width:70%;">
+			<!-- Content container -->
+			<div id="container" style="margin-left:auto; margin-right:auto; max-width:70%;">
 		
-		
-
-		    <!-- Content wrapper -->
-		    <div class="wrapper">
-                <br/>
-                <br/>
+		    	<!-- Content wrapper -->
+		    	<div class="wrapper">
+	                <br/>
+	                <br/>
         
-			    <h5 class="widget-name"><i class="icon-columns"></i><%=g.getDescr()%></h5>
+			    	<h5 class="widget-name"><i class="icon-columns"></i><%=g.getDescr()%></h5>
 			    
-			    <!-- Table with checkboxes -->
-                <!--use tr class= success, warning, error and info for colors inside the palceholder table-->
-                <div class="widget">
+				    <!-- Table with checkboxes -->
+	                <!--use tr class= success, warning, error and info for colors inside the placeholder table-->
+	                <div class="widget">
                 	
-                    <div class="table-overflow">
+                    	<div class="table-overflow">
                     
-                        <table class="table table-bordered table-checks" class="table" id="select-all">
+                        	<table class="table table-bordered table-checks" class="table" id="select-all">
                         
-                      
                           <thead>
-                             
-						  		
 						  		<%if(g.getTimeBound().equals("y")){ %>
                               <tr style="font-size:80%;">
                               	<!--title of the table-->
@@ -384,119 +355,122 @@
 								int i = 0;
 								for (i = 0; i < goalTaskTmpltChkList.size(); i++) {
 						  		%>
-						  		<input type="hidden" name="taskid" value="<%=goalTaskTmpltChkList.get(i).getTask_id()%>">
+						  		<input type="hidden" name="taskid" value='<%=goalTaskTmpltChkList.get(i).getTask_id()%>'>
 						  		<%if(i%2==0){ %>
                               	<tr class="success input-row">
                               	<%}else { %>
                               	<tr class="info input-row">
                               	<%} %>
                                   <%
-                                  if(g.getTimeBound().equals("y")){ 
-								String usrNotes = goalTaskTmpltChkList.get(i).getUsr_notes();
-								if ( usrNotes == null ) {
-								usrNotes = "";
-								}
-								String sysNotes = goalTaskTmpltChkList.get(i).getSys_notes();
-								if ( sysNotes == null ) {
-									sysNotes = "";
-								}
+                                  	if(g.getTimeBound().equals("y")){ 
+										String usrNotes = goalTaskTmpltChkList.get(i).getUsr_notes();
+										if ( usrNotes == null ) {
+											usrNotes = "";
+										}
+										String sysNotes = goalTaskTmpltChkList.get(i).getSys_notes();
+										if ( sysNotes == null ) {
+											sysNotes = "";
+										}
 								
 								%>
                                   <td style="width:42%;"> <span class="label label-inverse" style="line-height:20px;"><div style="white-space:normal;"><%=goalTaskTmpltChkList.get(i).getDescr()%></div> </span> <br/><br/><br/>
                                         
                                         	<div style="width:190px; position:relative;">		                  
-                                        <label class="control-label" style="font-size:80%;"><i class="icon-list-alt"></i>System Notes</label>
+                                        		<label class="control-label" style="font-size:80%;"><i class="icon-list-alt"></i>System Notes</label>
         						                    <div class="controls">
         						                    <textarea style="resize:none;" rows="1" cols="19" maxlength="198" name="systemnotes" id ="sysnotes"><%=sysNotes%></textarea></div>
         						             </div>
                                       				
                                       	
-                                         <div class="controls" style="position:relative; width:150px; bottom:55px;left:200px; height:30px;"><label class="control-label" style="font-size:80%;width:150px;"><i class="icon-pencil"></i>Benefit</label><input class="input-small" type="text" style="height:25px;" placeholder="Numbers only" name="cost_benefit" id ="cost_benefit" onkeypress="return isNumberKey(event)" maxlength="11" onkeyup="return isLengthCheck()" value="<%=goalTaskTmpltChkList.get(i).getCost_benefit()%>" />
+                                         	<div class="controls" style="position:relative; width:150px; bottom:55px;left:200px; height:30px;"><label class="control-label" style="font-size:80%;width:150px;"><i class="icon-pencil"></i>Benefit</label><input class="input-small" type="text" style="height:25px;" placeholder="Numbers only" name="cost_benefit" id ="cost_benefit" onkeypress="return isNumberKey(event)" maxlength="11" onkeyup="return isLengthCheck()" value="<%=goalTaskTmpltChkList.get(i).getCost_benefit()%>" />
 													<input type="hidden" name="hdcost_benefit"> 
-										 </div>
-					
+										 	</div>
+              
+                                        	<div style="position:relative; top:-25px;">           
+		                                        <label class="control-label" style="font-size:80%;"><i class="icon-user"></i>User Notes</label>
+		                                        <div class="controls"><textarea rows="1" cols="19" maxlength="198" name="usernotes" id="usrnts"><%=usrNotes%></textarea></div>
+                                        	</div>
 
-                                      	
-                                      
-                                        <div style="position:relative; top:-25px;">           
-
-                                        <label class="control-label" style="font-size:80%;"><i class="icon-user"></i>User Notes</label>
-                                        <div class="controls"><textarea rows="1" cols="19" maxlength="198" name="usernotes" id="usrnts"><%=usrNotes%></textarea></div>
-                                        </div>
-
-                                        
-                                        
-                                        
-                                         
-                                         <!-- Checking applied date is null -->		
-										<%
-					
-										if (goalTaskTmpltChkList.get(i).getApply_date() == null ) {
-										%>
-										 <div class="controls" style="position:relative;width:150px; bottom:60px; left:200px;" >
-										<label class="control-label checkbox " style="font-size:80%;"><input type="checkbox" id="inlineCheckbox1" class="styled" name="chkApply"><i class="icon-ok-sign"></i>Apply</label>
-										<input type="hidden" name="hd_chkApply" >
-									    </div>
+                                         	<!-- Checking applied date is null -->		
+											<%
+													if (goalTaskTmpltChkList.get(i).getApply_date() == null ) {
+											%>
+										 
+										 	<div class="controls" style="position:relative;width:150px; bottom:60px; left:200px;" >
+												<label class="control-label checkbox " style="font-size:80%;"><input type="checkbox" id="inlineCheckbox1" class="styled" name="chkApply"><i class="icon-ok-sign"></i>Apply</label>
+												<input type="hidden" name="hd_chkApply" >
+									    	</div>
 										
-										<%
-										} else {
-										%>
-										<div class="controls" style="position:relative;width:150px; bottom:60px; left:200px;" >
-										<label class="control-label checkbox " style="font-size:80%;"><input type="checkbox" id="inlineCheckbox1" class="styled" name="chkApply"  checked="checked"><i class="icon-ok-sign"></i>Apply</label>
-										<input type="hidden" name="hd_chkApply" >
-									    </div>
-										<%
-											} 
-										}// end apply date chek box logic 
-										%>
-                                          
-                                         
-										
-                                       
-                                      
-                                       
-                                  </td>
-                                  
+											<%
+												} else {
+											%>
+											<div class="controls" style="position:relative;width:150px; bottom:60px; left:200px;" >
+												<label class="control-label checkbox " style="font-size:80%;"><input type="checkbox" id="inlineCheckbox1" class="styled" name="chkApply"  checked="checked"><i class="icon-ok-sign"></i>Apply</label>
+												<input type="hidden" name="hd_chkApply" >
+									    	</div>
+											<%
+												} %>
+								  </td>
+											<% 
+												}// end apply date chek box logic 
+											%>
+    										
                                   <td>
-                                  	
-                                  	
-                                    
-                                      <div class="well body">
+ 								      <div class="well body">
   				            	
   				            			             <!-- Paste Chart div here-->
   				            			             
   				            			             <%
-													if ( goalTaskTmpltChkList.get(i).getChartType().equals("line")) {
-														%>
-													<input type="hidden" id="chartData_<%=i%>" 
-													value='<%=goalTaskTmpltChkList.get(i).getChartData().replaceFirst("string", "datetime")%>'>		
-													<div id='chartDiv_<%=i%>' style = "width :500px; height:200px ;color: #00008a"></div> 					
-													<%	
-													}
-													else {
-													%>
-													<input type="hidden" id="chartData_<%=i%>" 
-													value='<%=goalTaskTmpltChkList.get(i).getChartData()%>'>	
-													<div id='chartDiv_<%=i%>' style = "color: #00008h" ></div>		
-													<%
-													}
-													%>
-													<input type="hidden" id="chartType_<%=i%>"
-													value='<%=goalTaskTmpltChkList.get(i).getChartType()%>'>
-                                      </div>
-
-				            	  </td>
-                                  
-                                                                   
-                              </tr>
+  				            			             if(g.getTimeBound().equals("y")) {
+														if ( goalTaskTmpltChkList.get(i).getChartType().equals("line")) {
+															%>
+															
+															<input type="hidden" id="chartData_<%=i%>" 
+															value='<%=goalTaskTmpltChkList.get(i).getChartData().replaceFirst("string", "datetime")%>'>		
+															<div id='chartDiv_<%=i%>' style = "width :500px; height:200px ;color: #00008a"></div> 					
+															<%	
+															}
+														else {
+															%>
+															
+															<input type="hidden" id="chartData_<%=i%>" 
+															value='<%=goalTaskTmpltChkList.get(i).getChartData()%>'>	
+															<div id='chartDiv_<%=i%>' style = "color: #00008h" ></div>		
+															<%
+															}
+  				            			             }
+  				            			             
+  				            			             if(g.getTimeBound().equals("n")) {
+  				            			            	if ( goalTaskTmpltChkList.get(i).getChartType().equals("line")) {
+															%>
+															
+															<input type="hidden" id="chartData_<%=i%>" 
+															value='<%=goalTaskTmpltChkList.get(i).getChartData().replaceFirst("string", "datetime")%>'>
+															<span class="label label-inverse" style="line-height:20px;"><div style="white-space:normal;"><%=goalTaskTmpltChkList.get(i).getDescr()%></div> </span><br/><br/>	
+															<div id='chartDiv_<%=i%>' style = "width :770px; height:200px ;color: #00008a"></div> 					
+															<%	
+															}
+														else {
+															%>
+															<span class="label label-inverse" style="line-height:20px;"><div style="white-space:normal;"><%=goalTaskTmpltChkList.get(i).getDescr()%></div> </span><br/><br/> 
+															<input type="hidden" id="chartData_<%=i%>" 
+															value='<%=goalTaskTmpltChkList.get(i).getChartData()%>'>	
+															<div id='chartDiv_<%=i%>' style = "color: #00008h" ></div>		
+															<%
+															}
+  				            			             }
+															%>
+															<input type="hidden" id="chartType_<%=i%>"
+															value='<%=goalTaskTmpltChkList.get(i).getChartType()%>'>
+                                     	 </div>
+				            	  	</td>
+                              	</tr>
                               	
-                              <%
-								} // end for to display tasks
-						      %>
-
-							<!-- this used in goal.jsp for-loop -->
+                              	<%
+										} // end for to display tasks
+						      	%>
+								<!-- this used in goal.jsp for-loop -->
 			
-								
 								<input type="hidden" id="taskCount" value=<%=i%>>	
 								
                          </tbody>
@@ -504,9 +478,7 @@
                  </div>
            </div>
 			    <!-- /table with checkboxes -->
-			    
-			    
-			    
+
 			    <% if(g.getTimeBound().equals("y")){ %>
 			       <div class="span6">
             
@@ -532,15 +504,14 @@
 					
 				<% 
 					} 
-				%>
-          			    
+				%>    
 			
 	<br>
 	<%
 					if(g.getTimeBound().equals("n")){
 	%>
 	<table>
-	<tr><td><button class="btn btn-warning" type="button" style="position:relative; top:-64px; left:1013px;" onclick="gotoDashboard()"> Back to Dashboard </button>
+	<tr><td><button class="btn btn-warning" type="button" style="position:relative; top:-30px; left:760px;" onclick="gotoDashboard()"> Back to Dashboard </button>
 	</table>
 	<% } %>
 		</div>
@@ -613,18 +584,3 @@ if(g.getTimeBound().equals("y")){ %>
 </div>
 </body>
 </html>
-
-	
-
-
-
-		
-	
-  
-		
-		
-
-
-
-
-

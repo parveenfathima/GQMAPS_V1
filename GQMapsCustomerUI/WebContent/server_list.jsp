@@ -81,8 +81,8 @@
 
  		    if ( row.getElementsByTagName('td')[0].getElementsByTagName('input')[0].checked ) {
 	    
- 		     	total = total+ parseInt(row.cells[3].innerHTML);
- 		     	ipaddresses = ipaddresses + ',' + row.cells[2].innerHTML;
+ 		     	total = total+ parseInt(row.cells[4].innerHTML);
+ 		     	ipaddresses = ipaddresses + ',' + row.cells[3].innerHTML;
  		     	assetIds = assetIds + ',' + row.cells[1].innerHTML;
  		     	
  		  	} 
@@ -167,6 +167,7 @@
                               <tr>
                                   <th style="font-size:80%;">Apply</th>
                                   <th style="font-size:80%;">Asset ID</th>
+                                  <th style="font-size:80%;">Usage Dtls</th>
                                   <th style="font-size:80%;">IP Address</th>
                                   <th style="font-size:80%;">Cost</th>
                                   <th style="font-size:80%;">Description</th>
@@ -180,7 +181,7 @@
  		int j = 0;
  		int cost=0;
 		String ctlgDesc = "";
-		
+		String assetUsg="";
 		String enterpriseId = request.getParameter("entpId") ;
 		// Asset list
 		List<Asset> assetListDB = AssetHelper.getAssetList(enterpriseId);
@@ -213,6 +214,15 @@
 		<tr>
 			<td><input type="checkbox" id = "chkApply" class="styled"  ></td>
 			<td style="font-size:80%;"><%=assetListDB.get(i).getAssetId()%></td>
+			<%
+				if(assetListDB.get(i).getAssetUsg()==null) {
+					assetUsg="";
+				}
+				else {
+					assetUsg=assetListDB.get(i).getAssetUsg();
+				}
+			%>
+			<td style="font-size:80%;"><%=assetUsg%></td>
 			<td style="font-size:80%;"><%=assetListDB.get(i).getIpAddr()%></td>
 			<td style="font-size:80%;"><%= cost %></td>
 			<td style="font-size:80%;"><%= ctlgDesc %> </td>
@@ -233,11 +243,7 @@
                 <div class="span6 well body " style="height:70px;">
             
 		            <button class="btn btn-success" type="button" style="position:relative; top:-10px; left:0px;" onclick="handleClick()">Submit</button>
-		            <label id="consolidateResult" class="control-label" style="position:relative; top:-45px; left:80px; width:400px; line-height:20px;""> </label>
-		            <!--<button class="btn btn-warning" type="button" style="position:absolute; top:5px; left:1100px;"> Back to Dashboard </button>
-					
-			
-          		--></div>   
+		            <label id="consolidateResult" class="control-label" style="position:relative; top:-45px; left:80px; width:1000px; line-height:20px;"> </label>
 		    </div>
 		    <!-- /content wrapper -->
 
