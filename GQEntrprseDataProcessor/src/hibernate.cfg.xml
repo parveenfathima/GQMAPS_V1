@@ -38,7 +38,7 @@
 		<mapping resource="Protocol.hbm.xml"/>
 		<mapping resource="SrvrAppType.hbm.xml"/>
 		<mapping resource="SysProfile.hbm.xml"/>
-		  
+		<mapping resource="SpeedTestSnpsht.hbm.xml"/>  
  </session-factory>
  
 </hibernate-configuration>
