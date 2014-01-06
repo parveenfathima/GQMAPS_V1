@@ -70,7 +70,7 @@ public class GoalHelper {
 			   throw new RuntimeException("Failed : HTTP error code : " + response.getStatus());
 		}
 		else {
-			GQMapsCustomerUIConstants.logger.info(" Successful response from the client");
+			GQMapsCustomerUIConstants.logger.debug(" Successful response from the client");
 		}
 		
 		String svcOutput = response.getEntity(String.class);
