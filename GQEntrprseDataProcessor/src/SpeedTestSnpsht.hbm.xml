@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated Dec 30, 2013 5:29:05 PM by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+    <class name="com.gq.meter.object.SpeedTestSnpsht" table="speed_test_snpsht">
+        <composite-id name="id" class="com.gq.meter.object.SpeedTestSnpshtId">
+            <key-property name="assetId" type="string">
+                <column name="asset_id" length="30" />
+            </key-property>
+            <key-property name="runId" type="long">
+                <column name="run_id" />
+            </key-property>
+        </composite-id>
+        <property name="upldSpdMbs" type="java.lang.Double">
+            <column name="upld_spd_mbs" precision="22" scale="0" />
+        </property>
+        <property name="dwnldSpdMbs" type="java.lang.Double">
+            <column name="dwnld_spd_mbs" precision="22" scale="0" />
+        </property>
+    </class>
+</hibernate-mapping>
