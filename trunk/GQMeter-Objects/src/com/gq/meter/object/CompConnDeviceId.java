@@ -12,15 +12,17 @@ public class CompConnDeviceId implements java.io.Serializable {
     private String assetId;
     private String ipAddr;
     private int port;
-
+    private String hostName;
+    
     public CompConnDeviceId() {
     }
 
-    public CompConnDeviceId(Long runId, String assetId, String ipAddr, int port) {
+    public CompConnDeviceId(Long runId, String assetId, String ipAddr, int port,String hostName) {
         this.runId = runId;
         this.assetId = assetId;
         this.ipAddr = ipAddr;
         this.port = port;
+        this.hostName = hostName;
     }
 
     public Long getRunId() {
@@ -107,5 +109,13 @@ public class CompConnDeviceId implements java.io.Serializable {
         }
         return true;
     }
+
+	public void setHostName(String hostName) {
+		this.hostName = hostName;
+	}
+
+	public String getHostName() {
+		return hostName;
+	}
 
 }
