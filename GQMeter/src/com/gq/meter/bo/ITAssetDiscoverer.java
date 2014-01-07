@@ -524,23 +524,12 @@ public final class ITAssetDiscoverer {
          String localIPAddress=null;
          String remoteIPCommunityString=null;
          Long runId = 0L;
-         Long noOfBytes = 0L;
-         long startTime = 0;
-         long endTime = 0;
-         long timeTaken = 0;
-         double downloadSpeed = 0.0f;
-         double upLoadSpeed=0.0f;
-         double netDownloadSpeed = 0.0f;
-         //double avgDownloadSpeed = 0.0f;
-         double bytesInMB = 0.0f;
-         double timeInSec = 0.0f;
+         double uploadSpeed=0.0f;
+
          boolean isWindows = false;
          boolean isLinux=false;
          String sysDescription = null;
-         String osId=null;
-         String currentIP=null;
         
-         
          try {
         	  
         	 snmp = new Snmp(new DefaultUdpTransportMapping());
@@ -555,68 +544,65 @@ public final class ITAssetDiscoverer {
             	 snmpUnknownIPList.add(localIPAddress);
             	 errorList.add(localIPCommunityString + " - " + localIPAddress + " -  : Unable to reach the asset");
             	 gqErrorInfoList.add( new GQErrorInformation( null, errorList ) );
-            	 
-            	// continue;
+            	 return null;
              }
              
              snmpVersion = snmpDetails.get("snmpVersion");
              
-             
-             if(snmpVersion!=null) {
-            	 
-            	 target = MeterUtils.makeTarget(localIPAddress,localIPCommunityString, snmpVersion);
-    		 
-            	 assetObj=MeterUtils.sysBasicInfo(localIPCommunityString, localIPAddress, snmpVersion, errorList);
-            	 assetObj.setProtocolId(MeterConstants.SPEEDTEST_PROTOCOL);
-    		 
-            	 sysDescription = assetObj.getDescr();
-      
-            	 if (null != sysDescription) { // 1st if starts
-            		 if (sysDescription.contains("windows")) {
-            			 osId = "windows";
-            			 isWindows = true;
-            		 }
-            		 else if (sysDescription.contains("linux")) {
-            			 osId = "linux";
-            			 isLinux = true;
-            		 }
-            		 else if (sysDescription.contains("unix")) {
-            			 osId = "unix";
-            		 }
-            	 }// 1st if ends
-    	 	
-            	 SpeedTestHelper speedTestHelperObj=new SpeedTestHelper();
-            	 // the following oid's is used to get the asset id for windows.
-            	 if (isWindows) {
-            		 oidString = ".1.3.6.1.2.1.2.2.1";
-            		 rootOID = new OID(oidString);
-            		 result = MeterUtils.walk(rootOID, target);
-            		 if (result != null && !result.isEmpty()) {
-    	 					HashMap<String, String> winNetworkMap = new HashMap<String, String>();
-    	 					networkBytes =speedTestHelperObj.winAssetIdCalc(result, rootOID, winNetworkMap);
-    	 					assetId = "C-" + networkBytes.get("macWinNetworkValue");
-    	 					assetObj.setAssetId(assetId);
-    	 				}// 2nd if ends
-    	 			}// 1st if ends
-    	 			// the following oid's is used to get the asset id for Linux.
-    	 			else {
-    	 				oidString = ".1.3.6.1.2.1.2.2.1";
-    	 				rootOID = new OID(oidString);
-    	 				result = MeterUtils.walk(rootOID, target);
-    	 				if (result != null && !result.isEmpty()) {
-    	 					String[] ethernet = new String[] { "eth0", "eth1", "eth2", "en1", "en2", "en3", "em1", "em2",
-    	 						"em3", "wlan" };
-    	 					HashMap<String, List<Long>> networkMap = new HashMap<String, List<Long>>();
-    	 					networkBytes = speedTestHelperObj.linuxAssetIdCalc(result, rootOID, ethernet, networkMap, assetId, sysDescription);
-    	 					assetId = "C-" + networkBytes.get("assetId");
-    	 					assetObj.setAssetId(assetId);
-    	 				}
-    	 				else {
-    	 					errorList.add(assetId + " Root OID : 1.3.6.1.2.1.2.2.1" + " "
-    	 						+ "Unable to get network bandwidth details and unable to collate asset ID");
-    	 				}// 2nd else ends
-    	 			}// 1st else ends
-             	}	 
+             if(snmpVersion == null) {
+            	 return null;
+             }
+             // snmop version is not null
+        	 target = MeterUtils.makeTarget(localIPAddress,localIPCommunityString, snmpVersion);
+		 
+        	 assetObj = MeterUtils.sysBasicInfo(localIPCommunityString, localIPAddress, snmpVersion, errorList);
+        	 assetObj.setProtocolId(MeterConstants.SPEEDTEST_PROTOCOL);
+		 
+        	 sysDescription = assetObj.getDescr();
+  
+        	 if (null != sysDescription) { // 1st if starts
+        		 if (sysDescription.contains("windows")) {
+        			 isWindows = true;
+        		 }
+        		 else if (sysDescription.contains("linux")) {
+        			 isLinux = true;
+        		 }
+        		 else {
+        			 
+        		 }
+        	 }// 1st if ends
+	 	
+        	 SpeedTestHelper speedTestHelperObj = new SpeedTestHelper();
+        	 // the following oid's is used to get the asset id for windows.
+        	 if (isWindows) {
+        		 oidString = ".1.3.6.1.2.1.2.2.1";
+        		 rootOID = new OID(oidString);
+        		 result = MeterUtils.walk(rootOID, target);
+        		 if (result != null && !result.isEmpty()) {
+	 					HashMap<String, String> winNetworkMap = new HashMap<String, String>();
+	 					networkBytes =speedTestHelperObj.winAssetIdCalc(result, rootOID, winNetworkMap);
+	 					assetId = "C-" + networkBytes.get("macWinNetworkValue");
+	 					assetObj.setAssetId(assetId);
+	 				}// 2nd if ends
+	 			}// 1st if ends
+	 			// the following oid's is used to get the asset id for Linux.
+	 			else {
+	 				oidString = ".1.3.6.1.2.1.2.2.1";
+	 				rootOID = new OID(oidString);
+	 				result = MeterUtils.walk(rootOID, target);
+	 				if (result != null && !result.isEmpty()) {
+	 					String[] ethernet = new String[] { "eth0", "eth1", "eth2", "en1", "en2", "en3", "em1", "em2", "em3", "wlan" };
+	 					HashMap<String, List<Long>> networkMap = new HashMap<String, List<Long>>();
+	 					networkBytes = speedTestHelperObj.linuxAssetIdCalc(result, rootOID, ethernet, networkMap, assetId, sysDescription);
+	 					assetId = "C-" + networkBytes.get("assetId");
+	 					assetObj.setAssetId(assetId);
+	 				}
+	 				else {
+	 					errorList.add(assetId + " Root OID : 1.3.6.1.2.1.2.2.1" + " "
+	 						+ "Unable to get network bandwidth details and unable to collate asset ID");
+	 				}// 2nd else ends
+	 			}// 1st else ends
+                         
         	 	//To walk the remote machine for calculate the speed.
     	 		for ( Entry<String, String> entry : speedTestIPMap.entrySet() ) {
     	 			
@@ -629,64 +615,73 @@ public final class ITAssetDiscoverer {
     	 				snmpUnknownIPList.add(remoteIPAddress);
     	 				errorList.add(remoteIPCommunityString + " - " + remoteIPAddress + " -  : Unable to reach the asset");
     	 				gqErrorInfoList.add( new GQErrorInformation( null, errorList ) );
-                	 
+    	 				return null;
     	 			}
                  
     	 			snmpVersion = snmpDetails.get("snmpVersion");
                  
     	 			if (snmpDetails.get("snmpKnownIp") != null ) {
-                	 
     	 				snmpKnownIPList.add(remoteIPAddress);
     	 			}
     	 		}
         	 
         	 	// ASSET ID , RUN ID STARTS HERE.
-        	 		
         	 	id = new CPNId(runId, assetId);
         	 		
-        	 	if( snmpVersion != null ) {
-        	 		
-        	 		target = MeterUtils.makeTarget(remoteIPAddress,remoteIPCommunityString, snmpVersion);
-        	
-        	 		oidString = ".";
-       	 	 		rootOID = new OID(oidString);
-       	 	 		
-       	 	 		//we are here to perform speed test functionality based on speedtest tries.
-       	 	 		for(int speedTestTriesCount=1;speedTestTriesCount<=MeterConstants.SPEEDTEST_TRIES;speedTestTriesCount++) {
-   		 
-       	 	 			startTime = System.currentTimeMillis();
-       	 	 			result = MeterUtils.walk(rootOID, target);
-       	 	 			endTime = System.currentTimeMillis();
-       	 	 			timeTaken = endTime-startTime;
-   		 
-       	 	 			for(int resultCount = 0; resultCount < result.size(); resultCount++) {
-       	 	 				noOfBytes = noOfBytes+result.get(resultCount).toString().length();
-       	 	 			}
-   		 
-       	 	 			bytesInMB = (float) noOfBytes / (1024*1024);
-       	 	 			timeInSec = (float) timeTaken / 1000;
-       	 	 			downloadSpeed = bytesInMB / timeInSec;
-       	 	 			netDownloadSpeed = netDownloadSpeed + downloadSpeed;
-   		 
-       	 	 			System.out.println( bytesInMB + "			" + timeInSec);
-       	 	 			noOfBytes = 0L;
-       	 	 		}
-       	 	 		double avgDownloadSpeed = netDownloadSpeed / (MeterConstants.SPEEDTEST_TRIES);
-       	 	 		
-       	 	 		//To bulid a speed test snapshot object.
-       	 	 		SpeedTestSnpshtId speedTestSnapshotIdObj=new SpeedTestSnpshtId(assetId, runId);
-       	 	 		SpeedTestSnpsht speedTestSnapshotObj = new SpeedTestSnpsht(speedTestSnapshotIdObj, upLoadSpeed, avgDownloadSpeed);
-
-       	 	 		GQErrorInformation gqErrorInfo = null;
-       	 	 		if (errorList != null && !errorList.isEmpty()) {
-       	 	 			gqErrorInfo = new GQErrorInformation(sysDescription, errorList);
-       	 	 		}
-       	 	
-       	 	 		assetObject = new GQMeterData(gqErrorInfo, speedTestSnapshotObj);
-       	 	 		assetProtocol=MeterProtocols.SPEEDTEST;
-       	 	 		pdList.add(new ProtocolData(assetProtocol, gson.toJson(assetObject.getMeterData())));
-        	 
+        	 	if( snmpVersion == null ) {
+        	 		return null;
         	 	}
+        	 	
+    	 		target = MeterUtils.makeTarget(remoteIPAddress,remoteIPCommunityString, snmpVersion);
+    	
+    	 		oidString = ".";
+   	 	 		rootOID = new OID(oidString);
+   	 	 		
+   	 	 		//we are here to perform speed test functionality based on speedtest tries.
+   	 	 		double netDownloadSpeed = 0.0;
+   	 	 		long startTime = 0;
+   	 	 		long endTime = 0;
+   	 	 		long timeTaken = 0;
+				double bytesInMB = 0.0;
+				double timeInSec = 0.0;
+				double downloadSpeed=0.0;
+				
+				System.out.println(" Number of Bytes	TimeTaken");
+   	 	 		for( int speedTestTriesCount = 1; speedTestTriesCount <= MeterConstants.SPEEDTEST_TRIES; speedTestTriesCount++) {
+   	 	 			
+   	 	 			startTime = System.currentTimeMillis();
+   	 	 			result = MeterUtils.walk(rootOID, target);
+   	 	 			endTime = System.currentTimeMillis();
+   	 	 			timeTaken = endTime-startTime;
+   	 	 			
+   	 	 			long noOfBytes = 0L;
+   	 	 			for(int resultCount = 0; resultCount < result.size(); resultCount++) {
+   	 	 				noOfBytes = noOfBytes + result.get(resultCount).toString().length();
+   	 	 			}
+   	 	 			
+   	 	 			System.out.println(" "+noOfBytes +"			"+ timeTaken);
+   	 	 			
+   	 	 			bytesInMB = (double) noOfBytes / (1024*1024)  ;
+   	 	 			timeInSec = (double) timeTaken / 1000 ;
+   	 	 			downloadSpeed = (bytesInMB / timeInSec);
+   	 	 			netDownloadSpeed += downloadSpeed;
+	 
+   	 	 		}
+   	 	 		
+   	 	 		double avgDownloadSpeed = netDownloadSpeed / (MeterConstants.SPEEDTEST_TRIES);
+   	 	 		
+   	 	 		//To bulid a speed test snapshot object.
+   	 	 		SpeedTestSnpshtId speedTestSnapshotIdObj = new SpeedTestSnpshtId(assetId, runId);
+   	 	 		SpeedTestSnpsht speedTestSnapshotObj = new SpeedTestSnpsht(speedTestSnapshotIdObj, uploadSpeed, avgDownloadSpeed);
+
+   	 	 		GQErrorInformation gqErrorInfo = null;
+   	 	 		if (errorList != null && !errorList.isEmpty()) {
+   	 	 			gqErrorInfo = new GQErrorInformation(sysDescription, errorList);
+   	 	 		}
+   	 	
+   	 	 		assetObject = new GQMeterData(gqErrorInfo, speedTestSnapshotObj);
+   	 	 		assetProtocol = MeterProtocols.SPEEDTEST;
+   	 	 		pdList.add(new ProtocolData(assetProtocol, gson.toJson(assetObject.getMeterData())));
          } 
          catch (Exception e) {
         	e.printStackTrace();  
@@ -695,9 +690,8 @@ public final class ITAssetDiscoverer {
         		 gqmResponse.setErrorInformationList(gqErrorInfoList); // Added the errors to the GQMResponse
          }
          //To return a speedtest meter protcol list.
-       return pdList;
+         return pdList;
      }
-
 
     public void discover(String inputFilePath) throws IOException {
     	
@@ -724,6 +718,7 @@ public final class ITAssetDiscoverer {
             assetsList = findAssets(communityIPMap);
             gqmResponse.addToAssetInformationList(assetsList);
         }
+        
         if ( speedTestIPMap.size() > 0 && speedTestIPMap != null ) {    	
         	speedAssetsList=speedCalculation(speedTestIPMap,localIPCommunityString);
         	for(int i=0;i<speedAssetsList.size();i++) {
@@ -731,11 +726,7 @@ public final class ITAssetDiscoverer {
         	}
         	gqmResponse.addToAssetInformationList(speedAssetsList);
         }
-        else {
-            System.out.println(" [GQMETER] There are no valid IPAddresses given , Process Terminated..");
-            System.exit(0);
-        }
-        
+    
         long endTime = System.currentTimeMillis();
         gqmResponse.setRunTimeMiliSeconds((endTime - startTime));
         gqmResponse.setStatus("pass");
@@ -773,5 +764,5 @@ public final class ITAssetDiscoverer {
         String inputFilePath = args[0].trim();
         itad.discover(inputFilePath);
     }
-
+    
 }// class ends
