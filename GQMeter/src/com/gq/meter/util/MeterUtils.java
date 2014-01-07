@@ -458,7 +458,7 @@ public final class MeterUtils {
 		
 		ipAddress = ipAddress.trim();
 		
-		if ( ipAddress.contains("127.0.0.1")) {
+		if ( ipAddress.equals("127.0.0.1")) {
 			return "localhost";
 		}
 		else { // probably a good ip
@@ -476,13 +476,15 @@ public final class MeterUtils {
 	        }
 	        else {
 		   	    String[] hostNameParts = cnName.split("\\.");
-		   	       
 		   	    //to trim the unwanted characters and to display a valid domain names like google.co.in..
 		   	    if(hostNameParts.length >= 3) {
 		   	    	return hostNameParts[hostNameParts.length-3]+"."+hostNameParts[hostNameParts.length-2]+"."+hostNameParts[hostNameParts.length-1];
 		   	    } 
-		   	    else {// to display a completely qualified domain names
+		   	    else if(hostNameParts.length == 2) {// to display a completely qualified domain names
 		   	    	return hostNameParts[hostNameParts.length-2]+"."+hostNameParts[hostNameParts.length-1];
+		   	    }
+		   	    else {
+		   	    	return cnName;
 		   	    }
 	        }
 		}
