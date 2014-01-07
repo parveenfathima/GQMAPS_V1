@@ -432,7 +432,7 @@ public class ComputerMeter implements GQSNMPMeter {
                 connectedDevices);
 
         if (compObject.getAssetObj().getAssetId().equalsIgnoreCase("C-null")) {
-            errorList.add(ipAddress + "" + "Asset Id is null");
+            errorList.add(ipAddress + " " + "Asset Id is null");
         }
 
         GQErrorInformation gqErrorInfo = null;
@@ -954,8 +954,10 @@ public class ComputerMeter implements GQSNMPMeter {
             	}
             	else {
             		portNum = 0;
-            	}
-            	
+            	}	
+            }
+            if(ip[i].equals("0.0.0.0")) {
+            	continue;
             }
         	// figure out the host name of the machine as well and insert it in another column
             compConnDeviceId = new CompConnDeviceId(runId, assetId, ip[i], portNum, MeterUtils.getTrimmedHostName(ip[i]));
