@@ -11,7 +11,7 @@ import org.hibernate.Session;
 
 import com.gq.meter.object.Asset;
 import com.gq.meter.object.ProtocolCount;
-import com.gq.meter.util.CustomerServiceConstant;
+import com.gq.meter.util.CustomerServiceUtils;
 import com.gq.meter.util.HibernateUtil;
 
 /**
@@ -28,11 +28,11 @@ public class AssetModel {
             String hql = "select count(assetId) FROM Asset";
             Query query = session.createQuery(hql);
             List<Asset> assetresult = query.list();
-            CustomerServiceConstant.logger.debug(" Asset Count sucessfully Executed");
+            CustomerServiceUtils.logger.debug(" Asset Count sucessfully Executed");
             return assetresult;
         }
         catch (Exception e) {
-            CustomerServiceConstant.logger.error(" Exception occured while getting the asset count", e);
+            CustomerServiceUtils.logger.error(" Exception occured while getting the asset count", e);
             return null;
         }
         finally {
@@ -60,7 +60,7 @@ public class AssetModel {
             // List<ProtocolCount> assetResult = query.list();
 
             List<Object[]> queryresult = query.list();
-            CustomerServiceConstant.logger.debug(" Getting the ProtocolCount and ProtocolId is sucessfully Executed");
+            CustomerServiceUtils.logger.debug(" Getting the ProtocolCount and ProtocolId is sucessfully Executed");
             List<ProtocolCount> protocolresult = new ArrayList<ProtocolCount>();
             for (Object[] list : queryresult) {
                 ProtocolCount assetlist = new ProtocolCount();
@@ -68,11 +68,11 @@ public class AssetModel {
                 assetlist.setPcount((Long) list[1]);
                 protocolresult.add(assetlist);
             }
-            CustomerServiceConstant.logger.debug(" Protocol Count is sucessfully returned");
+            CustomerServiceUtils.logger.debug(" Protocol Count is sucessfully returned");
             return protocolresult;
         }
         catch (Exception e) {
-            CustomerServiceConstant.logger.error(" Exception occured while getting the protocol count", e);
+            CustomerServiceUtils.logger.error(" Exception occured while getting the protocol count", e);
             return null;
         }
         finally {

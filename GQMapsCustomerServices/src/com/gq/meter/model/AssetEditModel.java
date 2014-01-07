@@ -6,7 +6,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 
 import com.gq.meter.util.DynamicSessionUtil;
-import com.gq.meter.util.CustomerServiceConstant;
+import com.gq.meter.util.CustomerServiceUtils;
 
 import com.gq.meter.object.Asset;
 import com.gq.meter.object.GetAsset;
@@ -31,7 +31,7 @@ public class AssetEditModel {
         Transaction tx = null;
 
         try {
-            CustomerServiceConstant.logger.debug("Enterprise Id:" + enterpriseId);
+            CustomerServiceUtils.logger.debug("Enterprise Id:" + enterpriseId);
             String dbInstanceName = "gqm" + enterpriseId;
 
             // Create a session factory for requesting enterprise
@@ -47,7 +47,7 @@ public class AssetEditModel {
             getAssetServices = new GetAsset(assetResult);
         }
         catch (Exception e) {
-            CustomerServiceConstant.logger.error(" Exception occured while fetching the AssetDetails ", e);
+            CustomerServiceUtils.logger.error(" Exception occured while fetching the AssetDetails ", e);
         }
         finally {
             try {
@@ -95,12 +95,12 @@ public class AssetEditModel {
                 oldAssetObject.setInactiveDttm(currentDate);
             }
             oldAssetObject.setType_id(assetObject.getType_id());
-            CustomerServiceConstant.logger.debug(" Asset Object updated Successfully");
+            CustomerServiceUtils.logger.debug(" Asset Object updated Successfully");
             session.flush();
         }
         catch (Exception e) {
-            CustomerServiceConstant.logger.debug(e);
-            CustomerServiceConstant.logger.error(" Exception occured while Updating the Asset ", e);
+            CustomerServiceUtils.logger.debug(e);
+            CustomerServiceUtils.logger.error(" Exception occured while Updating the Asset ", e);
             throw e;
         }
         finally {

@@ -11,7 +11,7 @@ import com.gq.meter.model.MapsDomainModel;
 
 import com.gq.meter.object.MapsDomainBean;
 
-import com.gq.meter.util.CustomerServiceConstant;
+import com.gq.meter.util.CustomerServiceUtils;
 
 /**
  * @author parveen
@@ -28,10 +28,10 @@ public class MapsDomainServices {
     // This method takes care of getting all domain details
     public String getAllDomainDetails(@QueryParam("enterpriseId") String enterpriseId) {
 
-        CustomerServiceConstant.logger.debug("Generating all Domain service list from gqm" + enterpriseId);
+        CustomerServiceUtils.logger.debug("Generating all Domain service list from gqm" + enterpriseId);
         MapsDomainModel mapsDomainModel = new MapsDomainModel();
         MapsDomainBean mapsDomainResult = mapsDomainModel.getAllMapsDomainDetails(enterpriseId);
         // Returning all the domain list in JSON format
-        return CustomerServiceConstant.gson.toJson(mapsDomainResult);
+        return CustomerServiceUtils.gson.toJson(mapsDomainResult);
     }
 }

@@ -14,7 +14,7 @@ import com.gq.meter.object.AllCustomerServices;
 import com.gq.meter.object.Asset;
 import com.gq.meter.object.AssetLoad;
 import com.gq.meter.object.ProtocolCount;
-import com.gq.meter.util.CustomerServiceConstant;
+import com.gq.meter.util.CustomerServiceUtils;
 
 /**
  * @author rathish
@@ -32,64 +32,64 @@ public class CustomerServices {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public String getAllCustomerServiceDetails() {
-        CustomerServiceConstant.logger.debug(" Generating all the customer service list from GQEntrprseDataProcessor");
+        CustomerServiceUtils.logger.debug(" Generating all the customer service list from GQEntrprseDataProcessor");
         CustomerServiceModel customerServiceModel = new CustomerServiceModel();
         AllCustomerServices customerServiceResult = customerServiceModel.getAllCustomerServiceDetails();
         // Returning all the enterprises in JSON format
-        CustomerServiceConstant.logger.debug(" Sucessfully Data Received from GQEntrprseDataProcessor");
-        return CustomerServiceConstant.gson.toJson(customerServiceResult);
+        CustomerServiceUtils.logger.debug(" Sucessfully Data Received from GQEntrprseDataProcessor");
+        return CustomerServiceUtils.gson.toJson(customerServiceResult);
     }
 
     @Path("/getAssetCount")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public String getAssetCount() {
-        CustomerServiceConstant.logger.debug(" Generating all the customer service list from GQEntrprseDataProcessor");
+        CustomerServiceUtils.logger.debug(" Generating all the customer service list from GQEntrprseDataProcessor");
         AssetModel asset = new AssetModel();
         List<Asset> assetresult = asset.getAssetCount();
         // Returning all the enterprises in JSON format
-        CustomerServiceConstant.logger.debug(" Sucessfully Data Received from GQEntrprseDataProcessor For AssetCount");
-        return CustomerServiceConstant.gson.toJson(assetresult);
+        CustomerServiceUtils.logger.debug(" Sucessfully Data Received from GQEntrprseDataProcessor For AssetCount");
+        return CustomerServiceUtils.gson.toJson(assetresult);
     }
 
     @Path("/getEntpProtocolCount")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public String getEntpProtocolCount() {
-        CustomerServiceConstant.logger.debug(" Generating all the customer service list from GQEntrprseDataProcessor");
+        CustomerServiceUtils.logger.debug(" Generating all the customer service list from GQEntrprseDataProcessor");
         AssetModel asset = new AssetModel();
         List<ProtocolCount> protocolresult = asset.getEntpProtocolCount();
         // Returning all the enterprises in JSON format
-        CustomerServiceConstant.logger
+        CustomerServiceUtils.logger
                 .debug(" Sucessfully Data Received from GQEntrprseDataProcessor For Protocol Count");
-        return CustomerServiceConstant.gson.toJson(protocolresult);
+        return CustomerServiceUtils.gson.toJson(protocolresult);
     }
 
     @Path("/mostConsumedAssets")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public String mostConsumedAssets() {
-        CustomerServiceConstant.logger.debug(" Generating all the customer service list from GQEntrprseDataProcessor");
+        CustomerServiceUtils.logger.debug(" Generating all the customer service list from GQEntrprseDataProcessor");
         AssetLoadModel mostAsset = new AssetLoadModel();
 
         List<AssetLoad> assetresult = mostAsset.mostConsumedAssets();
         // Returning all the enterprises in JSON format
-        CustomerServiceConstant.logger
+        CustomerServiceUtils.logger
                 .debug(" Sucessfully Data Received from GQEntrprseDataProcessor For Most Consumed Asseets");
-        return CustomerServiceConstant.gson.toJson(assetresult);
+        return CustomerServiceUtils.gson.toJson(assetresult);
     }
 
     @Path("/leastConsumedAssets")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public String leastConsumedAssets() {
-        CustomerServiceConstant.logger.debug(" Generating all the customer service list from GQEntrprseDataProcessor");
+        CustomerServiceUtils.logger.debug(" Generating all the customer service list from GQEntrprseDataProcessor");
         AssetLoadModel leastAsset = new AssetLoadModel();
         List<AssetLoad> assetresult = leastAsset.leastConsumedAssets();
         // Returning all the enterprises in JSON format
-        CustomerServiceConstant.logger
+        CustomerServiceUtils.logger
                 .debug(" Sucessfully Data Received from GQEntrprseDataProcessor For Least Consumed Assets");
-        return CustomerServiceConstant.gson.toJson(assetresult);
+        return CustomerServiceUtils.gson.toJson(assetresult);
     }
 
 }

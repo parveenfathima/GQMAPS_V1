@@ -16,7 +16,7 @@ import org.json.JSONObject;
 import com.gq.meter.object.GoalMaster;
 import com.gq.meter.object.GoalSnpsht;
 import com.gq.meter.object.TemplateTaskDetails;
-import com.gq.meter.util.CustomerServiceConstant;
+import com.gq.meter.util.CustomerServiceUtils;
 import com.gq.meter.util.SqlUtil;
 import com.mysql.jdbc.Connection;
 import com.mysql.jdbc.PreparedStatement;
@@ -34,8 +34,8 @@ public class FinalizeGoalModel {
         String entpId = "";
         int snpshtId = 0;
         Timestamp currentDate = new Timestamp(new Date().getTime());
-        CustomerServiceConstant.logger.debug(" Current Date is" + currentDate);
-        CustomerServiceConstant.logger.info(" Data is Inserting into GoalSnapshot");
+        CustomerServiceUtils.logger.debug(" Current Date is" + currentDate);
+        CustomerServiceUtils.logger.info(" Data is Inserting into GoalSnapshot");
         try {
         	  dbExchange = (Connection) SqlUtil.getExchangeConnection();
               PreparedStatement preparegoalStmt = null;
@@ -88,7 +88,7 @@ public class FinalizeGoalModel {
             }
             
             preparegoalStmt.executeUpdate();
-            CustomerServiceConstant.logger.debug(" Data is inserted into GoalSnapshot");
+            CustomerServiceUtils.logger.debug(" Data is inserted into GoalSnapshot");
 
             //}
             // fetching the recently added goalsnpsht_id for the enterprise
@@ -100,7 +100,7 @@ public class FinalizeGoalModel {
                 snpshtId = snpshtSet.getInt("snpsht_id");
                 entpId = snpshtSet.getString("enterprise_id");
             }
-            CustomerServiceConstant.logger.debug(" selected max snapshotid from  GoalSnapshot");
+            CustomerServiceUtils.logger.debug(" selected max snapshotid from  GoalSnapshot");
 
             // fetching the task details fr snpsht id
             String snpShtquery = "SELECT * FROM task_chklst where  snpsht_id = ? ";
@@ -155,7 +155,7 @@ public class FinalizeGoalModel {
 
                 }
             }
-            CustomerServiceConstant.logger.debug(" inserting into task checklist");
+            CustomerServiceUtils.logger.debug(" inserting into task checklist");
             if(json.getString("actionName").equals("finalize")){
             	
             	if(goalmaster.getGoalSnpshtList().get(0).getSnpshtId()==0){
@@ -171,7 +171,7 @@ public class FinalizeGoalModel {
             	}
                  // updating the goalSnpsht with the end date and the sys notes
                  Timestamp applyDate = new Timestamp(new Date().getTime());
-                 CustomerServiceConstant.logger.debug(" Apply date is " + applyDate);
+                 CustomerServiceUtils.logger.debug(" Apply date is " + applyDate);
                 String finalizeUpdateQuery = "update goal_snpsht set end_date=?,notes=? where enterprise_id=? and snpsht_id=?;";
                 preparegoalStmt = (PreparedStatement) dbExchange.prepareStatement(finalizeUpdateQuery);
                 
@@ -184,17 +184,17 @@ public class FinalizeGoalModel {
             }
         }
         catch (SQLException e) {
-            CustomerServiceConstant.logger.error("Exception occured while inserting the Data",e);//fuctionality blk
+            CustomerServiceUtils.logger.error("Exception occured while inserting the Data",e);//fuctionality blk
             throw new SQLException(e);
         } catch (Exception e) {
-            CustomerServiceConstant.logger.error("Exception occured",e);//fuctionality blk
+            CustomerServiceUtils.logger.error("Exception occured",e);//fuctionality blk
             throw new Exception(e);
 		}
         finally{
         	try {
 				dbExchange.close();
 			} catch (SQLException e) {
-	            CustomerServiceConstant.logger.error("Exception occured while closing the connection",e);//dbxlose
+	            CustomerServiceUtils.logger.error("Exception occured while closing the connection",e);//dbxlose
 			}
         }
 
@@ -210,7 +210,7 @@ public class FinalizeGoalModel {
 			JSONObject json = new JSONObject(string);
 			int snpshtId=0;
 			//getting the snapshot id
-			CustomerServiceConstant.logger.debug("processing the data");
+			CustomerServiceUtils.logger.debug("processing the data");
 			if(json.getInt("gs_id")	== 0){
 				String snpshtIdQuery="select max(snpsht_id) as snpsht_id from goal_snpsht;";
 				Statement createStmt = (Statement) dbExchange.createStatement();
@@ -291,7 +291,7 @@ public class FinalizeGoalModel {
 		try{
 			dbExchange.close();
 		}catch(Exception e){
-			CustomerServiceConstant.logger.error("exception occuered wile closing the session in building goalmaster object",e);
+			CustomerServiceUtils.logger.error("exception occuered wile closing the session in building goalmaster object",e);
 		}
 		
 		return gm;

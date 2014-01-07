@@ -20,30 +20,30 @@ public class DynamicSessionUtil {
         String url = "jdbc:mysql://localhost:3306/" + dbInstanceName;
 
         if (SessionFactoryListMap.containsKey(dbInstanceName)) {
-        	CustomerServiceConstant.logger.info("Session Factory exists for " + dbInstanceName);
+        	CustomerServiceUtils.logger.info("Session Factory exists for " + dbInstanceName);
             sessionFactory = SessionFactoryListMap.get(dbInstanceName);
             try {
                 if ((sessionFactory == null) || (sessionFactory.getCurrentSession() == null)) {
-                	CustomerServiceConstant.logger.debug("Null session factory so newly creating one for .." + dbInstanceName);
+                	CustomerServiceUtils.logger.debug("Null session factory so newly creating one for .." + dbInstanceName);
                     createSessionFactory(dbInstanceName, url);
                 }
             }
             catch(HibernateException he){
             	he.printStackTrace();
-            	CustomerServiceConstant.logger.debug("HibernateException so newly creating one for .." + dbInstanceName);
+            	CustomerServiceUtils.logger.debug("HibernateException so newly creating one for .." + dbInstanceName);
 
                 try {
                 	createSessionFactory(dbInstanceName, url);
                 }
                 catch(HibernateException he1){
                 	he.printStackTrace();
-                	CustomerServiceConstant.logger.debug("HibernateException createSessionFactory .." + dbInstanceName);
+                	CustomerServiceUtils.logger.debug("HibernateException createSessionFactory .." + dbInstanceName);
                 }
 
             }
         }
         else {
-        	CustomerServiceConstant.logger.debug("No entry in map yet for .." + dbInstanceName + " , creating one ...");
+        	CustomerServiceUtils.logger.debug("No entry in map yet for .." + dbInstanceName + " , creating one ...");
             createSessionFactory(dbInstanceName, url);
         }
         
@@ -56,7 +56,7 @@ public class DynamicSessionUtil {
 		    configuration.setProperty("hibernate.connection.url", url);
 		    configuration.configure();
 		    SessionFactory sessionFactory = configuration.buildSessionFactory();
-		    CustomerServiceConstant.logger.debug("Session Factory created");
+		    CustomerServiceUtils.logger.debug("Session Factory created");
 		    SessionFactoryListMap.put(dbInstanceName, sessionFactory);
     } // method ends
 

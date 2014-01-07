@@ -16,7 +16,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import com.gq.meter.util.CustomerServiceConstant;
+import com.gq.meter.util.CustomerServiceUtils;
 import com.gq.meter.util.SqlUtil;
 import com.mysql.jdbc.CallableStatement;
 import com.mysql.jdbc.Statement;
@@ -54,7 +54,7 @@ public class ProcedureServices {
             stmt = (Statement) dbExchange.createStatement();
             // Resultset returned by query
             rs = stmt.executeQuery(sql);
-            CustomerServiceConstant.logger.info(" Query sucessfully Executed from the TaskAsst Table");
+            CustomerServiceUtils.logger.info(" Query sucessfully Executed from the TaskAsst Table");
 
             while (rs.next()) {
                 tsql = rs.getString("tsql");
@@ -72,16 +72,16 @@ public class ProcedureServices {
                 value = Math.round(output * 100.0) / 100.0;
             }
             else {
-                CustomerServiceConstant.logger.info(" nodata ");
+                CustomerServiceUtils.logger.info(" nodata ");
             }
-            CustomerServiceConstant.logger.error(" PUE data" + output);
+            CustomerServiceUtils.logger.error(" PUE data" + output);
             result = Double.toString(value);
         }
         catch (SQLException e) {
-            CustomerServiceConstant.logger.error(" Exception Occured during the Connection" + e);
+            CustomerServiceUtils.logger.error(" Exception Occured during the Connection" + e);
         }
         catch (Exception e) {
-            CustomerServiceConstant.logger.error(" Exception Occured during the Connection" + e);
+            CustomerServiceUtils.logger.error(" Exception Occured during the Connection" + e);
         }
         return Response.ok(result).build();
     }

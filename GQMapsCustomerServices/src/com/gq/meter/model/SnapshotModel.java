@@ -12,7 +12,7 @@ import com.gq.meter.object.Goal;
 import com.gq.meter.object.GoalSnpsht;
 import com.gq.meter.object.TaskCheckList;
 import com.gq.meter.object.TemplateTaskDetails;
-import com.gq.meter.util.CustomerServiceConstant;
+import com.gq.meter.util.CustomerServiceUtils;
 import com.gq.meter.util.SqlUtil;
 import com.mysql.jdbc.Connection;
 import com.mysql.jdbc.PreparedStatement;
@@ -43,12 +43,12 @@ public class SnapshotModel {
          }
      }
      catch (Exception e) {
-         CustomerServiceConstant.logger.error("exception occured" + e);
+         CustomerServiceUtils.logger.error("exception occured" + e);
      }
      try {
 			dbExchange.close();
 		} catch (SQLException e) {
-			CustomerServiceConstant.logger.error("Exception while closing the session", e);
+			CustomerServiceUtils.logger.error("Exception while closing the session", e);
 		}
 	return chklst;
 	}
@@ -65,7 +65,7 @@ public class SnapshotModel {
 		 prepareStmt.setInt(1, snpshtId);
 
          ResultSet chkSet = prepareStmt.executeQuery();
-         CustomerServiceConstant.logger.debug(" Query Sucessfully Executed for the Goal Snapshot");
+         CustomerServiceUtils.logger.debug(" Query Sucessfully Executed for the Goal Snapshot");
 
          while (chkSet.next()) {
         	 goalId = chkSet.getString("goal_id");
@@ -75,13 +75,13 @@ public class SnapshotModel {
                              .getTimestamp("end_date")));
          }
 		}catch(Exception e){
-			CustomerServiceConstant.logger.error("Exception Occured ",e);
+			CustomerServiceUtils.logger.error("Exception Occured ",e);
 
 		}
 		try {
 			dbExchange.close();
 		} catch (SQLException e) {
-			CustomerServiceConstant.logger.error("Exception while closing the session", e);
+			CustomerServiceUtils.logger.error("Exception while closing the session", e);
 		}
 		return gsList;
 	}
@@ -97,7 +97,7 @@ public class SnapshotModel {
         PreparedStatement prepareStmt = (PreparedStatement) dbExchange.prepareStatement(GoalSql);
          prepareStmt.setString(1, goalId);
         ResultSet rs = prepareStmt.executeQuery();
-         CustomerServiceConstant.logger.debug(" Query Executed for the Goal Table");
+         CustomerServiceUtils.logger.debug(" Query Executed for the Goal Table");
 
          if (rs.next()) {
 
@@ -105,16 +105,16 @@ public class SnapshotModel {
                      rs.getString("time_bound"), null); // last arg image is set to null for now - ss oct 10,13
          }
          else {
-             CustomerServiceConstant.logger.error("No Goal row found in table");
+             CustomerServiceUtils.logger.error("No Goal row found in table");
              return null;
          }
 		}catch(Exception e){
-			CustomerServiceConstant.logger.error("Exception Occured ",e);
+			CustomerServiceUtils.logger.error("Exception Occured ",e);
 		}
 		try {
 			dbExchange.close();
 		} catch (SQLException e) {
-			CustomerServiceConstant.logger.error("Exception while closing the session", e);
+			CustomerServiceUtils.logger.error("Exception while closing the session", e);
 		}
 		return goal;
 	}

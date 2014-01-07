@@ -12,46 +12,35 @@ import java.sql.Connection;
  * 
  */
 public class SqlUtil {
-    static String entpId = "";
-
+	
+	// static values for Database connection
+	static String ExchangeURL = "jdbc:mysql://localhost:3306/gqexchange";
+    static String CustomerURL = "jdbc:mysql://localhost:3306/gqm";
+    static String driver = "com.mysql.jdbc.Driver";
+    static String username = "gqmaps";
+    static String password = "Ch1ca803ear$";
+    
+    //getting the gqexchange db connection
     public static Connection getExchangeConnection() throws Exception {
-        String driver = "com.mysql.jdbc.Driver";
-        String dbURL = "jdbc:mysql://localhost:3306/gqexchange";
-        // String dbURL = "jdbc:mysql://192.168.8.15:3306/gqexchange";
-
-        String username = "gqmaps";
-        String password = "Ch1ca803ear$";
-
         Class.forName(driver);
-        Connection conn = DriverManager.getConnection(dbURL, username, password);
-        System.out.println("connparameters\t" + "DBURL\t" + dbURL);
+        Connection conn = DriverManager.getConnection(ExchangeURL, username, password);
         return conn;
     }
 
+    //getting the customer db connection
     public static Connection getCustomerConnection(String entpId) throws Exception {
-        String driver = "com.mysql.jdbc.Driver";
-        String dbURL1 = "jdbc:mysql://localhost:3306/gqm" + entpId;
-        // String dbURL1 = "jdbc:mysql://192.168.8.15:3306/gqm" + entpId;
-
-        String username = "gqmaps";
-        String password = "Ch1ca803ear$";
-
         Class.forName(driver);
-        Connection conn = DriverManager.getConnection(dbURL1, username, password);
-        System.out.println("connparameters\t" + "DBURL\t" + dbURL1);
+        Connection conn = DriverManager.getConnection(CustomerURL+ entpId, username, password);
         return conn;
     }
 
+    //getting the customer db connectin for  procedure execution 
+    //since no access permission allows to execute the procedure  this call is made
     public static Connection getCustomerConnectionProcedureCall(String entpId) throws Exception {
-        String driver = "com.mysql.jdbc.Driver";
-        // String dbURL1 = "jdbc:mysql://192.168.8.15:3306/gqm" + entpId
-        // + "?user=gqmaps&password=Ch1ca803ear$&noAccessToProcedureBodies=true";
-        String dbURL1 = "jdbc:mysql://localhost:3306/gqm" + entpId
-                + "?user=gqmaps&password=Ch1ca803ear$&noAccessToProcedureBodies=true";
-
+         String procedureURL = CustomerURL+ entpId
+         + "?user=gqmaps&password=Ch1ca803ear$&noAccessToProcedureBodies=true";
         Class.forName(driver);
-        Connection conn = DriverManager.getConnection(dbURL1);
-        System.out.println("connparameters\t" + "DBURL\t" + dbURL1);
+        Connection conn = DriverManager.getConnection(procedureURL);
         return conn;
     }
 }

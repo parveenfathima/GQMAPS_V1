@@ -32,7 +32,7 @@ import com.gq.meter.object.Goal;
 import com.gq.meter.object.GoalMaster;
 import com.gq.meter.object.GoalSnpsht;
 import com.gq.meter.object.TemplateTaskDetails;
-import com.gq.meter.util.CustomerServiceConstant;
+import com.gq.meter.util.CustomerServiceUtils;
 import com.gq.meter.util.SqlUtil;
 import com.ibm.icu.util.GregorianCalendar;
 import com.ibm.icu.util.TimeZone;
@@ -67,7 +67,7 @@ public class GoalServices {
             prepareStmt = (PreparedStatement) dbExchange.prepareStatement(masterGoalSql);
             prepareStmt.setString(1, goalId);
             rs = prepareStmt.executeQuery();
-            CustomerServiceConstant.logger.debug(" Query Executed for the Goal Table");
+            CustomerServiceUtils.logger.debug(" Query Executed for the Goal Table");
             Goal goal = null;
 
             if (rs.next()) {
@@ -76,7 +76,7 @@ public class GoalServices {
                         rs.getString("time_bound"), null); // last arg image is set to null for now - ss oct 10,13
             }
             else {
-                CustomerServiceConstant.logger.error("No Goal row found in table");
+                CustomerServiceUtils.logger.error("No Goal row found in table");
                 return null;
             }
 
@@ -92,7 +92,7 @@ public class GoalServices {
             prepareStmt.setString(2, entpId);
 
             ResultSet chkSet = prepareStmt.executeQuery();
-            CustomerServiceConstant.logger.debug(" Query Sucessfully Executed for the Goal Snapshot");
+            CustomerServiceUtils.logger.debug(" Query Sucessfully Executed for the Goal Snapshot");
             List<GoalSnpsht> gsList = new ArrayList<GoalSnpsht>(20);
 
             while (chkSet.next()) {
@@ -117,14 +117,14 @@ public class GoalServices {
 
             Statement statement = (Statement) dbExchange.createStatement();
 
-            CustomerServiceConstant.logger.debug("finaltskquery::" + taskTmpltQuery);
+            CustomerServiceUtils.logger.debug("finaltskquery::" + taskTmpltQuery);
             ResultSet taskTmpltset = statement.executeQuery(taskTmpltQuery);
 
             List<TemplateTaskDetails> templateTaskDetails = new ArrayList<TemplateTaskDetails>(10);
 
             while (taskTmpltset.next()) {
 
-                CustomerServiceConstant.logger.debug("ss1 === taskTmpltset.getInt(ts_id) = " + taskTmpltset.getInt("ts_id") + 
+                CustomerServiceUtils.logger.debug("ss1 === taskTmpltset.getInt(ts_id) = " + taskTmpltset.getInt("ts_id") + 
                 		" , goialid = "+ goalId + " , eid = " + entpId + " , ginputs = " + goalInputs);
                 List<String> cddetails = getChartData(taskTmpltset.getInt("ts_id"), goalId, entpId, goalInputs,
                         dbExchange, dbCustomer);
@@ -138,16 +138,16 @@ public class GoalServices {
 
             goalMaster.setTemplateTaskDetails(templateTaskDetails);
 
-            CustomerServiceConstant.logger.debug("Asset JSON is Constructed");
+            CustomerServiceUtils.logger.debug("Asset JSON is Constructed");
 
-            result = CustomerServiceConstant.gson.toJson(goalMaster);
+            result = CustomerServiceUtils.gson.toJson(goalMaster);
 
         }
         catch (SQLException ex) {
-            CustomerServiceConstant.logger.error(" Execption Occured while Executing Goal Services" + ex);
+            CustomerServiceUtils.logger.error(" Execption Occured while Executing Goal Services" + ex);
         }
         catch (Exception e) {
-            CustomerServiceConstant.logger.error(" Execption Occured " + e);
+            CustomerServiceUtils.logger.error(" Execption Occured " + e);
         }
         finally {
             // close connection
@@ -156,12 +156,12 @@ public class GoalServices {
                 dbCustomer.close();
             }
             catch (SQLException e) {
-                CustomerServiceConstant.logger.error(" Execption Occured while closing session" + e);
+                CustomerServiceUtils.logger.error(" Execption Occured while closing session" + e);
             }
 
-            CustomerServiceConstant.logger.debug("Session Closed sucessfully");
+            CustomerServiceUtils.logger.debug("Session Closed sucessfully");
         }
-        CustomerServiceConstant.logger.debug("GOAL Services Executed Sucessfully");
+        CustomerServiceUtils.logger.debug("GOAL Services Executed Sucessfully");
         return Response.ok().entity(result).build();
 
     } // end of method
@@ -196,7 +196,7 @@ public class GoalServices {
             String goalTaskAsstSql = "select * from task_asst where ts_id = ?;";
             prepareStmt = (PreparedStatement) dbExchange.prepareStatement(goalTaskAsstSql);
             prepareStmt.setInt(1, ts_id);
-            CustomerServiceConstant.logger.debug(" Query Executed for the TaskAsst Table for " + goalId + " Goal");
+            CustomerServiceUtils.logger.debug(" Query Executed for the TaskAsst Table for " + goalId + " Goal");
             goalTaskAsstSet = prepareStmt.executeQuery();
 
             if (!goalTaskAsstSet.next()) {
@@ -232,7 +232,7 @@ public class GoalServices {
         }
 
         // goal input
-        CustomerServiceConstant.logger.debug(" Dynamic Inputs passed for processing " + goalInputs);
+        CustomerServiceUtils.logger.debug(" Dynamic Inputs passed for processing " + goalInputs);
         Map<String, String> goalInputMap = new HashMap<String, String>(5);
         if(goalInputs!=" " && goalInputs!=null){
         String[] inputs = goalInputs.split("~");
@@ -247,10 +247,10 @@ public class GoalServices {
             Iterator<Entry<String, String>> it = goalInputMap.entrySet().iterator();
             while (it.hasNext()) {
                 Map.Entry<String, String> pairs = (Map.Entry<String, String>) it.next();
-                CustomerServiceConstant.logger.debug(" Input values from map " + pairs.getKey() + " = "
+                CustomerServiceUtils.logger.debug(" Input values from map " + pairs.getKey() + " = "
                         + pairs.getValue());
 
-                 CustomerServiceConstant.logger.debug(pairs.getKey() + " = " + pairs.getValue());
+                 CustomerServiceUtils.logger.debug(pairs.getKey() + " = " + pairs.getValue());
                 taskSql = taskSql.replaceAll(pairs.getKey(), pairs.getValue());
             }
         }
@@ -258,15 +258,15 @@ public class GoalServices {
         // check whether dynamic input is required for the task
 
         if (relatedDb.equalsIgnoreCase("e")) {
-            CustomerServiceConstant.logger.debug(" Query for non Dynamic value executing for Exchange");
+            CustomerServiceUtils.logger.debug(" Query for non Dynamic value executing for Exchange");
             stmt = (Statement) dbExchange.prepareStatement(taskSql);
             // Resultset returned by query entpResultset = stmt.executeQuery(tsql); } }
             entpResultset = stmt.executeQuery(taskSql);
         }
         else {
-            CustomerServiceConstant.logger.debug(" Query For non Dynamic value executing for Enterprise" + entpId);
+            CustomerServiceUtils.logger.debug(" Query For non Dynamic value executing for Enterprise" + entpId);
             stmt = (Statement) dbCustomer.prepareStatement(taskSql); // Resultset returned by query
-            CustomerServiceConstant.logger.debug("tsql:: " + taskSql);
+            CustomerServiceUtils.logger.debug("tsql:: " + taskSql);
             entpResultset = stmt.executeQuery(taskSql);
         }
         // determine the number of columns will be used for charts
@@ -282,14 +282,14 @@ public class GoalServices {
 
         if (ctId.equals("bar") || ctId.equals("pie")) {
             ArrayList<ColumnDescription> pieBarColumn = new ArrayList<ColumnDescription>();
-            CustomerServiceConstant.logger.debug(" Columns are being set for BAR/PIE charts");
+            CustomerServiceUtils.logger.debug(" Columns are being set for BAR/PIE charts");
             pieBarColumn.add(new ColumnDescription(colHeader[0], ValueType.TEXT, colHeader[0]));
             pieBarColumn.add(new ColumnDescription(colHeader[1], ValueType.NUMBER, colHeader[1]));
             dataTable.addColumns(pieBarColumn);
         }
         else if (ctId.equals("line")) {
             ArrayList<ColumnDescription> lineColumn = new ArrayList<ColumnDescription>();
-            CustomerServiceConstant.logger.debug(" Columns are being set for Annotated TimeLine charts");
+            CustomerServiceUtils.logger.debug(" Columns are being set for Annotated TimeLine charts");
             lineColumn.add(new ColumnDescription(colHeader[0], ValueType.TEXT, colHeader[0]));
             lineColumn.add(new ColumnDescription(colHeader[1], ValueType.NUMBER, colHeader[1]));
             dataTable.addColumns(lineColumn);
@@ -320,14 +320,14 @@ public class GoalServices {
             }
         }
         else if (ctId.equals("plain")) {
-            CustomerServiceConstant.logger.debug(" Dynamic Data Rows with are Plain Text");
+            CustomerServiceUtils.logger.debug(" Dynamic Data Rows with are Plain Text");
             // 3rd arg is the actual google chart json
             while (entpResultset.next()) {
             	retCData.add(entpResultset.getString(1)); // we expect only one row one column
             }
         }
         else if (ctId.equals("html")) {			// todo - make all these html / plain etc to constants - ss dec 31,2013
-            CustomerServiceConstant.logger.debug(" Dynamic Data Rows with html chosen - ss ");
+            CustomerServiceUtils.logger.debug(" Dynamic Data Rows with html chosen - ss ");
             // 3rd arg is the actual google chart json
             ResultSetMetaData rsmd = entpResultset.getMetaData();
 
@@ -337,7 +337,7 @@ public class GoalServices {
             }
             
             int columnsNumber = rsmd.getColumnCount();
-            CustomerServiceConstant.logger.debug("Dynamic Data Rows with html chosen , columns found - "+ columnsNumber);
+            CustomerServiceUtils.logger.debug("Dynamic Data Rows with html chosen , columns found - "+ columnsNumber);
 
             StringBuilder sb = new StringBuilder(2000);
             sb.append("<table>");
@@ -388,25 +388,25 @@ public class GoalServices {
                 sb.append("</tr>");
             }
             sb.append("</table>");
-            CustomerServiceConstant.logger.debug("===ss html string is === " + sb.toString());
+            CustomerServiceUtils.logger.debug("===ss html string is === " + sb.toString());
             retCData.add(sb.toString()); // we send the table
         } // html type ends
         
 
         // adding the rows to the chart
         if (ctId.equals("bar") || ctId.equals("pie")) {
-            CustomerServiceConstant.logger.debug(" Rows are being set for BAR/PIE charts");
+            CustomerServiceUtils.logger.debug(" Rows are being set for BAR/PIE charts");
             for (int i = 0; i < cDataList.size(); i++) {
                 dataTable.addRowFromValues(cDataList.get(i).getXaxis(), cDataList.get(i).getYaxis());
             }
             renderchart = JsonRenderer.renderDataTable(dataTable, true, true);
-            chartJson = CustomerServiceConstant.gson.toJson(renderchart);
+            chartJson = CustomerServiceUtils.gson.toJson(renderchart);
 
             // 3rd arg is the actual google chart json
             retCData.add(chartJson);
         }
         else if (ctId.equals("line")) {
-            CustomerServiceConstant.logger.debug(" Rows are being set for AnnotatedTimeLine charts");
+            CustomerServiceUtils.logger.debug(" Rows are being set for AnnotatedTimeLine charts");
             GregorianCalendar calendar = new GregorianCalendar();
             calendar.setTimeZone(TimeZone.getTimeZone("GMT"));
             for (int i = 0; i < cDataList.size(); i++) {
@@ -421,17 +421,19 @@ public class GoalServices {
             	DateFormat outputFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//used for converting date to String format
             	DateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             	Date currDate = inputFormat.parse(other);
-            	String outputText = outputFormat.format(currDate);
+            	String outputText = inputFormat.format(currDate);
                 String newDate="new Date("+outputText+")";
                 dataTable.addRowFromValues(outputText, cDataList.get(i).getYaxis());
             }
             renderchart = JsonRenderer.renderDataTable(dataTable, true, true);
-            chartJson = CustomerServiceConstant.gson.toJson(renderchart);
+            System.out.println("renderchart::"+renderchart);
+            chartJson = CustomerServiceUtils.gson.toJson(renderchart);
+            System.out.println("chartJson::"+chartJson);
             // 3rd arg is the actual google chart json
             retCData.add(chartJson);
         }
 
-        CustomerServiceConstant.logger.debug(" ArrowFormat data's are being constructed");
+        CustomerServiceUtils.logger.debug(" ArrowFormat data's are being constructed");
 
         return retCData;
 

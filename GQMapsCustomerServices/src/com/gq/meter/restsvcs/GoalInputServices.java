@@ -14,7 +14,7 @@ import javax.ws.rs.core.Response;
 
 import com.gq.meter.model.GoalInputModel;
 import com.gq.meter.object.GoalInput;
-import com.gq.meter.util.CustomerServiceConstant;
+import com.gq.meter.util.CustomerServiceUtils;
 
 /**
  * @author rathish
@@ -36,6 +36,6 @@ public class GoalInputServices {
         catch (Exception e) {
 
         }
-        return Response.ok(CustomerServiceConstant.gson.toJson(goalList)).build();
+        return Response.ok(CustomerServiceUtils.gson.toJson(goalList)).build();
     }
 }

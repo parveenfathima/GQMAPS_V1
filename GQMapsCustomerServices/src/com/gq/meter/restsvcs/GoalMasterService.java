@@ -18,7 +18,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.gq.meter.object.TaskAssist;
-import com.gq.meter.util.CustomerServiceConstant;
+import com.gq.meter.util.CustomerServiceUtils;
 import com.gq.meter.util.SqlUtil;
 
 import java.sql.Connection;
@@ -45,7 +45,7 @@ public class GoalMasterService {
             String goalSql = "select goal_id,descr from goal";
             goalStmt = (Statement) dbExchange.createStatement();
             ResultSet goalset = goalStmt.executeQuery(goalSql);
-            CustomerServiceConstant.logger.debug(" Query sucessfully Executed from the Goal Table");
+            CustomerServiceUtils.logger.debug(" Query sucessfully Executed from the Goal Table");
 
             while (goalset.next()) {
                 TaskAssist taskAssistObj = new TaskAssist();
@@ -70,11 +70,11 @@ public class GoalMasterService {
             JSONArray result = new JSONArray();
             result.put(goalDataTitle);
             goalResult = result.toString();
-            CustomerServiceConstant.logger
+            CustomerServiceUtils.logger
                     .debug(" Query sucessfully Executed Objects are constructed for the Goal and added to JSON Array");
         }
         catch (SQLException e) {
-            CustomerServiceConstant.logger.error(" Exception Occured while fetching the Goals");
+        	CustomerServiceUtils.logger.error(" Exception Occured while fetching the Goals");
         }
         catch (Exception e) {
             // TODO Auto-generated catch block

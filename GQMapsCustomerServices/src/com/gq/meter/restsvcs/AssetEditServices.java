@@ -15,7 +15,7 @@ import com.gq.meter.model.AssetEditModel;
 import com.gq.meter.object.GetAsset;
 import com.gq.meter.object.Asset;
 
-import com.gq.meter.util.CustomerServiceConstant;
+import com.gq.meter.util.CustomerServiceUtils;
 
 /**
  * @author parveen
@@ -32,11 +32,11 @@ public class AssetEditServices {
     // This method takes care of getting asset details for requesting enterprise.
     public String getAllAssetDetails(@QueryParam("enterpriseId") String enterpriseId) {
 
-        CustomerServiceConstant.logger.debug(" Generating all the Asset list for requesting enterprise");
+        CustomerServiceUtils.logger.debug(" Generating all the Asset list for requesting enterprise");
         AssetEditModel getAssetModel = new AssetEditModel();
         GetAsset getAssetResult = getAssetModel.getAssetDetails(enterpriseId);
         // Returning all the Assets in JSON format
-        return CustomerServiceConstant.gson.toJson(getAssetResult);
+        return CustomerServiceUtils.gson.toJson(getAssetResult);
     }
 
     @Path("/updateAssetData")
@@ -47,16 +47,16 @@ public class AssetEditServices {
         Asset[] assetObject = null;
         try {
             // Update the Asset Details
-            assetObject = CustomerServiceConstant.gson.fromJson(assetObjectString, Asset[].class);
+            assetObject = CustomerServiceUtils.gson.fromJson(assetObjectString, Asset[].class);
             for (int assetCount = 0; assetCount < assetObject.length; assetCount++) {
                 AssetEditModel assetModel = new AssetEditModel();
                 assetModel.updateAssets(enterpriseId, assetObject[assetCount]);
             }
         }
         catch (Exception e) {
-            CustomerServiceConstant.logger.error(" Exception occured while updating enterprise", e);
+            CustomerServiceUtils.logger.error(" Exception occured while updating enterprise", e);
             return Response.status(400).build();
         }
-        return Response.ok(CustomerServiceConstant.gson.toJson("success")).build();
+        return Response.ok(CustomerServiceUtils.gson.toJson("success")).build();
     }
 }
