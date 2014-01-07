@@ -18,7 +18,7 @@ import com.gq.meter.object.GoalMaster;
 import com.gq.meter.object.GoalSnpsht;
 import com.gq.meter.object.TaskCheckList;
 import com.gq.meter.object.TemplateTaskDetails;
-import com.gq.meter.util.CustomerServiceConstant;
+import com.gq.meter.util.CustomerServiceUtils;
 import com.gq.meter.util.SqlUtil;
 import com.mysql.jdbc.Connection;
 import com.mysql.jdbc.PreparedStatement;
@@ -38,7 +38,7 @@ public class SnapshotServices {
     	//1. taskchk list for retrieving the details based on the snapshotid
     	List<TemplateTaskDetails> chkList = snpshtModel.getSnapshot(snpshtId);
     	goalMaster.setTemplateTaskDetails(chkList);
-    	CustomerServiceConstant.logger.debug("TaskchkList Data sucessfully set to the GoalMaster");
+    	CustomerServiceUtils.logger.debug("TaskchkList Data sucessfully set to the GoalMaster");
     	
     	 // 2.build goal snapshot
     	List<GoalSnpsht> snpshtList = snpshtModel.getGoalSnapshot(snpshtId);
@@ -47,7 +47,7 @@ public class SnapshotServices {
     	//3.build goal object
     	Goal goal = snpshtModel.getGoal();
     	goalMaster.setGoal(goal);
-        return Response.ok(CustomerServiceConstant.gson.toJson(goalMaster)).build();
+        return Response.ok(CustomerServiceUtils.gson.toJson(goalMaster)).build();
 
     }
 }

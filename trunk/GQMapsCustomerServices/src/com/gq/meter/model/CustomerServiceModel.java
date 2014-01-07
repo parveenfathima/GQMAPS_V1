@@ -9,7 +9,7 @@ import com.gq.meter.object.AllCustomerServices;
 import com.gq.meter.object.DevCtlg;
 import com.gq.meter.object.Protocol;
 import com.gq.meter.object.SrvrAppType;
-import com.gq.meter.util.CustomerServiceConstant;
+import com.gq.meter.util.CustomerServiceUtils;
 import com.gq.meter.util.HibernateUtil;
 
 public class CustomerServiceModel {
@@ -24,23 +24,23 @@ public class CustomerServiceModel {
             String protocol = "FROM Protocol";
             Query protocolQuery = session.createQuery(protocol);
             List<Protocol> protocolResult = protocolQuery.list();
-            CustomerServiceConstant.logger.debug(" protocolResult : " + protocolResult);
+            CustomerServiceUtils.logger.debug(" protocolResult : " + protocolResult);
 
             String srvrAppType = "FROM SrvrAppType";
             Query srvrAppTypeQuery = session.createQuery(srvrAppType);
             List<SrvrAppType> srvrAppTypeResult = srvrAppTypeQuery.list();
-            CustomerServiceConstant.logger.debug(" srvrAppTypeResult : " + srvrAppTypeResult);
+            CustomerServiceUtils.logger.debug(" srvrAppTypeResult : " + srvrAppTypeResult);
 
             String deviceCatalog = "FROM DeviceCatalog";
             Query deviceCatalogQuery = session.createQuery(deviceCatalog);
             List<DevCtlg> deviceCatalogResult = deviceCatalogQuery.list();
-            CustomerServiceConstant.logger.debug(" deviceCatalogResult : " + deviceCatalogResult);
+            CustomerServiceUtils.logger.debug(" deviceCatalogResult : " + deviceCatalogResult);
 
             allCustomerServices = new AllCustomerServices(protocolResult, srvrAppTypeResult, deviceCatalogResult);
 
         }
         catch (Exception e) {
-            CustomerServiceConstant.logger.error(" Exception occured while fetching the CustomerServiceDetails ", e);
+            CustomerServiceUtils.logger.error(" Exception occured while fetching the CustomerServiceDetails ", e);
         }
         finally {
             try {
@@ -53,7 +53,7 @@ public class CustomerServiceModel {
                 e.printStackTrace();
             }
         }
-        CustomerServiceConstant.logger.debug(" Sucessfully returned the CusomerDetails");
+        CustomerServiceUtils.logger.debug(" Sucessfully returned the CusomerDetails");
         return allCustomerServices;
     }
 }

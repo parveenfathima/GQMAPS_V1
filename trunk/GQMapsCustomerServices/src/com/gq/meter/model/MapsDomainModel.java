@@ -12,7 +12,7 @@ import com.gq.meter.object.SrvrAppType;
 import com.gq.meter.object.CompType;
 import com.gq.meter.object.AssetImp;
 
-import com.gq.meter.util.CustomerServiceConstant;
+import com.gq.meter.util.CustomerServiceUtils;
 import com.gq.meter.util.DynamicSessionUtil;
 
 /**
@@ -29,7 +29,7 @@ public class MapsDomainModel {
         SessionFactory sessionFactory = null;
 
         try {
-            CustomerServiceConstant.logger.debug("Enterprise Id:" + enterpriseId);
+            CustomerServiceUtils.logger.debug("Enterprise Id:" + enterpriseId);
             String dbInstanceName = "gqm" + enterpriseId;
 
             // Create a session factory for requesting enterprise
@@ -62,7 +62,7 @@ public class MapsDomainModel {
             mapsDomainServices = new MapsDomainBean(devCtlgResult, srvrAppTypeResult, compTypeResult, assetImpResult);
         }
         catch (Exception e) {
-            CustomerServiceConstant.logger.error(" Exception occured while fetching the CustomerServiceDetails ", e);
+            CustomerServiceUtils.logger.error(" Exception occured while fetching the CustomerServiceDetails ", e);
         }
         finally {
             try {

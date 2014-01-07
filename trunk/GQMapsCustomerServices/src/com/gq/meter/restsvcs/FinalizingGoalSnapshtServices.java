@@ -8,7 +8,7 @@ import javax.ws.rs.core.Response;
 
 import com.gq.meter.model.FinalizeGoalModel;
 import com.gq.meter.object.GoalMaster;
-import com.gq.meter.util.CustomerServiceConstant;
+import com.gq.meter.util.CustomerServiceUtils;
 
 @Path("/saveAndFinalize")
 public class FinalizingGoalSnapshtServices {
@@ -18,21 +18,21 @@ public class FinalizingGoalSnapshtServices {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response finalizetasks(String string) {
     	
-        CustomerServiceConstant.logger.debug(" entered rest svc............. Goalmaster object"+string);
+        CustomerServiceUtils.logger.debug(" entered rest svc............. Goalmaster object"+string);
         GoalMaster goalmaster = new GoalMaster();
         FinalizeGoalModel goalModel = new FinalizeGoalModel();
 		try {
-        CustomerServiceConstant.logger.debug(" Building Goalmaster object"+string);
+        CustomerServiceUtils.logger.debug(" Building Goalmaster object"+string);
 
         goalmaster = goalModel.buildGoalMasterObj(string);
-		CustomerServiceConstant.logger.debug("Data before processing snapshot"+goalmaster.getGoalSnpshtList().size()+"task template details"+goalmaster.getTemplateTaskDetails().size());
+		CustomerServiceUtils.logger.debug("Data before processing snapshot"+goalmaster.getGoalSnpshtList().size()+"task template details"+goalmaster.getTemplateTaskDetails().size());
 
         //goalmaster = CustomerServiceConstant.gson.fromJson(jsonString, GoalMaster.class);
         //if (json.getString("actionName").equals("save")) {
-    		CustomerServiceConstant.logger.debug("before save");
+    		CustomerServiceUtils.logger.debug("before save");
 
     	 goalModel.CompleteGoal(goalmaster,string);
-            CustomerServiceConstant.logger.debug("sucessfully completed the save operation");
+            CustomerServiceUtils.logger.debug("sucessfully completed the save operation");
 
         //}
         //else if(json.getString("actionName").equals("finalize")) {
@@ -41,9 +41,9 @@ public class FinalizingGoalSnapshtServices {
 
        // }
 		} catch (Exception e) {
-			CustomerServiceConstant.logger.error("exception occured while processing the data",e);
+			CustomerServiceUtils.logger.error("exception occured while processing the data",e);
 			return Response.status(400).build();
 		}
-		return Response.ok(CustomerServiceConstant.gson.toJson("success")).build();
+		return Response.ok(CustomerServiceUtils.gson.toJson("success")).build();
     }// end of method
 }// end of class
