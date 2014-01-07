@@ -280,7 +280,6 @@ function serverList()
   
 }
 
-
 //opening goal input dialog based on the goal id in goal_input table
 function checkGoalInput(goalId)
 {
@@ -306,24 +305,21 @@ function checkGoalInput(goalId)
 				{
 					vValues = vValues + '<tr><td width="200%"> <label for = "' + json[i]["descr"] + '" > ' + json[i]["descr"] + ' </label></td> ';
 					
-	 				if(json[i]["dtvalue"] === "date")
-						vValues = vValues + '<td> <input type="date" name="' + json[i]["descr"] + '"  id="' + json[i]["descr"] + '" /></td></tr> ';	   						
+	 				if(json[i]["dtvalue"] === "date") 
+						vValues = vValues + '<td> <input type="date" name="' + json[i]["descr"] + '"  id="' + json[i]["descr"] + '" /></td></tr> ';
 					else					
 						vValues = vValues + '<td> <input type="text" name="' + json[i]["descr"] + '" id="' + json[i]["descr"] + '"  /></td></tr> ';
 				});	 
-
+				
 				$("#addElements").append(vValues);	
-				
-				
 				$("#dlgGoalInput").dialog(optGoalInput).dialog('open');	
-				
+
 			}
 			else
 			{
 				//TODO navigate to goal.jsp page
 				window.location.href = "goal.jsp?goalId="+$.jStorage.get("goalId")+"&entpId="+$.jStorage.get("jsEntpId");
-}
-		
+			}
 		},
 		error:function(json)
 		{
@@ -419,11 +415,10 @@ function submitGoalInput()
 						else {
 							vGoalInputs = vGoalInputs + "~"+ json[i]["colHoldr"] + "=" + $("#"+json[i]["descr"]).val();	
 						}
-						
 					}
 				});	 
 								
-				$("#dlgGoalInput").dialog(optGoalInput).dialog('close');		
+				$("#dlgGoalInput").dialog(optGoalInput).dialog('close');
 				window.location.href = "goal.jsp?goalId="+$.jStorage.get("goalId")+"&entpId="+$.jStorage.get("jsEntpId")+"&goalInputs="+vGoalInputs;
 				
 			}	
