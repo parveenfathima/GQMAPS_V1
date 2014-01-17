@@ -1,4 +1,3 @@
-
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
 	pageEncoding="ISO-8859-1"%>
 
@@ -228,9 +227,6 @@
 		 	  
 	 }
 	
-//---------------------
-		
-			
 	//function to find number of check boxes selected
 	function processForm(obj) {
 		var cb = document.getElementsByTagName('input');
@@ -315,65 +311,70 @@
 			<div id="top">
 				<div class="fixed">
 					<a href="#" title="" class="logo"></a>
+					<img class="logo-menu" src="images/image001.jpg"></img>
 				</div>
 			</div>
 			<!-- /fixed top -->
-	
-	
-			<!-- form to display task template -->
-			<form name="ttform" action="/GQMapsCustomerServices/saveAndFinalize/submit" method="post">
-	
+			
 			<!-- Content container -->
 			<div id="container" style="margin-left:auto; margin-right:auto; max-width:70%;">
 		
 		    	<!-- Content wrapper -->
 		    	<div class="wrapper">
-	                <br/>
+		    	
+		    		<br/>
 	                <br/>
         
 			    	<h5 class="widget-name"><i class="icon-columns"></i><%=g.getDescr()%></h5>
-			    
-				    <!-- Table with checkboxes -->
-	                <!--use tr class= success, warning, error and info for colors inside the placeholder table-->
-	                <div class="widget">
+			    	
+			    	<%if(g.getTimeBound().equals("y")){ %>
+			    		
+			    		<a id = "serverAsset" href = "#" onclick="serverList();"><h6 align="right"><u>Asset List</u></h6></a>
+			    		
+			    		<br/><br/>
+			    		<!-- form to display task template -->
+						<form name="ttform" action="/GQMapsCustomerServices/saveAndFinalize/submit" method="post">
+		
+							<!-- Table with checkboxes -->
+	                		<!--use tr class= success, warning, error and info for colors inside the placeholder table-->
+	                		<div class="widget">
                 	
-                    	<div class="table-overflow">
+                    			<div class="table-overflow">
                     
-                        	<table class="table table-bordered table-checks" class="table" id="select-all">
+                        			<table class="table table-bordered table-checks" class="table" id="select-all">
                         
-                          <thead>
-						  		<%if(g.getTimeBound().equals("y")){ %>
-                              <tr style="font-size:80%;">
-                              	<!--title of the table-->
-                                  <th>Tasks</th>
-                                  <th>Graph</th>
-                              </tr>
-                              <%}%>
-                          </thead>
-                          <tbody>
-                          	 <%
-								int i = 0;
-								for (i = 0; i < goalTaskTmpltChkList.size(); i++) {
-						  		%>
-						  		<input type="hidden" name="taskid" value='<%=goalTaskTmpltChkList.get(i).getTask_id()%>'>
-						  		<%if(i%2==0){ %>
-                              	<tr class="success input-row">
-                              	<%}else { %>
-                              	<tr class="info input-row">
-                              	<%} %>
-                                  <%
-                                  	if(g.getTimeBound().equals("y")){ 
-										String usrNotes = goalTaskTmpltChkList.get(i).getUsr_notes();
-										if ( usrNotes == null ) {
-											usrNotes = "";
-										}
-										String sysNotes = goalTaskTmpltChkList.get(i).getSys_notes();
-										if ( sysNotes == null ) {
-											sysNotes = "";
-										}
+                          			<thead>
+						  				
+                              			<tr style="font-size:80%;">
+                              			<!--title of the table-->
+                                  		<th>Tasks</th>
+                                  		<th>Graph</th>
+                              			</tr>
+                          			</thead>
+                          			<tbody>
+                          	 		<%
+										int i = 0;
+										for (i = 0; i < goalTaskTmpltChkList.size(); i++) {
+						  			%>
+						  			<input type="hidden" name="taskid" value='<%=goalTaskTmpltChkList.get(i).getTask_id()%>'>
+						  			
+						  			<%if(i%2==0){ %>
+                              		<tr class="success input-row">
+                              		<%}else { %>
+                              		<tr class="info input-row">
+                              		<%} %>
+                                  	<%
+											String usrNotes = goalTaskTmpltChkList.get(i).getUsr_notes();
+											if ( usrNotes == null ) {
+												usrNotes = "";
+											}
+											String sysNotes = goalTaskTmpltChkList.get(i).getSys_notes();
+											if ( sysNotes == null ) {
+												sysNotes = "";
+											}
 								
-								%>
-                                  <td style="width:42%;"> <span class="label label-inverse" style="line-height:20px;"><div style="white-space:normal;"><%=goalTaskTmpltChkList.get(i).getDescr()%></div> </span> <br/><br/><br/>
+									%>
+                                  		<td style="width:42%;"> <span class="label label-inverse" style="line-height:20px;"><div style="white-space:normal;"><%=goalTaskTmpltChkList.get(i).getDescr()%></div> </span> <br/><br/><br/>
                                         
                                         	<div style="width:190px; position:relative;">		                  
                                         		<label class="control-label" style="font-size:80%;"><i class="icon-list-alt"></i>System Notes</label>
@@ -410,18 +411,15 @@
 									    	</div>
 											<%
 												} %>
-								  </td>
-											<% 
-												}// end apply date chek box logic 
-											%>
-    										
-                                  <td>
- 								      <div class="well body">
+								  		</td>
+											
+                                  		<td>
+ 								      		<div class="well body">
   				            	
   				            			             <!-- Paste Chart div here-->
   				            			             
   				            			             <%
-  				            			             if(g.getTimeBound().equals("y")) {
+  				            			             
 														if ( goalTaskTmpltChkList.get(i).getChartType().equals("line")) {
 															%>
 															
@@ -438,37 +436,17 @@
 															<div id='chartDiv_<%=i%>' style = "color: #00008h" ></div>		
 															<%
 															}
-  				            			             }
-  				            			             
-  				            			             if(g.getTimeBound().equals("n")) {
-  				            			            	if ( goalTaskTmpltChkList.get(i).getChartType().equals("line")) {
-															%>
-															
-															<input type="hidden" id="chartData_<%=i%>" 
-															value='<%=goalTaskTmpltChkList.get(i).getChartData().replaceFirst("string", "datetime")%>'>
-															<span class="label label-inverse" style="line-height:20px;"><div style="white-space:normal;"><%=goalTaskTmpltChkList.get(i).getDescr()%></div> </span><br/><br/>	
-															<div id='chartDiv_<%=i%>' style = "width :770px; height:200px ;color: #00008a"></div> 					
-															<%	
-															}
-														else {
-															%>
-															<span class="label label-inverse" style="line-height:20px;"><div style="white-space:normal;"><%=goalTaskTmpltChkList.get(i).getDescr()%></div> </span><br/><br/> 
-															<input type="hidden" id="chartData_<%=i%>" 
-															value='<%=goalTaskTmpltChkList.get(i).getChartData()%>'>	
-															<div id='chartDiv_<%=i%>' style = "color: #00008h" ></div>		
-															<%
-															}
-  				            			             }
-															%>
-															<input type="hidden" id="chartType_<%=i%>"
+  				            			             		%>
+  				            			             	<input type="hidden" id="chartType_<%=i%>"
 															value='<%=goalTaskTmpltChkList.get(i).getChartType()%>'>
-                                     	 </div>
-				            	  	</td>
-                              	</tr>
+                                     	 	</div>
+				            	  		</td>
+                              		</tr>
                               	
-                              	<%
+                              		<%
 										} // end for to display tasks
-						      	%>
+						      		%>
+								
 								<!-- this used in goal.jsp for-loop -->
 			
 								<input type="hidden" id="taskCount" value=<%=i%>>	
@@ -477,60 +455,108 @@
                      </table>
                  </div>
            </div>
-			    <!-- /table with checkboxes -->
-
-			    <% if(g.getTimeBound().equals("y")){ %>
-			       <div class="span6">
+			    
+			<!-- /table with checkboxes -->
+			<div class="span6">
             
-            		<button id="save" class="btn btn-info" type="button" style="position:relative; top:10px; left:10px;" onclick="goalSubmit('save')">Save and Exit</button>
-            		<input class="input-large" name="gs_notes" maxlength="50" type="text" placeholder="Enter a Snapshot Note" style="display: block; position:relative;  top:-22px; left:150px;" />
-            		<button id="finalize" class="btn btn-success" type="button" style="position:relative; top:-54px; left:363px;" onclick="goalSubmit('finalize')">Finalize</button>
-            		
-            		<!--  the following entries are for providing the goal snapshot entry -->
-            		
-            		<button class="btn btn-warning" type="button" style="position:relative; top:-56px; left:680px;" onclick="gotoDashboard()"> Back to Dashboard </button>
-					<input type="hidden" name="gs_cost_benefit" id="gs_cost_benefit" >
-					<input type="hidden" name="gs_id" value="<%=goalTaskTmpltChkList.get(0).getSnpsht_id() %>">
-					<input type="hidden" name="gs_entpid" value="<%=enterpriseId %>">
-					<input type="hidden" name="gs_goalid" value="<%=goalId %>">
-		
-					<!-- mention what action is this -->
-					<input type="hidden" name="actionName" id="actionName" >
-
-					<!-- a dummy field to hold the json string-->
-					<input type="hidden" name="jsonFormData" id="jsonFormData" >
-					<p class="widget-name"></p>
-					</div>   
-					
-				<% 
-					} 
-				%>    
-			
-	<br>
-	<%
-					if(g.getTimeBound().equals("n")){
-	%>
-	<table>
-	<tr><td><button class="btn btn-warning" type="button" style="position:relative; top:-30px; left:760px;" onclick="gotoDashboard()"> Back to Dashboard </button>
-	</table>
-	<% } %>
-		</div>
-		<!-- Content Wrapper ends -->
-	</div>
-	<!-- Content Container ends  -->
+           		<button id="save" class="btn btn-info" type="button" style="position:relative; top:10px; left:10px;" onclick="goalSubmit('save')">Save and Exit</button>
+           		<input class="input-large" name="gs_notes" maxlength="50" type="text" placeholder="Enter a Snapshot Note" style="display: block; position:relative;  top:-22px; left:150px;" />
+           		<button id="finalize" class="btn btn-success" type="button" style="position:relative; top:-54px; left:363px;" onclick="goalSubmit('finalize')">Finalize</button>
+           		
+           		<!--  the following entries are for providing the goal snapshot entry -->
+           		
+           		<button class="btn btn-warning" type="button" style="position:relative; top:-56px; left:680px;" onclick="gotoDashboard()"> Back to Dashboard </button>
+           		<p class="widget-name"></p>
+				<input type="hidden" name="gs_cost_benefit" id="gs_cost_benefit" >
+				<input type="hidden" name="gs_id" value="<%=goalTaskTmpltChkList.get(0).getSnpsht_id() %>">
+				<input type="hidden" name="gs_entpid" value="<%=enterpriseId %>">
+				<input type="hidden" name="gs_goalid" value="<%=goalId %>">
 	
-  </form>
-  
-  <!-- form to display goal snapshot history-->
-<%
-if(g.getTimeBound().equals("y")){ %>
+				<!-- mention what action is this -->
+				<input type="hidden" name="actionName" id="actionName" >
 
- <h4 style="font-family: 'Open Sans', sans-serif; font-weight: 400; text-shadow: 0 1px 1px #fff; margin: 0; color: #303030;" align="center">Goal History</h4>
-<br>
-	<form id='gsform' method="post" >
+				<!-- a dummy field to hold the json string-->
+				<input type="hidden" name="jsonFormData" id="jsonFormData" >
+				
+			</div>   
+			<br/><br/>
+		<%}%>
+	    <%
+			if(g.getTimeBound().equals("n")){ %>
+			
+				<div class="widget">
+                	
+                    	<div class="table-overflow">
+                    
+                        	<table class="table table-bordered table-checks" class="table" id="select-all">
+                 			
+                 				<tbody>
+                          	 <%
+								int i = 0;
+								for (i = 0; i < goalTaskTmpltChkList.size(); i++) {
+						  		%>
+						  		<input type="hidden" name="taskid" value='<%=goalTaskTmpltChkList.get(i).getTask_id()%>'>
+						  		<%if(i%2==0){ %>
+                              	<tr class="success input-row">
+                              	<%}else { %>
+                              	<tr class="info input-row">
+                              	<%} %>
+                              	<td>
+ 								      <div class="well body">
+ 								      
+ 								      	<!-- Paste Chart div here-->
+ 								      	<% 
+			            			            	if ( goalTaskTmpltChkList.get(i).getChartType().equals("line")) {
+													%>
+												
+												<input type="hidden" id="chartData_<%=i%>" 
+												value='<%=goalTaskTmpltChkList.get(i).getChartData().replaceFirst("string", "datetime")%>'>
+												<span class="label label-inverse" style="line-height:20px;"><div style="white-space:normal;"><%=goalTaskTmpltChkList.get(i).getDescr()%></div> </span><br/><br/>	
+												<div id='chartDiv_<%=i%>' style = "width :800px; height:250px ;color: #00008a"></div> 					
+												<%	
+												}
+												else {
+												%>
+												<span class="label label-inverse" style="line-height:20px;"><div style="white-space:normal;"><%=goalTaskTmpltChkList.get(i).getDescr()%></div> </span><br/><br/> 
+												<input type="hidden" id="chartData_<%=i%>" 
+												value='<%=goalTaskTmpltChkList.get(i).getChartData()%>'>	
+												<div id='chartDiv_<%=i%>' style = "color: #00008h" ></div>		
+												<%
+												}
+			            			            
+												%>
+												<input type="hidden" id="chartType_<%=i%>"
+												value='<%=goalTaskTmpltChkList.get(i).getChartType()%>'>
+                 			       		</div>
+				            	  	</td>
+                              	</tr>
+                              	<%
+										} // end for to display tasks
+						      	%>
+								<!-- this used in goal.jsp for-loop -->
+			
+								<input type="hidden" id="taskCount" value=<%=i%>>	
+								
+                         	</tbody>
+                        </table>
+                 </div>
+           </div>
+           <br><br>
+			    <!-- /table with checkboxes -->	
+			    <table>
+				<tr><td><button class="btn btn-warning" type="button" style="position:relative; top:-30px; left:760px;" onclick="gotoDashboard()"> Back to Dashboard </button>
+				</table>
+	<% } %> 
+			
+			<!-- form to display goal snapshot history-->
+			<%
+			if(g.getTimeBound().equals("y")){ %>
 
+ 			<h4 style="font-family: 'Open Sans', sans-serif; font-weight: 400; text-shadow: 0 1px 1px #fff; margin: 0; color: #303030;" align="center">Goal History</h4>
+			<br/><br/>
+			<form id='gsform' method="post" >
 
-		<div class="widget">
+				<div class="widget">
                 	
                     <div class="table-overflow">
                         <table align="center" style="width:600px;" id="tblGoalsnapsht" class="table table-bordered table-checks" >
@@ -546,41 +572,43 @@ if(g.getTimeBound().equals("y")){ %>
                                   
                               </tr>
                           </thead>
-				<%
-					for (i = 0; i < goalsnapshotList.size(); i++) {
-						String goalSPLink = "goal_snapshot.jsp?snapShotId=" + goalsnapshotList.get(i).getSnpshtId() ;
-				%>
-				<tr style="font-size:80%;">
-					<td style="width:20px;"><a href='<%=goalSPLink%>'>
+                          <tbody>
+								<%
+								for (int i = 0; i < goalsnapshotList.size(); i++) {
+									String goalSPLink = "goal_snapshot.jsp?snapShotId=" + goalsnapshotList.get(i).getSnpshtId() ;
+								%>
+								<tr style="font-size:80%;">
+								<td style="width:20px;"><a href='<%=goalSPLink%>'>
 										<%=goalsnapshotList.get(i).getSnpshtId()%></a></td>
-					<% startDate=new Date(goalsnapshotList.get(i).getStartDate().getTime());
-					year=startDate.getYear()+1900;
-					month=startDate.getMonth()+1;
-					date=startDate.getDate();
-					%>
-					<td style="width:50px;"><%=year%>-<%if(month<10)out.println("0"+month);else out.println(month);%>-<%if(date<10)out.println("0"+date);else out.println(date);%></td>
-					<td style="width:50px;"><%=goalsnapshotList.get(i).getNotes()%></td>
-					<% endDate=new Date(goalsnapshotList.get(i).getEndDate().getTime());
-					year=endDate.getYear()+1900;
-					month=endDate.getMonth()+1;
-					date=endDate.getDate();
-					%>
-					<td style="width:50px;"><%=year%>-<%if(month<10)out.println("0"+month);else out.println(month);%>-<%if(date<10)out.println("0"+date);else out.println(date);%></td>
-					<td style="width:50px;"><%=goalsnapshotList.get(i).getCostBenefit()%></td>
-					</tr>
-					<%
-						}
-					%>				
-
-			</table>
-		</div>
+								<% startDate=new Date(goalsnapshotList.get(i).getStartDate().getTime());
+								year=startDate.getYear()+1900;
+								month=startDate.getMonth()+1;
+								date=startDate.getDate();
+								%>
+								<td style="width:50px;"><%=year%>-<%if(month<10)out.println("0"+month);else out.println(month);%>-<%if(date<10)out.println("0"+date);else out.println(date);%></td>
+								<td style="width:50px;"><%=goalsnapshotList.get(i).getNotes()%></td>
+								<% endDate=new Date(goalsnapshotList.get(i).getEndDate().getTime());
+								year=endDate.getYear()+1900;
+								month=endDate.getMonth()+1;
+								date=endDate.getDate();
+								%>
+								<td style="width:50px;"><%=year%>-<%if(month<10)out.println("0"+month);else out.println(month);%>-<%if(date<10)out.println("0"+date);else out.println(date);%></td>
+								<td style="width:50px;"><%=goalsnapshotList.get(i).getCostBenefit()%></td>
+								</tr>
+								<%
+								}
+								%>				
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</form>
+		<%}%> 
+			
+		<script>
+	  		window.onload = showGoalGraphs();	
+		</script>
+			
 	</div>
-	</form>
-	<%}%> 
-	<script>
-	  	window.onload = showGoalGraphs();	
-	</script>
-	
-</div>
 </body>
 </html>
