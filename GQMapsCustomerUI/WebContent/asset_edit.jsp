@@ -376,7 +376,7 @@ function getCurrentAssets()
 	<div id="top">
 		<div class="fixed">
 			<a href="#" title="" class="logo"></a>
-			
+			<img class="logo-menu" src="images/image001.jpg"></img>
 		</div>
 	</div>
 	<!-- /fixed top -->
