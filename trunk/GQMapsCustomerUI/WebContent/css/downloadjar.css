@@ -60,6 +60,7 @@ body {
 .align-left { text-align: left; }
 .align-right {text-align: right; }
 .align-center { text-align: center; }
+.logo-menu {height: 25px; top:10px; left:15px; width:100px; }
 
 .pull-right { float: right; }
 .pull-left { float: left; }
