@@ -1047,9 +1047,9 @@ footer p {
 .downloadjar{
     
   height:100px;
-  width:120px;
+  width:200px;
   position: absolute;
-  left: 175px;
+  left: 120px;
   bottom: -60px
 }
 
@@ -1058,7 +1058,7 @@ footer p {
 	height:100px;
 	width:100px;
 	position:absolute;
-	left:310px;
+	left:340px;
 	bottom:-60px;
 	}
 
