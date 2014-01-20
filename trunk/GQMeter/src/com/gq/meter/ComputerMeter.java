@@ -904,11 +904,7 @@ public class ComputerMeter implements GQSNMPMeter {
                         String softwareName = softwareResult.get(appResultCount).getVariable().toString().trim();
                         Date installDate = getDate(dateResult.get(appResultCount).getVariable().toString().trim(),
                                 isLinux);
-                        System.out.println(softwareName+"                 "+installDate);
                         String[] softwareNameTokens = softwareName.split("-");
-                        for(int i=0;i<softwareNameTokens.length;i++) {
-                        	System.out.println(softwareNameTokens[i]);
-                        }
                         String finalSoftwareName = "";
                         for (int count = 0; count < softwareNameTokens.length; count++) {
                             if ((softwareNameTokens[count].charAt(0) >= 65 && softwareNameTokens[count].charAt(0) <= 91)
