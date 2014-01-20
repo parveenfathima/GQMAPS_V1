@@ -101,12 +101,15 @@ public class ComputerMeter implements GQSNMPMeter {
             String tempStr;
             boolean isWindows = false;
             boolean isLinux = false;
+            boolean isMac = false;
+            
             OID rootOID = null;
             List<VariableBinding> result = null;
             List<VariableBinding> result1 = null;
             sysDescription = assetObj.getDescr();
-
+            
             if (null != sysDescription) { // 1st if starts
+            	sysDescription = sysDescription.toLowerCase();
                 if (sysDescription.contains("windows")) {
                     osId = "windows";
                     isWindows = true;
@@ -117,6 +120,11 @@ public class ComputerMeter implements GQSNMPMeter {
                 }
                 else if (sysDescription.contains("unix")) {
                     osId = "unix";
+                }
+                //we are here for mac all the processes are same as that of linux machine.
+                else if(sysDescription.contains("mac")) {
+                	osId = "mac";
+                	isMac = true;
                 }
             }// 1st if ends
              // the following oid's is used to get the asset id for windows.
@@ -132,12 +140,12 @@ public class ComputerMeter implements GQSNMPMeter {
                 }// 2nd if ends
             }// 1st if ends
              // the following oid's is used to get the asset id for Linux.
-            else {
+            else if(isLinux) {
                 oidString = ".1.3.6.1.2.1.2.2.1";
                 rootOID = new OID(oidString);
                 result = MeterUtils.walk(rootOID, target);
                 if (result != null && !result.isEmpty()) {
-                    String[] ethernet = new String[] { "eth0", "eth1", "eth2", "en1", "en2", "en3", "em1", "em2",
+                    String[] ethernet = new String[] { "eth0", "eth1", "eth2", "en0","en1", "en2", "en3", "em1", "em2",
                             "em3", "wlan" };
                     HashMap<String, List<Long>> networkMap = new HashMap<String, List<Long>>();
                     networkBytes = linuxAssetIdCalc(result, rootOID, ethernet, networkMap, assetId, sysDescription);
@@ -149,7 +157,19 @@ public class ComputerMeter implements GQSNMPMeter {
                             + "Unable to get network bandwidth details and unable to collate asset ID");
                 }// 2nd else ends
             }// 1st else ends
-
+            
+            else if(isMac) {
+            	oidString = ".1.3.6.1.2.1.2.2.1";
+                rootOID = new OID(oidString);
+                result = MeterUtils.walk(rootOID, target);
+                if (result != null && !result.isEmpty()) {
+                    HashMap<String, String> winNetworkMap = new HashMap<String, String>();
+                    networkBytes = winAssetIdCalc(result, rootOID, winNetworkMap);
+                    assetId = "C-" + networkBytes.get("macWinNetworkValue");
+                    assetObj.setAssetId(assetId);
+                }// 2nd if ends
+            }//else if ends
+           
             // ASSET ID , RUN ID STARTS HERE.
             id = new CPNId(runId, assetId);
             for (String element : toggleSwitches) { // main for loop starts here
@@ -216,6 +236,7 @@ public class ComputerMeter implements GQSNMPMeter {
                             variable = "/dev/shm";
                             long linuxDriveSize = getMemorycalc(result, rootOID, variable, false);
                             long usedLinuxDriveSize = getMemorycalc(result, rootOID, variable, true);
+                            
 
                             variable = "/home";
                             long homeSize = getMemorycalc(result, rootOID, variable, false);
@@ -249,8 +270,8 @@ public class ComputerMeter implements GQSNMPMeter {
                                 usedMemory = getMemorycalc(result, rootOID, variable, true);
                             } // 2nd else loop ends
                             if (usedMemory == 0) {
-                                errorList.add(ipAddress + " " + "Unable to get used Memory");
-                            }
+                               errorList.add(ipAddress + " " + "Unable to get used Memory");
+                           }
                         } // 1st else loop ends
                     } // 1st if loop ends
                     else {
@@ -300,7 +321,7 @@ public class ComputerMeter implements GQSNMPMeter {
                         result = MeterUtils.walk(rootOID, target);
 
                         if (result != null && !result.isEmpty()) { // 1st if loop starts
-                            String[] ethernet = new String[] { "eth0", "eth1", "eth2", "en1", "en2", "en3", "em1",
+                            String[] ethernet = new String[] { "eth0", "eth1", "eth2", "en0","en1", "en2", "en3", "em1",
                                     "em2", "em3", "wlan" };
 
                             HashMap<String, List<Long>> networkMap = new HashMap<String, List<Long>>();
@@ -355,7 +376,7 @@ public class ComputerMeter implements GQSNMPMeter {
                         // equal.
                         if (appResult.size() == softwareResult.size() && appResult.size() == dateResult.size()) {
                             installedSwList = installedSwListCalc(appResult, softwareResult, dateResult, rootOID,
-                                    isWindows, isLinux, id);
+                                    isWindows, isLinux,isMac, id);
                         }
                         else {
                             errorList.add(assetId + " Unable to fetch list of installed software due to network speed");
@@ -425,6 +446,7 @@ public class ComputerMeter implements GQSNMPMeter {
 
         }// try ends
         catch (Exception e) {
+        	e.printStackTrace();
             errorList.add(ipAddress + " " + e.getMessage());
         }
 
@@ -534,7 +556,7 @@ public class ComputerMeter implements GQSNMPMeter {
     }
 
     /**
-     * This method is used to get the Linux , network in and out bytes of a asset.
+     * This method is used to get the Linux and Mac , network in and out bytes of a asset.
      * 
      * @param result
      * @param rootOid
@@ -636,16 +658,26 @@ public class ComputerMeter implements GQSNMPMeter {
                 } // if loop ends
             } // 2nd for loop ends
         } // 1st for loop ends
-
-        Set<String> uniqueValues = new HashSet<String>(macOidMap.get("eth0").values());
-        if (macOidMap.get("eth0") != null && macOidMap.get("eth0").size() != 0) {
-            String eth0MacAddress = uniqueValues.toString().substring(1, uniqueValues.toString().length() - 1).trim()
+        if( sysDescription.contains("mac") ){
+        	
+        	Set<String> uniqueValues = new HashSet<String>(macOidMap.get("en0").values());
+        	if (macOidMap.get("eth0") != null && macOidMap.get("en0").size() != 0) {
+        		String eth0MacAddress = uniqueValues.toString().substring(1, uniqueValues.toString().length() - 1).trim()
                     .replaceAll(":", "");
-            assetId = eth0MacAddress;
-            networkValues.put("assetId", assetId);
-        }
+        		assetId = eth0MacAddress;
+        		networkValues.put("assetId", assetId);
+        		}	
+        	}else{
+        		Set<String> uniqueValues = new HashSet<String>(macOidMap.get("eth0").values());
+        		if (macOidMap.get("eth0") != null && macOidMap.get("eth0").size() != 0) {
+        			String eth0MacAddress = uniqueValues.toString().substring(1, uniqueValues.toString().length() - 1).trim()
+                    .replaceAll(":", "");
+        			assetId = eth0MacAddress;
+        			networkValues.put("assetId", assetId);
+        		}
+        }	
         return networkValues;
-    } // network bytes calculation for Linux gets over
+    } // network bytes calculation for Linux and Mac gets over
 
     /**
      * This method is used to get the Windows , network in and out bytes of a asset.
@@ -749,6 +781,45 @@ public class ComputerMeter implements GQSNMPMeter {
         return networkValues;
     }
 
+    private HashMap<String, String> macAssetIdCalc(List<VariableBinding> result, OID rootOid, String[] ethernet,
+            HashMap<String, List<Long>> networkMap, String assetId, String sysDescription) {
+        String macOid = null;
+        String rootId = rootOid.toString();
+        HashMap<String, HashMap<String, String>> macOidMap = new HashMap<String, HashMap<String, String>>();
+        HashMap<String, String> networkValues = new HashMap<String, String>();
+
+        for (int i = 0; i < ethernet.length; i++) { // 1st for loop starts
+            for (VariableBinding vb : result) { // 2nd for loop starts
+                if (vb.getVariable().toString().trim().equalsIgnoreCase(ethernet[i])) { // 1st if loop starts
+                    String lastchar = String.valueOf(vb.getOid().last());
+                    macOid = rootId + "." + "10" + "." + lastchar;
+                    for (VariableBinding vbs : result) { // 3rd for loop starts
+
+                        if (vbs.getOid().toString().trim().equals(macOid)) { // 2nd if loop starts
+                            if (macOidMap.get(ethernet[i]) == null || macOidMap.get(ethernet[i]).size() == 0
+                                    || macOidMap.get(ethernet[i]).isEmpty()) {
+                                HashMap<String, String> macMap = new HashMap<String, String>();
+                                macMap.put(vbs.getOid().toString(), vbs.getVariable().toString());
+                                macOidMap.put(ethernet[i], macMap);
+                            }
+                            else {
+                                macOidMap.get(ethernet[i]).put(vbs.getOid().toString(), vbs.getVariable().toString());
+                            }
+                        } // 2nd if loop ends
+                    } // 3rd for loop ends
+                } // 1st if loop ends
+            } // 2nd for loop ends
+        } // 1st for loop ends
+        Set<String> uniqueValues = new HashSet<String>(macOidMap.get("en0").values());
+        if (macOidMap.get("en0") != null && macOidMap.get("en0").size() != 0) {
+            String eth0MacAddress = uniqueValues.toString().substring(1, uniqueValues.toString().length() - 1).trim()
+                    .replaceAll(":", "");
+            assetId = eth0MacAddress;
+            networkValues.put("assetId", assetId);
+        }
+        return networkValues;
+    }
+
     /**
      * This method is used to Windows Asset ID
      * 
@@ -800,7 +871,7 @@ public class ComputerMeter implements GQSNMPMeter {
      */
     private ArrayList<CompInstSoftware> installedSwListCalc(List<VariableBinding> appResult,
             List<VariableBinding> softwareResult, List<VariableBinding> dateResult, OID rootOid, boolean isWindows,
-            boolean isLinux, CPNId id) {
+            boolean isLinux,boolean isMac, CPNId id) {
 
         Long runId = id.getRunId();
         String assetId = id.getAssetId();
@@ -808,7 +879,7 @@ public class ComputerMeter implements GQSNMPMeter {
         ArrayList<CompInstSoftware> installedSwList = new ArrayList<CompInstSoftware>(appResult.size());
         CompInstSoftwareId ins = null;
         try {
-            if (isWindows) {
+            if (isWindows || isMac) {
                 for (int i = 0; i < appResult.size(); i++) { // for loop starts
                     if (appResult.get(i).getVariable().toString().trim().equals("4")) { // 1st if loop starts
                         String softwareName = softwareResult.get(i).getVariable().toString().trim();
@@ -833,7 +904,11 @@ public class ComputerMeter implements GQSNMPMeter {
                         String softwareName = softwareResult.get(appResultCount).getVariable().toString().trim();
                         Date installDate = getDate(dateResult.get(appResultCount).getVariable().toString().trim(),
                                 isLinux);
+                        System.out.println(softwareName+"                 "+installDate);
                         String[] softwareNameTokens = softwareName.split("-");
+                        for(int i=0;i<softwareNameTokens.length;i++) {
+                        	System.out.println(softwareNameTokens[i]);
+                        }
                         String finalSoftwareName = "";
                         for (int count = 0; count < softwareNameTokens.length; count++) {
                             if ((softwareNameTokens[count].charAt(0) >= 65 && softwareNameTokens[count].charAt(0) <= 91)
