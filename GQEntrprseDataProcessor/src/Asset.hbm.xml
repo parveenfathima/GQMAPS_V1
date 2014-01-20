@@ -26,5 +26,8 @@
         <property name="location" type="string">
             <column name="location" length="45" />
         </property>
+        <property name="assetUsg" type="string">
+        	<column name="asset_usg" length="50"/>
+        </property>
     </class>
 </hibernate-mapping>
