@@ -114,7 +114,7 @@ noscript p{
 
 /* === CONTENT Section === */
 #documenter_cover{
-	height:130px;
+	height:100px;
 	padding-top:10px !important;
 }
 #documenter_cover li{
@@ -182,7 +182,7 @@ h6 { color: #b55d5c; }
 	font-weight:700;
 }
 #documenter_content table th, #documenter_content table td{
-	text-align:left;
+	text-align:center;
 }
 
 table tr:nth-child(even) { background-color: #fafafa; }
