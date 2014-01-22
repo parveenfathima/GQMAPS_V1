@@ -4,7 +4,6 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
 	pageEncoding="ISO-8859-1"%>
 
-
 <!DOCTYPE>
 
 <html>
@@ -87,6 +86,7 @@
 
 <script type="text/javascript">
 
+
 //array to store the db values to compare with the page values
 var assetsDB = { assetDataDB: [] };
 
@@ -125,6 +125,14 @@ function updateAsset(count)
 			vSrvrType = null;
 		
 		vUsage =  $.trim($("#txtAssetUsage"+j).val()); // NA for nsrg
+
+		var assetRegExp = /^[A-Za-z0-9\/\s\.-]+$/;
+		if (!assetRegExp.test(vUsage)) 
+		{
+			alert('Please enter asset usage details without special characters except .,- and space '+'  '+ vUsage);
+				return false;
+		}
+		
 		if(vUsage === "" || vUsage === "null" || vUsage === null)
 			vUsage = null;
 		else if(vUsage.length > 50)
