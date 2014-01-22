@@ -194,6 +194,45 @@ $(document).ready(function()
 	}	
 });
 
+//function to store compute duration new value.
+function computeDurationSet(vol) 
+{
+	document.querySelector('#volume').value = vol;
+	var rangeValue = document.getElementById('slide').value;
+	document.getElementById('computeValue').value=rangeValue;
+}
+
+
+//function to redirect a dashboard screen when dynamically changed compute duration
+function computeDurationUpdate() 
+{
+	var rangeValue=document.getElementById('computeValue').value;
+	var vType = "PUT";
+	var vUrl = $.jStorage.get("jsDBUrl") + "updcmpdur?entpId=" + $.jStorage.get("jsEntpId")+"&value="+rangeValue;
+	
+	$.ajax
+	({
+		type:vType,
+		contentType: "application/json",
+		url:vUrl,
+		async:false,
+		//dataType: "json",
+		success:function()
+		{	
+			//window.location.href="dashboard_full.html";
+			//window.location.replace("dashboard_full.html");
+			window.location.reload();
+		},
+		error:function(json)
+		{
+			
+			alert("Error from fetching Updated compute duration data!");			
+ 
+		}	 
+	});	//end of ajax	
+	//alert(rangeValue);
+	}
+
 
 //function to display text in the specified div location
 function showPlainText(plainText, divID)
@@ -237,8 +276,7 @@ function getPUE()
 function loadGoals()
 {
 	var vType = "GET";
-	var vUrl = $.jStorage.get("jsDBUrl") + "goalmaster/goals";
-	
+	var vUrl = $.jStorage.get("jsDBUrl") + "goalmaster/goals?entpId=" + $.jStorage.get("jsEntpId");
 	$.ajax
 	({
 		type:vType,
@@ -252,18 +290,11 @@ function loadGoals()
 		
 			$.each(json[0]["goalData"], function(i,n)
 			{
-				//vValues = vValues + '<option value = "'+ json[0]["goalData"][i]["goalId"] + '" >' 
-					//+ json[0]["goalData"][i]["goalDescr"] + '</option>';	
-				
 				vValues = vValues + '<li><a href="#" onClick="checkGoalInput(\''+ json[0]["goalData"][i]["goalId"] +"')\">"
 						 + json[0]["goalData"][i]["goalDescr"] + "</a></li>";
-				
-
-                
 			});
 			
 			$("#cmbGoals").append(vValues); 			
-					
 		},
 		error:function(json)
 		{
@@ -274,10 +305,8 @@ function loadGoals()
 
 function serverList()
 {
-  
 	window.open("server_list.jsp?entpId="+ $.jStorage.get("jsEntpId") ,"serverlist","right=2000,top=20,toolbar=no, " +
 				"status=no,location=no,	menubar=no, scrollbars=yes, resizable=no, width=400, height=400");
-  
 }
 
 //opening goal input dialog based on the goal id in goal_input table
@@ -313,7 +342,7 @@ function checkGoalInput(goalId)
 				
 				$("#addElements").append(vValues);	
 				$("#dlgGoalInput").dialog(optGoalInput).dialog('open');	
-
+				
 			}
 			else
 			{
@@ -430,6 +459,13 @@ function submitGoalInput()
 	});	//end of ajax		
 }
 
+//function to redirect Dashboard screen    
+function gotoDashboard() {
+
+	//window.location.href="dashboard_full.html";
+	window.location.replace("dashboard_full.html");
+
+}
 
 
 //function setGoal(e)
