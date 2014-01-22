@@ -286,7 +286,7 @@ public class AssetData {
 				asset.setDcEnt("DC");
 			
 			if(asset.getAssetUsg() == null) 
-				asset.setAssetUsg(" ");
+				asset.setAssetUsg("Please enter asset usage details");
 			if (asset.getType_id() == null
 					&& asset.getProtocolId().equals("computer"))
 				asset.setType_id("server");
