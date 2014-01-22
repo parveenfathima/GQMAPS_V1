@@ -96,7 +96,7 @@
 
 	
 
-	<script type="text/javascript"> 		
+	<script type="text/javascript">		
 	 
 	$.fn.serializeObject = function()
 	{
@@ -137,10 +137,22 @@
 			}
 		}
 
+	//funtion to validate the System notes,User Notes and Snapshot notes dont accept special characters except .,- and space.
+	function validateSplChars(value) {
+		var splRegExp = /^[A-Za-z\/\s\.-]+$/;
+
+		if(splRegExp.test(value)) {
+			return true;
+		}
+		else 
+		{
+			alert('Please enter asset usage details without special characters except .,- and space');
+			return false;
+		}
+	}
+		
 
 	function goalSubmit(actionName) {
-	
-
 		// if a check box is checked , set the corresponding hidden box to 1
 		
 		document.getElementById('actionName').value = actionName;
@@ -223,8 +235,6 @@
 					window.location.href="Error.jsp";
 				} 
 			});	
-
-		 	  
 	 }
 	
 	//function to find number of check boxes selected
@@ -379,17 +389,19 @@
                                         	<div style="width:190px; position:relative;">		                  
                                         		<label class="control-label" style="font-size:80%;"><i class="icon-list-alt"></i>System Notes</label>
         						                    <div class="controls">
-        						                    <textarea style="resize:none;" rows="1" cols="19" maxlength="198" name="systemnotes" id ="sysnotes"><%=sysNotes%></textarea></div>
+        						                    <textarea style="resize:none;" rows="1" cols="19" maxlength="198" name="systemnotes" id ="sysnotes" onblur="validateSplChars(this.value)"><%=sysNotes%></textarea></div>
         						             </div>
                                       				
                                       	
-                                         	<div class="controls" style="position:relative; width:150px; bottom:55px;left:200px; height:30px;"><label class="control-label" style="font-size:80%;width:150px;"><i class="icon-pencil"></i>Benefit</label><input class="input-small" type="text" style="height:25px;" placeholder="Numbers only" name="cost_benefit" id ="cost_benefit" onkeypress="return isNumberKey(event)" maxlength="11" onkeyup="return isLengthCheck()" value="<%=goalTaskTmpltChkList.get(i).getCost_benefit()%>" />
+                                         	<div class="controls" style="position:relative; width:150px; bottom:55px;left:200px; height:30px;">
+                                         	<label class="control-label" style="font-size:80%;width:150px;"><i class="icon-pencil"></i>Benefit</label>
+                                         	<input class="input-small" type="text" style="height:25px;" placeholder="Numbers only" name="cost_benefit" id ="cost_benefit" onkeypress="return isNumberKey(event)" maxlength="11" onkeyup="return isLengthCheck()" value="<%=goalTaskTmpltChkList.get(i).getCost_benefit()%>" />
 													<input type="hidden" name="hdcost_benefit"> 
 										 	</div>
               
                                         	<div style="position:relative; top:-25px;">           
 		                                        <label class="control-label" style="font-size:80%;"><i class="icon-user"></i>User Notes</label>
-		                                        <div class="controls"><textarea rows="1" cols="19" maxlength="198" name="usernotes" id="usrnts"><%=usrNotes%></textarea></div>
+		                                        <div class="controls"><textarea rows="1" cols="19" maxlength="198" name="usernotes" id="usrnts" onblur="validateSplChars(this.value)"><%=usrNotes%></textarea></div>
                                         	</div>
 
                                          	<!-- Checking applied date is null -->		
@@ -460,7 +472,7 @@
 			<div class="span6">
             
            		<button id="save" class="btn btn-info" type="button" style="position:relative; top:10px; left:10px;" onclick="goalSubmit('save')">Save and Exit</button>
-           		<input class="input-large" name="gs_notes" maxlength="50" type="text" placeholder="Enter a Snapshot Note" style="display: block; position:relative;  top:-22px; left:150px;" />
+           		<input class="input-large" id="gs_notes" name="gs_notes" maxlength="50" type="text" placeholder="Enter a Snapshot Note" style="display: block; position:relative;  top:-22px; left:150px;" onblur="validateSplChars(this.value)"/>
            		<button id="finalize" class="btn btn-success" type="button" style="position:relative; top:-54px; left:363px;" onclick="goalSubmit('finalize')">Finalize</button>
            		
            		<!--  the following entries are for providing the goal snapshot entry -->
