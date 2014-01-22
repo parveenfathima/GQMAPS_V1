@@ -222,7 +222,7 @@ function updateEntp(dbEntp)
 		$('#txtDCUsed').select();
 		return false;
 	}				
-	else if(dcTemp > 99)
+	else if(dcTemp > 999)
 	{
 		alert("Please enter valid datacenter temperature");
 		$('#txtDCTemp').focus();
@@ -478,8 +478,7 @@ function addEntpMeter(dbEntp)
 			url:vUrl,
 			async:false,
 			data:vQuery,
-			dataType: "json",
-			success:function(json) 
+			success:function() 
 			{
 				gMeterId = 0;	
 				$.jStorage.set("jsLat", "0.0"); 
@@ -490,7 +489,7 @@ function addEntpMeter(dbEntp)
 				window.location.href = "edit_registration.html";
 				gArrayIndex = "";
 			},
-			error:function(json)
+			error:function()
 			{
 				resetVariables();	
 				clearMeterDetails();
