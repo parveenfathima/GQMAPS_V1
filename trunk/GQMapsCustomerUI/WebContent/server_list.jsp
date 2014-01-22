@@ -216,7 +216,7 @@
 			<td style="font-size:80%;"><%=assetListDB.get(i).getAssetId()%></td>
 			<%
 				if(assetListDB.get(i).getAssetUsg()==null) {
-					assetUsg="";
+					assetUsg="Please enter asset usage details";
 				}
 				else {
 					assetUsg=assetListDB.get(i).getAssetUsg();
