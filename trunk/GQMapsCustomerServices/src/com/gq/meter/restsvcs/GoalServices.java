@@ -362,7 +362,10 @@ public class GoalServices {
                     sb.append("<td>");
 
             		if ( ( rsmd.getColumnType(i) == Types.VARCHAR ) ||  ( rsmd.getColumnType(i) == Types.CHAR ) ) {
-            			sb.append(entpResultset.getString(i));
+            			if(entpResultset.getString(i) == null) 
+            				sb.append(" ");
+            			else 
+            				sb.append(entpResultset.getString(i));
             		}
             		else if ( ( rsmd.getColumnType(i) == Types.INTEGER ) || ( rsmd.getColumnType(i) == Types.BIGINT ) ) {
             			sb.append(entpResultset.getLong(i));
@@ -426,9 +429,7 @@ public class GoalServices {
                 dataTable.addRowFromValues(outputText, cDataList.get(i).getYaxis());
             }
             renderchart = JsonRenderer.renderDataTable(dataTable, true, true);
-            System.out.println("renderchart::"+renderchart);
             chartJson = CustomerServiceUtils.gson.toJson(renderchart);
-            System.out.println("chartJson::"+chartJson);
             // 3rd arg is the actual google chart json
             retCData.add(chartJson);
         }
