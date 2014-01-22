@@ -3,14 +3,17 @@
  */
 package com.gq.meter.restsvcs;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -34,17 +37,19 @@ public class GoalMasterService {
     @Path("/goals")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getGoals() {
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response getGoals(@QueryParam("entpId") String entpId) {
         Connection dbExchange = null;
         List<TaskAssist> goalArray = new ArrayList<TaskAssist>();
         String goalResult = "";
 
-        Statement goalStmt;
+        PreparedStatement goalStmt;
         try {
             dbExchange = SqlUtil.getExchangeConnection();
-            String goalSql = "select goal_id,descr from goal";
-            goalStmt = (Statement) dbExchange.createStatement();
-            ResultSet goalset = goalStmt.executeQuery(goalSql);
+            String goalSql = "select b.goal_id,a.descr from goal a,enterprise_goal b where a.goal_id=b.goal_id and enterprise_id = ?";
+            goalStmt = (PreparedStatement) dbExchange.prepareStatement(goalSql);
+            goalStmt.setString(1,entpId);
+            ResultSet goalset = goalStmt.executeQuery();
             CustomerServiceUtils.logger.debug(" Query sucessfully Executed from the Goal Table");
 
             while (goalset.next()) {
