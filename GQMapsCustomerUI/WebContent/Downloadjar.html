@@ -58,12 +58,13 @@
 		::selection{background:#111111;color:#F1F1F1;}
 		
 		a{color:#111111;}
-		table td { padding: 10px; }
-		hr{border-top:1px solid #E5E5E5;border-bottom:1px solid #F9F9F9; margin-bottom: 40px;}
 		
+		hr{border-top:1px solid #E5E5E5;border-bottom:1px solid #F9F9F9; margin-bottom: 20px;}
 		
-		table { background: #fafafa; border-left: 1px solid #d5d5d5; border-right: 1px solid #d5d5d5; border-bottom: 1px solid #d5d5d5; }
+		td { padding: 10px; }
 		table th { background: #f5f5f5; font-weight: bold; padding: 10px; white-space: nowrap; } 
+		table { background: #fafafa; border-left: 1px solid #d5d5d5; border-right: 1px solid #d5d5d5;}
+		
 	</style>
     <style type="text/css">
 .syntaxhighlighter { overflow-y: hidden !important; overflow-x:hidden !important;  }
@@ -85,13 +86,10 @@
             
             <h1 style=" font-family: 'Cuprum', sans-serif; font-weight: normal; padding-bottom: 5px; color: #b55d5c; font-size:40px;">GQMaps-Manage your data</h1>
             <button class="btn btn-inverse" type="button" onclick="DownloadJar()">Download GQMaps Jar</button>
-            
         </section>
         
         <section id="features">
             <h3 style=" font-family: 'Cuprum', sans-serif; font-weight: normal; padding-bottom: 5px; color: #b55d5c; font-size:40px;">Pre-requisites</h3><hr class="notop">
-            
-           
             <ul>	
                 <li>Get a list of IP assets.(IP Address you want to scan)</li>
                 <li>Enable SNMP V2 or if not supported enable V1 and get the community string from the system admin. </li>
@@ -99,10 +97,7 @@
                 <li>To run the meter please type the following command:		<code>java -jar gqmeter.jar  &lt;path to input asset file&gt;</code></li>
                 <li>Please follow the steps described below to create the input asset file. </li>
             </ul>
-            
-
         </section>
-        
 
         <section id="htmlStructure">
             <h3 style=" font-family: 'Cuprum', sans-serif; font-weight: normal; padding-bottom: 5px; color: #b55d5c; font-size:40px;">Asset File Creation</h3><hr class="notop">
@@ -110,12 +105,12 @@
             
             <p>GQMaps is smart enough to discover the type of asset given an IP Address.</p>
             <p>Entries above the $$ mark the header section. Please choose appropriate switches as required. </p>
-            <p>A line starts with  # denote a comment line.</p>
+            <p>Lines starting with # are comments.</p>
             
         <div class="row-fluid" >
         	
             <div class="span6" >
-            	<div><p align="center">Header section</p></div>
+            	<div><p align="center"><b>Header section</b></p></div>
                 <div onmouseover="ShowPanel('<p>The keyword meterid is mandatory and gqmaps1 represent the sample id , Please enter the meterid  which was given by gquotient team .</p>' );" onmouseout="HidePanel();"><pre>$meterid gqmaps1</pre></div>
 
                 <div onmouseover="ShowPanel('<p>@computor is a mandatory switch. </p><p>snap_shot is used to get the details of total memory,used memory,cpu load,up time,number of users logged in etc.</P><p>conn_devices is used to get the details of connected devices for the given IP Address with the port number.</p><p>process is used to get the details of proccess name,cpu share,memory share in kilobytes.</p><p>inst_sw is used to get the list of installed software programs.</p>');"onmouseout="HidePanel();"><pre>@computer     snap_shot|conn_devices|process|inst_sw</pre></div>
@@ -130,11 +125,11 @@
 
                 <div onmouseover="ShowPanel('<p>$$ is the delimeter and should be present in its own line .</p>');" onmouseout="HidePanel();"><pre>$$ </pre></div>
                 
-                <div><p align="center">Input section</p></div><br>               
-                <div onmouseover="ShowPanel('<p>This is an example where you can specify one IP Address to be processed, The invalid IP Address are not processed. </p>');"onmouseout="HidePanel();" ><pre>gqmaps 192.168.1.14</pre></div>
+                <div><p align="center"><b>Input section</b></p></div><br>               
+                
+                <div onmouseover="ShowPanel('<p>Here is where you specify one IP Address to be processed. </p><p>gqmaps 192.168.1.14 line is of the format SNMPcommunity string space IPAddress. </p>');"onmouseout="HidePanel();" ><pre>gqmaps 192.168.1.14</pre></div>
 
-                <div onmouseover="ShowPanel('<p>Here is how you specify a range of IP Address which all share a common community string.IP address1 is lower bound and  IP address2 is upper bound . </p>');"onmouseout="HidePanel();"><pre>gqmaps 192.168.8.128  192.168.8.130</pre></div>               
-            	                    
+                <div onmouseover="ShowPanel('<p>Here is where you specify a range of IP Address which all share a common community string.</p><p> In this example gqmaps is the SNMPcommunity string space 192.168.8.128 is the IPAddress lowerbound space 192.168.8.140 is the IPAddress upperbound. </p>');"onmouseout="HidePanel();"><pre>gqmaps 192.168.8.128  192.168.8.140</pre></div>               
             
             </div>
             <div class="span6" id="pnlDetail" ></div>
@@ -151,7 +146,7 @@
             	@printer      snap_shot|conn_devices 
             	@nsrg         snap_shot|conn_devices 
             	@storage      snap_shot 
-            	@speedtest	  on     192.168.8.15    gqmaps      gqm3%
+            	@speedtest	  on     192.168.8.15    gqmaps		127.0.0.1	gqm3%
             	$$
             	gqmaps 192.168.1.14 
             	gqmaps 192.168.8.128  192.168.8.130
@@ -163,16 +158,139 @@
             	@printer      snap_shot 
             	@nsrg         conn_devices 
             	@storage      snap_shot
-            	@speedtest	  on     192.168.8.15    gqmaps      gqm3% 
+            	@speedtest	  off
             	$$ 
             	gqmaps 192.168.1.14 
             	gqmaps 192.168.8.128  192.168.8.130
 				</pre>
         </section>
-        <hr>
-
-
-
-	</div>
-</body>
+       
+		
+            <h3 style=" font-family: 'Cuprum', sans-serif; font-weight: normal; padding-bottom: 5px; color: #b55d5c; font-size:40px;">Addendum A</h3><hr class="notop">
+            <h4>Full List of data collected</h4>
+           
+            	 <table>
+            	 	<thead>
+            	 		<tr>
+	            	 		<th>Computer</th>
+	            	 		<th>Printer</th>
+	            	 		<th>Network,Switch,Router and Gateway</th>
+            	 		</tr>
+            	 	</thead>
+            	 	<tbody>
+            	 		<tr>
+            	 			<th scope="rowgroup" colspan="4">Snapshot</th>
+            	 		</tr>
+            	 		<tr>
+            	 			<td>	
+    <pre>
+	asset_id
+	ip_addr
+	os_id
+	tot_mem
+	used_mem
+	tot_v_mem
+	used_v_mem
+	tot_disk_space
+	used_disk_space
+	cpu_load
+	up_time
+	num_lgd_in_usrs
+	num_procs
+	ntwrk_bytes_in
+	ntwrk_bytes_out
+	clock_speed
+	extras
+	</pre>
+            	 			</td>
+            	 			<td>
+	<pre>
+	asset_id
+	ip_addr
+	tot_mem
+	tot_disk_space
+	used_mem
+	used_disk_space
+	up_time
+	toner_status
+	out_of_papr_ind
+	prnts_tkn_cnt
+	prntr_status
+	aux_status
+	mfg_mdl
+	clr_prntr
+	extras
+	</pre>
+            	 			</td>
+            	 			<td>
+	<pre>
+	asset_id
+	ip_addr
+	up_time
+	num_ports
+	num_ports_up
+	ntwrk_bytes_in
+	ntwrk_bytes_out
+	extras
+	</pre>
+            	 			</td>
+            	 		</tr>
+            	 		<tr>
+            	 			<th scope="rowgroup" colspan="4">Connected Devices</th>
+            	 		</tr>
+            	 		<tr>
+            	 			<td>
+	<pre>
+	asset_id
+	ip_addr
+	host_name
+	port
+	</pre>
+            	 			</td>
+            	 			<td>
+	<pre>
+	asset_id
+	ip_addr
+	</pre>
+            	 			</td>
+            	 			<td>
+	<pre>
+	asset_id
+	ip_addr
+	</pre>
+            	 			</td>
+            	 		</tr>
+            	 		<tr>
+            	 			<th scope="rowgroup" colspan="4">Process</th>
+            	 		</tr>
+            	 		<tr>
+            	 			<td>
+	<pre>
+	asset_id
+	proc_name
+	cpu_share_cs
+	mem_share_kb
+	</pre>
+            	 			</td>
+            	 			<td></td>
+            	 			<td></td>
+            	 		</tr>
+            	 		<tr>
+            	 			<th scope="rowgroup" colspan="4">Installed Software</th>
+            	 		</tr>
+            	 		<tr>
+            	 			<td>
+	<pre>
+	asset_id
+	name
+	Inst_dttm
+	</pre>
+            	 			</td>
+            	 			<td></td>
+            	 			<td></td>
+            	 		</tr>
+            	 	</tbody>
+            	</table>
+			</div>
+	</body>
 </html>
