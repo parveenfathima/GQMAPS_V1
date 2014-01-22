@@ -110,6 +110,7 @@ function showGoalHTML(htmlText, divId)
 //function to redirect Dashboard screen    
 function gotoDashboard() {
 
-	window.location.href="dashboard_full.html";
+	//window.location.href="dashboard_full.html";
+	window.location.replace("dashboard_full.html");
 
 }
