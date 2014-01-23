@@ -174,14 +174,11 @@ h6 { color: #b55d5c; }
 	margin-left:36px;
 	
 }
-#documenter_content table{
-	border-collapse:collapse;
-	
-}
+
 #documenter_content table th{
 	font-weight:700;
 }
-#documenter_content table th, #documenter_content table td{
+#documenter_content table th{
 	text-align:center;
 }
 
@@ -190,6 +187,16 @@ table tr { border-top: 1px solid #d5d5d5; }
 
 .syntaxhighlighter table td { padding: 5px 1px!important; }
 
+#test {
+	min-height:100%;
+	height:auto;
+	z-index:1;
+	padding-top:1750px;
+	position:absolute;
+	right:18px;
+	left:218px;
+	padding-left:15px;
+	}
 #documenter_content code, #documenter_content pre{
 	font-family:"Courier New", Courier, monospace;
 	font-size:12px;
