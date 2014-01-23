@@ -1125,7 +1125,7 @@ ol.linenums li { padding-left: 12px; color: #bebec5; line-height: 20px; text-sha
 
 /*===== Tables styles =====*/
 
-table { max-width: 100%; background-color: transparent; border-collapse: collapse; border-spacing: 0; }
+table { max-width: 100%; background-color: transparent;  border-spacing: 0; }
 .table { width: 100%; border: 1px solid #d5d5d5; }
 .table th, .table td { padding: 8px 12px; line-height: 20px; vertical-align: middle; border-top: 1px solid #e2e2e2; }
 .table td { background: #fff; }
@@ -1190,6 +1190,10 @@ table { max-width: 100%; background-color: transparent; border-collapse: collaps
 
 .row-fluid table [class*=span] { display: table-cell; float: none; margin-left: 0; }
 
+.rowborder {border-left: 1px solid #d5d5d5; border-right: 1px solid #d5d5d5; border-bottom: 1px solid #d5d5d5;}
+.rowBborder {}
+.colborder {border-left: 1px solid #d5d5d5; border-right: 1px solid #d5d5d5;}
+.databorder {border-right: 1px solid #d5d5d5;}
 
 /* Color highlighting */
 
