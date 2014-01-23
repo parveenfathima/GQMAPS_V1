@@ -63,7 +63,7 @@
 		
 		td { padding: 10px; }
 		table th { background: #f5f5f5; font-weight: bold; padding: 10px; white-space: nowrap; } 
-		table { background: #fafafa; border-left: 1px solid #d5d5d5; border-right: 1px solid #d5d5d5;}
+		
 		
 	</style>
     <style type="text/css">
@@ -165,23 +165,22 @@
 				</pre>
         </section>
        
-		
             <h3 style=" font-family: 'Cuprum', sans-serif; font-weight: normal; padding-bottom: 5px; color: #b55d5c; font-size:40px;">Addendum A</h3><hr class="notop">
             <h4>Full List of data collected</h4>
            
-            	 <table>
+            	 <table frame="vsides" rules="all">
             	 	<thead>
-            	 		<tr>
-	            	 		<th>Computer</th>
-	            	 		<th>Printer</th>
-	            	 		<th>Network,Switch,Router and Gateway</th>
+            	 		<tr class="rowborder">
+	            	 		<th class="colborder">Computer</th>
+	            	 		<th class="colborder">Printer</th>
+	            	 		<th width="250px" class="colborder">Network,Switch,Router and Gateway</th>
             	 		</tr>
             	 	</thead>
             	 	<tbody>
             	 		<tr>
             	 			<th scope="rowgroup" colspan="4">Snapshot</th>
             	 		</tr>
-            	 		<tr>
+            	 		<tr class="rowborder">
             	 			<td>	
     <pre>
 	asset_id
@@ -222,7 +221,7 @@
 	extras
 	</pre>
             	 			</td>
-            	 			<td>
+            	 			<td class="databorder">
 	<pre>
 	asset_id
 	ip_addr
@@ -238,7 +237,7 @@
             	 		<tr>
             	 			<th scope="rowgroup" colspan="4">Connected Devices</th>
             	 		</tr>
-            	 		<tr>
+            	 		<tr class="rowborder">
             	 			<td>
 	<pre>
 	asset_id
@@ -253,7 +252,7 @@
 	ip_addr
 	</pre>
             	 			</td>
-            	 			<td>
+            	 			<td  class="databorder">
 	<pre>
 	asset_id
 	ip_addr
@@ -263,7 +262,7 @@
             	 		<tr>
             	 			<th scope="rowgroup" colspan="4">Process</th>
             	 		</tr>
-            	 		<tr>
+            	 		<tr class="rowborder">
             	 			<td>
 	<pre>
 	asset_id
@@ -273,12 +272,12 @@
 	</pre>
             	 			</td>
             	 			<td></td>
-            	 			<td></td>
+            	 			<td  class="databorder"></td>
             	 		</tr>
             	 		<tr>
             	 			<th scope="rowgroup" colspan="4">Installed Software</th>
             	 		</tr>
-            	 		<tr>
+            	 		<tr class="rowborder rowBborder">
             	 			<td>
 	<pre>
 	asset_id
@@ -287,10 +286,12 @@
 	</pre>
             	 			</td>
             	 			<td></td>
-            	 			<td></td>
+            	 			<td  class="databorder"></td>
             	 		</tr>
             	 	</tbody>
             	</table>
-			</div>
+            	<br><br>
+            	</div>
+			
 	</body>
 </html>
