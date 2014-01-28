@@ -5,9 +5,9 @@ import java.util.HashMap;
 public class MeterConstants {
 
     public static final String restURL = "http://cloud.gqexchange.com:8080/GQGatekeeper/";
-    
-    public static final String localIPAddress="127.0.0.1";
-    
+	
+	//public static final String restURL = "http://localhost:8080/GQGatekeeper/";
+	
     public static final int SPEEDTEST_TRIES=3;
 
     public static final String STATUS_PASS = "pass";
@@ -56,7 +56,7 @@ public class MeterConstants {
     
     public static final String SPEEDTEST_SWITCH = "@speedtest";
     
-    public static final String SPEEDTEST_STATUS = "on";
+    public static final String SPEEDTEST_STATUS[] = {"on","off"};
 
     public static final String METER_ID = "$meterid";
 
