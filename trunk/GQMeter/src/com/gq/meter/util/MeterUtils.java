@@ -52,7 +52,6 @@ public final class MeterUtils {
             String assetId = null; // unique identifier about the asset
             String protocolId = null;
             String ipAddr = null;
-            String assetUsg = "Please enter your asset usage details";
             String oidString = "1.3.6.1.2.1.1";
             String temp;
             int sysLength;
@@ -106,7 +105,7 @@ public final class MeterUtils {
             assetObj.setIpAddr(ipAddr);
             assetObj.setContact(sysContact);
             assetObj.setLocation(sysLocation);
-            assetObj.setAssetUsg(assetUsg);     
+                 
         }
         catch (Exception e) {
             errorList.add(ipAddress + " " + e.getMessage());
