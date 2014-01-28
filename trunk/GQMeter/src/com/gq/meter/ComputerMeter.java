@@ -145,8 +145,8 @@ public class ComputerMeter implements GQSNMPMeter {
                 rootOID = new OID(oidString);
                 result = MeterUtils.walk(rootOID, target);
                 if (result != null && !result.isEmpty()) {
-                    String[] ethernet = new String[] { "eth0", "eth1", "eth2", "en0","en1", "en2", "en3", "em1", "em2",
-                            "em3", "wlan" };
+                    String[] ethernet = new String[] { "eth2", "eth1", "eth0", "en3","en2", "en1", "en0", "em3", "em2",
+                            "em1", "wlan"};
                     HashMap<String, List<Long>> networkMap = new HashMap<String, List<Long>>();
                     networkBytes = linuxAssetIdCalc(result, rootOID, ethernet, networkMap, assetId, sysDescription);
                     assetId = "C-" + networkBytes.get("assetId");
@@ -163,8 +163,8 @@ public class ComputerMeter implements GQSNMPMeter {
                 rootOID = new OID(oidString);
                 result = MeterUtils.walk(rootOID, target);
                 if (result != null && !result.isEmpty()) {
-                    HashMap<String, String> winNetworkMap = new HashMap<String, String>();
-                    networkBytes = winAssetIdCalc(result, rootOID, winNetworkMap);
+                    HashMap<String, String> macNetworkMap = new HashMap<String, String>();
+                    networkBytes = macAssetIdCalc(result, rootOID, macNetworkMap);
                     assetId = "C-" + networkBytes.get("macWinNetworkValue");
                     assetObj.setAssetId(assetId);
                 }// 2nd if ends
@@ -668,8 +668,9 @@ public class ComputerMeter implements GQSNMPMeter {
         		networkValues.put("assetId", assetId);
         		}	
         	}else{
-        		Set<String> uniqueValues = new HashSet<String>(macOidMap.get("eth0").values());
+        		
         		if (macOidMap.get("eth0") != null && macOidMap.get("eth0").size() != 0) {
+        			Set<String> uniqueValues = new HashSet<String>(macOidMap.get("eth0").values());
         			String eth0MacAddress = uniqueValues.toString().substring(1, uniqueValues.toString().length() - 1).trim()
                     .replaceAll(":", "");
         			assetId = eth0MacAddress;
@@ -769,56 +770,52 @@ public class ComputerMeter implements GQSNMPMeter {
                     } // 3rd for loop ends
                 } // 1st if loop ends
             } // 2nd for loop ends
+           
         } // 1st for loop ends
-
-        Set<String> uniqueValues = new HashSet<String>(macOidMap.get("eth0").values());
-        if (macOidMap.get("eth0") != null && macOidMap.get("eth0").size() != 0) {
-            String eth0MacAddress = uniqueValues.toString().substring(1, uniqueValues.toString().length() - 1).trim()
-                    .replaceAll(":", "");
-            assetId = eth0MacAddress;
-            networkValues.put("assetId", assetId);
-        }
+        	//Asset Id calculations are based on ethernet values.
+        	for (int i = 0; i < ethernet.length; i++) {
+        		if (macOidMap.get(ethernet[i]) != null && macOidMap.get(ethernet[i]).size() != 0) {
+        			Set<String> uniqueValues = new HashSet<String>(macOidMap.get(ethernet[i]).values());
+        			String eth0MacAddress = uniqueValues.toString().substring(1, uniqueValues.toString().length() - 1).trim()
+        			.replaceAll(":", "");
+        			assetId = eth0MacAddress;
+        			networkValues.put("assetId", assetId);
+        		}
+        	}
         return networkValues;
     }
 
-    private HashMap<String, String> macAssetIdCalc(List<VariableBinding> result, OID rootOid, String[] ethernet,
-            HashMap<String, List<Long>> networkMap, String assetId, String sysDescription) {
-        String macOid = null;
+    private HashMap<String, String> macAssetIdCalc(List<VariableBinding> result, OID rootOid,
+            HashMap<String, String> macNetworkMap) {
+
+        String networkOid = null;
+        String macWinNetworkId = null;
         String rootId = rootOid.toString();
-        HashMap<String, HashMap<String, String>> macOidMap = new HashMap<String, HashMap<String, String>>();
-        HashMap<String, String> networkValues = new HashMap<String, String>();
 
-        for (int i = 0; i < ethernet.length; i++) { // 1st for loop starts
-            for (VariableBinding vb : result) { // 2nd for loop starts
-                if (vb.getVariable().toString().trim().equalsIgnoreCase(ethernet[i])) { // 1st if loop starts
-                    String lastchar = String.valueOf(vb.getOid().last());
-                    macOid = rootId + "." + "10" + "." + lastchar;
-                    for (VariableBinding vbs : result) { // 3rd for loop starts
+        for (VariableBinding vb : result) { // 1st for loop starts
+            String lastchar = String.valueOf(vb.getOid().last());
+            networkOid = rootId + "." + "10" + "." + lastchar;
 
-                        if (vbs.getOid().toString().trim().equals(macOid)) { // 2nd if loop starts
-                            if (macOidMap.get(ethernet[i]) == null || macOidMap.get(ethernet[i]).size() == 0
-                                    || macOidMap.get(ethernet[i]).isEmpty()) {
-                                HashMap<String, String> macMap = new HashMap<String, String>();
-                                macMap.put(vbs.getOid().toString(), vbs.getVariable().toString());
-                                macOidMap.put(ethernet[i], macMap);
-                            }
-                            else {
-                                macOidMap.get(ethernet[i]).put(vbs.getOid().toString(), vbs.getVariable().toString());
-                            }
-                        } // 2nd if loop ends
-                    } // 3rd for loop ends
-                } // 1st if loop ends
-            } // 2nd for loop ends
-        } // 1st for loop ends
-        Set<String> uniqueValues = new HashSet<String>(macOidMap.get("en0").values());
-        if (macOidMap.get("en0") != null && macOidMap.get("en0").size() != 0) {
-            String eth0MacAddress = uniqueValues.toString().substring(1, uniqueValues.toString().length() - 1).trim()
-                    .replaceAll(":", "");
-            assetId = eth0MacAddress;
-            networkValues.put("assetId", assetId);
-        }
-        return networkValues;
+            if (networkOid != null && vb.getOid().toString().contains(networkOid)) { // 1st if loop starts
+                String macNetworkInVal = vb.getVariable().toString().trim();
+
+                if (!macNetworkInVal.equalsIgnoreCase("0")) { // 2nd if loop starts
+                    String winNetworkInValue = vb.getVariable().toString().trim();
+                    macNetworkMap.put("InBytes", winNetworkInValue);
+
+                    macWinNetworkId = rootId + "." + "6" + "." + lastchar;
+                    for (VariableBinding vbs : result) { // 2nd for loop starts
+                        if (macWinNetworkId != null && vbs.getOid().toString().contains(macWinNetworkId)) {
+                            String macWinNetworkValue = vbs.getVariable().toString().trim().replaceAll(":", "");
+                            macNetworkMap.put("macWinNetworkValue", macWinNetworkValue);
+                        }
+                    }// 2nd for loop ends
+                } // 2nd if loop ends
+            } // 1st if loop ends
+        }// 1st for loop ends
+        return macNetworkMap;
     }
+
 
     /**
      * This method is used to Windows Asset ID
