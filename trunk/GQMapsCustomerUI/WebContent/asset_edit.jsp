@@ -127,18 +127,17 @@ function updateAsset(count)
 		vUsage =  $.trim($("#txtAssetUsage"+j).val()); // NA for nsrg
 
 		var assetRegExp = /^[A-Za-z0-9\/\s\.-]+$/;
-		if (!assetRegExp.test(vUsage)) 
+
+		if(vUsage === "" || vUsage === null) 
+		{
+			alert('Unnamed Asset');
+			$("#txtAssetUsage"+j).select();
+			return false;
+		}
+		else if (!assetRegExp.test(vUsage)) 
 		{
 			alert('Please enter asset usage details without special characters except .,- and space '+'  '+ vUsage);
 				return false;
-		}
-		
-		if(vUsage === "" || vUsage === "null" || vUsage === null)
-			vUsage = null;
-		else if(vUsage.length > 50)
-		{
-			$("#txtAssetUsage"+j).select();
-			return false;
 		}
 		
 		vImpLevel =  $("#cmbImpLevel"+j).val(); // NA for nsrg
