@@ -202,7 +202,17 @@ function computeDurationSet(vol)
 	document.getElementById('computeValue').value=rangeValue;
 }
 
+//function to show compute duration div 
+function showComDurDiv(){
+	document.getElementById('ComDurDiv').style.display = "block";
+	
+}
 
+//function to highlight the label
+function labelHighLight() {
+	document.getElementById('fader').style.color = "blue";
+	document.getElementById('fader').style.text-decoration = "underline";
+}
 //function to redirect a dashboard screen when dynamically changed compute duration
 function computeDurationUpdate() 
 {
