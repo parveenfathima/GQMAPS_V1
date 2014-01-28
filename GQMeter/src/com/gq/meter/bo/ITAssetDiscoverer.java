@@ -60,7 +60,8 @@ import com.sun.jersey.api.representation.Form;
 public final class ITAssetDiscoverer {
 
     private String gqmid = null;
-    public String localIPCommunityString = null;
+    private String localIPCommunityString = null;
+    private String localIPAddress = null;
     private static Pattern pattern = Pattern.compile("^([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\."
             + "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\." + "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\."
             + "([01]?\\d\\d?|2[0-4]\\d|25[0-5])$");
@@ -161,7 +162,6 @@ public final class ITAssetDiscoverer {
             boolean finished = es.awaitTermination(1, TimeUnit.MINUTES); // this is a blocking call
 
             System.out.println(" [GQMETER] all threads complete ");
-
         }
         catch (Exception e) {
             System.out.println(" [GQMETER] Exception occured while processing the communityIpMap ");
@@ -171,7 +171,6 @@ public final class ITAssetDiscoverer {
             gqmResponse.setErrorInformationList(gqErrorInfoList); // Added the errors to the GQMResponse
             
         }
-
         return pdList;
     }
 
@@ -190,7 +189,6 @@ public final class ITAssetDiscoverer {
             System.out.println(" [GQMETER] Not a valid input file argument");
             System.exit(1);
         }
-
         try {
             assetsInputFile = new File(inputFilePath);
 
@@ -206,12 +204,14 @@ public final class ITAssetDiscoverer {
             int headerLinesCount = 0;
             Map<String, Integer> switchOcc = new HashMap<String, Integer>(); // integer value has no significance. just
                                                                              // using it for map features
+            Map<String, String> speedTestStatusMap =new HashMap<String, String>();//Map only used for validation purpose.
 
             // process the header section
             while ((line = br.readLine()) != null) {
 
                 line = line.trim();
-
+                line = line.toLowerCase();
+                
                 if (line.startsWith("#") || line.length() == 0) {
                     continue;
                 }
@@ -338,31 +338,50 @@ public final class ITAssetDiscoverer {
                         switches.put(MeterProtocols.NSRG, switchList);
                     }
                 }
-                //Validation for speed test meter input            
+                
+                //starts validation for speed test meter input            
                 else if ( keyy.equals ( MeterConstants.SPEEDTEST_SWITCH )) {
-                	// line must contains 4 tokens.
-                	if ( headerToken.length != 5 ) {
+                	
+                	// line must contains 2 tokens.
+                	if ( headerToken.length == 1) {
                 		System.out.println(" [GQMETER] Invalid header line ; wrong # of tokens ; line : " + line);
                         System.exit(0);
                 	}
+                	
                 	// complain if the line starts or ends with a | symbol
-                    if ( ( headerToken[1].charAt(0) == '|')
+                    if ( headerToken[1].contains("|") || ( headerToken[1].charAt(0) == '|')
                             || ( headerToken[1].charAt( headerToken[1].length() - 1 ) == '|') ) {
                         System.out
-                                .println(" [GQMETER] Switches cannot start or end with | chars , Process Terminating Now ..");
+                                .println(" [GQMETER] Switches cannot start/end or contains with | chars ,"+headerToken[1]+" Process Terminating Now ..");
                         System.exit(0);
                     }
+                    
+                    speedTestStatusMap.put(MeterConstants.SPEEDTEST_STATUS[0], "status");
+                	speedTestStatusMap.put(MeterConstants.SPEEDTEST_STATUS[1], "status");
+                	
+                    //complain if the  speedtest status are wrong
+                    if( ! speedTestStatusMap.containsKey( headerToken[1] )){
+                    	System.out.println(" [GQMETER] Invalid header line for speedtest status ; wrong # of tokens ; line : " + line);
+                		System.exit(0);
+                    }
+                    
                     //to check the speedtest status condition here.
-                    if ( headerToken[1].equals ( MeterConstants.SPEEDTEST_STATUS ) ) {
-                    	if ( !isIPAddressValid ( headerToken[2] ) ) {
+                    if ( headerToken[1].equalsIgnoreCase ( MeterConstants.SPEEDTEST_STATUS[0] ) ) {
+                    	
+                    	if(headerToken.length != 6) {
+                    		System.out.println(" [GQMETER] Invalid header line for speedtest ; wrong # of tokens ; line : " + line);
+                    		System.exit(0);
+                    	}
+                    	
+                    	if ( !isIPAddressValid ( headerToken[2] ) || !isIPAddressValid (headerToken[4]) ) {
                             System.out.println(" [GQMETER] Invalid ip address ; continuing process ; line :" + line);
-                            System.exit(0);
                         }
                         else {
-                        	//here to add ipaddress and communitystring in Map
-                        	localIPCommunityString=headerToken[4];
+                        	//here to put remoteip and their community string in SpeedTestIPMap,then also put local ip and comm string in CommunityIPMap
+                        	localIPAddress = headerToken[4];
+                        	localIPCommunityString = headerToken[5];
                             speedTestIPMap.put(headerToken[2], headerToken[3]);
-                            
+                            communityIPMap.put(headerToken[4],headerToken[5]);
                         }
                     }
                 }
@@ -464,7 +483,6 @@ public final class ITAssetDiscoverer {
             e.printStackTrace();
             System.out.println(" [GQMETER] Exception occured : " + e);
         }
-
     }
     
     private String isValid(String gqmid) {
@@ -499,7 +517,7 @@ public final class ITAssetDiscoverer {
     }
     
   //We are here to calculate download speed of given asset
-    public List<ProtocolData> speedCalculation(HashMap<String,String> speedTestIPMap,String localIPCommunityString) {
+    public List<ProtocolData> speedCalculation(HashMap<String,String> speedTestIPMap,String localIPCommunityString,String localIPAddress) {
     	 
     	 Snmp snmp = null;
 		 CommunityTarget target = null;
@@ -511,7 +529,6 @@ public final class ITAssetDiscoverer {
          List<VariableBinding> result = null;
          List<ProtocolData> pdList = new LinkedList<ProtocolData>();
          List<String> errorList = new LinkedList<String>();
-         //List<GQErrorInformation> gqErrorInfoList = new LinkedList<GQErrorInformation>();
          
          String assetId=null;
          Asset assetObj = null;         
@@ -521,7 +538,6 @@ public final class ITAssetDiscoverer {
          HashMap<String, String> networkBytes = null;
          
          String remoteIPAddress=null;
-         String localIPAddress=null;
          String remoteIPCommunityString=null;
          Long runId = 0L;
          double uploadSpeed=0.0f;
@@ -534,32 +550,31 @@ public final class ITAssetDiscoverer {
         	  
         	 snmp = new Snmp(new DefaultUdpTransportMapping());
         	 snmp.listen();
-        	 
-        	 localIPAddress = MeterConstants.localIPAddress;
-        	 
+        	         	 
         	 //To walk the snmp for current working machine here. reason for that calculate the asset id.
         	 snmpDetails = MeterUtils.isSnmpConfigured(localIPCommunityString, localIPAddress);
-        	 
+
         	 if ( snmpDetails.get("snmpUnKnownIp") != null ) {
             	 snmpUnknownIPList.add(localIPAddress);
             	 errorList.add(localIPCommunityString + " - " + localIPAddress + " -  : Unable to reach the asset");
             	 gqErrorInfoList.add( new GQErrorInformation( null, errorList ) );
             	 return null;
              }
-             
-             snmpVersion = snmpDetails.get("snmpVersion");
+
+        	 snmpVersion = snmpDetails.get("snmpVersion");
              
              if(snmpVersion == null) {
             	 return null;
              }
-             // snmop version is not null
+
+             // snmp version is not null
         	 target = MeterUtils.makeTarget(localIPAddress,localIPCommunityString, snmpVersion);
 		 
         	 assetObj = MeterUtils.sysBasicInfo(localIPCommunityString, localIPAddress, snmpVersion, errorList);
         	 assetObj.setProtocolId(MeterConstants.SPEEDTEST_PROTOCOL);
 		 
         	 sysDescription = assetObj.getDescr();
-  
+
         	 if (null != sysDescription) { // 1st if starts
         		 if (sysDescription.contains("windows")) {
         			 isWindows = true;
@@ -571,7 +586,7 @@ public final class ITAssetDiscoverer {
         			 
         		 }
         	 }// 1st if ends
-	 	
+
         	 SpeedTestHelper speedTestHelperObj = new SpeedTestHelper();
         	 // the following oid's is used to get the asset id for windows.
         	 if (isWindows) {
@@ -602,36 +617,35 @@ public final class ITAssetDiscoverer {
 	 						+ "Unable to get network bandwidth details and unable to collate asset ID");
 	 				}// 2nd else ends
 	 			}// 1st else ends
-                         
-        	 	//To walk the remote machine for calculate the speed.
+        	 	
+        	 //To walk the remote machine for calculate the speed.
     	 		for ( Entry<String, String> entry : speedTestIPMap.entrySet() ) {
     	 			
     	 			remoteIPAddress = entry.getKey();
     	 			remoteIPCommunityString = entry.getValue();
-                 
+    	 			
     	 			snmpDetails = MeterUtils.isSnmpConfigured(remoteIPCommunityString, remoteIPAddress);
                  
     	 			if ( snmpDetails.get("snmpUnKnownIp") != null ) {
     	 				snmpUnknownIPList.add(remoteIPAddress);
     	 				errorList.add(remoteIPCommunityString + " - " + remoteIPAddress + " -  : Unable to reach the asset");
     	 				gqErrorInfoList.add( new GQErrorInformation( null, errorList ) );
-    	 				return null;
+    	 				break;
     	 			}
                  
     	 			snmpVersion = snmpDetails.get("snmpVersion");
-                 
+    	 			
     	 			if (snmpDetails.get("snmpKnownIp") != null ) {
     	 				snmpKnownIPList.add(remoteIPAddress);
     	 			}
     	 		}
-        	 
         	 	// ASSET ID , RUN ID STARTS HERE.
         	 	id = new CPNId(runId, assetId);
         	 		
         	 	if( snmpVersion == null ) {
         	 		return null;
         	 	}
-        	 	
+        	 	else {
     	 		target = MeterUtils.makeTarget(remoteIPAddress,remoteIPCommunityString, snmpVersion);
     	
     	 		oidString = ".";
@@ -646,7 +660,7 @@ public final class ITAssetDiscoverer {
 				double timeInSec = 0.0;
 				double downloadSpeed=0.0;
 				
-				System.out.println(" Number of Bytes	TimeTaken");
+				//System.out.println(" Number of Bytes	TimeTaken");
    	 	 		for( int speedTestTriesCount = 1; speedTestTriesCount <= MeterConstants.SPEEDTEST_TRIES; speedTestTriesCount++) {
    	 	 			
    	 	 			startTime = System.currentTimeMillis();
@@ -658,9 +672,7 @@ public final class ITAssetDiscoverer {
    	 	 			for(int resultCount = 0; resultCount < result.size(); resultCount++) {
    	 	 				noOfBytes = noOfBytes + result.get(resultCount).toString().length();
    	 	 			}
-   	 	 			
-   	 	 			System.out.println(" "+noOfBytes +"			"+ timeTaken);
-   	 	 			
+   	 	 			//System.out.println(" "+noOfBytes +"			"+ timeTaken);
    	 	 			bytesInMB = (double) noOfBytes / (1024*1024)  ;
    	 	 			timeInSec = (double) timeTaken / 1000 ;
    	 	 			downloadSpeed = (bytesInMB / timeInSec);
@@ -669,7 +681,7 @@ public final class ITAssetDiscoverer {
    	 	 		}
    	 	 		
    	 	 		double avgDownloadSpeed = netDownloadSpeed / (MeterConstants.SPEEDTEST_TRIES);
-   	 	 		
+
    	 	 		//To bulid a speed test snapshot object.
    	 	 		SpeedTestSnpshtId speedTestSnapshotIdObj = new SpeedTestSnpshtId(assetId, runId);
    	 	 		SpeedTestSnpsht speedTestSnapshotObj = new SpeedTestSnpsht(speedTestSnapshotIdObj, uploadSpeed, avgDownloadSpeed);
@@ -682,6 +694,7 @@ public final class ITAssetDiscoverer {
    	 	 		assetObject = new GQMeterData(gqErrorInfo, speedTestSnapshotObj);
    	 	 		assetProtocol = MeterProtocols.SPEEDTEST;
    	 	 		pdList.add(new ProtocolData(assetProtocol, gson.toJson(assetObject.getMeterData())));
+        	 	}
          } 
          catch (Exception e) {
         	e.printStackTrace();  
@@ -698,7 +711,6 @@ public final class ITAssetDiscoverer {
     	HashMap<String, String> communityIPMap = new HashMap<String, String>();// to process computer,printer and switches ip's.
     	HashMap<String, String> speedTestIPMap = new HashMap<String, String>();// to process speed test meter ip.
     	
-        
     	System.out.println(" [GQMETER] started .......");
         gqmResponse = new GQMeterResponse();
         gqmResponse.setRecDttm(new Date());
@@ -713,28 +725,29 @@ public final class ITAssetDiscoverer {
         readInput(inputFilePath,communityIPMap,speedTestIPMap);
         
         gqmResponse.setAssetScanned((short) ((communityIPMap.size())+speedTestIPMap.size()));
-
-        if (communityIPMap.size() > 0) {
+         
+        if ( communityIPMap.size() > 0) {
             assetsList = findAssets(communityIPMap);
             gqmResponse.addToAssetInformationList(assetsList);
         }
         
         if ( speedTestIPMap.size() > 0 && speedTestIPMap != null ) {    	
-        	speedAssetsList=speedCalculation(speedTestIPMap,localIPCommunityString);
-        	for(int i=0;i<speedAssetsList.size();i++) {
-        		System.out.println(speedAssetsList.get(i).getData());
-        	}
+        	speedAssetsList = speedCalculation( speedTestIPMap,localIPCommunityString,localIPAddress );
         	gqmResponse.addToAssetInformationList(speedAssetsList);
         }
-    
+        
+        if( communityIPMap.size() == 0 && speedTestIPMap.size() == 0) {
+        	System.out.println(" [GQMETER] There is no valid IP Address in given input section");
+        	System.exit(0);
+        }
+        
         long endTime = System.currentTimeMillis();
         gqmResponse.setRunTimeMiliSeconds((endTime - startTime));
         gqmResponse.setStatus("pass");
         gqmResponse.setVersion("1");
         gqmResponse.setGqmid(gqmid);
         gqmResponse.setAssetDiscovered((short) snmpKnownIPList.size());
-
-        // System.out.println(" [GQMETER] json : " + gson.toJson(gqmResponse));
+       
         System.out.println(" [GQMETER] Total number of assets(ip address) in input file : "
                 + gqmResponse.getAssetScanned());
         System.out.println(" [GQMETER] SNMP configured on : " + this.snmpKnownIPList.toString());
