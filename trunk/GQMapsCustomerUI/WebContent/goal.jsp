@@ -139,6 +139,12 @@
 
 	//funtion to validate the System notes,User Notes and Snapshot notes dont accept special characters except .,- and space.
 	function validateSplChars(value) {
+
+		if(value === "" || value === null) 
+		{
+			return true;
+		}
+
 		var splRegExp = /^[A-Za-z\/\s\.-]+$/;
 
 		if(splRegExp.test(value)) {
