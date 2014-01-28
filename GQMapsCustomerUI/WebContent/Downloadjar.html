@@ -121,7 +121,7 @@
 
                 <div onmouseover="ShowPanel('<p>@storage switch is mandatory but the storage meter is under implementation.</p>');" onmouseout="HidePanel();" ><pre>@storage      snap_shot</pre></div>
                 
-                <div onmouseover="ShowPanel('<p>@speedtest switch is a mandatory switch. </p><p> on stands for speedtest is enabled and  if not set it to off.</p><p>IP Address is the remote machine IP Address, rem_comm_str is the SNMP community string of the remote machine ,loc_comm_str is the SNMP community string of the local machine</p><p>If speed test is enabled you are required to have local machines entry in the Input section.</p>');" onmouseout="HidePanel();" ><pre>@speedtest on 192.168.8.15  rem_comm_str  loc_comm_str</pre></div>
+                <div onmouseover="ShowPanel('<p>rem_ipaddress is the remote machine IPAddress, rem_comm_str is the SNMP community string of the remote machine ,loc_ipaddress is the local machine IPAddress ,loc_comm_str is the SNMP community string of the local machine.</p><p>If speed test is enabled you are required to have local machines entry in the Input section.</p>');" onmouseout="HidePanel();" ><pre>@speedtest on rem_ipaddress  rem_comm_str  loc_ipaddress  loc_comm_str</pre></div>
 
                 <div onmouseover="ShowPanel('<p>$$ is the delimeter and should be present in its own line .</p>');" onmouseout="HidePanel();"><pre>$$ </pre></div>
                 
@@ -145,7 +145,7 @@
             	@computer     snap_shot|conn_devices|process|inst_sw 
             	@printer      snap_shot|conn_devices 
             	@nsrg         snap_shot|conn_devices 
-            	@storage      snap_shot 
+            	@storage      snap_shot|conn_devices|process|inst_sw 
             	@speedtest	  on     192.168.8.15    gqmaps		127.0.0.1	gqm3%
             	$$
             	gqmaps 192.168.1.14 
@@ -170,10 +170,10 @@
            
             	 <table frame="vsides" rules="all">
             	 	<thead>
-            	 		<tr class="rowborder">
+            	 		<tr class="rowborder" style="color: #b55d5c; font-size:15px;">
 	            	 		<th class="colborder">Computer</th>
 	            	 		<th class="colborder">Printer</th>
-	            	 		<th width="250px" class="colborder">Network,Switch,Router and Gateway</th>
+	            	 		<th width="250px" class="colborder">Network Switch,Router and Gateway</th>
             	 		</tr>
             	 	</thead>
             	 	<tbody>
@@ -260,7 +260,7 @@
             	 			</td>
             	 		</tr>
             	 		<tr>
-            	 			<th scope="rowgroup" colspan="4">Process</th>
+            	 			<th scope="rowgroup" colspan="4">Current Running Processes</th>
             	 		</tr>
             	 		<tr class="rowborder">
             	 			<td>
