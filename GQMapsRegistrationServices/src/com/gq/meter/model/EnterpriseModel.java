@@ -24,6 +24,7 @@ import com.gq.meter.util.HibernateUtil;
 
 /**
  * @author Chandru
+ * @modified Rathish
  * 
  */
 public class EnterpriseModel {
@@ -80,18 +81,20 @@ public class EnterpriseModel {
 
     /**
      * This method used to fetch all the enterprise registered for GQMaps
+     * @param entpId 
      * 
      * @return
      * @throws Exception
      */
-    public List<Enterprise> getAllEnterprises() throws Exception {
+    public List<Enterprise> getAllEnterprises(String entpId) throws Exception {
         Session session = null;
         try {
             session = HibernateUtil.getSessionFactory().getCurrentSession();
             session.beginTransaction();
 
-            String hql = "FROM Enterprise";
+            String hql = "FROM Enterprise where enterpriseId = :ENTP_ID";
             Query query = session.createQuery(hql);
+            query.setParameter("ENTP_ID", entpId);
             List<Enterprise> entMeterResult = query.list();
             return entMeterResult;
         }

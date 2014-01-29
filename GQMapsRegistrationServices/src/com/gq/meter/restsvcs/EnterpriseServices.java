@@ -19,7 +19,7 @@ import com.gq.meter.util.GQRegistrationConstants;
 
 /**
  * @author Chandru
- * 
+ * @modified Rathish
  */
 @Path("/enterprise")
 public class EnterpriseServices {
@@ -61,12 +61,13 @@ public class EnterpriseServices {
     @Path("/getRegistration")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getAllEnterprises() {
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response getAllEnterprises(@QueryParam("entpId") String entpId) {
         GQGateKeeperConstants.logger.info("Generating all the enterprises list from GQGatekeeper");
         EnterpriseModel entmodel = new EnterpriseModel();
         List<Enterprise> entMeterResult = null;
         try {
-            entMeterResult = entmodel.getAllEnterprises();
+            entMeterResult = entmodel.getAllEnterprises(entpId);
         }
         catch (Exception e) {
             GQGateKeeperConstants.logger.error("Exception occured while fetching the enterprises list ", e);
