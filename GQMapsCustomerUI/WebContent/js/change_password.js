@@ -7,19 +7,16 @@ $(window).load(function ()
 		changeQA();
 });
 
-
 //binding the click event to the submit button
-$(document).ready(function()
-{
+$(document).ready(function() {
+	$('#submit').bind("click", validateForm);
+	$('#chkChageQA').bind("click", changeQA);
+
 	if(($.jStorage.get("jsUserID") === "" || $.jStorage.get("jsUserID") === null ))
 	{
 		window.location.href = "login.html";
 	}
-	
 	else {
-		$("#submit").bind("click", validateForm);
-		$('#chkChageQA').bind("click", changeQA);
-		
 		//loading the security questions
 		loadSecQuestions();
 
@@ -30,146 +27,147 @@ $(document).ready(function()
 // function to validate the change_password form
 function validateForm()
 {
-		//declaring and initializing form variables
-	
-		var vUserID = $.jStorage.get("jsUserID");
-	
-		var vQues1 = $('#cmbQues1').val(); 
-		var vAns1 = $.trim($('#txtAns1').val()); 
+	//declaring and initializing form variables
+	var vUserID = $.jStorage.get("jsUserID");
+	alert(vUserID);
+	var vQues1 = $('#cmbQues1').val(); 
+	var vAns1 = $.trim($('#txtAns1').val()); 
 		
-		var vQues2 = $('#cmbQues2').val(); 
-		var vAns2 = $.trim($('#txtAns2').val()); 
+	var vQues2 = $('#cmbQues2').val(); 
+	var vAns2 = $.trim($('#txtAns2').val()); 
 		
-		var vNewPwd = $.trim($('#txtNewPwd').val()); 
-		var vConfPwd = $.trim($('#txtConfPwd').val()); 
+	var vNewPwd = $.trim($('#txtNewPwd').val()); 
+	var vConfPwd = $.trim($('#txtConfPwd').val()); 
 		
-		//validating each field for not null and appropriate value selction
-		if(!validateQues(vQues1, "1", "oldQA"))
-		{
-			return false;
-		}
-		else if(!validateAns(vAns1, "1", "oldQA"))
-		{
-			return false;
-		}
-		else if(!validateQues(vQues2, "2", "oldQA"))
-		{
-			return false;
-		}
-		else if(vQues2 === vQues1)
-		{
-			alert("Select unique security questions");
-			$('#cmbQues2').focus();
-			return false;			
-		}
-		else if(!validateAns(vAns2, "2", "oldQA"))
-		{
-			return false;
-		}
-		else if(!validatePwd(vNewPwd)) // calling it from change security question to set focus back to this page
-		{
-			$('#txtNewPwd').focus();
-			return false;
-		}
-		else if(!validatePwd(vConfPwd))
-		{
-			$("#txtConfPwd").focus();
-			return false;
-		}		
-		else if(comparePwd(vNewPwd, vConfPwd))
-		{
-			var vUrl = $.jStorage.get("jsUrl") + "enterprise/getRegistration";			
-			
-			var vQuery = "";
+	//validating each field for not null and appropriate value selction
+	if(!validateQues(vQues1, "1", "oldQA"))
+	{
+		return false;
+	}
+	else if(!validateAns(vAns1, "1", "oldQA"))
+	{
+		return false;
+	}
+	else if(!validateQues(vQues2, "2", "oldQA"))
+	{
+		return false;
+	}
+	else if(vQues2 === vQues1)
+	{
+		alert("Select unique security questions");
+		$('#cmbQues2').focus();
+		return false;			
+	}
+	else if(!validateAns(vAns2, "2", "oldQA"))
+	{
+		return false;
+	}
+	else if(!validatePwd(vNewPwd)) // calling it from change security question to set focus back to this page
+	{
+		$('#txtNewPwd').focus();
+		return false;
+	}
+	else if(!validatePwd(vConfPwd))
+	{
+		$("#txtConfPwd").focus();
+		return false;
+	}		
+	else if(comparePwd(vNewPwd, vConfPwd))
+	{
+		var vUrl = $.jStorage.get("jsUrl") + "enterprise/getRegistration?entpId=" + vUserId;	
+		alert(vUrl);
+		var vQuery = "";
 
-			$.ajax({
-				type : "GET",
-				url : vUrl,
-				dataType : "json",
-				success : function(json) 
-				{			
-					var vRecLen = json.length;
-					
-					if(vRecLen != 0 && vUserID != "admin") // validating the user who should not be an admin user to change their pwd and sec. questions
-					{									
-							$.each(json, function(i,n)
-							{											
-								if( vUserID === $.trim(n["userId"]) && vQues1 === $.trim(n["secQtn1"]) && vAns1 === $.trim(n["ans1"]) && vQues2 === $.trim(n["secQtn2"]) && vAns2 === $.trim(n["ans2"]))
-								{
-									isValid = 1; //valid user
-									$.jStorage.set("jsUserId", vUserID);
-									$.jStorage.set("jsSId", n["sid"]);									
-								}	
-							});
-							
-							if(isValid === 0) //invalid user
+		$.ajax({
+			type : "GET",
+			contentType: "application/json",
+			url:vUrl,
+			dataType: "json",
+			success : function(json) 
+			{			
+				alert('success');
+				var vRecLen = json.length;
+				
+				if(vRecLen != 0 && vUserID != "admin") // validating the user who should not be an admin user to change their pwd and sec. questions
+				{									
+						$.each(json, function(i,n)
+						{											
+							if( vUserID === $.trim(n["userId"]) && vQues1 === $.trim(n["secQtn1"]) 
+									&& vAns1 === $.trim(n["ans1"]) && vQues2 === $.trim(n["secQtn2"]) && vAns2 === $.trim(n["ans2"]))
 							{
-								alert("Invalid User");	
-								$.jStorage.set("jsUserId", "");	
-								return false;						
-							}
-							else
-							{
-							
-								// Check for Change Security Questions option
-								var isChecked = $('#chkChageQA').is(':checked');
-								var vSId = $.jStorage.get("jsSId");
-								if(isChecked)
-								{			
-									if(!validateChangeQA())   //validating the fields in Change Security Questions for proper values to submi the form if the checkbox is checked
-									{
-										return false;
-									}
-									else
-									{																
-									  var vCQues1 = $('#cmbChangeQues1').val();
-									  var vCAns1 = $('#txtChangeAns1').val();
-									  var vCQues2 = $('#cmbChangeQues2').val();
-									  var vCAns2 = $('#txtChangeAns2').val();									  									  
-									  
-									  vQuery =  '{"sid":"' + vSId + '", "passwd":"' + vNewPwd + '", "secQtn1":"' + vCQues1 + '", "ans1":"' + vCAns1 + '", "secQtn2":"' + vCQues2 + '", "ans2":"' + vCAns2 + '"}';	
-									}
-								}
-								else
-								{							
-									vQuery =  '{"sid":"' + vSId + '", "passwd":"' + vNewPwd + '", "secQtn1":"0", "ans1":" ","secQtn2":"0", "ans2":" "}';	
-								}
-								
-								$.ajax
-								({
-									type:"PUT",
-									contentType: "application/json",
-									url: $.jStorage.get("jsUrl") + "enterprise/updatePassword",
-									async:false,
-									data:vQuery,
-									dataType: "json",
-									success:function(json)
-									{
-										alert("Updated successfully!");
-										window.location.href = "login.html";
-									},
-									failure:function(json)
-									{
-										alert("Error: " + json.status + " " + json.responseText);
-									} 
-								});								
-								return true;	
-							}											
-					} // end of if(vRecLen != 0 && vUserID != "admin")
-					else
-					{
+								isValid = 1; //valid user
+								$.jStorage.set("jsUserId", vUserID);
+								$.jStorage.set("jsSId", n["sid"]);									
+							}	
+						});
+						
+						if(isValid === 0) //invalid user
+						{
 							alert("Invalid User");	
 							$.jStorage.set("jsUserId", "");	
-							window.location.href = "login.html";	
-					} // end of if(vRecLen != 0)
-					
-				}, //end of success
-				error : function(json) 
+							return false;						
+						}
+						else
+						{
+							// Check for Change Security Questions option
+							var isChecked = $('#chkChageQA').is(':checked');
+							var vSId = $.jStorage.get("jsSId");
+							if(isChecked)
+							{			
+								if(!validateChangeQA())   //validating the fields in Change Security Questions for proper values to submi the form if the checkbox is checked
+								{
+									return false;
+								}
+								else
+								{																
+								  var vCQues1 = $('#cmbChangeQues1').val();
+								  var vCAns1 = $('#txtChangeAns1').val();
+								  var vCQues2 = $('#cmbChangeQues2').val();
+								  var vCAns2 = $('#txtChangeAns2').val();									  									  
+								  
+								  vQuery =  '{"sid":"' + vSId + '", "passwd":"' + vNewPwd + '", "secQtn1":"' + vCQues1 + '", "ans1":"' + vCAns1 + '", "secQtn2":"' + vCQues2 + '", "ans2":"' + vCAns2 + '"}';	
+								}
+							}
+							else
+							{							
+								vQuery =  '{"sid":"' + vSId + '", "passwd":"' + vNewPwd + '", "secQtn1":"0", "ans1":" ","secQtn2":"0", "ans2":" "}';	
+							}
+							
+							$.ajax
+							({
+								type:"PUT",
+								contentType: "application/json",
+								url: $.jStorage.get("jsUrl") + "enterprise/updatePassword",
+								async:false,
+								data:vQuery,
+								dataType: "json",
+								success:function(json)
+								{
+									alert("Updated successfully!");
+									window.location.href = "login.html";
+								},
+								failure:function(json)
+								{
+									alert("Error: " + json.status + " " + json.responseText);
+								} 
+							});								
+							return true;	
+						}											
+				} // end of if(vRecLen != 0 && vUserID != "admin")
+				else
 				{
-					alert("Error: " + json.status + " " + json.responseText);
-				}
-			});			  		
-		}	
+						alert("Invalid User");	
+						$.jStorage.set("jsUserId", "");	
+						window.location.href = "login.html";	
+				} // end of if(vRecLen != 0)
+				
+			}, //end of success
+			error : function(json) 
+			{
+				alert("Error: " + json.length + " " + json.responseText+" "+json);
+			}
+		});				
+	}	
 }
 
 function comparePwd(password, confPwd)
@@ -217,6 +215,13 @@ function clearChangeQA()
 		$('#txtChangeAns1').val("");
 		$('#cmbChangeQues2').val("");
 		$('#txtChangeAns2').val("");
+}
+
+
+//function to redirect login page
+function gotoLogin()
+{
+	window.location.href="login.html";
 }
 
 //function to validate the fields in the Change Security Questions if the checkbox is checked
