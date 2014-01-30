@@ -211,7 +211,6 @@ function showComDurDiv(){
 //function to highlight the label
 function labelHighLight() {
 	document.getElementById('fader').style.color = "blue";
-	document.getElementById('fader').style.text-decoration = "underline";
 }
 //function to redirect a dashboard screen when dynamically changed compute duration
 function computeDurationUpdate() 
@@ -229,20 +228,16 @@ function computeDurationUpdate()
 		//dataType: "json",
 		success:function()
 		{	
-			//window.location.href="dashboard_full.html";
-			//window.location.replace("dashboard_full.html");
 			window.location.reload();
 		},
 		error:function(json)
 		{
-			
 			alert("Error from fetching Updated compute duration data!");			
  
 		}	 
 	});	//end of ajax	
 	//alert(rangeValue);
-	}
-
+}
 
 //function to display text in the specified div location
 function showPlainText(plainText, divID)
