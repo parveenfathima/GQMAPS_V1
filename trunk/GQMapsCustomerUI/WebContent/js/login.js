@@ -108,4 +108,4 @@ function addRegistration()
 {
 	$.jStorage.set("jsTimeout",180);
 	window.location.href="add_registration.html";
-	}
+}
