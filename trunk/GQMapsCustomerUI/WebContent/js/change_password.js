@@ -7,38 +7,37 @@ $(window).load(function ()
 		changeQA();
 });
 
+
 //binding the click event to the submit button
 $(document).ready(function() {
+	
 	$('#submit').bind("click", validateForm);
 	$('#chkChageQA').bind("click", changeQA);
 
-	if(($.jStorage.get("jsUserID") === "" || $.jStorage.get("jsUserID") === null ))
-	{
+	if(($.jStorage.get("jsUserID") === "" || $.jStorage.get("jsUserID") === null )) {
 		window.location.href = "login.html";
 	}
 	else {
 		//loading the security questions
 		loadSecQuestions();
-
 		isValid = 0; // 0 and 1 indicates invalid and valid user flags.
 	}
 });
 
 // function to validate the change_password form
-function validateForm()
-{
+function validateForm() {
+	
 	//declaring and initializing form variables
 	var vUserID = $.jStorage.get("jsUserID");
-	alert(vUserID);
 	var vQues1 = $('#cmbQues1').val(); 
 	var vAns1 = $.trim($('#txtAns1').val()); 
-		
+	
 	var vQues2 = $('#cmbQues2').val(); 
 	var vAns2 = $.trim($('#txtAns2').val()); 
-		
+	
 	var vNewPwd = $.trim($('#txtNewPwd').val()); 
 	var vConfPwd = $.trim($('#txtConfPwd').val()); 
-		
+	
 	//validating each field for not null and appropriate value selction
 	if(!validateQues(vQues1, "1", "oldQA"))
 	{
@@ -74,18 +73,15 @@ function validateForm()
 	}		
 	else if(comparePwd(vNewPwd, vConfPwd))
 	{
-		var vUrl = $.jStorage.get("jsUrl") + "enterprise/getRegistration?entpId=" + vUserId;	
-		alert(vUrl);
+		var vUrl = $.jStorage.get("jsUrl") + "enterprise/getRegistration?entpId=" + vUserID;			
 		var vQuery = "";
 
 		$.ajax({
 			type : "GET",
-			contentType: "application/json",
-			url:vUrl,
-			dataType: "json",
+			url : vUrl,
+			dataType : "json",
 			success : function(json) 
 			{			
-				alert('success');
 				var vRecLen = json.length;
 				
 				if(vRecLen != 0 && vUserID != "admin") // validating the user who should not be an admin user to change their pwd and sec. questions
@@ -164,9 +160,9 @@ function validateForm()
 			}, //end of success
 			error : function(json) 
 			{
-				alert("Error: " + json.length + " " + json.responseText+" "+json);
+				alert("Error: " + json.length + "  "+json);
 			}
-		});				
+		});			  		
 	}	
 }
 
