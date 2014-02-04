@@ -75,13 +75,13 @@ public class ComputerMeter implements GQSNMPMeter {
         OsType osTypeObj = null;
 
         // objects that go in finally
-
         CompSnapshot snapShot = null;
         ArrayList<CompInstSoftware> installedSwList = null;
         HashSet<CompConnDevice> connectedDevices = null;
         ArrayList<CompProcess> processList = null;
         Asset assetObj = null;
-
+        
+        //snmp listented here.
         try {
             snmp = new Snmp(new DefaultUdpTransportMapping());
             snmp.listen();
@@ -121,7 +121,7 @@ public class ComputerMeter implements GQSNMPMeter {
                 else if (sysDescription.contains("unix")) {
                     osId = "unix";
                 }
-                //we are here for mac all the processes are same as that of linux machine.
+                //we are here for mac all the processes are same as that of linux machine except asset id calculations.
                 else if(sysDescription.contains("mac")) {
                 	osId = "mac";
                 	isMac = true;
@@ -230,7 +230,6 @@ public class ComputerMeter implements GQSNMPMeter {
 
                             totalDiskSpace = windowsDriveSize + totalVirtualMemory;
                             usedDiskSpace = usedWindowsDriveSize + usedVirtualMemory;
-
                         }// 2nd if loop ends
                         else { // 1st else loop starts
                             variable = "/dev/shm";
@@ -321,8 +320,8 @@ public class ComputerMeter implements GQSNMPMeter {
                         result = MeterUtils.walk(rootOID, target);
 
                         if (result != null && !result.isEmpty()) { // 1st if loop starts
-                            String[] ethernet = new String[] { "eth0", "eth1", "eth2", "en0","en1", "en2", "en3", "em1",
-                                    "em2", "em3", "wlan" };
+                            String[] ethernet = new String[] { "eth2", "eth1", "eth0", "en3","en2", "en1", "en0", "em3", "em2",
+                                    "em1", "wlan" };
 
                             HashMap<String, List<Long>> networkMap = new HashMap<String, List<Long>>();
                             networkBytes = networkBytesCalc(result, rootOID, ethernet, networkMap, assetId,
@@ -371,12 +370,12 @@ public class ComputerMeter implements GQSNMPMeter {
                         rootOID = new OID(oidString);
                         List<VariableBinding> dateResult = MeterUtils.walk(rootOID, target);
 
-                        // Here to check count of applicationname,softwarename and date must be equal.
+                        // Here to check count of applicationtype,softwarename and date must be equal.
                         // because due to network speed count of applicationtype,softwarename and date must not be
                         // equal.
                         if (appResult.size() == softwareResult.size() && appResult.size() == dateResult.size()) {
                             installedSwList = installedSwListCalc(appResult, softwareResult, dateResult, rootOID,
-                                    isWindows, isLinux,isMac, id);
+                                    isWindows, isLinux, isMac, id);
                         }
                         else {
                             errorList.add(assetId + " Unable to fetch list of installed software due to network speed");
@@ -449,7 +448,7 @@ public class ComputerMeter implements GQSNMPMeter {
         	e.printStackTrace();
             errorList.add(ipAddress + " " + e.getMessage());
         }
-
+        
         Computer compObject = new Computer(id, assetObj, osTypeObj, snapShot, installedSwList, processList,
                 connectedDevices);
 
@@ -461,8 +460,9 @@ public class ComputerMeter implements GQSNMPMeter {
         if (errorList != null && !errorList.isEmpty()) {
             gqErrorInfo = new GQErrorInformation(sysDescription, errorList);
         }
-
+        
         GQMeterData gqMeterObject = new GQMeterData(gqErrorInfo, compObject);
+        
         long computerendTime = System.currentTimeMillis();
         new MeterUtils().compMeterTime = new MeterUtils().compMeterTime + (computerendTime - computerstartTime);
 
@@ -514,6 +514,7 @@ public class ComputerMeter implements GQSNMPMeter {
         for (VariableBinding vb : result) { // 1st for loop starts
             String temp = vb.getVariable().toString().trim();
             boolean isValid = false;
+            
             if (temp.contains("/") && temp.trim().equals(variable)) {
                 isValid = true;
             }
@@ -556,7 +557,7 @@ public class ComputerMeter implements GQSNMPMeter {
     }
 
     /**
-     * This method is used to get the Linux and Mac , network in and out bytes of a asset.
+     * This method is used to get the Linux and Mac  network in and out bytes of a asset.
      * 
      * @param result
      * @param rootOid
@@ -577,6 +578,7 @@ public class ComputerMeter implements GQSNMPMeter {
         String rootId = rootOid.toString();
         HashMap<String, HashMap<String, String>> macOidMap = new HashMap<String, HashMap<String, String>>();
         HashMap<String, String> networkValues = new HashMap<String, String>();
+        
         for (int i = 0; i < ethernet.length; i++) { // 1st for loop starts
             for (VariableBinding vb : result) { // 2nd for loo starts
                 if (vb.getVariable().toString().trim().equalsIgnoreCase(ethernet[i])) { // 1st if loop starts
@@ -666,9 +668,9 @@ public class ComputerMeter implements GQSNMPMeter {
                     .replaceAll(":", "");
         		assetId = eth0MacAddress;
         		networkValues.put("assetId", assetId);
-        		}	
-        	}else{
-        		
+        	}	
+        }
+        else {
         		if (macOidMap.get("eth0") != null && macOidMap.get("eth0").size() != 0) {
         			Set<String> uniqueValues = new HashSet<String>(macOidMap.get("eth0").values());
         			String eth0MacAddress = uniqueValues.toString().substring(1, uniqueValues.toString().length() - 1).trim()
@@ -784,7 +786,15 @@ public class ComputerMeter implements GQSNMPMeter {
         	}
         return networkValues;
     }
-
+    
+    /**
+     * This method is used to calculate Mac Asset ID
+     * 
+     * @param result
+     * @param rootOid
+     * @param macNetworkMap
+     * @return
+     */
     private HashMap<String, String> macAssetIdCalc(List<VariableBinding> result, OID rootOid,
             HashMap<String, String> macNetworkMap) {
 
@@ -815,7 +825,6 @@ public class ComputerMeter implements GQSNMPMeter {
         }// 1st for loop ends
         return macNetworkMap;
     }
-
 
     /**
      * This method is used to Windows Asset ID
@@ -875,7 +884,9 @@ public class ComputerMeter implements GQSNMPMeter {
 
         ArrayList<CompInstSoftware> installedSwList = new ArrayList<CompInstSoftware>(appResult.size());
         CompInstSoftwareId ins = null;
+        
         try {
+        	//calculations done on either windows or mac.
             if (isWindows || isMac) {
                 for (int i = 0; i < appResult.size(); i++) { // for loop starts
                     if (appResult.get(i).getVariable().toString().trim().equals("4")) { // 1st if loop starts
@@ -942,9 +953,11 @@ public class ComputerMeter implements GQSNMPMeter {
      */
     private static Date getDate(String hexDate, boolean isWindows) {
         Date newDate = null;
+        
         if (!isWindows) {
             hexDate = hexDate.substring(0, hexDate.length() - 12);
         }
+        
         String year = hexDate.split(":")[0] + hexDate.split(":")[1];
         int intOfYear = Integer.parseInt(year, 16);
         String yearStr = Integer.toString(intOfYear);
@@ -983,11 +996,13 @@ public class ComputerMeter implements GQSNMPMeter {
     /**
      * This method is used to get the Connected Device of a asset
      * 
-     * @param result
+     * @param connDeviceIPResult
+     * @param connDevicePortResult
      * @param ipAddress
+     * @param AssetId
      * @return
      */
-    private HashSet<CompConnDevice> ConnectedDevicesCalc(List<VariableBinding> result, List<VariableBinding> result1,
+    private HashSet<CompConnDevice> ConnectedDevicesCalc(List<VariableBinding> connDeviceIPResult, List<VariableBinding> connDevicePortResult,
             String ipAddress, CPNId id) {
 
         HashSet<CompConnDevice> connectedDevices = new HashSet<CompConnDevice>();
@@ -996,39 +1011,42 @@ public class ComputerMeter implements GQSNMPMeter {
         Long runId = id.getRunId();
         String assetId = id.getAssetId();
         CompConnDeviceId compConnDeviceId = null;
-        String ip[] = new String[result.size()];
-        int port[] = new int[result1.size()];
+        
+        String ip[] = new String[connDeviceIPResult.size()];
+        int port[] = new int[connDevicePortResult.size()];
         String ip_addr;
-        int ip_port, i = 0;
+        int ip_port, ipCount = 0;
+        
         // Getting IPaddress from List
-        for (VariableBinding vb : result) {
+        for (VariableBinding vb : connDeviceIPResult) {
             ip_addr = vb.getVariable().toString();
-            ip[i] = ip_addr;
-            i++;
+            ip[ipCount] = ip_addr;
+            ipCount++;
         }
-        i = 0;
+        ipCount = 0;
+        
         // Getting ports from List
-        for (VariableBinding vb : result1) {
+        for (VariableBinding vb : connDevicePortResult) {
             ip_port = Integer.parseInt(vb.getVariable().toString());
-            port[i] = ip_port;
-            i++;
+            port[ipCount] = ip_port;
+            ipCount++;
         }
         // Used to get the IPaddress and port from the SNMPwalkresult based on the condition
         int portNum = 0;
-        for (i = 0; i < result.size(); i++) {
-            if (!ip[i].equals("0.0.0.0") && !ip[i].equals("127.0.0.1") && !ip[i].equals(ipAddress) ) {
-            	if (port[i] <= 12000) {
-            		portNum = port[i];
+        for (ipCount = 0; ipCount < connDeviceIPResult.size(); ipCount++) {
+            if (!ip[ipCount].equals("0.0.0.0") && !ip[ipCount].equals("127.0.0.1") && !ip[ipCount].equals(ipAddress) ) {
+            	if (port[ipCount] <= 12000) {
+            		portNum = port[ipCount];
             	}
             	else {
             		portNum = 0;
             	}	
             }
-            if(ip[i].equals("0.0.0.0")) {
+            if(ip[ipCount].equals("0.0.0.0")) {
             	continue;
             }
         	// figure out the host name of the machine as well and insert it in another column
-            compConnDeviceId = new CompConnDeviceId(runId, assetId, ip[i], portNum, MeterUtils.getTrimmedHostName(ip[i]));
+            compConnDeviceId = new CompConnDeviceId(runId, assetId, ip[ipCount], portNum, MeterUtils.getTrimmedHostName(ip[ipCount]));
             connDevice = new CompConnDevice(compConnDeviceId);
             connectedDevices.add(connDevice);
         }
@@ -1052,18 +1070,24 @@ public class ComputerMeter implements GQSNMPMeter {
         Long runId = id.getRunId();
         String assetId = id.getAssetId();
         int processSize = sysRunNameResult.size();
+        
         ArrayList<CompProcess> processList = new ArrayList<CompProcess>(processSize);
         CompProcess process = null;
         CompProcessId compProcessId = null;
         String runName = null;
         int cpuShare = 0;
         int memShare = 0;
+        
         for (int i = 0; i < processSize; i++) { // for loop starts
-            runName = sysRunNameResult.get(i).getVariable().toString().trim();
+            
+        	runName = sysRunNameResult.get(i).getVariable().toString().trim();
             cpuShare = Integer.parseInt(cpuShareResult.get(i).getVariable().toString().trim());
             memShare = Integer.parseInt(memShareResult.get(i).getVariable().toString().trim());
+            
             if (runName != null && runName.trim().length() != 0) { // if loop starts
-                int runNameLength = runName.length();
+                
+            	int runNameLength = runName.length();
+                
                 if (runNameLength >= 45) {
                     runName = runName.substring(0, 44);
                 }
