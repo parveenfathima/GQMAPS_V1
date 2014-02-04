@@ -49,7 +49,8 @@ public class StorageMeter implements GQSNMPMeter {
         Snmp snmp = null;
         CommunityTarget target = null;
         Asset assetObj = null;
-
+        
+        //snmp listened here.
         try {
             snmp = new Snmp(new DefaultUdpTransportMapping());
             snmp.listen();
@@ -96,7 +97,7 @@ public class StorageMeter implements GQSNMPMeter {
             if (result != null && !result.isEmpty()) {
                 temp = oidString + ".3.0";
                 tempStr = MeterUtils.getSNMPValue(temp, result);
-                upTime = new MeterUtils().upTimeCalc(tempStr);
+                upTime = MeterUtils.upTimeCalc(tempStr);
             }
 
             oidString = "1.3.6.1.4.1.";
@@ -120,6 +121,7 @@ public class StorageMeter implements GQSNMPMeter {
         if (errorList != null && !errorList.isEmpty()) {
             gqErrorInfo = new GQErrorInformation(assetObj.getDescr(), errorList);
         }
+        
         GQMeterData gqMeterObject = new GQMeterData(gqErrorInfo, storageObj);
         long storageEndTime = System.currentTimeMillis();
         storageMeterTime = storageMeterTime + (storageEndTime - storageStartTime);
@@ -127,9 +129,11 @@ public class StorageMeter implements GQSNMPMeter {
     }
 
     private long totalHardDiskCalc(List<VariableBinding> result, OID rootOID) {
-        String oidString = "1.3.6.1.4.1.";
+        
+    	String oidString = "1.3.6.1.4.1.";
         String checkOid = ".4.1.1.5.0";
         long totalHardDiskSpace = 0;
+        
         for (VariableBinding vb : result) { // for loop starts
             String actualOid = vb.getOid().toString();
             actualOid = actualOid.replace(oidString, "");
@@ -145,9 +149,11 @@ public class StorageMeter implements GQSNMPMeter {
     }
 
     private long usedHardDiskCalc(List<VariableBinding> result, OID rootOID) {
-        String oidString = "1.3.6.1.4.1.";
+        
+    	String oidString = "1.3.6.1.4.1.";
         String checkOid = ".4.1.1.4.0";
         long UsedHardDiskSpace = 0;
+        
         for (VariableBinding vb : result) { // for loop starts
             String actualOid = vb.getOid().toString();
             actualOid = actualOid.replace(oidString, "");
@@ -163,12 +169,15 @@ public class StorageMeter implements GQSNMPMeter {
     }
 
     private short controllerCalc(List<VariableBinding> result, OID rootOID) {
-        String oidString = "1.3.6.1.4.1.";
+        
+    	String oidString = "1.3.6.1.4.1.";
         String checkOid = ".4.1.1.3.0";
         short numOfController = 0;
+        
         for (VariableBinding vb : result) { // for loop starts
             String actualOid = vb.getOid().toString();
             actualOid = actualOid.replace(oidString, "");
+            
             if (actualOid.contains(checkOid)) { // 1st if loop starts
                 actualOid = actualOid.replace(checkOid, "");
                 if (!actualOid.contains(".")) {
@@ -181,12 +190,15 @@ public class StorageMeter implements GQSNMPMeter {
     }
 
     private short individualHardDiskCalc(List<VariableBinding> result, OID rootOID) {
-        String oidString = "1.3.6.1.4.1.";
+        
+    	String oidString = "1.3.6.1.4.1.";
         String checkOid = ".4.1.1.2.0";
         short numOfDisk = 0;
+        
         for (VariableBinding vb : result) { // for loop starts
             String actualOid = vb.getOid().toString();
             actualOid = actualOid.replace(oidString, "");
+            
             if (actualOid.contains(checkOid)) { // 1st if loop starts
                 actualOid = actualOid.replace(checkOid, "");
                 if (!actualOid.contains(".")) {
