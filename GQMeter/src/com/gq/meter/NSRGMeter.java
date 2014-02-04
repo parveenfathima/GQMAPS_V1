@@ -110,7 +110,7 @@ public class NSRGMeter implements GQSNMPMeter {
 
                         temp = oidString + ".3.0";
                         tempStr = MeterUtils.getSNMPValue(temp, result);
-                        upTime = new MeterUtils().upTimeCalc(tempStr);
+                        upTime = MeterUtils.upTimeCalc(tempStr);
                     }
 
                     oidString = "1.3.6.1.2.1.2.1";
@@ -188,13 +188,17 @@ public class NSRGMeter implements GQSNMPMeter {
         }
 
         NSRG nsrg = new NSRG(id, assetObj, nsrgSnapShot, connectedDevices);
+        
         if (nsrg.getAssetObj().getAssetId().equalsIgnoreCase("S-null")) {
             errorList.add(ipAddress + " " + "Asset id is null");
         }
+        
         GQErrorInformation gqErrorInfo = null;
+        
         if (errorList != null && !errorList.isEmpty()) {
             gqErrorInfo = new GQErrorInformation(assetObj.getDescr(), errorList);
         }
+        
         GQMeterData gqMeterObject = new GQMeterData(gqErrorInfo, nsrg);
 
         long NSRGendTime = System.currentTimeMillis();
@@ -214,6 +218,7 @@ public class NSRGMeter implements GQSNMPMeter {
         String rootId = rootOid.toString();
         String totalPorts = null;
         long totalActivePorts = 0;
+        
         for (VariableBinding vb : result) { // for loop starts
 
             String lastchar = String.valueOf(vb.getOid().last());
@@ -304,10 +309,13 @@ public class NSRGMeter implements GQSNMPMeter {
         NSRGConnDeviceId nsrgConnDeviceId = null;
 
         for (VariableBinding vb : result) { // for loop starts
+        	
             String dynamic = vb.getVariable().toString().trim();
+            
             if (dynamic.trim().equalsIgnoreCase("3")) { // if loop starts
                 String dynamicOID = vb.getOid().toString();
                 finalIP = dynamicOID.substring(23);
+            
                 if (finalIP != null && finalIP.trim().length() != 0) {
                     nsrgConnDeviceId = new NSRGConnDeviceId(runId, assetId, finalIP);
                     nsrgConnDevice = new NSRGConnDevice(nsrgConnDeviceId);
