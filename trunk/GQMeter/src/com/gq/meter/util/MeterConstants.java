@@ -8,7 +8,7 @@ public class MeterConstants {
 	
 	//public static final String restURL = "http://localhost:8080/GQGatekeeper/";
 	
-    public static final int SPEEDTEST_TRIES=3;
+    public static final int SPEEDTEST_TRIES = 3;
 
     public static final String STATUS_PASS = "pass";
 
@@ -59,7 +59,9 @@ public class MeterConstants {
     public static final String SPEEDTEST_STATUS[] = {"on","off"};
 
     public static final String METER_ID = "$meterid";
-
+    
+    public static final String REST_ENDPOINT_URL = "$url";
+    
     public static final String NO_VALUE = "No value is found";
 
     public static final String NO_OID = "No OID is found";
