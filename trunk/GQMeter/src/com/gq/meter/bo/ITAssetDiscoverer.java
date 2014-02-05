@@ -2,12 +2,9 @@ package com.gq.meter.bo;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.net.InetAddress;
 import java.util.Date;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -29,7 +26,6 @@ import org.snmp4j.transport.DefaultUdpTransportMapping;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import com.gq.meter.ComputerMeter;
 import com.gq.meter.GQErrorInformation;
 import com.gq.meter.GQMeterData;
 import com.gq.meter.GQMeterResponse;
@@ -37,6 +33,7 @@ import com.gq.meter.assist.ProtocolData;
 
 import com.gq.meter.object.Asset;
 import com.gq.meter.object.CPNId;
+import com.gq.meter.object.Computer;
 import com.gq.meter.object.SpeedTestSnpsht;
 import com.gq.meter.object.SpeedTestSnpshtId;
 import com.gq.meter.util.MeterConstants;
@@ -58,8 +55,9 @@ import com.sun.jersey.api.representation.Form;
  * 
  */
 public final class ITAssetDiscoverer {
-
-    private String gqmid = null;
+	private final static int REQD_HEADER_ENTRIES = 6; // all switches and stuff in header 
+	
+	private String gqmid = null;
     private String localIPCommunityString = null;
     private String localIPAddress = null;
     private static Pattern pattern = Pattern.compile("^([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\."
@@ -251,6 +249,11 @@ public final class ITAssetDiscoverer {
                     }
                     gqmid = headerToken[1];
                 }
+//                
+//                else if(keyy.equals(MeterConstants.URL)) {
+//                	System.out.println("url:"+headerToken[1]);
+//                }
+                
                 else if (keyy.equals(MeterConstants.COMPUTER_SWITCH) || keyy.equals(MeterConstants.STORAGE_SWITCH)) {
                     Map<String, Integer> tokenOcc = new HashMap<String, Integer>();
                     
@@ -407,17 +410,18 @@ public final class ITAssetDiscoverer {
                 System.exit(0);
             }
 
-            if (switchOcc.size() != 6) {
+            if (switchOcc.size() != REQD_HEADER_ENTRIES) {
                 System.out.println(" [GQMETER] All switches need to be present on Input Assets File , check manual..");
                 System.exit(0);
             }
 
-            if (!(headerLinesCount == 6)) {
-                System.out.println(" [GQMETER] Invalid Header Section , 5 lines are reqd , Process Terminating Now ..");
+            if (!(headerLinesCount == REQD_HEADER_ENTRIES)) {
+                System.out.println(" [GQMETER] Invalid Header Section , "+REQD_HEADER_ENTRIES +" lines are reqd , Process Terminating Now ..");
                 System.exit(0);
             }
 
-            // send it to gate keeper and check if it is good.
+            // send it to gate keeper and check if it is good. this call will shut the program if found to be invalid
+            // bad idea but we keep it this way for now - ss feb 5 , 14
             meterProtocol = isValid(gqmid);
 
             // *************************
@@ -557,7 +561,7 @@ public final class ITAssetDiscoverer {
         	 snmpDetails = MeterUtils.isSnmpConfigured(localIPCommunityString, localIPAddress);
 
         	 if ( snmpDetails.get("snmpUnKnownIp") != null ) {
-            	 snmpUnknownIPList.add(localIPAddress);
+            	 //snmpUnknownIPList.add(localIPAddress);
             	 errorList.add(localIPCommunityString + " - " + localIPAddress + " -  : Unable to reach the asset");
             	 gqErrorInfoList.add( new GQErrorInformation( null, errorList ) );
              }
@@ -708,7 +712,12 @@ public final class ITAssetDiscoverer {
     	
     	HashMap<String, String> communityIPMap = new HashMap<String, String>();// to process computer,printer and switches ip's.
     	HashMap<String, String> speedTestIPMap = new HashMap<String, String>();// to process speed test meter ip.
+    	HashMap<String,String> compMap=new HashMap<String, String>(20);//Here Map only used for check duplications of local ip.
+    	Computer computerObj = null;//check duplications only for computer meter.
+    	Asset assetObj = null;//only for computer asset. 
     	
+    	int valid = 0;
+        
     	System.out.println(" [GQMETER] started .......");
         gqmResponse = new GQMeterResponse();
         gqmResponse.setRecDttm(new Date());
@@ -722,21 +731,53 @@ public final class ITAssetDiscoverer {
         //we are here to read the input file, to store the ip for required map
         readInput(inputFilePath,communityIPMap,speedTestIPMap);
         
-        gqmResponse.setAssetScanned((short) ((communityIPMap.size())+speedTestIPMap.size()));
-         
+        gqmResponse.setAssetScanned( (short)( (communityIPMap.size() ) + speedTestIPMap.size() ));
+        
+        if( communityIPMap.size() == 0 && speedTestIPMap.size() == 0) {
+        	System.out.println(" [GQMETER] There is no valid IP Address in given input section");
+        	System.exit(0);
+        }
+        
         if ( communityIPMap.size() > 0) {
             assetsList = findAssets(communityIPMap);
-            gqmResponse.addToAssetInformationList(assetsList);
+        }
+        
+        for(int assetCount = 0; assetCount < assetsList.size(); assetCount++ ) {
+        	
+        	computerObj = gson.fromJson( assetsList.get(assetCount).getData(), Computer.class);
+	        assetObj = computerObj.getAssetObj();
+	        
+	        if( !compMap.containsValue( assetObj.getAssetId() )) {
+	        	compMap.put(assetObj.getIpAddr(),assetObj.getAssetId());
+	        }
+	        else {
+	        	valid++;
+	        }
+        }
+        //we are here to remove the duplication local ip.
+        if(valid > 0) {
+        	for(int assetCount = 0; assetCount < assetsList.size(); assetCount++ ) {
+        		
+        		computerObj = gson.fromJson(assetsList.get(assetCount).getData(), Computer.class);
+      	        assetObj = computerObj.getAssetObj();
+      	        
+      	        if((assetObj.getIpAddr()).equals("127.0.0.1")) {
+      	        	assetsList.remove(assetCount);
+      	        	break;
+      	        	//System.out.println("Removed Data:" + assetsList.remove(assetCount));
+      	        }
+        	}
+        	gqmResponse.addToAssetInformationList(assetsList);
+        }
+        
+        //we are here for there is no duplication local ipaddress.
+        if(valid == 0) {
+        	gqmResponse.addToAssetInformationList(assetsList);
         }
         
         if ( speedTestIPMap.size() > 0 && speedTestIPMap != null ) {    	
         	speedAssetsList = speedCalculation( speedTestIPMap,localIPCommunityString,localIPAddress );
         	gqmResponse.addToAssetInformationList(speedAssetsList);
-        }
-        
-        if( communityIPMap.size() == 0 && speedTestIPMap.size() == 0) {
-        	System.out.println(" [GQMETER] There is no valid IP Address in given input section");
-        	System.exit(0);
         }
         
         long endTime = System.currentTimeMillis();
@@ -762,7 +803,6 @@ public final class ITAssetDiscoverer {
         ClientResponse response = builder.post(ClientResponse.class, form);
 
         System.out.println(" [GQMETER] ended successfully ...." + response.getStatus());
-
     }
 
     public static void main(String[] args) throws IOException {
@@ -775,5 +815,4 @@ public final class ITAssetDiscoverer {
         String inputFilePath = args[0].trim();
         itad.discover(inputFilePath);
     }
-    
 }// class ends
