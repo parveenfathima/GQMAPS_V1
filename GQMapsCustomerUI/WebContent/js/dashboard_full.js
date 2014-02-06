@@ -362,28 +362,6 @@ function checkGoalInput(goalId)
 	});	//end of ajax			
 }
 
-
-// opening the asset list dialog to copy the selected assets
-//function openAssetList()
-//{
-//	var vValues = "";
-//	
-//	$("#txtSelAssets").val("");
-//	
-//	vValues = vValues + '<table><thead><tr id = "trAssetIdHead"><th>Action</th><th>Asset ID</th></tr></thead><tbody>'
-//	$.each(assetsDB.assetDataDB, function(i, n)
-//	{
-//		vValues = vValues + '<tr id = "trAssetId' + i + '"><td><input type = "checkbox"  id = "chkAssetId' + i + '" value = "' +  assetsDB.assetDataDB[i].assetId  + '"/></td>';
-//		vValues = vValues + '<td>' + assetsDB.assetDataDB[i].assetId  + '</td></tr>';							
-//	});		
-//	
-//	vValues = vValues + '</tbody></table>';   
-//	
-//	$("#spnAssetList").append(vValues);
-//	$("#dlgAssetList").dialog(optAssetList).dialog('open');	
-//				
-//}
-
 //concatenating asset IDs on selection to copy past from asset list dialog box
 function addText()
 {
@@ -399,7 +377,6 @@ function addText()
 			txt = txt + $("#chkAssetId"+i).val() + ',';
 		}
 	}
-	
 	//truncating the last comma
 	if($.trim(txt) != "" && txt.length > 2)
 		$("#txtSelAssets").val(txt.substring(0, txt.length-1));
@@ -412,7 +389,6 @@ function submitGoalInput()
 	var vUrl = $.jStorage.get("jsDBUrl") + "GoalInputServices/getGoalInput?goalId=" + 	$.jStorage.get("goalId");
 	
 	var vGoalInputs = "";
-	
 	var aryGoalInputs = [];
 
 	$.ajax
@@ -466,19 +442,5 @@ function submitGoalInput()
 
 //function to redirect Dashboard screen    
 function gotoDashboard() {
-
-	//window.location.href="dashboard_full.html";
 	window.location.replace("dashboard_full.html");
-
 }
-
-
-//function setGoal(e)
-//{
-//	window
-//	.open(
-//			'goal.jsp',
-//			"GoalTasks",
-//			"right=2000,top=20,toolbar=no, "
-//					+ "status=no,location=no,	menubar=no, scrollbars=yes, resizable=no, width=900, height=900");
-//	}
