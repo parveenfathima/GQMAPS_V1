@@ -1,145 +1,186 @@
 <!doctype html>  
-<!--[if IE 6 ]><html lang="en-us" class="ie6"> <![endif]-->
-<!--[if IE 7 ]><html lang="en-us" class="ie7"> <![endif]-->
-<!--[if IE 8 ]><html lang="en-us" class="ie8"> <![endif]-->
-<!--[if (gt IE 7)|!(IE)]><!-->
-<html lang="en-us"><!--<![endif]-->
-<head>
-	<meta charset="utf-8">
+<html lang = "en-us">
+	<head>
+		<meta charset = "utf-8">
 	
-	<title>GQMaps Download Jar</title>
+		<title> GQMaps Download Jar </title>
 	
-	<link href="http://fonts.googleapis.com/css?family=Cuprum" rel="stylesheet" type="text/css" />
-	<link rel="stylesheet" href="css/documenter_style.css" media="all">
-	<link rel="stylesheet" href="css/custom.css" media="screen">
-    <link rel="stylesheet" href="css/downloadjar.css" media="all">
+		<!-- Custom Styles -->
+		<link rel = "stylesheet" href = "css/gqmaps.css" type = "text/css" />
+		<link rel = "stylesheet" href = "css/documenter_style.css" media = "all">
+		<link rel = "stylesheet" href = "css/downloadjar.css" media = "all">
+		<link rel = "stylesheet" href = "css/custom.css" media = "screen">
+		<link rel = "stylesheet" href = "css/downloadjar/shDocumenter.css" media = "screen">
+	    
+	    <!-- Predefined Style -->
+		<link rel = "stylesheet" href = "http://fonts.googleapis.com/css?family=Cuprum" type = "text/css" />
+		
+		<!-- Predefined Scripts -->
+		<script src = "js/downloadjar/jquery.1.6.4.js"> </script>
+		<script src = "js/downloadjar/jquery.scrollTo-1.4.2-min.js"> </script>
+		<script src = "js/downloadjar/jquery.easing.js"> </script>
+		
+		<script src = "js/downloadjar/shCore.js"> </script>
+		<script src = "js/downloadjar/shBrushAS3.js"> </script>
+		<script src = "js/downloadjar/shBrushCss.js"> </script>
+		<script src = "js/downloadjar/shBrushXml.js"> </script>
+		<script src = "js/downloadjar/shBrushJScript.js"> </script>
+		<script src = "js/downloadjar/shBrushPhp.js"> </script>
+		<script src = "js/downloadjar/shBrushPlain.js"> </script>
+		<script src = "js/script.js"> </script>
+		
+		<script type="text/javascript" language="javascript">
+		
+			SyntaxHighlighter.defaults['toolbar'] = false;SyntaxHighlighter.all();
+			document.createElement('section');
+			var duration = 450;
+			var easing = 'easeOutExpo';
+		
+	    	function ShowPanel(val)
+	    	{
+	     		var pnl= document.getElementById("pnlDetail");
+				pnl.style.display="block";
+				pnl.innerHTML=val;
+	    	}
+	    	
+	    	function HidePanel()
+	  		{
+	    		var pnl= document.getElementById("pnlDetail");
+	  			pnl.style.display="none";
+	    	}
+	
+	    	function DownloadJar()
+	    	{
+	    	window.location.href="http://cloud.gqexchange.com:8080/downloads/gqmeter.jar";    
+	    	}
+	  
+		</script>
+		
+		<style type="text/css">
+			
+			html{
+				background-color:#F3F3F3;
+				color:#585858;
+				background-image:url(assets/images/image_15.png);
+				background-repeat:repeat;
+				background-attachment:fixed;}
+				::-moz-selection{background:#111111;color:#F1F1F1;}
+				::selection{background:#111111;color:#F1F1F1;}
+			
+			a{
+				color:#111111;}
+			
+			hr{
+				border-top:1px solid #E5E5E5;
+				border-bottom:1px solid #F9F9F9; 
+				margin-bottom: 20px;}
+			
+			td { 
+				padding: 10px; }
+				
+			table th { 
+				background: #f5f5f5; 
+				font-weight: bold; 
+				padding: 10px; 
+				white-space: nowrap;}
+			 
+			.syntaxhighlighter { 
+				overflow-y: hidden !important; 
+				overflow-x:hidden !important;  }
+			 
+		</style>
+	</head>
+	<body>
     
+    	<!-- Timeout Div -->
+		<div id = "idletimeout">
+        	Logging off in <span> countdown place holder </span>&nbsp;seconds due to inactivity.
+        	<a id = "idletimeout-resume" href = "#"> Click here to continue </a>.
+    	</div>          
 
-	<script src="js/downloadjar/jquery.1.6.4.js"></script>
-	<script src="js/downloadjar/jquery.scrollTo-1.4.2-min.js"></script>
-	<script src="js/downloadjar/jquery.easing.js"></script>
+		<!-- Fixed top -->
+		<div id = "top">
+			<div class = "fixed">
+				<a href = "index.html" title = " " class = "logo"></a>
+				<img class = "logo-menu" src = "images/image001.jpg"></img>
+			</div>
+		</div>
+		<!-- /Fixed top -->
 	
-	<link rel="stylesheet" href="css/downloadjar/shDocumenter.css" media="screen">
-	<script src="js/downloadjar/shCore.js"></script>
-	<script src="js/downloadjar/shBrushAS3.js"></script>
-	<script src="js/downloadjar/shBrushCss.js"></script>
-	<script src="js/downloadjar/shBrushXml.js"></script>
-	<script src="js/downloadjar/shBrushJScript.js"></script>
-	<script src="js/downloadjar/shBrushPhp.js"></script>
-	<script src="js/downloadjar/shBrushPlain.js"></script>
-	<script>SyntaxHighlighter.defaults['toolbar'] = false;SyntaxHighlighter.all();</script>
-
-	<script>document.createElement('section');var duration=450,easing='easeOutExpo';</script>
-	<script src="js/script.js"></script>
-	<script type="text/javascript" language="javascript">
-    function ShowPanel(val)
-    {
-     var pnl= document.getElementById("pnlDetail");
-  pnl.style.display="block";
-  pnl.innerHTML=val;
-    }
-    function HidePanel()
-  
-  {
-    var pnl= document.getElementById("pnlDetail");
-  pnl.style.display="none";
-    }
-
-    function DownloadJar()
-    {
-    window.location.href="http://cloud.gqexchange.com:8080/downloads/gqmeter.jar";    
-    //window.location.href="http://192.168.8.15:8080/downloads/gqmeter.jar";
-    }
-  
-</script>
-	<style>
-		html{background-color:#F3F3F3;color:#585858;background-image:url(assets/images/image_15.png);background-repeat:repeat;background-attachment:fixed;}
-		::-moz-selection{background:#111111;color:#F1F1F1;}
-		::selection{background:#111111;color:#F1F1F1;}
-		
-		a{color:#111111;}
-		
-		hr{border-top:1px solid #E5E5E5;border-bottom:1px solid #F9F9F9; margin-bottom: 20px;}
-		
-		td { padding: 10px; }
-		table th { background: #f5f5f5; font-weight: bold; padding: 10px; white-space: nowrap; } 
-		
-		
-	</style>
-    <style type="text/css">
-.syntaxhighlighter { overflow-y: hidden !important; overflow-x:hidden !important;  }
-</style>
-
-	
-</head>
-<body>
-    <div id="top">
-        <div class="fixed">
-            <a href="#" title="" class="logo"><!--<img src="img/logo.png" alt="" />--></a>
-            <img class="logo-menu" src="images/image001.jpg"></img>
-        </div>
-    </div>
-	
-	<div id="documenter_content" style="width:70%; height:100%;">
+		<!-- Documenter content starts -->
+		<div id = "documenter_content" style = "width:70%; height:100%;">
     
-        <section id="documenter_cover" style="position:relative; top:0px;">
-            
-            <h1 style=" font-family: 'Cuprum', sans-serif; font-weight: normal; padding-bottom: 5px; color: #b55d5c; font-size:40px;">GQMaps-Manage your data</h1>
-            <button class="btn btn-inverse" type="button" onclick="DownloadJar()">Download GQMaps Jar</button>
-        </section>
-        
-        <section id="features">
-            <h3 style=" font-family: 'Cuprum', sans-serif; font-weight: normal; padding-bottom: 5px; color: #b55d5c; font-size:40px;">Pre-requisites</h3><hr class="notop">
-            <ul>	
-                <li>Get a list of IP assets.(IP Address you want to scan)</li>
-                <li>Enable SNMP V2 or if not supported enable V1 and get the community string from the system admin. </li>
-                <li>Please make sure you want to use java version 6 on the macine where you want to run the meter.</li>
-                <li>To run the meter please type the following command:		<code>java -jar gqmeter.jar  &lt;path to input asset file&gt;</code></li>
-                <li>Please follow the steps described below to create the input asset file. </li>
-            </ul>
-        </section>
-
-        <section id="htmlStructure">
-            <h3 style=" font-family: 'Cuprum', sans-serif; font-weight: normal; padding-bottom: 5px; color: #b55d5c; font-size:40px;">Asset File Creation</h3><hr class="notop">
-            <h3>Hover over the lines below to view the detailed meaning.</h3>
-            
-            <p>GQMaps is smart enough to discover the type of asset given an IP Address.</p>
-            <p>Entries above the $$ mark the header section. Please choose appropriate switches as required. </p>
-            <p>Lines starting with # are comments.</p>
-            
-        <div class="row-fluid" >
+        	<section id = "documenter_cover" style = "position:relative; top:0px;">
         	
-            <div class="span6" >
-            	<div><p align="center"><b>Header section</b></p></div>
-                <div onmouseover="ShowPanel('<p>The keyword meterid is mandatory and gqmaps1 represent the sample id , Please enter the meterid  which was given by gquotient team .</p>' );" onmouseout="HidePanel();"><pre>$meterid gqmaps1</pre></div>
+            	<h1 style = " font-family: 'Cuprum', sans-serif; font-weight: normal; padding-bottom: 5px; color: #b55d5c; font-size:40px;">
+        	    	GQMaps-Manage your data
+            	</h1>
+            	<button class = "btn btn-inverse" type = "button" onclick = "DownloadJar()"> Download GQMaps Jar </button>
+            	
+	        </section>
+        
+        	<section id = "features">
+        	
+            	<h3 style = " font-family: 'Cuprum', sans-serif; font-weight: normal; padding-bottom: 5px; color: #b55d5c; font-size:40px;">
+            		Pre-requisites
+            	</h3>
+            	<hr class =	"notop">
+            	<ul>	
+                	<li>Get a list of IP assets.(IP Address you want to scan)</li>
+                	<li>Enable SNMP V2 or if not supported enable V1 and get the community string from the system admin. </li>
+                	<li>Please make sure you want to use java version 6 on the macine where you want to run the meter.</li>
+                	<li>To run the meter please type the following command:		<code>java -jar gqmeter.jar  &lt;path to input asset file&gt;</code></li>
+                	<li>Please follow the steps described below to create the input asset file. </li>
+            	</ul>
+            	
+        	</section>
 
-                <div onmouseover="ShowPanel('<p>@computor is a mandatory switch. </p><p>snap_shot is used to get the details of total memory,used memory,cpu load,up time,number of users logged in etc.</P><p>conn_devices is used to get the details of connected devices for the given IP Address with the port number.</p><p>process is used to get the details of proccess name,cpu share,memory share in kilobytes.</p><p>inst_sw is used to get the list of installed software programs.</p>');"onmouseout="HidePanel();"><pre>@computer     snap_shot|conn_devices|process|inst_sw</pre></div>
-
-                <div onmouseover="ShowPanel('<p>@printer is a mandatory switch.</p><p>snap_shot is used to get the details of  total memory,used memory,up time, toner status etc.</p><p>conn_devices is used to get the details of connected devices for the given IP Address.</p>');" onmouseout="HidePanel();"><pre>@printer      snap_shot|conn_devices</pre></div>
-
-                <div onmouseover="ShowPanel('<p>@nsrg is a mandatory switch.</p><p>snap_shot is used to get the details of up time,number of ports,number of ports up,network bytes in,network bytes out.</p><p>conn_device is used to get the details of connected devices for the given IP Address.</p>');" onmouseout="HidePanel();" ><pre>@nsrg         snap_shot|conn_devices</pre></div>
-
-                <div onmouseover="ShowPanel('<p>@storage switch is mandatory but the storage meter is under implementation.</p>');" onmouseout="HidePanel();" ><pre>@storage      snap_shot</pre></div>
-                
-                <div onmouseover="ShowPanel('<p>rem_ipaddress is the remote machine IPAddress, rem_comm_str is the SNMP community string of the remote machine ,loc_ipaddress is the local machine IPAddress ,loc_comm_str is the SNMP community string of the local machine.</p><p>If speed test is enabled you are required to have local machines entry in the Input section.</p>');" onmouseout="HidePanel();" ><pre>@speedtest on rem_ipaddress  rem_comm_str  loc_ipaddress  loc_comm_str</pre></div>
-
-                <div onmouseover="ShowPanel('<p>$$ is the delimeter and should be present in its own line .</p>');" onmouseout="HidePanel();"><pre>$$ </pre></div>
-                
-                <div><p align="center"><b>Input section</b></p></div><br>               
-                
-                <div onmouseover="ShowPanel('<p>Here is where you specify one IP Address to be processed. </p><p>gqmaps 192.168.1.14 line is of the format SNMPcommunity string space IPAddress. </p>');"onmouseout="HidePanel();" ><pre>gqmaps 192.168.1.14</pre></div>
-
-                <div onmouseover="ShowPanel('<p>Here is where you specify a range of IP Address which all share a common community string.</p><p> In this example gqmaps is the SNMPcommunity string space 192.168.8.128 is the IPAddress lowerbound space 192.168.8.140 is the IPAddress upperbound. </p>');"onmouseout="HidePanel();"><pre>gqmaps 192.168.8.128  192.168.8.140</pre></div>               
+        	<section id = "htmlStructure">
             
-            </div>
-            <div class="span6" id="pnlDetail" ></div>
-        </div>
-        </section>
-
-        <section id="features">
-            <h3 style=" font-family: 'Cuprum', sans-serif; font-weight: normal; padding-bottom: 5px; color: #b55d5c; font-size:40px;">Samples</h3><hr class="notop">
+            	<h3 style = " font-family: 'Cuprum', sans-serif; font-weight: normal; padding-bottom: 5px; color: #b55d5c; font-size:40px;">
+            		Asset File Creation
+            	</h3>
+            	<hr class = "notop">
+            	<h3> Hover over the lines below to view the detailed meaning. </h3>
             
-            <h4>Sample1 - File with all switches used</h4>
+            	<p>GQMaps is smart enough to discover the type of asset given an IP Address.</p>
+            	<p>Entries above the $$ mark the header section. Please choose appropriate switches as required. </p>
+            	<p>Lines starting with # are comments.</p>
+            
+        		<div class = "row-fluid" >
+        	
+            		<div class = "span6" >
+	            		<div> 
+	            			<p align = "center"> <b> Header section </b> </p>
+	            		</div>
+	                	<div onmouseover = "ShowPanel('<p>The keyword meterid is mandatory and gqmaps1 represent the sample id , Please enter the meterid  which was given by gquotient team .</p>' );" 
+	                	onmouseout = "HidePanel();"> <pre>$meterid gqmaps1</pre></div>
+	                	<div onmouseover = "ShowPanel('<p>@computor is a mandatory switch. </p><p>snap_shot is used to get the details of total memory,used memory,cpu load,up time,number of users logged in etc.</P><p>conn_devices is used to get the details of connected devices for the given IP Address with the port number.</p><p>process is used to get the details of proccess name,cpu share,memory share in kilobytes.</p><p>inst_sw is used to get the list of installed software programs.</p>');" onmouseout = "HidePanel();"><pre>@computer     snap_shot|conn_devices|process|inst_sw</pre></div>
+	                	<div onmouseover = "ShowPanel('<p>@printer is a mandatory switch.</p><p>snap_shot is used to get the details of  total memory,used memory,up time, toner status etc.</p><p>conn_devices is used to get the details of connected devices for the given IP Address.</p>');" onmouseout = "HidePanel();"><pre>@printer      snap_shot|conn_devices</pre></div>
+	                	<div onmouseover = "ShowPanel('<p>@nsrg is a mandatory switch.</p><p>snap_shot is used to get the details of up time,number of ports,number of ports up,network bytes in,network bytes out.</p><p>conn_device is used to get the details of connected devices for the given IP Address.</p>');" onmouseout = "HidePanel();" ><pre>@nsrg         snap_shot|conn_devices</pre></div>
+	                	<div onmouseover = "ShowPanel('<p>@storage switch is mandatory but the storage meter is under implementation.</p>');" onmouseout = "HidePanel();" ><pre>@storage      snap_shot</pre></div>
+	                	<div onmouseover = "ShowPanel('<p>rem_ipaddress is the remote machine IPAddress, rem_comm_str is the SNMP community string of the remote machine ,loc_ipaddress is the local machine IPAddress ,loc_comm_str is the SNMP community string of the local machine.</p><p>If speed test is enabled you are required to have local machines entry in the Input section.</p>');" onmouseout = "HidePanel();" ><pre>@speedtest on rem_ipaddress  rem_comm_str  loc_ipaddress  loc_comm_str</pre></div>
+		                <div onmouseover = "ShowPanel('<p>$$ is the delimeter and should be present in its own line .</p>');" onmouseout = "HidePanel();"><pre>$$ </pre></div>
+		                <div>
+		                	<p align = "center"><b>Input section</b></p>
+		                </div> <br/>               
+		                <div onmouseover = "ShowPanel('<p>Here is where you specify one IP Address to be processed. </p><p>gqmaps 192.168.1.14 line is of the format SNMPcommunity string space IPAddress. </p>');" onmouseout = "HidePanel();" ><pre>gqmaps 192.168.1.14</pre></div>
+		                <div onmouseover = "ShowPanel('<p>Here is where you specify a range of IP Address which all share a common community string.</p><p> In this example gqmaps is the SNMPcommunity string space 192.168.8.128 is the IPAddress lowerbound space 192.168.8.140 is the IPAddress upperbound. </p>');" onmouseout = "HidePanel();"><pre>gqmaps 192.168.8.128  192.168.8.140</pre></div>               
+            		</div>
+            		<div class = "span6" id = "pnlDetail" ></div>
+            		
+        		</div>
+        		
+        	</section>
+
+        	<section id = "features">
+        	
+            	<h3 style = " font-family: 'Cuprum', sans-serif; font-weight: normal; padding-bottom: 5px; color: #b55d5c; font-size:40px;">
+            		Samples
+            	</h3>
+            	<hr class = "notop">
+            
+            	<h4> Sample1 - File with all switches used </h4>
             	<pre>
             	$meterid gqmaps1 
             	@computer     snap_shot|conn_devices|process|inst_sw 
@@ -151,7 +192,7 @@
             	gqmaps 192.168.1.14 
             	gqmaps 192.168.8.128  192.168.8.130
 				</pre>
-				 <h4>Sample2 - File with required switches only</h4>
+				<h4> Sample2 - File with required switches only </h4>
             	<pre>
             	$meterid gqmaps1 
             	@computer     process|inst_sw 
@@ -163,25 +204,29 @@
             	gqmaps 192.168.1.14 
             	gqmaps 192.168.8.128  192.168.8.130
 				</pre>
-        </section>
+				
+        	</section>
        
-            <h3 style=" font-family: 'Cuprum', sans-serif; font-weight: normal; padding-bottom: 5px; color: #b55d5c; font-size:40px;">Addendum A</h3><hr class="notop">
-            <h4>Full List of data collected</h4>
+            <h3 style = "font-family: 'Cuprum', sans-serif; font-weight: normal; padding-bottom: 5px; color: #b55d5c; font-size:40px;">
+            	Addendum A
+            </h3>
+            <hr class = "notop">
+            <h4> Full List of data collected </h4>
            
-            	 <table frame="vsides" rules="all">
-            	 	<thead>
-            	 		<tr class="rowborder" style="color: #b55d5c; font-size:15px;">
-	            	 		<th class="colborder">Computer</th>
-	            	 		<th class="colborder">Printer</th>
-	            	 		<th width="250px" class="colborder">Network Switch,Router and Gateway</th>
-            	 		</tr>
-            	 	</thead>
-            	 	<tbody>
-            	 		<tr>
-            	 			<th scope="rowgroup" colspan="4">Snapshot</th>
-            	 		</tr>
-            	 		<tr class="rowborder">
-            	 			<td>	
+           	<table frame = "vsides" rules = "all">
+           		<thead>
+           	 		<tr class = "rowborder" style = "color: #b55d5c; font-size:15px;">
+            	 		<th class = "colborder"> Computer </th>
+            	 		<th class = "colborder"> Printer </th>
+            	 		<th width = "250px" class = "colborder"> Network Switch,Router and Gateway </th>
+           	 		</tr>
+           	 	</thead>
+           	 	<tbody>
+           	 		<tr>
+           	 			<th scope = "rowgroup" colspan = "4"> Snapshot </th>
+           	 		</tr>
+           	 		<tr class = "rowborder">
+           	 			<td>	
     <pre>
 	asset_id
 	ip_addr
@@ -201,8 +246,8 @@
 	clock_speed
 	extras
 	</pre>
-            	 			</td>
-            	 			<td>
+           	 			</td>
+           	 			<td>
 	<pre>
 	asset_id
 	ip_addr
@@ -220,8 +265,8 @@
 	clr_prntr
 	extras
 	</pre>
-            	 			</td>
-            	 			<td class="databorder">
+           	 			</td>
+           	 			<td class = "databorder">
 	<pre>
 	asset_id
 	ip_addr
@@ -232,66 +277,589 @@
 	ntwrk_bytes_out
 	extras
 	</pre>
-            	 			</td>
-            	 		</tr>
-            	 		<tr>
-            	 			<th scope="rowgroup" colspan="4">Connected Devices</th>
-            	 		</tr>
-            	 		<tr class="rowborder">
-            	 			<td>
+            	 		</td>
+            	 	</tr>
+           	 		<tr>
+           	 			<th scope = "rowgroup" colspan = "4"> Connected Devices </th>
+           	 		</tr>
+           	 		<tr class = "rowborder">
+           	 			<td>
 	<pre>
 	asset_id
 	ip_addr
 	host_name
 	port
 	</pre>
-            	 			</td>
-            	 			<td>
+           	 			</td>
+           	 			<td>
 	<pre>
 	asset_id
 	ip_addr
 	</pre>
-            	 			</td>
-            	 			<td  class="databorder">
+           	 			</td>
+           	 			<td  class = "databorder">
 	<pre>
 	asset_id
 	ip_addr
 	</pre>
-            	 			</td>
-            	 		</tr>
-            	 		<tr>
-            	 			<th scope="rowgroup" colspan="4">Current Running Processes</th>
-            	 		</tr>
-            	 		<tr class="rowborder">
-            	 			<td>
+           	 			</td>
+           	 		</tr>
+           	 		<tr>
+           	 			<th scope = "rowgroup" colspan = "4"> Current Running Processes </th>
+           	 		</tr>
+           	 		<tr class = "rowborder">
+           	 			<td>
 	<pre>
 	asset_id
 	proc_name
 	cpu_share_cs
 	mem_share_kb
 	</pre>
-            	 			</td>
-            	 			<td></td>
-            	 			<td  class="databorder"></td>
-            	 		</tr>
-            	 		<tr>
-            	 			<th scope="rowgroup" colspan="4">Installed Software</th>
-            	 		</tr>
-            	 		<tr class="rowborder rowBborder">
-            	 			<td>
+           	 			</td>
+           	 			<td></td>
+           	 			<td  class = "databorder"></td>
+           	 		</tr>
+           	 		<tr>
+           	 			<th scope = "rowgroup" colspan = "4"> Installed Software</th>
+           	 		</tr>
+           	 		<tr class = "rowborder rowBborder">
+           	 			<td>
 	<pre>
 	asset_id
 	name
 	Inst_dttm
 	</pre>
-            	 			</td>
-            	 			<td></td>
-            	 			<td  class="databorder"></td>
-            	 		</tr>
-            	 	</tbody>
-            	</table>
-            	<br><br>
-            	</div>
+           	 			</td>
+           	 			<td></td>
+           	 			<td  class = "databorder"></td>
+            	 	</tr>
+            	 </tbody>
+            </table>
+            
+            <section id = "features">
+            
+            	<h3 style = " font-family: 'Cuprum', sans-serif; font-weight: normal; padding-bottom: 5px; color: #b55d5c; font-size:40px;">
+            		Sample JSON output containing all types of assets
+            	</h3>
+            	<hr class = "notop">
+            	
+            	<h4> Computer </h4>
+            	<pre>
+{
+    "gqmid": "gq_gqmeterit",
+    "runid": 50920,
+    "recDttm": "Feb 4, 2014 3:13:52 PM",
+    "version": "1",
+    "assetScanned": 1,
+    "assetDiscovered": 1,
+    "runTimeMiliSeconds": 16679,
+    "status": "pass",
+    "assetInformationList": [
+        {
+            "protocol": "COMPUTER",
+            "data": "{
+    			"id": {
+        		"runId": 0,
+        		"assetId": "C-2c41389da7d6"
+    			},
+    			"assetObj": {
+        			"assetId": "C-2c41389da7d6",
+			        "protocolId": "computer",
+			        "name": "GQCHND1009.gquotient.com",
+			        "descr": "hardware: intel64 family 6 model 42 stepping 7 at/at compatible - software: 
+			        windows version 6.1 (build 7601 multiprocessor free)",
+			        "ipAddr": "192.168.8.206",
+			        "contact": "",
+			        "location": "",
+			        "impLvl": 0
+    				},
+    			"osTypeObj": {
+			        "osId": "windows",
+			        "descr": "hardware: intel64 family 6 model 42 stepping 7 at/at compatible - software: 
+			        windows version 6.1 (build 7601 multiprocessor free)"
+    				},
+    			"snapShot": {
+    				"id": {
+        			"runId": 0,
+        			"assetId": "C-2c41389da7d6"
+        			},
+        			"ipAddr": "192.168.8.206",
+			        "osId": "windows",
+			        "totMem": 4177526784,
+			        "usedMem": 3033792512,
+			        "totVMem": 8353218560,
+			        "usedVMem": 3491692544,
+			        "totDiskSpace": 508220923904,
+			        "usedDiskSpace": 49859911680,
+			        "cpuLoad": 18,
+			        "upTime": 18423,
+			        "numLgdInUsrs": 3,
+			        "numProcs": 96,
+			        "ntwrkBytesIn": 69300559,
+			        "ntwrkBytesOut": 32976003,
+			        "clockSpeed": 0.0
+    				},
+    			"compInstSwList": [
+        			{
+        			"id": {
+        			"runId": 0,
+        			"assetId": "C-2c41389da7d6",
+        			"name": "Apache Tomcat 6.0 Tomcat6 (remove only)",
+        			"instDttm": "Sep 13, 2013 4:13:44 PM"
+        			}},
+        			{
+        			"id": {
+        			"runId": 0,
+        			"assetId": "C-2c41389da7d6",
+        			"name": "CCleaner",
+        			"instDttm": "Nov 19, 2013 12:39:56 PM"
+        			}},
+        			{
+        			"id": {
+        			"runId": 0,
+        			"assetId": "C-2c41389da7d6",
+        			"name": "Microsoft .NET Framework 4 Client Profile",
+        			"instDttm": "Jun 20, 2012 2:11:04 PM"
+        			}},
+        			{
+        			"id": {
+        			"runId": 0,
+        			"assetId": "C-2c41389da7d6",
+        			"name": "Microsoft .NET Framework 4 Extended",
+        			"instDttm": "Jul 17, 2012 10:32:00 AM"
+        			}},
+        			{
+        			"id": {
+        			"runId": 0,
+        			"assetId": "C-2c41389da7d6",
+        			"name": "WinRAR 4.11 (64-bit)",
+        			"instDttm": "May 25, 2012 12:22:58 AM"
+        			}},
+        			{
+        			"id": {
+        			"runId": 0,
+        			"assetId": "C-2c41389da7d6",
+        			"name": "Microsoft Visual C++ 2008 Redistributable - x64 9.0.30729.6161",
+        			"instDttm": "Oct 4, 2012 8:41:14 PM"
+        			}},
+        			{
+        			"id": {
+        			"runId": 0,
+        			"assetId": "C-2c41389da7d6",
+        			"name": "Microsoft Office Shared 64-bit MUI (English) 2007",
+        			"instDttm": "Jun 20, 2012 1:17:06 PM"
+        			}},
+        			{
+        			"id": {
+        			"runId": 0,
+        			"assetId": "C-2c41389da7d6",
+        			"name": "Microsoft Office Shared 64-bit Setup Metadata MUI (English) 2007",
+        			"instDttm": "Jun 20, 2012 1:17:14 PM"
+        			}},
+        			],
+    			"compProcList": [
+        			{
+        			"id": {
+        			"runId": 0,
+        			"assetId": "C-2c41389da7d6",
+        			"procName": "System Idle Process",
+        			"cpuShareCs": 6253922,
+        			"memShareKb": 24
+        			}},
+        			{
+        			"id": {
+        			"runId": 0,
+        			"assetId": "C-2c41389da7d6",
+        			"procName": "System",
+        			"cpuShareCs": 74220,
+        			"memShareKb": 1020
+        			}},
+        			{
+        			"id": {
+        			"runId": 0,
+        			"assetId": "C-2c41389da7d6",
+        			"procName": "wininit.exe",
+        			"cpuShareCs": 7,
+        			"memShareKb": 4660
+        			}},
+        			{
+        			"id": {
+        			"runId": 0,
+        			"assetId": "C-2c41389da7d6",
+        			"procName": "notepad.exe",
+        			"cpuShareCs": 37,
+        			"memShareKb": 7124
+        			}},
+        			{
+        			"id": {
+        			"runId": 0,
+        			"assetId": "C-2c41389da7d6",
+        			"procName": "taskhost.exe",
+        			"cpuShareCs": 4433,
+        			"memShareKb": 10356
+        			}},
+        			{
+        			"id": {
+        			"runId": 0,
+        			"assetId": "C-2c41389da7d6",
+        			"procName": "EXCEL.EXE",
+        			"cpuShareCs": 449,
+        			"memShareKb": 41896
+        			}},
+        			{
+        			"id": {
+        			"runId": 0,
+        			"assetId": "C-2c41389da7d6",
+        			"procName": "cmd.exe",
+        			"cpuShareCs": 1,
+        			"memShareKb": 2984
+        			}},
+        			{
+        			"id": {
+        			"runId": 0,
+        			"assetId": "C-2c41389da7d6",
+        			"procName": "TeamViewer_Service.exe",
+        			"cpuShareCs": 23,
+        			"memShareKb": 14548
+        			}},
+        			{
+        			"id": {
+        			"runId": 0,
+        			"assetId": "C-2c41389da7d6",
+        			"procName": "HPLaserJetService.exe",
+        			"cpuShareCs": 765,
+        			"memShareKb": 2612
+        			}},
+        			{
+        			"id": {
+        			"runId": 0,
+        			"assetId": "C-2c41389da7d6",
+        			"procName": "mysqld.exe",
+        			"cpuShareCs": 54,
+        			"memShareKb": 35880
+        			}},
+        			{
+        			"id": {
+        			"runId": 0,
+        			"assetId": "C-2c41389da7d6",
+        			"procName": "snmp.exe",
+        			"cpuShareCs": 577,
+        			"memShareKb": 8336
+        			}},
+        			{
+        			"id": {
+        			"runId": 0,
+        			"assetId": "C-2c41389da7d6",
+        			"procName": "updateKozaka.exe",
+        			"cpuShareCs": 23,
+        			"memShareKb": 16788
+        			}},
+        			{
+        			"id": {
+        			"runId": 0,
+        			"assetId": "C-2c41389da7d6",
+        			"procName": "utilKozaka.exe",
+        			"cpuShareCs": 951,
+        			"memShareKb": 44516
+        			}},
+        			{
+        			"id": {
+        			"runId": 0,
+        			"assetId": "C-2c41389da7d6",
+        			"procName": "putty.exe",
+        			"cpuShareCs": 42,
+        			"memShareKb": 7744
+        			}},
+        			{
+        			"id": {
+        			"runId": 0,
+        			"assetId": "C-2c41389da7d6",
+        			"procName": "svchost.exe",
+        			"cpuShareCs": 227388,
+        			"memShareKb": 39424
+        			}},
+        			{
+        			"id": {
+        			"runId": 0,
+        			"assetId": "C-2c41389da7d6",
+        			"procName": "taskeng.exe",
+        			"cpuShareCs": 59,
+        			"memShareKb": 5488
+        			}},
+        			{
+        			"id": {
+        			"runId": 0,
+        			"assetId": "C-2c41389da7d6",
+        			"procName": "cntaosmgr.exe",
+        			"cpuShareCs": 0,
+        			"memShareKb": 4188
+        			}},
+        		],
+        		"CompConnDeviceSet": [
+        			{
+        			"id": {
+        			"runId": 0,
+        			"assetId": "C-2c41389da7d6",
+        			"ipAddr": "192.168.8.15",
+        			"port": 22,
+        			"hostName": "cloud.gqexchange.com"
+        			}},
+        			{
+        			"id": {
+        			"runId": 0,
+        			"assetId": "C-2c41389da7d6",
+        			"ipAddr": "127.0.0.1",
+        			"port": 0,
+        			"hostName": "localhost"
+        			}},
+        			{
+        			"id": {
+        			"runId": 0,
+        			"assetId": "C-2c41389da7d6",
+        			"ipAddr": "74.125.236.72",
+        			"port": 443,
+        			"hostName": "maa03s05-in-f8.1e100.net"
+        			}},
+        			{
+        			"id": {
+        			"runId": 0,
+        			"assetId": "C-2c41389da7d6",
+        			"ipAddr": "70.186.131.178",
+        			"port": 443,
+        			"hostName": "sd.cox.net"
+        			}},
+        			{
+        			"id": {
+        			"runId": 0,
+        			"assetId": "C-2c41389da7d6",
+        			"ipAddr": "184.31.210.101",
+        			"port": 443,
+        			"hostName": "static.akamaitechnologies.com"
+        			}},
+        			{
+        			"id": {
+        			"runId": 0,
+        			"assetId": "C-2c41389da7d6",
+        			"ipAddr": "192.168.8.15",
+        			"port": 3306,
+        			"hostName": "cloud.gqexchange.com"
+        			}},
+        			{
+        			"id": {
+        			"runId": 0,
+        			"assetId": "C-2c41389da7d6",
+        			"ipAddr": "192.168.8.12",
+        			"port": 8080,
+        			"hostName": "NPI489436"
+        			}},
+        			{
+        			"id": {
+        			"runId": 0,
+        			"assetId": "C-2c41389da7d6",
+        			"ipAddr": "216.34.181.96",
+        			"port": 80,
+        			"hostName": "projects.sourceforge.net"
+        			}},
+        			{
+        			"id": {
+        			"runId": 0,
+        			"assetId": "C-2c41389da7d6",
+        			"ipAddr": "65.54.167.13",
+        			"port": 0,
+        			"hostName": "65.54.167.13"
+        			}},
+        			{
+        			"id": {
+        			"runId": 0,
+        			"assetId": "C-2c41389da7d6",
+        			"ipAddr": "74.125.135.125",
+        			"port": 5222,
+        			"hostName": "ni-in-f125.1e100.net"
+        			}},
+        			{
+        			"id": {
+        			"runId": 0,
+        			"assetId": "C-2c41389da7d6",
+        			"ipAddr": "117.18.237.20",
+        			"port": 443,
+        			"hostName": "117.18.237.20"
+        			}},
+        			{
+        			"id": {
+        			"runId": 0,
+        			"assetId": "C-2c41389da7d6",
+        			"ipAddr": "127.0.0.1",
+        			"port": 0,
+        			"hostName": "localhost"
+        			}
+        		}]
+        	}"
+        }],
+    "errorInformationList": []
+}
+            	</pre>
+            	
+            	<br/><br/>
+            	<h4> Printer </h4>
+            	<pre>
+{
+    "gqmid": "gq_gqmeterit",
+    "runid": 50921,
+    "recDttm": "Feb 4, 2014 3:15:28 PM",
+    "version": "1",
+    "assetScanned": 1,
+    "assetDiscovered": 1,
+    "runTimeMiliSeconds": 3377,
+    "status": "pass",
+    "assetInformationList": [
+        {
+            "protocol": "PRINTER",
+            "data": "{
+    			id: {
+        		runId: 0,
+        		"assetId": "P-2c413881ed23"
+    			},
+    			"assetObj": {
+        		"assetId": "P-2c413881ed23",
+        		"protocolId": "printer",
+        		"name": "NPI81ED23",
+        		"descr": "hp ethernet multi-environment,sn:cnc9c8hd62,fn:p933l00,svcid:22032,pid:hp laserjet m1536dnf mfp",
+        		"ipAddr": "192.168.1.11",
+        		"contact": "",
+        		"location": "",
+        		"impLvl": 0
+    			},
+    			"printerSnapShot": {
+    			"id": {
+    			"runId": 0,
+    			"assetId": "P-2c413881ed23"
+        		},
+		        "ipAddr": "192.168.1.11",
+		        "totMem": 134217728,
+		        "totDiskSpace": 0,
+		        "usedMem": 43119753,
+		        "usedDiskSpace": 0,
+		        "upTime": 18486,
+		        "toner_status": "High",
+		        "outOfPaprInd": "n",
+		        "prntsTknCnt": 0,
+		        "prntr_status": 3,
+		        "aux_status": 0,
+		        "mfgMdl": "HP LaserJet M1536dnf MFP",
+		        "clrPrntr": "N"
+    			},
+    			"printerConnectedDevice": [
+        		]
+			}"
+        }],
+    "errorInformationList": []
+}
+				</pre>
+				
+				<br/><br/>
+				
+				<h4> Network Switch,Router and Gateway </h4>
+				<pre>
+{
+    "gqmid": "gq_gqmeterit",
+    "runid": 50923,
+    "recDttm": "Feb 4, 2014 3:17:12 PM",
+    "version": "1",
+    "assetScanned": 1,
+    "assetDiscovered": 1,
+    "runTimeMiliSeconds": 4236,
+    "status": "pass",
+    "assetInformationList": [
+        {
+            "protocol": "NSRG",
+            "data": "{
+    			"id": {
+        		"runId": 0,
+        		"assetId": "S-0025b438b440"
+    			},
+    			"assetObj": {
+        			"assetId": "S-0025b438b440",
+        			"protocolId": "nsrg",
+        			"name": "GQCHNSW01",
+        			"descr": "cisco ios software, c2960 software (c2960-lanbase-m), version 12.2(35)se5, release 
+        			software (fc1)rncopyright (c) 1986-2007 by cisco systems, 
+        			inc.rncompiled thu 19-jul-07 20:06 by nachen",
+	        		"ipAddr": "192.168.1.253",
+	        		"contact": "",
+	        		"location": "",
+        			"impLvl": 0
+    				},
+    			"nsrgSnapShot": {
+        			"id": {
+        			"runId": 0,
+        			"assetId": "S-0025b438b440"
+        			},
+			        "ipAddr": "192.168.1.253",
+			        "upTime": 111705,
+			        "numPorts": 56,
+			        "numPortsUp": 27,
+			        "ntwrkBytesIn": 11765752400,
+			        "ntwrkBytesOut": 15027420893
+    				},
+    			"nsrgConnectedDevices": [
+        			{
+        			"id": {
+        			"runId": 0,
+        			"assetId": "S-0025b438b440",
+        			"ipAddr": "192.168.1.254"
+            		}
+        			},
+        			{
+        			"id": {
+        			"runId": 0,
+        			"assetId": "S-0025b438b440",
+        			"ipAddr": "192.168.1.33"
+            		}
+            	}]
+            }"
+       	}],
+    "errorInformationList": []
+}
+				</pre>
+				
+				<br/><br/>
+				
+			</section>
 			
+		</div>
+		<br/><br/>
+		
 	</body>
 </html>
+
+<!-- Mask to cover the whole screen -->
+		<div id="mask"></div>
+		 	
+		<script src="js/jquery.idletimer.js" type="text/javascript"></script>
+		<script src="js/jquery.idletimeout.js" type="text/javascript"></script>
+         
+		<script type="text/javascript">
+			$.idleTimeout('#idletimeout', '#idletimeout a', {
+			idleAfter : $.jStorage.get("jsTimeout"),
+	        onTimeout : function() {
+	            $(this).slideUp();
+	            window.location = "login.html";
+	        },
+	        onIdle : function() {
+	            var maskHeight = $(document).height();
+	            var maskWidth = $(window).width();
+	            $('#mask').css({'width':maskWidth,'height':maskHeight});
+	            $('#mask').fadeIn(1000);	
+	            $('#mask').fadeTo("slow",0.8);	
+	            $(this).slideDown(); // show the warning bar
+	        },
+	        onCountdown : function(counter) {
+	            $(this).find("span").html(counter); // update the counter
+	        },
+	        onResume : function() {
+	            $(this).slideUp(); // hide the warning bar
+	            $('#mask').hide();
+	            $('.window').hide();
+	        }
+	    });
+		</script>
