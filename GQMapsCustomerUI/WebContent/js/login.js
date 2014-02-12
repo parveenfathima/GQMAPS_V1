@@ -1,8 +1,7 @@
-	$.jStorage.set("jsUserId", "");
-	$.jStorage.set("jsPwd", "");		
-	$.jStorage.set("jsEntpId","");	
-	$.jStorage.set("jsEName", "");
-
+$.jStorage.set("jsUserId", "");
+$.jStorage.set("jsPwd", "");		
+$.jStorage.set("jsEntpId","");	
+$.jStorage.set("jsEName", "");
 
 //binding the click event to the submit button
 $(document).ready(function() 
@@ -42,8 +41,8 @@ function userLogin()
 			success : function(json) 
 			{
 				var vRecLen = json.length;
-
-				var vActive = "n";		
+				var vActive = "n";
+				
 				if(vRecLen > 0)
 				{
 					$.each(json, function(i,n)
@@ -56,7 +55,6 @@ function userLogin()
 							$.jStorage.set("jsEntpId", n["enterpriseId"]);	
 							$.jStorage.set("jsEName", n["eName"]);
 							$.jStorage.set("jsTimeout", 180);							
-							return false;
 						}
 					});	
 					if(isValid === 1)
@@ -65,7 +63,7 @@ function userLogin()
 					}
 				}
 					
-				if(vRecLen==0)
+				if(vRecLen == 0)
 				{
 					alert("Either User credentials are invalid or Your meters have expired.");
 					$.jStorage.set("jsUserId", "");
@@ -91,7 +89,6 @@ function checkForValue()
 	if (user.length === 0) 
 	{
 		alert("Please enter your userid");
-			
 		window.location.href = "login.html";
 		$("#txtUserId").focus();
 	} 
@@ -107,5 +104,12 @@ function checkForValue()
 function addRegistration()
 {
 	$.jStorage.set("jsTimeout",180);
-	window.location.href="add_registration.html";
+	window.location.href = "add_registration.html";
+}
+
+//function to redirect download meter jar page
+function downloadJar()
+{
+	$.jStorage.set("jsTimeout",180);
+	window.location.href = "Downloadjar.html";
 }
