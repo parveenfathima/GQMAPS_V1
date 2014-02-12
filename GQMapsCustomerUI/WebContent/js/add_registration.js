@@ -270,6 +270,7 @@ function convertToTwoDigit(no)
 }
 
 //function disable submit button on submission of the form.
-$('#frmAddRegn').submit(function(){
+$('#frmAddRegn').submit(function()
+{
     $('input[type=submit]', this).attr('disabled', 'disabled');
 });
