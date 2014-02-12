@@ -1,21 +1,20 @@
 <!doctype html>  
-<html lang = "en-us">
+<html lang = "en">
 	<head>
-		<meta charset = "utf-8">
-	
 		<title> GQMaps Download Jar </title>
 	
 		<!-- Custom Styles -->
-		<link rel = "stylesheet" href = "css/gqmaps.css" type = "text/css" />
+		<link rel = "stylesheet" href = "css/timeout.css" type = "text/css" />
 		<link rel = "stylesheet" href = "css/documenter_style.css" media = "all">
 		<link rel = "stylesheet" href = "css/downloadjar.css" media = "all">
 		<link rel = "stylesheet" href = "css/custom.css" media = "screen">
-		<link rel = "stylesheet" href = "css/downloadjar/shDocumenter.css" media = "screen">
+		<link rel = "stylesheet" href = "css/shDocumenter.css" media = "screen">
 	    
 	    <!-- Predefined Style -->
 		<link rel = "stylesheet" href = "http://fonts.googleapis.com/css?family=Cuprum" type = "text/css" />
 		
 		<!-- Predefined Scripts -->
+		<script type = "text/javascript" src = "http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"> </script>
 		<script src = "js/downloadjar/jquery.1.6.4.js"> </script>
 		<script src = "js/downloadjar/jquery.scrollTo-1.4.2-min.js"> </script>
 		<script src = "js/downloadjar/jquery.easing.js"> </script>
@@ -27,9 +26,12 @@
 		<script src = "js/downloadjar/shBrushJScript.js"> </script>
 		<script src = "js/downloadjar/shBrushPhp.js"> </script>
 		<script src = "js/downloadjar/shBrushPlain.js"> </script>
-		<script src = "js/script.js"> </script>
+		<script src = "js/downloadjar/script.js"> </script>
 		
-		<script type="text/javascript" language="javascript">
+		<!--/custom scripts -->             
+		<script src = "js/jstorage.js"> </script> 
+	   	                
+		<script type = "text/javascript" language = "javascript">
 		
 			SyntaxHighlighter.defaults['toolbar'] = false;SyntaxHighlighter.all();
 			document.createElement('section');
@@ -39,24 +41,24 @@
 	    	function ShowPanel(val)
 	    	{
 	     		var pnl= document.getElementById("pnlDetail");
-				pnl.style.display="block";
-				pnl.innerHTML=val;
+				pnl.style.display = "block";
+				pnl.innerHTML = val;
 	    	}
 	    	
 	    	function HidePanel()
 	  		{
 	    		var pnl= document.getElementById("pnlDetail");
-	  			pnl.style.display="none";
+	  			pnl.style.display = "none";
 	    	}
 	
 	    	function DownloadJar()
 	    	{
-	    	window.location.href="http://cloud.gqexchange.com:8080/downloads/gqmeter.jar";    
+	    	window.location.href = "http://cloud.gqexchange.com:8080/downloads/gqmeter.jar";    
 	    	}
 	  
 		</script>
 		
-		<style type="text/css">
+		<style type = "text/css">
 			
 			html{
 				background-color:#F3F3F3;
@@ -153,7 +155,7 @@
 	            		<div> 
 	            			<p align = "center"> <b> Header section </b> </p>
 	            		</div>
-	                	<div onmouseover = "ShowPanel('<p>The keyword meterid is mandatory and gqmaps1 represent the sample id , Please enter the meterid  which was given by gquotient team .</p>' );" 
+	                	<div onmouseover = "ShowPanel('<p>The keyword meterid is mandatory and gqmaps1 represent the sample id , Please enter the meterid  which was given by gquotient team .</p>');" 
 	                	onmouseout = "HidePanel();"> <pre>$meterid gqmaps1</pre></div>
 	                	<div onmouseover = "ShowPanel('<p>@computor is a mandatory switch. </p><p>snap_shot is used to get the details of total memory,used memory,cpu load,up time,number of users logged in etc.</P><p>conn_devices is used to get the details of connected devices for the given IP Address with the port number.</p><p>process is used to get the details of proccess name,cpu share,memory share in kilobytes.</p><p>inst_sw is used to get the list of installed software programs.</p>');" onmouseout = "HidePanel();"><pre>@computer     snap_shot|conn_devices|process|inst_sw</pre></div>
 	                	<div onmouseover = "ShowPanel('<p>@printer is a mandatory switch.</p><p>snap_shot is used to get the details of  total memory,used memory,up time, toner status etc.</p><p>conn_devices is used to get the details of connected devices for the given IP Address.</p>');" onmouseout = "HidePanel();"><pre>@printer      snap_shot|conn_devices</pre></div>
@@ -832,34 +834,34 @@
 	</body>
 </html>
 
-<!-- Mask to cover the whole screen -->
-		<div id="mask"></div>
+	<!-- Mask to cover the whole screen -->
+	<div id = "mask"> </div>
 		 	
-		<script src="js/jquery.idletimer.js" type="text/javascript"></script>
-		<script src="js/jquery.idletimeout.js" type="text/javascript"></script>
-         
-		<script type="text/javascript">
-			$.idleTimeout('#idletimeout', '#idletimeout a', {
-			idleAfter : $.jStorage.get("jsTimeout"),
-	        onTimeout : function() {
-	            $(this).slideUp();
-	            window.location = "login.html";
-	        },
-	        onIdle : function() {
-	            var maskHeight = $(document).height();
-	            var maskWidth = $(window).width();
-	            $('#mask').css({'width':maskWidth,'height':maskHeight});
-	            $('#mask').fadeIn(1000);	
-	            $('#mask').fadeTo("slow",0.8);	
-	            $(this).slideDown(); // show the warning bar
-	        },
-	        onCountdown : function(counter) {
-	            $(this).find("span").html(counter); // update the counter
-	        },
-	        onResume : function() {
-	            $(this).slideUp(); // hide the warning bar
-	            $('#mask').hide();
-	            $('.window').hide();
-	        }
-	    });
-		</script>
+	<script src = "js/jquery.idletimer.js" type = "text/javascript" > </script>
+	<script src = "js/jquery.idletimeout.js" type = "text/javascript" > </script>
+        
+	<script type = "text/javascript" >
+		$.idleTimeout('#idletimeout', '#idletimeout a', {
+		idleAfter : $.jStorage.get("jsTimeout"),
+        onTimeout : function() {
+            $(this).slideUp();
+            window.location = "login.html";
+        },
+        onIdle : function() {
+            var maskHeight = $(document).height();
+            var maskWidth = $(window).width();
+            $('#mask').css({'width':maskWidth,'height':maskHeight});
+            $('#mask').fadeIn(1000);	
+            $('#mask').fadeTo("slow",0.8);	
+            $(this).slideDown(); // show the warning bar
+        },
+        onCountdown : function(counter) {
+            $(this).find("span").html(counter); // update the counter
+        },
+        onResume : function() {
+            $(this).slideUp(); // hide the warning bar
+            $('#mask').hide();
+            $('.window').hide();
+        }
+    });
+	</script>
