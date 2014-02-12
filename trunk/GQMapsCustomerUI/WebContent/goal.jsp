@@ -21,6 +21,7 @@
 	href="jquery-ui-1.10.2.custom/css/blitzer/jquery-ui-1.10.2.custom.css"
 	rel="stylesheet" />
 	<link type="text/css" href="css/gqmaps.css" rel="stylesheet" />
+	<link href = "css/timeout.css" rel = "stylesheet" type = "text/css" />
 	<link href="css/dashboard.css" rel="stylesheet" type="text/css" />
 	<link href='http://fonts.googleapis.com/css?family=Open+Sans:400,600,700' rel='stylesheet' type='text/css'>
 	<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
@@ -270,43 +271,15 @@
 	}
 	</script>
 	
-<!--timeout css -->
-<style type="text/css">
-#idletimeout {
-	background: #4E4E4E;
-	border: 3px solid #4E4E4E;
-	color: #fff;
-	font-family: arial, sans-serif;
-	text-align: center;
-	font-size: 15px;
-	padding: 10px;
-	position: relative;
-	top: 0px;
-	left: 0;
-	right: 0;
-	z-index: 100000;
-	display: none;
-}
-
-#idletimeout a {
-	color: #fff;
-	font-weight: bold
-}
-
-#idletimeout span {
-	font-weight: bold
-}
-</style>
-
 </head>
 
 <body id="table-body">
+		<!-- Timeout Div -->
+		<div id = "idletimeout">
+        	Logging off in <span> countdown place holder </span>&nbsp;seconds due to inactivity.
+        	<a id = "idletimeout-resume" href = "#"> Click here to continue </a>.
+    	</div>
 		<div id="wrap">
-			<img class="mergedimg" src="images/grey.png"> 
-  			<div id="idletimeout" style="top: 150px; margin-left: 215px; margin-right: 200px; ">
-        		Logging off in <span><!-- countdown place holder --></span>&nbsp;seconds due to inactivity.
-        		<a id="idletimeout-resume" href="#">Click here to continue</a>.
-    		</div>  
     
     		<%
 				String enterpriseId = request.getParameter("entpId");
@@ -630,3 +603,36 @@
 	</div>
 </body>
 </html>
+
+
+<!-- Mask to cover the whole screen -->
+	<div id = "mask"> </div>
+		 	
+	<script src = "js/jquery.idletimer.js" type = "text/javascript" > </script>
+	<script src = "js/jquery.idletimeout.js" type = "text/javascript" > </script>
+        
+	<script type = "text/javascript" >
+		$.idleTimeout('#idletimeout', '#idletimeout a', {
+		idleAfter : $.jStorage.get("jsTimeout"),
+        onTimeout : function() {
+            $(this).slideUp();
+            window.location = "login.html";
+        },
+        onIdle : function() {
+            var maskHeight = $(document).height();
+            var maskWidth = $(window).width();
+            $('#mask').css({'width':maskWidth,'height':maskHeight});
+            $('#mask').fadeIn(1000);	
+            $('#mask').fadeTo("slow",0.8);	
+            $(this).slideDown(); // show the warning bar
+        },
+        onCountdown : function(counter) {
+            $(this).find("span").html(counter); // update the counter
+        },
+        onResume : function() {
+            $(this).slideUp(); // hide the warning bar
+            $('#mask').hide();
+            $('.window').hide();
+        }
+    });
+	</script>
