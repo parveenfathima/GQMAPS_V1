@@ -46,70 +46,64 @@ var pieChartOptionsForIS = {
 
 // Set bar chart options
 var barChartOptions = {
-		backgroundColor: '#F4F4F4',
-		legend : 'none','chartArea':{left:"23%",top:20,width:"70%"}, 
-		hAxis : {
-			'title' : '',
-			textStyle : {
-				fontSize : '12'
-							}
-		}
-	};
+	backgroundColor: '#F4F4F4',
+	legend : 'none','chartArea':{left:"23%",top:20,width:"70%"}, 
+	hAxis : {
+		'title' : '',
+		textStyle : {
+		fontSize : '12'
+		}}
+};
 
 var barChartOptionsForBL = {
-		backgroundColor: '#F4F4F4',
-		legend : 'none','chartArea':{left:"50%",top:20,width:"70%"},colors:['#990066'],
-		hAxis : {
-			'title' : '',
-			textStyle : {
-				color : '#005500',
-				fontSize : '12'
-							}
-		}
-	};
-
-//var barChartOptions = {'title':title,'width':w,'height':h,'chartArea':{left:0,top:10,width:"100%"}};
+	backgroundColor: '#F4F4F4',
+	legend : 'none','chartArea':{left:"50%",top:20,width:"70%"},colors:['#990066'],
+	hAxis : {
+		'title' : '',
+		textStyle : {
+		color : '#005500',
+		fontSize : '12'
+		}}
+};
 
 // Goal input dialog configuration
 var optGoalInput = {
-		  autoOpen: false,
-		  height: 300,
-		  width: 300,
-		  modal: true ,
-		  position: "center",
-		  title: "Goal Input Dialog",
-		  close: function () {
-			
-			  $("#addElements").children(this).remove();
-			  $(this).dialog('close');
-			  }
-	};
+	autoOpen: false,
+	height: 300,
+	width: 300,
+	modal: true ,
+	position: "center",
+	title: "Goal Input Dialog",
+
+	close: function () {
+		$("#addElements").children(this).remove();
+		$(this).dialog('close');
+		}
+};
 	
 // Asset list dialog configuration	
 var optAssetList = {
-		 
-		  autoOpen: false,
-		  height: 400,
-		  width: 300,
-		  modal: true ,
-		  position: "center" ,	  
-		  close: function () {
-					
-				$("#trAssetIdHead").remove();			
-				for(i=0; i<$.jStorage.get("jsAstCount"); i++)
-				{			
-					$("#trAssetId"+ i).remove();
-				}						
-				
-				$(this).dialog('close');
-			  }
-	};	
+	autoOpen: false,
+	height: 400,
+	width: 300,
+	modal: true ,
+	position: "center" ,	  
+	
+	close: function () {
+		$("#trAssetIdHead").remove();			
+		for(i = 0; i < $.jStorage.get("jsAstCount"); i++)
+		{			
+			$("#trAssetId"+ i).remove();
+		}						
+		$(this).dialog('close');
+	}
+};	
 	  
 // Ajax call to get all the dashboard services
 $(document).ready(function() 
 {
-	 $("#div_topcpuLoad").height(200);
-	if(($.jStorage.get("jsUserId") === "" || $.jStorage.get("jsUserId") === null || $.jStorage.get("jsPwd") === "" 
+	$("#div_topcpuLoad").height(200);
+	if( ($.jStorage.get("jsUserId") === "" || $.jStorage.get("jsUserId") === null || $.jStorage.get("jsPwd") === "" 
 		|| $.jStorage.get("jsPwd") === null)&& ($.jStorage.get("jsEntpId")=== "" || $.jStorage.get("jsEntpId")=== null ))
 	{
 		window.location.href = "login.html";
@@ -125,20 +119,16 @@ $(document).ready(function()
 			document.frmAssetEdit.setEntp.value = id;
 		 });
 		
-		
 		$("#btnShowAssets").bind("click", addText);	
 		$("#btnConfAssets").bind("click", goToAssetEdit);	
 		$("#serverAsset").bind("click", serverList);
 		$("#btnAsset").bind("click", submitGoalInput);
 		
-		
 		$("#entpName").text( " Hello " + $.jStorage.get("jsEName"));
 		
-		var vType = "GET";						
 		// call to the dashboard services are made
+		var vType = "GET";						
 		var vUrl = $.jStorage.get("jsDBUrl") + "DashboardServices/getdashboard?entpId=" + $.jStorage.get("jsEntpId");
-		
-		
 		$.ajax
 		({
 			type:vType,
@@ -148,31 +138,27 @@ $(document).ready(function()
 			dataType: "json",
 			success:function(json)
 			{		
-				
-				    $.each(json, function(i, v)
-					{
-						if(json[i]["charttype"] == "plain"){
-							showPlainText(json[i]["data"], json[i]["divId"]);
-						}
-					else {
-							var rowLength =  json[i].data.rows.length;
-							if(json[i]["charttype"] == "pie" )
-								showPieChart(json[i]["data"], json[i]["divId"],rowLength);			            	  
-							else if(json[i]["charttype"] == "bar")
-								showBarChart(json[i]["data"], json[i]["divId"],rowLength);
-							else if(json[i]["charttype"] == "line")
-								showLineChart(json[i]["data"], json[i]["divId"],rowLength);	
-							}
+				$.each(json, function(i, v)
+				{
+					if(json[i]["charttype"] == "plain"){
+						showPlainText(json[i]["data"], json[i]["divId"]);
 					}
-					);	 	                           				
-				
-		
+					else {
+						var rowLength =  json[i].data.rows.length;
+						if(json[i]["charttype"] == "pie" )
+						showPieChart(json[i]["data"], json[i]["divId"],rowLength);			            	  
+						else if(json[i]["charttype"] == "bar")
+						showBarChart(json[i]["data"], json[i]["divId"],rowLength);
+						else if(json[i]["charttype"] == "line")
+						showLineChart(json[i]["data"], json[i]["divId"],rowLength);	
+					}
+				});	 	                           				
 			},
 			error : function(json) {
-				var obj = eval('(' + json.responseText + ')');	
 				
-				$.each(obj, function(i, v){
-					
+				var obj = eval('(' + json.responseText + ')');	
+				$.each(obj, function(i, v)
+				{
 					if(obj[i]["charttype"] == "plain"){
 						showPlainText(obj[i]["data"], obj[i]["divId"]);
 					}
@@ -184,7 +170,7 @@ $(document).ready(function()
 							showBarChart(obj[i]["data"], obj[i]["divId"],rowLength);
 						else if(obj[i]["charttype"] == "line")
 							showLineChart(obj[i]["data"], obj[i]["divId"],rowLength);	
-						}
+					}
 				});	 
 			}
 		});	//end of ajax
@@ -199,25 +185,26 @@ function computeDurationSet(vol)
 {
 	document.querySelector('#volume').value = vol;
 	var rangeValue = document.getElementById('slide').value;
-	document.getElementById('computeValue').value=rangeValue;
+	document.getElementById('computeValue').value = rangeValue;
 }
 
 //function to show compute duration div 
-function showComDurDiv(){
+function showComDurDiv()
+{
 	document.getElementById('ComDurDiv').style.display = "block";
-	
 }
 
 //function to highlight the label
 function labelHighLight() {
 	document.getElementById('fader').style.color = "blue";
 }
+
 //function to redirect a dashboard screen when dynamically changed compute duration
 function computeDurationUpdate() 
 {
-	var rangeValue=document.getElementById('computeValue').value;
+	var rangeValue = document.getElementById('computeValue').value;
 	var vType = "PUT";
-	var vUrl = $.jStorage.get("jsDBUrl") + "updcmpdur?entpId=" + $.jStorage.get("jsEntpId")+"&value="+rangeValue;
+	var vUrl = $.jStorage.get("jsDBUrl") + "updcmpdur?entpId=" + $.jStorage.get("jsEntpId")+"&value=" +rangeValue;
 	
 	$.ajax
 	({
@@ -225,7 +212,7 @@ function computeDurationUpdate()
 		contentType: "application/json",
 		url:vUrl,
 		async:false,
-		//dataType: "json",
+		
 		success:function()
 		{	
 			window.location.reload();
@@ -236,7 +223,6 @@ function computeDurationUpdate()
  
 		}	 
 	});	//end of ajax	
-	//alert(rangeValue);
 }
 
 //function to display text in the specified div location
@@ -270,9 +256,7 @@ function getPUE()
 		},
 		error:function(json)
 		{
-			
 			alert("Error loading PUE data!");			
- 
 		}	 
 	});	//end of ajax	
 }
@@ -310,7 +294,7 @@ function loadGoals()
 
 function serverList()
 {
-	window.open("server_list.jsp?entpId="+ $.jStorage.get("jsEntpId") ,"serverlist","right=2000,top=20,toolbar=no, " +
+	window.open("server_list.jsp?entpId=" + $.jStorage.get("jsEntpId") ,"serverlist","right=2000,top=20,toolbar=no, " +
 				"status=no,location=no,	menubar=no, scrollbars=yes, resizable=no, width=400, height=400");
 }
 
@@ -334,7 +318,6 @@ function checkGoalInput(goalId)
 			var vValues = "";
 			if(len>0)
 			{		
-				
 				$.each(json, function(i, v)
 				{
 					vValues = vValues + '<tr><td width="200%"> <label for = "' + json[i]["descr"] + '" > ' + json[i]["descr"] + ' </label></td> ';
@@ -386,7 +369,7 @@ function addText()
 function submitGoalInput()
 {
 	var vType = "GET";
-	var vUrl = $.jStorage.get("jsDBUrl") + "GoalInputServices/getGoalInput?goalId=" + 	$.jStorage.get("goalId");
+	var vUrl = $.jStorage.get("jsDBUrl") + "GoalInputServices/getGoalInput?goalId=" + $.jStorage.get("goalId");
 	
 	var vGoalInputs = "";
 	var aryGoalInputs = [];
@@ -429,7 +412,7 @@ function submitGoalInput()
 				});	 
 								
 				$("#dlgGoalInput").dialog(optGoalInput).dialog('close');
-				window.location.href = "goal.jsp?goalId="+$.jStorage.get("goalId")+"&entpId="+$.jStorage.get("jsEntpId")+"&goalInputs="+vGoalInputs;
+				window.location.href = "goal.jsp?goalId=" + $.jStorage.get("goalId")+"&entpId=" + $.jStorage.get("jsEntpId") + "&goalInputs=" + vGoalInputs;
 				
 			}	
 		},
