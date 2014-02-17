@@ -1,5 +1,4 @@
 .body {
-	background-color:#C4E0C4;
 	margin:0px;
 	padding:0px;
 	/*background-image:url(../images/login-form%20copy.png); */
@@ -256,33 +255,4 @@
 	border-bottom-color:#000000;
 	
 }
-
-
 /*button_style_ends*/
-
-/* Timeout css */
-
-#idletimeout {
-	background: #4E4E4E;
-	border: 3px solid #4E4E4E;
-	color: #fff;
-	font-family: arial, sans-serif;
-	text-align: center;
-	font-size: 15px;
-	padding: 10px;
-	position: relative;
-	top: 150px; 
-	margin-left: 215px; 
-	margin-right: 200px;
-	z-index: 100000;
-	display: none;
-}
-
-#idletimeout a {
-	color: #fff;
-	font-weight: bold
-}
-
-#idletimeout span {
-	font-weight: bold
-}
