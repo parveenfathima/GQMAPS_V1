@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<!-- Generated Feb 21, 2013 2:44:12 PM by Hibernate Tools 3.4.0.CR1 -->
+<!-- Generated Feb 18, 2014 3:13:26 PM by Hibernate Tools 3.4.0.CR1 -->
 <hibernate-mapping>
     <class name="com.gq.meter.object.CompConnDevice" table="comp_conn_device">
         <composite-id name="id" class="com.gq.meter.object.CompConnDeviceId">
@@ -14,13 +14,12 @@
             <key-property name="ipAddr" type="string">
                 <column name="ip_addr" length="15" />
             </key-property>
-            <key-property name="port" type="int">
-            	<column name="port" length="11"/>
+            <key-property name="hostName" type="string">
+                <column name="host_name" length="55" />
+            </key-property>
+            <key-property name="port" type="java.lang.Integer">
+                <column name="port" />
             </key-property>
         </composite-id>
-            <key-property name="hostName" type="string">
-            	<column name="host_name" length="55"/>
-            </key-property>
-        
     </class>
 </hibernate-mapping>
