@@ -740,7 +740,7 @@ public final class ITAssetDiscoverer {
         readInput(inputFilePath,communityIPMap,speedTestIPMap);
         
         client = Client.create(new DefaultClientConfig());
-        service = client.resource(MeterConstants.restURL);
+        service = client.resource(restEndPointURL);
         
 
         gqmResponse.setAssetScanned( (short)( (communityIPMap.size() ) + speedTestIPMap.size() ));
