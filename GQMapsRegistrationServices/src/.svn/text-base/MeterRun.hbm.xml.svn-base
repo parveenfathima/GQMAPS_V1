@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated Mar 1, 2013 12:57:44 PM by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+    <class name="com.gq.meter.object.MeterRun" table="meter_run" catalog="gqexchange">
+        <id name="runId" type="java.lang.Integer">
+            <column name="run_id" />
+            <generator class="increment" />
+        </id>
+        <property name="meterId" type="string">
+            <column name="meter_id" length="10" not-null="true" />
+        </property>
+        <property name="recDttm" type="timestamp">
+            <column name="rec_dttm" length="19" not-null="true" />
+        </property>
+        <property name="assetScnd" type="short">
+            <column name="asset_scnd" not-null="true" />
+        </property>
+        <property name="assetDisc" type="short">
+            <column name="asset_disc" not-null="true" />
+        </property>
+        <property name="runTimeMs" type="long">
+            <column name="run_time_ms" not-null="true" />
+        </property>
+    </class>
+</hibernate-mapping>

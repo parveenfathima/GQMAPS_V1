@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated Jul 26, 2013 10:19:06 AM by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+    <class name="com.gq.meter.xchange.object.TaskChklst" table="task_chklst" catalog="gqexchange">
+        <composite-id name="id" class="TaskChklstId">
+            <key-property name="snpshtId" type="int">
+                <column name="snpsht_id" />
+            </key-property>
+            <key-property name="taskId" type="byte">
+                <column name="task_id" length="10" />
+            </key-property>
+        </composite-id>
+        <many-to-one name="taskTmplt" class="TaskTmplt" update="false" insert="false" fetch="select">
+            <column name="goal_id" />
+            <column name="task_id" length="10" not-null="true" />
+        </many-to-one>
+        <property name="enterpriseId" type="string">
+            <column name="enterprise_id" length="10" />
+        </property>
+        <property name="applyDate" type="timestamp">
+            <column name="apply_date" length="19" />
+        </property>
+        <property name="usrNotes" type="string">
+            <column name="usr_notes" length="200">
+                <comment>entry of user in free form text</comment>
+            </column>
+        </property>
+        <property name="costBenefit" type="java.lang.Integer">
+            <column name="cost_benefit">
+                <comment>we will calculate and display in recommendation apply page</comment>
+            </column>
+        </property>
+        <property name="sysNotes" type="string">
+            <column name="sys_notes" length="200">
+                <comment>system will makes an entry based on the action performed by user, like user choosed 5 assets to decommsion then system make an entry like asset id 4,5,6
+                are decommsioned</comment>
+            </column>
+        </property>
+    </class>
+</hibernate-mapping>

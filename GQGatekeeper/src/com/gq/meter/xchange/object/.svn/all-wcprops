@@ -1,0 +1,131 @@
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/svn/gqm3/!svn/ver/465/trunk/GQGatekeeper/src/com/gq/meter/xchange/object
+END
+TaskAsst.java
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/svn/gqm3/!svn/ver/323/trunk/GQGatekeeper/src/com/gq/meter/xchange/object/TaskAsst.java
+END
+DataTypes.java
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/svn/gqm3/!svn/ver/323/trunk/GQGatekeeper/src/com/gq/meter/xchange/object/DataTypes.java
+END
+SecurityQuestion.java
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/svn/gqm3/!svn/ver/57/trunk/GQGatekeeper/src/com/gq/meter/xchange/object/SecurityQuestion.java
+END
+SysProfile.java
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/svn/gqm3/!svn/ver/323/trunk/GQGatekeeper/src/com/gq/meter/xchange/object/SysProfile.java
+END
+TaskTmpltId.java
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/svn/gqm3/!svn/ver/323/trunk/GQGatekeeper/src/com/gq/meter/xchange/object/TaskTmpltId.java
+END
+Protocol.java
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/svn/gqm3/!svn/ver/57/trunk/GQGatekeeper/src/com/gq/meter/xchange/object/Protocol.java
+END
+MeterRun.java
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/svn/gqm3/!svn/ver/323/trunk/GQGatekeeper/src/com/gq/meter/xchange/object/MeterRun.java
+END
+GateKeeperAudit.java
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/svn/gqm3/!svn/ver/124/trunk/GQGatekeeper/src/com/gq/meter/xchange/object/GateKeeperAudit.java
+END
+ChartType.java
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/svn/gqm3/!svn/ver/323/trunk/GQGatekeeper/src/com/gq/meter/xchange/object/ChartType.java
+END
+BusinessLine.java
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/svn/gqm3/!svn/ver/57/trunk/GQGatekeeper/src/com/gq/meter/xchange/object/BusinessLine.java
+END
+ClientData.java
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/svn/gqm3/!svn/ver/323/trunk/GQGatekeeper/src/com/gq/meter/xchange/object/ClientData.java
+END
+PwrSlab.java
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/svn/gqm3/!svn/ver/323/trunk/GQGatekeeper/src/com/gq/meter/xchange/object/PwrSlab.java
+END
+TaskChklst.java
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/svn/gqm3/!svn/ver/323/trunk/GQGatekeeper/src/com/gq/meter/xchange/object/TaskChklst.java
+END
+GateKeeper.java
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/svn/gqm3/!svn/ver/124/trunk/GQGatekeeper/src/com/gq/meter/xchange/object/GateKeeper.java
+END
+EnterpriseMeter.java
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/svn/gqm3/!svn/ver/78/trunk/GQGatekeeper/src/com/gq/meter/xchange/object/EnterpriseMeter.java
+END
+PwrSrc.java
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svn/gqm3/!svn/ver/323/trunk/GQGatekeeper/src/com/gq/meter/xchange/object/PwrSrc.java
+END
+Enterprise.java
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/svn/gqm3/!svn/ver/323/trunk/GQGatekeeper/src/com/gq/meter/xchange/object/Enterprise.java
+END
+GoalSnpsht.java
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/svn/gqm3/!svn/ver/393/trunk/GQGatekeeper/src/com/gq/meter/xchange/object/GoalSnpsht.java
+END
+Goal.java
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/svn/gqm3/!svn/ver/465/trunk/GQGatekeeper/src/com/gq/meter/xchange/object/Goal.java
+END
+TaskTmplt.java
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/svn/gqm3/!svn/ver/323/trunk/GQGatekeeper/src/com/gq/meter/xchange/object/TaskTmplt.java
+END
+TaskChklstId.java
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/svn/gqm3/!svn/ver/323/trunk/GQGatekeeper/src/com/gq/meter/xchange/object/TaskChklstId.java
+END

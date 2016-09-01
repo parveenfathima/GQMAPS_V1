@@ -14,8 +14,10 @@ import java.sql.Connection;
 public class SqlUtil {
 	
 	// static values for Database connection
-	static String ExchangeURL = "jdbc:mysql://localhost:3306/gqexchange";
-    static String CustomerURL = "jdbc:mysql://localhost:3306/gqm";
+	//static String ExchangeURL = "jdbc:mysql://localhost:3306/gqexchange";
+    //static String CustomerURL = "jdbc:mysql://localhost:3306/gqm";
+    static String ExchangeURL = "jdbc:mysql://gqmaps.com:3306/gqexchange";
+    static String CustomerURL = "jdbc:mysql://gqmaps.com:3306/gqm";
     static String driver = "com.mysql.jdbc.Driver";
     static String username = "gqmaps";
     static String password = "Ch1ca803ear$";

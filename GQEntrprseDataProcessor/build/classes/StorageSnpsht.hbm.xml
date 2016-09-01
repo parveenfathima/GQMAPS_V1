@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated Apr 5, 2013 12:30:28 PM by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+    <class name="com.gq.meter.object.StorageSnpsht" table="storage_snpsht">
+        <composite-id name="id" class="com.gq.meter.object.CPNId">
+            <key-property name="runId" type="long">
+                <column name="run_id" />
+            </key-property>
+            <key-property name="assetId" type="string">
+                <column name="asset_id" length="30" />
+            </key-property>
+        </composite-id>
+        <property name="upTime" type="java.lang.Long">
+            <column name="up_time" />
+        </property>
+        <property name="totDiskSpace" type="java.lang.Long">
+            <column name="tot_disk_space" />
+        </property>
+        <property name="usedDiskSpace" type="java.lang.Long">
+            <column name="used_disk_space" />
+        </property>
+        <property name="numOfCntrlr" type="java.lang.Short">
+            <column name="num_of_cntrlr" />
+        </property>
+        <property name="numOfDisks" type="java.lang.Short">
+            <column name="num_of_disks" />
+        </property>
+        <property name="iops" type="java.lang.Long">
+            <column name="iops" />
+        </property>
+        <property name="cnctrProtocol" type="string">
+            <column name="cnctr_protocol" length="25" />
+        </property>
+        <property name="extras" type="string">
+            <column name="extras" length="200" />
+        </property>
+    </class>
+</hibernate-mapping>

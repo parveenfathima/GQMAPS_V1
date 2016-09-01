@@ -1,0 +1,77 @@
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/svn/gqm3/!svn/ver/807/trunk/GQMapsCustomerServices/src/com/gq/meter/restsvcs
+END
+DashboardServices.java
+K 25
+svn:wc:ra_dav:version-url
+V 100
+/svn/gqm3/!svn/ver/789/trunk/GQMapsCustomerServices/src/com/gq/meter/restsvcs/DashboardServices.java
+END
+MapsDomainServices.java
+K 25
+svn:wc:ra_dav:version-url
+V 101
+/svn/gqm3/!svn/ver/789/trunk/GQMapsCustomerServices/src/com/gq/meter/restsvcs/MapsDomainServices.java
+END
+ProcedureServices.java
+K 25
+svn:wc:ra_dav:version-url
+V 100
+/svn/gqm3/!svn/ver/789/trunk/GQMapsCustomerServices/src/com/gq/meter/restsvcs/ProcedureServices.java
+END
+GoalMasterService.java
+K 25
+svn:wc:ra_dav:version-url
+V 100
+/svn/gqm3/!svn/ver/807/trunk/GQMapsCustomerServices/src/com/gq/meter/restsvcs/GoalMasterService.java
+END
+FinalizingGoalSnapshtServices.java
+K 25
+svn:wc:ra_dav:version-url
+V 112
+/svn/gqm3/!svn/ver/789/trunk/GQMapsCustomerServices/src/com/gq/meter/restsvcs/FinalizingGoalSnapshtServices.java
+END
+TaskmasterServices.java
+K 25
+svn:wc:ra_dav:version-url
+V 101
+/svn/gqm3/!svn/ver/789/trunk/GQMapsCustomerServices/src/com/gq/meter/restsvcs/TaskmasterServices.java
+END
+SnapshotServices.java
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/svn/gqm3/!svn/ver/789/trunk/GQMapsCustomerServices/src/com/gq/meter/restsvcs/SnapshotServices.java
+END
+UpdateComputeDuration.java
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/svn/gqm3/!svn/ver/793/trunk/GQMapsCustomerServices/src/com/gq/meter/restsvcs/UpdateComputeDuration.java
+END
+CustomerServices.java
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/svn/gqm3/!svn/ver/789/trunk/GQMapsCustomerServices/src/com/gq/meter/restsvcs/CustomerServices.java
+END
+GoalServices.java
+K 25
+svn:wc:ra_dav:version-url
+V 95
+/svn/gqm3/!svn/ver/806/trunk/GQMapsCustomerServices/src/com/gq/meter/restsvcs/GoalServices.java
+END
+GoalInputServices.java
+K 25
+svn:wc:ra_dav:version-url
+V 100
+/svn/gqm3/!svn/ver/789/trunk/GQMapsCustomerServices/src/com/gq/meter/restsvcs/GoalInputServices.java
+END
+AssetEditServices.java
+K 25
+svn:wc:ra_dav:version-url
+V 100
+/svn/gqm3/!svn/ver/789/trunk/GQMapsCustomerServices/src/com/gq/meter/restsvcs/AssetEditServices.java
+END

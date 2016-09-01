@@ -17,7 +17,7 @@ public class DynamicSessionUtil {
     public static synchronized SessionFactory getSessionFactory(String dbInstanceName) {
 
         SessionFactory sessionFactory = null;
-        String url = "jdbc:mysql://localhost:3306/" + dbInstanceName;
+        String url = "jdbc:mysql://gqmaps.com:3306/" + dbInstanceName;
 
         if (SessionFactoryListMap.containsKey(dbInstanceName)) {
             GQEDPConstants.logger.info("Session Factory exists for " + dbInstanceName);

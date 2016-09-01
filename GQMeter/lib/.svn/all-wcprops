@@ -1,0 +1,35 @@
+K 25
+svn:wc:ra_dav:version-url
+V 40
+/svn/gqm3/!svn/ver/803/trunk/GQMeter/lib
+END
+gson-2.2.2.jar
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/svn/gqm3/!svn/ver/3/trunk/GQMeter/lib/gson-2.2.2.jar
+END
+snmp4j-2.1.0.jar
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/svn/gqm3/!svn/ver/3/trunk/GQMeter/lib/snmp4j-2.1.0.jar
+END
+gqmeter-objects.jar
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/svn/gqm3/!svn/ver/803/trunk/GQMeter/lib/gqmeter-objects.jar
+END
+jersey-core-1.9.1.jar
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svn/gqm3/!svn/ver/46/trunk/GQMeter/lib/jersey-core-1.9.1.jar
+END
+jersey-client-1.9.1.jar
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svn/gqm3/!svn/ver/46/trunk/GQMeter/lib/jersey-client-1.9.1.jar
+END

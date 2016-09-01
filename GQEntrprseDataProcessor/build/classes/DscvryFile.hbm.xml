@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated Apr 10, 2013 12:24:47 PM by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+    <class name="com.gq.meter.object.DscvryFile" table="dscvry_file">
+        <id name="sid" type="java.lang.Byte">
+            <column name="sid" />
+            <generator class="identity" />
+        </id>
+        <property name="meterId" type="string">
+            <column name="meter_id" length="10" />
+        </property>
+        <property name="fileContent" type="string">
+            <column name="file_content" length="65535" not-null="true" />
+        </property>
+        <property name="creDttm" type="timestamp">
+            <column name="cre_dttm" length="19" not-null="true" />
+        </property>
+    </class>
+</hibernate-mapping>

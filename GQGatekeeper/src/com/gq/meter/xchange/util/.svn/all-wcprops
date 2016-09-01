@@ -1,0 +1,29 @@
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/svn/gqm3/!svn/ver/768/trunk/GQGatekeeper/src/com/gq/meter/xchange/util
+END
+StringCompression.java
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/svn/gqm3/!svn/ver/572/trunk/GQGatekeeper/src/com/gq/meter/xchange/util/StringCompression.java
+END
+GQRegistrationConstants.java
+K 25
+svn:wc:ra_dav:version-url
+V 100
+/svn/gqm3/!svn/ver/221/trunk/GQGatekeeper/src/com/gq/meter/xchange/util/GQRegistrationConstants.java
+END
+HibernateUtil.java
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/svn/gqm3/!svn/ver/62/trunk/GQGatekeeper/src/com/gq/meter/xchange/util/HibernateUtil.java
+END
+GQGateKeeperConstants.java
+K 25
+svn:wc:ra_dav:version-url
+V 98
+/svn/gqm3/!svn/ver/768/trunk/GQGatekeeper/src/com/gq/meter/xchange/util/GQGateKeeperConstants.java
+END

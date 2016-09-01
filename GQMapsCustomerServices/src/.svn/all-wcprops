@@ -1,0 +1,71 @@
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/svn/gqm3/!svn/ver/807/trunk/GQMapsCustomerServices/src
+END
+OsType.hbm.xml
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/svn/gqm3/!svn/ver/417/trunk/GQMapsCustomerServices/src/OsType.hbm.xml
+END
+AssetImp.hbm.xml
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svn/gqm3/!svn/ver/417/trunk/GQMapsCustomerServices/src/AssetImp.hbm.xml
+END
+DevCtlg.hbm.xml
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/svn/gqm3/!svn/ver/417/trunk/GQMapsCustomerServices/src/DevCtlg.hbm.xml
+END
+hibernate.cfg.xml
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/svn/gqm3/!svn/ver/675/trunk/GQMapsCustomerServices/src/hibernate.cfg.xml
+END
+Asset.hbm.xml
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svn/gqm3/!svn/ver/674/trunk/GQMapsCustomerServices/src/Asset.hbm.xml
+END
+SrvrAppType.hbm.xml
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svn/gqm3/!svn/ver/417/trunk/GQMapsCustomerServices/src/SrvrAppType.hbm.xml
+END
+SysProfile.hbm.xml
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svn/gqm3/!svn/ver/417/trunk/GQMapsCustomerServices/src/SysProfile.hbm.xml
+END
+CompType.hbm.xml
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svn/gqm3/!svn/ver/674/trunk/GQMapsCustomerServices/src/CompType.hbm.xml
+END
+Protocol.hbm.xml
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svn/gqm3/!svn/ver/438/trunk/GQMapsCustomerServices/src/Protocol.hbm.xml
+END
+MeterRun.hbm.xml
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svn/gqm3/!svn/ver/417/trunk/GQMapsCustomerServices/src/MeterRun.hbm.xml
+END
+hibernate.reveng.xml
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svn/gqm3/!svn/ver/309/trunk/GQMapsCustomerServices/src/hibernate.reveng.xml
+END

@@ -15,8 +15,8 @@ public class GQMapsCustomerUIConstants {
     private static FileAppender fileappender;
     private static String logFilePrefix = "/opt/gq/maps/logs/";
     private static String logFileName = "customerui.log";
-    public static final String webSvcHost = "localhost";
-    //public static final String webSvcHost = "192.168.8.15";
+    public static final String webSvcHost = "gqmaps.com";
+  //  public static final String webSvcHost = "192.168.8.119";
     private static final String LOG_FILE_NAME_DATE_PATTERN = "yyyy-MM-dd";
     
 

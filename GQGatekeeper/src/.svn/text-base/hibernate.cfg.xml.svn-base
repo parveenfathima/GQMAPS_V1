@@ -1,0 +1,42 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-configuration PUBLIC
+"-//Hibernate/Hibernate Configuration DTD//EN"
+"http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+    <session-factory>
+        <property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
+         <property name="hibernate.connection.url">jdbc:mysql://localhost:3306/gqexchange?autoReconnect=true</property>
+        <property name="hibernate.connection.username">gqmaps</property>
+        <property name="hibernate.connection.password">Ch1ca803ear$</property>
+
+        <!-- <property name="hibernate.connection.url">jdbc:mysql://localhost:3306/gqexchange?autoReconnect=true</property>
+        <property name="hibernate.connection.username">root</property>
+        <property name="hibernate.connection.password">root</property>  -->
+        <property name="hibernate.connection.provider_class">org.hibernate.connection.C3P0ConnectionProvider</property>
+        <property name="hibernate.c3p0.timeout">1800</property>
+        <property name="hibernate.c3p0.min_size">5</property>
+        <property name="hibernate.c3p0.max_statements">100</property>
+        <property name="hibernate.c3p0.idle_test_period">100</property>
+        <property name="hibernate.transaction.factory_class">org.hibernate.transaction.JDBCTransactionFactory</property>
+        <property name="hibernate.connection.pool_size">100</property>
+        <property name="current_session_context_class">thread</property>
+        <property name="cache.provider_class">org.hibernate.cache.NoCacheProvider</property>
+        <property name="dialect">org.hibernate.dialect.MySQLDialect</property>
+        <property name="hibernate.hbm2ddl.auto">update</property>
+
+        <!-- Mapping files -->
+
+        <mapping resource="AssetErr.hbm.xml" />
+        <mapping resource="BusnLine.hbm.xml" />
+        <mapping resource="ClientData.hbm.xml" />
+        <mapping resource="Enterprise.hbm.xml" />
+        <mapping resource="EnterpriseMeter.hbm.xml" />
+        <mapping resource="Gatekpr.hbm.xml" />
+        <mapping resource="GatekprAudit.hbm.xml" />
+        <mapping resource="MeterRun.hbm.xml" />
+        <mapping resource="Protocol.hbm.xml" />
+        <mapping resource="SecQuestion.hbm.xml" />
+
+
+    </session-factory>
+</hibernate-configuration>

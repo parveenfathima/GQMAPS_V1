@@ -1,0 +1,122 @@
+10
+
+dir
+891
+https://subversion.assembla.com/svn/gqm3/trunk/GQMapsRegistrationUI/WebContent/jquery-ui-1.10.2.custom/development-bundle/demos
+https://subversion.assembla.com/svn/gqm3
+
+
+
+2013-09-16T14:56:53.286701Z
+475
+hema@itechins.com
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+82efd7aa-5ada-47e4-9ce6-1c3ee3813419
+
+position
+dir
+
+menu
+dir
+
+images
+dir
+
+droppable
+dir
+
+draggable
+dir
+
+datepicker
+dir
+
+button
+dir
+
+sortable
+dir
+
+spinner
+dir
+
+resizable
+dir
+
+slider
+dir
+
+widget
+dir
+
+tabs
+dir
+
+progressbar
+dir
+
+tooltip
+dir
+
+effect
+dir
+
+demos.css
+file
+
+
+
+
+2015-04-28T12:17:10.192821Z
+be92e8cc090dc9f07112c75622df8e2b
+2013-09-16T14:56:53.286701Z
+475
+hema@itechins.com
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+306
+
+dialog
+dir
+
+accordion
+dir
+
+autocomplete
+dir
+
+selectable
+dir
+

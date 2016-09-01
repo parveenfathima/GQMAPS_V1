@@ -1,0 +1,29 @@
+K 25
+svn:wc:ra_dav:version-url
+V 48
+/svn/gqm3/!svn/ver/269/trunk/GQMeter-Objects/lib
+END
+mysql-connector-java-5.1.17-bin.jar
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svn/gqm3/!svn/ver/269/trunk/GQMeter-Objects/lib/mysql-connector-java-5.1.17-bin.jar
+END
+hibernate-annotations.jar
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svn/gqm3/!svn/ver/269/trunk/GQMeter-Objects/lib/hibernate-annotations.jar
+END
+hibernate3.jar
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svn/gqm3/!svn/ver/269/trunk/GQMeter-Objects/lib/hibernate3.jar
+END
+hibernate-commons-annotations.jar
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/svn/gqm3/!svn/ver/269/trunk/GQMeter-Objects/lib/hibernate-commons-annotations.jar
+END

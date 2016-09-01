@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated Apr 10, 2013 12:45:59 PM by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+    <class name="com.gq.meter.object.PwrSlab" table="pwr_slab">
+        <id name="sid" type="int">
+            <column name="sid" />
+            <generator class="assigned" />
+        </id>
+        <property name="locId" type="string">
+            <column name="loc_id" length="3" not-null="true" />
+        </property>
+        <property name="ULwrBnd" type="short">
+            <column name="u_lwr_bnd" not-null="true" />
+        </property>
+        <property name="UUprBnd" type="short">
+            <column name="u_upr_bnd" not-null="true" />
+        </property>
+        <property name="rate" type="double">
+            <column name="rate" precision="22" scale="0" not-null="true" />
+        </property>
+    </class>
+</hibernate-mapping>

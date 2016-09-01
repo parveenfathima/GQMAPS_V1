@@ -1,0 +1,71 @@
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svn/gqm3/!svn/ver/708/trunk/GQMeter-Objects/src/com/gq/meter/xchange/object
+END
+TaskAsst.java
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/svn/gqm3/!svn/ver/597/trunk/GQMeter-Objects/src/com/gq/meter/xchange/object/TaskAsst.java
+END
+GoalMaster.java
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/svn/gqm3/!svn/ver/624/trunk/GQMeter-Objects/src/com/gq/meter/xchange/object/GoalMaster.java
+END
+EnterpriseGoalId.java
+K 25
+svn:wc:ra_dav:version-url
+V 98
+/svn/gqm3/!svn/ver/708/trunk/GQMeter-Objects/src/com/gq/meter/xchange/object/EnterpriseGoalId.java
+END
+TaskTmpltId.java
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/svn/gqm3/!svn/ver/597/trunk/GQMeter-Objects/src/com/gq/meter/xchange/object/TaskTmpltId.java
+END
+GoalSnpsht.java
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/svn/gqm3/!svn/ver/626/trunk/GQMeter-Objects/src/com/gq/meter/xchange/object/GoalSnpsht.java
+END
+Goal.java
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/svn/gqm3/!svn/ver/624/trunk/GQMeter-Objects/src/com/gq/meter/xchange/object/Goal.java
+END
+EnterpriseGoal.java
+K 25
+svn:wc:ra_dav:version-url
+V 96
+/svn/gqm3/!svn/ver/708/trunk/GQMeter-Objects/src/com/gq/meter/xchange/object/EnterpriseGoal.java
+END
+ChartType.java
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/svn/gqm3/!svn/ver/597/trunk/GQMeter-Objects/src/com/gq/meter/xchange/object/ChartType.java
+END
+TemplateTaskDetails.java
+K 25
+svn:wc:ra_dav:version-url
+V 101
+/svn/gqm3/!svn/ver/636/trunk/GQMeter-Objects/src/com/gq/meter/xchange/object/TemplateTaskDetails.java
+END
+ChartRowHolder.java
+K 25
+svn:wc:ra_dav:version-url
+V 96
+/svn/gqm3/!svn/ver/639/trunk/GQMeter-Objects/src/com/gq/meter/xchange/object/ChartRowHolder.java
+END
+TaskChklstId.java
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/svn/gqm3/!svn/ver/597/trunk/GQMeter-Objects/src/com/gq/meter/xchange/object/TaskChklstId.java
+END

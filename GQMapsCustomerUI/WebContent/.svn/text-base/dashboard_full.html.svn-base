@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang = "en">
+
+	<head>
+	
+		<title> GQMaps </title>
+		
+		<!--  Custom Styles -->
+		<link href = "css/dashboard.css" rel = "stylesheet" type = "text/css" />
+		<link href = "css/timeout.css" rel = "stylesheet" type = "text/css" />
+		
+		<!-- Predefined Styles -->
+		<link href = 'http://fonts.googleapis.com/css?family=Open+Sans:400,600,700' rel = 'stylesheet' type = 'text/css' />
+		<link href = "http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" rel = "stylesheet" type = 'text/css' />
+		<link href = "css/thickbox.css" rel = "stylesheet" type = "text/css" />
+		
+		<!-- Predefined Scripts -->
+		<script src = "http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js" type = "text/javascript"> </script>
+		<script src = "http://code.jquery.com/ui/1.10.3/jquery-ui.js" type = "text/javascript"> </script>
+		<script src = "http://code.jquery.com/jquery-1.9.1.js" type = "text/javascript"> </script>
+		<script src = "http://ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.js" type = "text/javascript"> </script>
+		<script src = "http://www.google.com/jsapi" type = "text/javascript"> </script>
+		<script src = "js/plugins/tables/jquery.dataTables.min.js" type = "text/javascript"></script>
+		
+		<script type = "text/javascript">
+			google.load("visualization", "1", {packages:["piechart", "corechart", "annotatedtimeline", "geomap"]});
+		</script>
+		
+		<!--Custom scripts -->
+		<script src = "js/jstorage.js"> </script>
+		<script src = "js/rest_service.js"> </script>
+		<script src = "js/dashboard_full.js"> </script>
+		<script src = "js/general.js"> </script>
+		<script src = "js/chart.js"> </script>
+		
+		<script type = "text/javascript" src = "js/thickbox.js"> </script>
+		
+		<script type = "text/javascript" src = "js/charts/graph.js"> </script>
+		<script type = "text/javascript" src = "js/charts/chart1.js"> </script>
+		<script type = "text/javascript" src = "js/charts/chart2.js"> </script>
+		<script type = "text/javascript" src = "js/charts/chart3.js"> </script>
+		<script type = "text/javascript" src = "js/plotgraph.js"> </script>
+		
+		<script type = "text/javascript" src = "http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js"> </script>
+		<script type = "text/javascript" src = "http://maps.googleapis.com/maps/api/js?key=AIzaSyDY0kkJiTPVd2U7aTOAwhc9ySH6oHxOIYM&amp;sensor=false"> 
+		</script>
+		
+		<script type = "text/javascript" src = "js/plugins/charts/excanvas.min.js"> </script>
+		<script type = "text/javascript" src = "js/plugins/charts/jquery.flot.js"> </script>
+		<script type = "text/javascript" src = "js/plugins/charts/jquery.flot.resize.js"> </script>
+		<script type = "text/javascript" src = "js/plugins/charts/jquery.sparkline.min.js"> </script>
+		
+		<script type = "text/javascript" src = "js/plugins/ui/jquery.easytabs.min.js"> </script>
+		<script type = "text/javascript" src = "js/plugins/ui/jquery.collapsible.min.js"> </script>
+		<script type = "text/javascript" src = "js/plugins/ui/jquery.mousewheel.js"> </script>
+		<script type = "text/javascript" src = "js/plugins/ui/prettify.js"> </script>
+		<script type = "text/javascript" src = "js/plugins/ui/jquery.bootbox.min.js"> </script>
+		<script type = "text/javascript" src = "js/plugins/ui/jquery.colorpicker.js"> </script>
+		<script type = "text/javascript" src = "js/plugins/ui/jquery.timepicker.min.js"> </script>
+		<script type = "text/javascript" src = "js/plugins/ui/jquery.jgrowl.js"> </script>
+		<script type = "text/javascript" src = "js/plugins/ui/jquery.fancybox.js"> </script>
+		<script type = "text/javascript" src = "js/plugins/ui/jquery.fullcalendar.min.js"> </script>
+		<script type = "text/javascript" src = "js/plugins/ui/jquery.elfinder.js"> </script>
+		
+		<script type = "text/javascript" src = "js/plugins/uploader/plupload.js"> </script>
+		<script type = "text/javascript" src = "js/plugins/uploader/plupload.html4.js"> </script>
+		<script type = "text/javascript" src = "js/plugins/uploader/plupload.html5.js"> </script>
+		<script type = "text/javascript" src = "js/plugins/uploader/jquery.plupload.queue.js"> </script>
+		
+		<script type = "text/javascript" src = "js/plugins/forms/jquery.uniform.min.js"> </script>
+		<script type = "text/javascript" src = "js/plugins/forms/jquery.autosize.js"> </script>
+		<script type = "text/javascript" src = "js/plugins/forms/jquery.inputlimiter.min.js"> </script>
+		<script type = "text/javascript" src = "js/plugins/forms/jquery.tagsinput.min.js"> </script>
+		<script type = "text/javascript" src = "js/plugins/forms/jquery.inputmask.js"> </script>
+		<script type = "text/javascript" src = "js/plugins/forms/jquery.select2.min.js"> </script>
+		<script type = "text/javascript" src = "js/plugins/forms/jquery.listbox.js"> </script>
+		<script type = "text/javascript" src = "js/plugins/forms/jquery.validation.js"> </script>
+		<script type = "text/javascript" src = "js/plugins/forms/jquery.validationEngine-en.js"> </script>
+		<script type = "text/javascript" src = "js/plugins/forms/jquery.form.wizard.js"> </script>
+		<script type = "text/javascript" src = "js/plugins/forms/jquery.form.js"> </script>
+	
+	</head>
+	
+	<body>
+	
+		<!-- Timeout Div -->
+		<div id = "idletimeout">
+			Logging off in <span> countdown place holder </span>&nbsp;seconds due to inactivity.
+			<a id = "idletimeout-resume" href = "#"> Click here to continue </a>.
+		</div>
+		
+		<!-- Fixed top -->
+		<div id = "top">
+			<div class = "fixed">
+				<a href = "#" title = "" class = "logo"> </a>
+				<img class = "logo-menu" src = "images/image001.jpg"/>
+				<ul class = "top-menu">
+					<li class = "dropdown">
+						<a href = "login.html" class = "user-menu" data-toggle = "dropdown">
+							<i class = "icon-remove"></i><span> Logout </span> 
+						</a>
+					</li>
+				</ul>
+			</div>
+		</div>
+		<!-- /fixed top -->
+		
+		<!--Goal input dialog box -->
+		<div id = "dlgGoalInput" style = "display:none;" title = "Goal Input">
+		
+			<form id = "frmGoalInput" style = "top:100px;">
+				<fieldset>
+				
+					<a class = "link_style" id = "serverAsset" href = "#"><h6 align = "right"> Asset List </h6></a>
+					<table id = "addElements">
+					</table>
+					
+					<br/><br/><br/>
+					
+					<button class = "btn btn-inverse" type = "button" id = "btnAsset" style = "width:110px;"> Submit </button>
+				</fieldset>
+			</form>
+			
+		</div>
+		
+		<!-- Content container -->
+		<div id = "container">
+		
+			<!-- Sidebar -->
+			<div id = "sidebar">
+			
+				<div class = "sidebar-tabs">
+				
+					<div id = "general">
+					
+						<!-- Sidebar user -->
+						<div class = "sidebar-user widget">
+						
+							<div class = "navbar"><div class = "navbar-inner"><h6><p id = "entpName"></p></h6></div></div>
+						
+						</div>
+						<!-- /sidebar user -->
+						
+						<!-- Main navigation -->
+						<ul class = "navigation widget">
+						
+						<li class = "active"><a class = "expand"><i class = "icon-tasks"></i> Business Goals </a>
+						
+						<ul id = 'cmbGoals' > </ul>
+						</li>
+						<!-- /main navigation -->
+						
+						<br/><br/>
+						
+						<div class = "span6 left-alligned">
+						
+							<form name = "frmAssetEdit"  id = "frmAssetEdit" method = "post" action = "asset_edit.jsp">
+								<input type = "hidden" name ="setEntp" id = "setEntp"  />
+								<button class = "btn btn-inverse" type = "submit" id = "btnConfAssets" 
+								name = "btnConfAssets" style = "width:210px;"> Configure Assets </button>
+							</form>
+							
+						</div>
+						
+						<br/><br/><br/>
+						
+						<!-- Change compute duration -->
+						<div id = "slider">
+						
+							<div id = "slider-inner">
+								<h6 style = "font-size:13px; color:slategray;">
+									Current Compute Duration:&nbsp;<span id = "div_comp_duration"></span>
+									<label id = "fader" onclick = "showComDurDiv()" onmouseover = "labelHighLight()" 
+									title = "Click to change the compute duration here" 
+									style = "position:relative;top:15px;"> Change </label>
+									
+									<div id = "ComDurDiv" style = "display:none; padding-left:55px; position:relative; 
+									top:-10px;">
+										1&nbsp;<input id = "slide" style = "width:100px;" type = "range" min = "1" max = "30" 
+										step = "1" value = "1" onchange = "computeDurationSet(value)"/>&nbsp;
+										<output for = "fader" id = "volume"></output>
+										<input type = "hidden" value = "" id = "computeValue"/><br>
+										<button class = "btn btn-info" type = "button" style = "position:relative; 
+										top:-1px; left:35px; width:60px;height:30px;" onClick = "computeDurationUpdate()"> Submit </button>
+									</div>
+								</h6>
+							</div>
+							
+						</div>
+						<!-- /slider -->
+					
+					</div>
+					<!-- /general -->
+				</div>
+			</div>
+			<!-- /sidebar -->
+			
+			<!-- Content -->
+			<div id = "content">
+			
+				<!-- Content wrapper -->
+				<div class = "wrapper">
+			
+					<!-- Page header -->
+					<div class = "page-header">
+						
+						<div class = "page-title">
+							<span> GQMaps Dashboard </span>
+						</div>
+						
+						<ul class = "page-stats">
+						
+							<li>
+								<div class = "showcase">
+									<i class = "icon-bell"></i> <span> Alerts </span>
+									<div id = "div_expiryAlert"> </div>
+								</div>
+							</li>
+							
+							<li>
+								<div class = "showcase">
+									<span> Assets Under Management </span>
+									<div id = "div_assetsScanned"> </div>
+								</div>
+							</li>
+							
+							<li>
+								<div class = "showcase">
+									<span> Current PUE </span>
+									<div id = "div_pue"> </div>
+								</div>
+							</li>
+						</ul>
+					
+					</div>
+					<!-- /page header -->
+					
+					<!-- Action tabs -->
+					<div class = "actions-wrapper">
+						
+						<div class = "actions">
+							<div id = "quick-actions">
+								<ul class = "statistics">
+								
+									<li>
+										<div class = "top-info">
+											<a href = "#TB_inline?height=310&width=540&inlineId=loaded-assets" 
+											title = "" class = " thickbox blue-square" >
+												<i class = "icon-inbox"></i>
+											</a>
+											<strong> Top Loaded <br/> Assets Today </strong>
+										</div>
+										
+										<div class = "progress progress-micro">
+											<div class = "bar" style = "width: 60%;"></div>
+										</div>
+									</li>
+									
+									<li>
+										<div class = "top-info">
+											<a href = "#TB_inline?height=310&width=540&inlineId=installed-software" 
+											title = "" class = "thickbox red-square">
+												<i class = "icon-gift"></i>
+											</a>
+											<strong> Top Installed <br/> Software </strong>
+										</div>
+										
+										<div class = "progress progress-micro">
+											<div class = "bar" style = "width: 20%;"></div>
+										</div>
+									</li>
+									
+									<li>
+										<div class = "top-info">
+											<a href = "#TB_inline?height=310&width=540&inlineId=blacklisted-software" 
+											title = "" class = "thickbox black-square">
+												<i class = "icon-exclamation-sign"></i>
+											</a>
+											<strong> Top Blacklisted <br/> Software </strong>
+										</div>
+										
+										<div class = "progress progress-micro">
+											<div class = "bar" style = "width: 40%;"></div>
+										</div>
+									</li>
+									
+									<li>
+										<div class = "top-info">
+											<a href = "#TB_inline?height=310&width=540&inlineId=least-assets" 
+											title = "" class = "thickbox green-square">
+												<i class = "icon-signal"></i>
+											</a>
+											<strong> Least and Most <br/> Loaded Assets </strong>
+										</div>
+										
+										<div class = "progress progress-micro">
+											<div class = "bar" style = "width: 70%;"></div>
+										</div>
+									</li>
+									
+									<li>
+										<div class = "top-info">
+											<a href = "#TB_inline?height=310&width=540&inlineId=connected-server" 
+											title = "" class = "thickbox sea-square">
+												<i class = "icon-list-alt"></i>
+											</a>
+											<strong> Most Connected <br/> Server Assets </strong>
+										</div>
+										
+										<div class = "progress progress-micro">
+											<div class = "bar" style = "width: 50%;"></div>
+										</div>
+									</li>
+									
+									<li>
+										<div class="top-info">
+											<a href = "#TB_inline?height=310&width=540&inlineId=external-website" 
+											title = "" class = "thickbox dark-blue-square">
+												<i class = "icon-globe"></i>
+											</a>
+											<strong>Externally Connected <br/>Websites</strong>
+										</div>
+										
+										<div class = "progress progress-micro">
+											<div class = "bar" style = "width: 93%;"></div>
+										</div>
+									</li>
+								</ul>
+							</div>
+						
+						</div>
+						<!-- /actions -->
+					</div>
+					<!-- /action wrapper -->
+					
+					<img class = "indicator" src = "images/indicator.png">
+					
+					<!-- Graph  -->
+					<div class = "row-fluid">
+					
+						<div class = "span6" id = "loaded-assets" style = "display:inline" >
+							<div class = "widget">
+							
+								<div class = "navbar">
+									<div class = "navbar-inner">
+										<h6> Top Loaded Assets Today </h6>
+										<h6>
+											<div id = "div_todaysTopAsset" style = "color: blue; left:200px;"> </div>
+										</h6>
+									</div>
+								</div>
+								
+								<div class = "well body">
+									<div id = "div_topcpuLoad"></div>
+								</div>
+							
+							</div>
+						</div>
+						
+						<div class = "span6" id = "installed-software" style = "display:inline">
+							<div class = "widget">
+							
+								<div class = "navbar">
+									<div class = "navbar-inner">
+										<h6> Top Installed Software </h6>
+									</div>
+								</div>
+								
+								<div class = "well body">
+									<div id = "div_installedSW"></div>
+								</div>
+							
+							</div>
+						</div>
+						
+					</div>
+					<!-- /row fluid -->
+					
+					<div class = "row-fluid">
+					
+						<div class = "span6" id = "blacklisted-software" style = "display:inline">
+							<div class = "widget">
+							
+								<div class = "navbar">
+									<div class = "navbar-inner">
+										<h6> Top BlackListed Software </h6>
+									</div>
+								</div>
+								
+								<div class = "well body">
+									<div id = "div_blacklistedSW"></div>
+								</div>
+							
+							</div>
+						</div>
+						
+						<div class = "span6" id = "least-assets" style = "display:inline">
+							<div class = "widget">
+							
+								<div class = "navbar">
+									<div class="navbar-inner">
+										<h6> Least and Most Loaded Assets </h6>
+									</div>
+								</div>
+								
+								<div class = "well body">
+									<div id = "div_mostleastAssets"></div>
+								</div>
+							
+							</div>
+						</div>
+					
+					</div>
+					<!--  /row fluid -->
+					
+					<div class = "row-fluid">
+					
+						<div class = "span6" id = "connected-server" style = "display:inline">
+							<div class = "widget">
+								
+								<div class = "navbar">
+									<div class = "navbar-inner">
+										<h6> Most Connected Server Assets </h6>
+									</div>
+								</div>
+								
+								<div class = "well body">
+									<div id = "div_connectedServers" ></div>
+								</div>
+							
+							</div>
+						</div>
+						
+						<div class = "span6" id = "external-website" style = "display:inline">
+							<div class = "widget">
+							
+								<div class = "navbar">
+									<div class = "navbar-inner">
+										<h6> Externally Connected Websites </h6>
+									</div>
+								</div>
+								
+								<div class = "well body">
+									<div id = "div_connectedWebsites"></div>
+								</div>
+							
+							</div>
+						</div>
+						
+					</div>
+					<!-- /row fluid -->
+					<!--/Graphs-->
+				
+				</div>
+				<!-- /content wrapper -->
+			
+			</div>
+			<!-- /content -->
+			
+		</div>
+		<!-- /content container -->
+	
+	</body>
+
+</html>
+
+	<!-- Mask to cover the whole screen -->
+	<div id = "mask"> </div>
+		 	
+	<script src = "js/jquery.idletimer.js" type = "text/javascript" > </script>
+	<script src = "js/jquery.idletimeout.js" type = "text/javascript" > </script>
+        
+	<script type = "text/javascript" >
+		$.idleTimeout('#idletimeout', '#idletimeout a', {
+		idleAfter : $.jStorage.get("jsTimeout"),
+        onTimeout : function() {
+            $(this).slideUp();
+            window.location = "login.html";
+        },
+        onIdle : function() {
+            var maskHeight = $(document).height();
+            var maskWidth = $(window).width();
+            $('#mask').css({'width':maskWidth,'height':maskHeight});
+            $('#mask').fadeIn(1000);	
+            $('#mask').fadeTo("slow",0.8);	
+            $(this).slideDown(); // show the warning bar
+        },
+        onCountdown : function(counter) {
+            $(this).find("span").html(counter); // update the counter
+        },
+        onResume : function() {
+            $(this).slideUp(); // hide the warning bar
+            $('#mask').hide();
+            $('.window').hide();
+        }
+    });
+	</script>
+
+
+

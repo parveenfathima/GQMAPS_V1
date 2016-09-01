@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated Feb 21, 2013 4:19:35 PM by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+    <class name="com.gq.meter.object.NSRGConnDevice" table="nsrg_conn_device">
+        <composite-id name="id" class="com.gq.meter.object.NSRGConnDeviceId">
+            <key-property name="runId" type="long">
+                <column name="run_id" />
+            </key-property>
+            <key-property name="assetId" type="string">
+                <column name="asset_id" length="30" />
+            </key-property>
+            <key-property name="ipAddr" type="string">
+                <column name="ip_addr" length="15" />
+            </key-property>
+        </composite-id>
+    </class>
+</hibernate-mapping>

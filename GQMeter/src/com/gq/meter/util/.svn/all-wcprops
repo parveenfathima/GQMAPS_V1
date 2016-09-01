@@ -1,0 +1,29 @@
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/svn/gqm3/!svn/ver/853/trunk/GQMeter/src/com/gq/meter/util
+END
+StringCompression.java
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svn/gqm3/!svn/ver/566/trunk/GQMeter/src/com/gq/meter/util/StringCompression.java
+END
+MeterConstants.java
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svn/gqm3/!svn/ver/900/trunk/GQMeter/src/com/gq/meter/util/MeterConstants.java
+END
+MeterUtils.java
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svn/gqm3/!svn/ver/900/trunk/GQMeter/src/com/gq/meter/util/MeterUtils.java
+END
+SpeedTestHelper.java
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svn/gqm3/!svn/ver/763/trunk/GQMeter/src/com/gq/meter/util/SpeedTestHelper.java
+END

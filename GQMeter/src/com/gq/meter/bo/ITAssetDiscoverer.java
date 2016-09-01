@@ -84,49 +84,70 @@ public final class ITAssetDiscoverer {
         service = client.resource(MeterConstants.restURL);
     }
 
+    //This method is used to perform a basic snmp walk and get the list of snmp known/unknown Ipaddresses.
+    private void  checkSnmp(HashMap<String, String> communityIPMap) {
+    	
+    	//System.out.println("Entry 1");
+    	long checkSnmpStartTime = System.currentTimeMillis();
+    	
+    	String communityString = null;
+        String ipAddress = null;
+        String snmpVersion = null;
+
+    	for (Entry<String, String> entry : communityIPMap.entrySet()) {
+	    	ipAddress = entry.getKey();
+	        communityString = entry.getValue();
+	        MeterUtils.isSnmpConfigured(communityString, ipAddress);  
+            snmpVersion = MeterUtils.snmpVersionMap.get(ipAddress);
+	        MeterUtils.getAssetType(communityString, ipAddress, snmpVersion);
+    	}
+    	
+    	long checkSnmpEndTime = System.currentTimeMillis();
+    	//System.out.println("Entry 2");
+    	//System.out.println("snmp ip map : " + MeterUtils.snmpIPMap );
+    	System.out.println(" [GQMETER] Time taken to complete basic snmp walk to find known/unknown Ip is : " + (checkSnmpEndTime - checkSnmpStartTime));
+    }
+    
     /**
      * This method used to find the asset type
      * 
-     * @param communityIPMap
-     * @return
+     * @param communityIPMap, snmpIPMap
+     * @return Protocol list
      */
-    private List<ProtocolData> findAssets(HashMap<String, String> communityIPMap) {
+    private List<ProtocolData> findAssets(HashMap<String, String> snmpIPMap, HashMap<String, String> communityIPMap) {
+
+    	//System.out.println("Entry 3");
 
         String snmpVersion = null;
         String communityString = null;
         String ipAddress = null;
 
         MeterProtocols assetProtocol = null;
-        HashMap<String, String> snmpDetails = null;
-
-        
+       
         List<ProtocolData> pdList = new LinkedList<ProtocolData>();
 
         ExecutorService es = Executors.newCachedThreadPool();
-
+ 
         try {
             // Iterating the community ip map
             for (Entry<String, String> entry : communityIPMap.entrySet()) {
                 ipAddress = entry.getKey();
                 communityString = entry.getValue();
 
-                List<String> errorList = new LinkedList<String>();
-                snmpDetails = MeterUtils.isSnmpConfigured(communityString, ipAddress);
+                List<String> errorList = new LinkedList<String>();      
 
-                if (snmpDetails.get("snmpUnKnownIp") != null) {
-                	
+                if (snmpIPMap.get(ipAddress).equals("Unknown")) {
                     snmpUnknownIPList.add(ipAddress);
                     errorList.add(communityString + " - " + ipAddress + " -  : Unable to reach the asset");
                     gqErrorInfoList.add(new GQErrorInformation(null, errorList));
                     continue;
                 }
 
-                snmpVersion = snmpDetails.get("snmpVersion");
-                
-                if (snmpDetails.get("snmpKnownIp") != null) {
+                snmpVersion = MeterUtils.snmpVersionMap.get(ipAddress);
+                                
+                if (snmpIPMap.get(ipAddress).equals("Known")) {
                     snmpKnownIPList.add(ipAddress);
-
-                    assetProtocol = MeterUtils.getAssetType(communityString, ipAddress, snmpVersion);
+                    assetProtocol = MeterProtocols.valueOf(MeterUtils.assetProtocolMap.get(ipAddress));
                     if (assetProtocol == null) {
                         errorList.add(communityString + " - " + ipAddress
                                 + " -  : Unable to reach the asset may be due to slow network connection");
@@ -169,6 +190,7 @@ public final class ITAssetDiscoverer {
             gqmResponse.setErrorInformationList(gqErrorInfoList); // Added the errors to the GQMResponse
             
         }
+
         return pdList;
     }
 
@@ -179,6 +201,8 @@ public final class ITAssetDiscoverer {
      * @return
      */
     private void readInput(String inputFilePath,HashMap<String, String> communityIPMap,HashMap<String, String> speedTestIPMap) {
+    	
+    	long readInputStartTime = System.currentTimeMillis();
 
         File assetsInputFile = null;
         //HashMap<String, String> communityIPMap = new HashMap<String, String>();
@@ -484,6 +508,9 @@ public final class ITAssetDiscoverer {
 
             br.close();
 
+            long readInputEndTime = System.currentTimeMillis();
+            System.out.println(" [GQMETER] Time taken to parse the input file  is :" + (readInputEndTime - readInputStartTime));
+           
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -492,6 +519,9 @@ public final class ITAssetDiscoverer {
     }
     
     private String isValid(String gqmid) {
+    	
+    	long meterValidationStartTime = System.currentTimeMillis();
+    	
         String protocolId = "";
         try {
             System.out.println(" [GQMETER] Validating the expiry date for the meter " + gqmid);
@@ -509,11 +539,15 @@ public final class ITAssetDiscoverer {
                 System.out.println(" [GQMETER] Your Meter: " + gqmid + " is expired/Invalid");
                 System.exit(0);
             }
+         
+            long meterValidationEndTime = System.currentTimeMillis();
+            System.out.println(" [GQMETER] Time taken to validate the meter is :" + (meterValidationEndTime - meterValidationStartTime));
+            
         }// try ends
         catch (Exception e) {
             e.printStackTrace();
             System.exit(0);
-        }
+        }        
         return protocolId;
     }
 
@@ -558,7 +592,7 @@ public final class ITAssetDiscoverer {
         	 snmp.listen();
         	         	 
         	 //To walk the snmp for current working machine here. reason for that calculate the asset id.
-        	 snmpDetails = MeterUtils.isSnmpConfigured(localIPCommunityString, localIPAddress);
+        	 //snmpDetails = MeterUtils.isSnmpConfigured(localIPCommunityString, localIPAddress);
 
         	 if ( snmpDetails.get("snmpUnKnownIp") != null ) {
             	 //snmpUnknownIPList.add(localIPAddress);
@@ -628,7 +662,7 @@ public final class ITAssetDiscoverer {
     	 			remoteIPAddress = entry.getKey();
     	 			remoteIPCommunityString = entry.getValue();
     	 			
-    	 			snmpDetails = MeterUtils.isSnmpConfigured(remoteIPCommunityString, remoteIPAddress);
+    	 		//	snmpDetails = MeterUtils.isSnmpConfigured(remoteIPCommunityString, remoteIPAddress);
                  
     	 			if ( snmpDetails.get("snmpUnKnownIp") != null ) {
     	 				snmpUnknownIPList.add(remoteIPAddress);
@@ -676,7 +710,6 @@ public final class ITAssetDiscoverer {
 	   	 	 			for(int resultCount = 0; resultCount < result.size(); resultCount++) {
 	   	 	 				noOfBytes = noOfBytes + result.get(resultCount).toString().length();
 	   	 	 			}
-	   	 	 			//System.out.println(" "+noOfBytes +"			"+ timeTaken);
 	   	 	 			bytesInMB = (double) noOfBytes / (1024*1024)  ;
 	   	 	 			timeInSec = (double) timeTaken / 1000 ;
 	   	 	 			downloadSpeed = (bytesInMB / timeInSec);
@@ -719,8 +752,7 @@ public final class ITAssetDiscoverer {
     	int valid = 0;
         
     	System.out.println(" [GQMETER] started .......");
-        gqmResponse = new GQMeterResponse();
-        gqmResponse.setRecDttm(new Date());
+        
 
         // The start time of the meter execution
         long startTime = System.currentTimeMillis();
@@ -731,7 +763,6 @@ public final class ITAssetDiscoverer {
         //we are here to read the input file, to store the ip for required map
         readInput(inputFilePath,communityIPMap,speedTestIPMap);
         
-        gqmResponse.setAssetScanned( (short)( (communityIPMap.size() ) + speedTestIPMap.size() ));
         
         if( communityIPMap.size() == 0 && speedTestIPMap.size() == 0) {
         	System.out.println(" [GQMETER] There is no valid IP Address in given input section");
@@ -739,70 +770,95 @@ public final class ITAssetDiscoverer {
         }
         
         if ( communityIPMap.size() > 0) {
-            assetsList = findAssets(communityIPMap);
+        	checkSnmp(communityIPMap);
         }
         
-        for(int assetCount = 0; assetCount < assetsList.size(); assetCount++ ) {
+        // This code throws exception when snmp is disabled for monitored assets during monitoring. Need to be fixed in future. 
+        for (int i = MeterConstants.CRON_INIT_VALUE; i <= MeterConstants.CRON_LIMIT; i++) {
         	
-        	computerObj = gson.fromJson( assetsList.get(assetCount).getData(), Computer.class);
-	        assetObj = computerObj.getAssetObj();
+        	long meterRunStartTime = System.currentTimeMillis();
+        	
+        	gqmResponse = new GQMeterResponse();
+            gqmResponse.setRecDttm(new Date());
+            gqmResponse.setAssetScanned( (short)( (communityIPMap.size() ) + speedTestIPMap.size() ));
+
+        	assetsList = findAssets(MeterUtils.snmpIPMap,communityIPMap);
+        	
+	        for(int assetCount = 0; assetCount < assetsList.size(); assetCount++ ) {
+	        	
+	        	computerObj = gson.fromJson( assetsList.get(assetCount).getData(), Computer.class);
+		        assetObj = computerObj.getAssetObj();
+		        
+		        if( !compMap.containsValue( assetObj.getAssetId() )) {
+		        	compMap.put(assetObj.getIpAddr(),assetObj.getAssetId());
+		        }
+		        else {
+		        	valid++;
+		        }
+	        }
 	        
-	        if( !compMap.containsValue( assetObj.getAssetId() )) {
-	        	compMap.put(assetObj.getIpAddr(),assetObj.getAssetId());
+	        //we are here to remove the local ip duplication.
+	        if(valid > 0) {
+	        	for(int assetCount = 0; assetCount < assetsList.size(); assetCount++ ) {
+	        		
+	        		computerObj = gson.fromJson(assetsList.get(assetCount).getData(), Computer.class);
+	      	        assetObj = computerObj.getAssetObj();
+	      	        
+	      	        if((assetObj.getIpAddr()).equals("127.0.0.1")) {
+	      	        	assetsList.remove(assetCount);
+	      	        	break;
+	      	        }
+	        	}
+	        	gqmResponse.addToAssetInformationList(assetsList);
 	        }
-	        else {
-	        	valid++;
+	        
+	        //we are here for there is no duplication local ipaddress.
+	        if(valid == 0) {
+	        	gqmResponse.addToAssetInformationList(assetsList);
 	        }
-        }
-        //we are here to remove the duplication local ip.
-        if(valid > 0) {
-        	for(int assetCount = 0; assetCount < assetsList.size(); assetCount++ ) {
-        		
-        		computerObj = gson.fromJson(assetsList.get(assetCount).getData(), Computer.class);
-      	        assetObj = computerObj.getAssetObj();
-      	        
-      	        if((assetObj.getIpAddr()).equals("127.0.0.1")) {
-      	        	assetsList.remove(assetCount);
-      	        	break;
-      	        	//System.out.println("Removed Data:" + assetsList.remove(assetCount));
-      	        }
-        	}
-        	gqmResponse.addToAssetInformationList(assetsList);
-        }
-        
-        //we are here for there is no duplication local ipaddress.
-        if(valid == 0) {
-        	gqmResponse.addToAssetInformationList(assetsList);
-        }
-        
-        if ( speedTestIPMap.size() > 0 && speedTestIPMap != null ) {    	
-        	speedAssetsList = speedCalculation( speedTestIPMap,localIPCommunityString,localIPAddress );
-        	gqmResponse.addToAssetInformationList(speedAssetsList);
-        }
-        
-        long endTime = System.currentTimeMillis();
-        gqmResponse.setRunTimeMiliSeconds((endTime - startTime));
-        gqmResponse.setStatus("pass");
-        gqmResponse.setVersion("1");
-        gqmResponse.setGqmid(gqmid);
-        gqmResponse.setAssetDiscovered((short) snmpKnownIPList.size());
-       
-        System.out.println(" [GQMETER] Total number of assets(ip address) in input file : "
-                + gqmResponse.getAssetScanned());
-        System.out.println(" [GQMETER] SNMP configured on : " + this.snmpKnownIPList.toString());
-        System.out.println(" [GQMETER] SNMP not configured on : " + this.snmpUnknownIPList.toString());
-        System.out.println(" [GQMETER] SNMP walk succeeded on : " + this.snmpKnownIPList.size());
-        System.out.println(" [GQMETER] TOTAL time taken for meter execution : " + (endTime - startTime));
+	        
+	        if ( speedTestIPMap.size() > 0 && speedTestIPMap != null ) {    	
+	        	speedAssetsList = speedCalculation( speedTestIPMap,localIPCommunityString,localIPAddress );
+	        	gqmResponse.addToAssetInformationList(speedAssetsList);
+	        }
 
-        // Sending the generated json output to the server
-        Form form = new Form();
-        form.add("gqMeterResponse", StringCompression.compress(gson.toJson(gqmResponse)));
-        form.add("summary", "Sending data from GQMeter to GQGatekeeper");
+	        long endTime = System.currentTimeMillis();
 
-        Builder builder = service.path("gatekeeper").type(MediaType.APPLICATION_JSON);
-        ClientResponse response = builder.post(ClientResponse.class, form);
+	        gqmResponse.setRunTimeMiliSeconds((endTime - startTime));
+	        gqmResponse.setStatus("pass");
+	        gqmResponse.setVersion("1");
+	        gqmResponse.setGqmid(gqmid);
+	        gqmResponse.setAssetDiscovered((short) snmpKnownIPList.size());
+	       
+	        System.out.println(" [GQMETER] Total number of assets(ip address) in input file : "
+	                + gqmResponse.getAssetScanned());
+	        System.out.println(" [GQMETER] SNMP configured on : " + this.snmpKnownIPList.toString());
+	        System.out.println(" [GQMETER] SNMP not configured on : " + this.snmpUnknownIPList.toString());
+	        System.out.println(" [GQMETER] SNMP walk succeeded on : " + this.snmpKnownIPList.size());
+	       // System.out.println(" [GQMETER] TOTAL time taken for meter execution(without gk post) : " + (endTime - startTime));
+	
+        	long gkPostStartTime = System.currentTimeMillis();
+        	
+	        // Sending the generated json output to the server
+	        Form form = new Form();
+	        form.add("gqMeterResponse", StringCompression.compress(gson.toJson(gqmResponse)));
+	        form.add("summary", "Sending data from GQMeter to GQGatekeeper");
+	        //System.out.println(gson.toJson(gqmResponse));
+	        Builder builder = service.path("gatekeeper").type(MediaType.APPLICATION_JSON);
+	        ClientResponse response = builder.post(ClientResponse.class, form);
 
-        System.out.println(" [GQMETER] ended successfully ...." + response.getStatus());
+
+	        System.out.println(" [GQMETER] ended successfully ...." + response.getStatus());
+	        
+        	long gkPostEndTime = System.currentTimeMillis();
+        	System.out.println(" [GQMETER] Time taken to post the response to gatekeeper is: " + (gkPostEndTime - gkPostStartTime));
+        	
+        	long meterRunEndTime = System.currentTimeMillis();
+        	System.out.println(" [GQMETER] Total time taken to execute all thread execution with gk post is (without basic walk) : " + (meterRunEndTime - meterRunStartTime));
+	        
+        	this.snmpKnownIPList.clear();
+        	this.snmpUnknownIPList.clear();  	
+        }
     }
 
     public static void main(String[] args) throws IOException {

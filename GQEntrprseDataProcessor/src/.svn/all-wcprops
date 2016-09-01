@@ -1,0 +1,155 @@
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/svn/gqm3/!svn/ver/887/trunk/GQEntrprseDataProcessor/src
+END
+CompSnapshot.hbm.xml
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/svn/gqm3/!svn/ver/339/trunk/GQEntrprseDataProcessor/src/CompSnapshot.hbm.xml
+END
+Asset.hbm.xml
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/svn/gqm3/!svn/ver/804/trunk/GQEntrprseDataProcessor/src/Asset.hbm.xml
+END
+PrinterConnDevice.hbm.xml
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/svn/gqm3/!svn/ver/339/trunk/GQEntrprseDataProcessor/src/PrinterConnDevice.hbm.xml
+END
+CompAssets.hbm.xml
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svn/gqm3/!svn/ver/339/trunk/GQEntrprseDataProcessor/src/CompAssets.hbm.xml
+END
+OsType.hbm.xml
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/svn/gqm3/!svn/ver/339/trunk/GQEntrprseDataProcessor/src/OsType.hbm.xml
+END
+AssetImp.hbm.xml
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/svn/gqm3/!svn/ver/430/trunk/GQEntrprseDataProcessor/src/AssetImp.hbm.xml
+END
+DevCtlg.hbm.xml
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svn/gqm3/!svn/ver/431/trunk/GQEntrprseDataProcessor/src/DevCtlg.hbm.xml
+END
+NSRGSnapshot.hbm.xml
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/svn/gqm3/!svn/ver/339/trunk/GQEntrprseDataProcessor/src/NSRGSnapshot.hbm.xml
+END
+hibernate.cfg.xml
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svn/gqm3/!svn/ver/770/trunk/GQEntrprseDataProcessor/src/hibernate.cfg.xml
+END
+CompConnDevice.hbm.xml
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svn/gqm3/!svn/ver/887/trunk/GQEntrprseDataProcessor/src/CompConnDevice.hbm.xml
+END
+Power.hbm.xml
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/svn/gqm3/!svn/ver/339/trunk/GQEntrprseDataProcessor/src/Power.hbm.xml
+END
+CompProcess.hbm.xml
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svn/gqm3/!svn/ver/339/trunk/GQEntrprseDataProcessor/src/CompProcess.hbm.xml
+END
+SysProfile.hbm.xml
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svn/gqm3/!svn/ver/432/trunk/GQEntrprseDataProcessor/src/SysProfile.hbm.xml
+END
+SrvrAppType.hbm.xml
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svn/gqm3/!svn/ver/339/trunk/GQEntrprseDataProcessor/src/SrvrAppType.hbm.xml
+END
+SpeedTestSnpsht.hbm.xml
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svn/gqm3/!svn/ver/771/trunk/GQEntrprseDataProcessor/src/SpeedTestSnpsht.hbm.xml
+END
+CompType.hbm.xml
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/svn/gqm3/!svn/ver/339/trunk/GQEntrprseDataProcessor/src/CompType.hbm.xml
+END
+MeterRun.hbm.xml
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/svn/gqm3/!svn/ver/339/trunk/GQEntrprseDataProcessor/src/MeterRun.hbm.xml
+END
+Protocol.hbm.xml
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/svn/gqm3/!svn/ver/339/trunk/GQEntrprseDataProcessor/src/Protocol.hbm.xml
+END
+PrinterSnapshot.hbm.xml
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svn/gqm3/!svn/ver/339/trunk/GQEntrprseDataProcessor/src/PrinterSnapshot.hbm.xml
+END
+StorageSnpsht.hbm.xml
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svn/gqm3/!svn/ver/339/trunk/GQEntrprseDataProcessor/src/StorageSnpsht.hbm.xml
+END
+CompInstSoftware.hbm.xml
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svn/gqm3/!svn/ver/339/trunk/GQEntrprseDataProcessor/src/CompInstSoftware.hbm.xml
+END
+BlSw.hbm.xml
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svn/gqm3/!svn/ver/339/trunk/GQEntrprseDataProcessor/src/BlSw.hbm.xml
+END
+NSRGConnDevice.hbm.xml
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svn/gqm3/!svn/ver/339/trunk/GQEntrprseDataProcessor/src/NSRGConnDevice.hbm.xml
+END
+PwrSlab.hbm.xml
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svn/gqm3/!svn/ver/339/trunk/GQEntrprseDataProcessor/src/PwrSlab.hbm.xml
+END
+DscvryFile.hbm.xml
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svn/gqm3/!svn/ver/339/trunk/GQEntrprseDataProcessor/src/DscvryFile.hbm.xml
+END

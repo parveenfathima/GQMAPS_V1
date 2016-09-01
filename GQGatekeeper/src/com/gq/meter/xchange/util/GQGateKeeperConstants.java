@@ -21,7 +21,7 @@ public class GQGateKeeperConstants {
     private static String logFileName = "gatekeeper.log";
     private static final String LOG_FILE_NAME_DATE_PATTERN = "yyyy-MM-dd";
 
-    public static final String GQEDP_URL = "http://127.0.0.1:8080/GQEntrprseDataProcessor/";
+    public static final String GQEDP_URL = "http://gqmaps.com:8080/GQEntrprseDataProcessor/";
     public static final String PROTOCOL_IT = "it";
 
     static {

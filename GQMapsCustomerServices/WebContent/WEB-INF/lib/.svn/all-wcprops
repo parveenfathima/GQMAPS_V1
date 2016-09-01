@@ -1,0 +1,215 @@
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svn/gqm3/!svn/ver/644/trunk/GQMapsCustomerServices/WebContent/WEB-INF/lib
+END
+commons-logging-1.0.4.jar
+K 25
+svn:wc:ra_dav:version-url
+V 100
+/svn/gqm3/!svn/ver/108/trunk/GQMapsCustomerServices/WebContent/WEB-INF/lib/commons-logging-1.0.4.jar
+END
+slf4j-api-1.5.5.jar
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/svn/gqm3/!svn/ver/108/trunk/GQMapsCustomerServices/WebContent/WEB-INF/lib/slf4j-api-1.5.5.jar
+END
+javassist-3.4.GA.jar
+K 25
+svn:wc:ra_dav:version-url
+V 95
+/svn/gqm3/!svn/ver/108/trunk/GQMapsCustomerServices/WebContent/WEB-INF/lib/javassist-3.4.GA.jar
+END
+log4j-1.2.16.jar
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/svn/gqm3/!svn/ver/108/trunk/GQMapsCustomerServices/WebContent/WEB-INF/lib/log4j-1.2.16.jar
+END
+commons-vfs-2.0.jar
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/svn/gqm3/!svn/ver/108/trunk/GQMapsCustomerServices/WebContent/WEB-INF/lib/commons-vfs-2.0.jar
+END
+jsch-0.1.41.jar
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/svn/gqm3/!svn/ver/108/trunk/GQMapsCustomerServices/WebContent/WEB-INF/lib/jsch-0.1.41.jar
+END
+c3p0-0.9.1.jar
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/svn/gqm3/!svn/ver/513/trunk/GQMapsCustomerServices/WebContent/WEB-INF/lib/c3p0-0.9.1.jar
+END
+mysql-connector-java-5.1.17-bin.jar
+K 25
+svn:wc:ra_dav:version-url
+V 110
+/svn/gqm3/!svn/ver/108/trunk/GQMapsCustomerServices/WebContent/WEB-INF/lib/mysql-connector-java-5.1.17-bin.jar
+END
+jersey-server-1.9.1.jar
+K 25
+svn:wc:ra_dav:version-url
+V 98
+/svn/gqm3/!svn/ver/108/trunk/GQMapsCustomerServices/WebContent/WEB-INF/lib/jersey-server-1.9.1.jar
+END
+jersey-json-1.9.1.jar
+K 25
+svn:wc:ra_dav:version-url
+V 96
+/svn/gqm3/!svn/ver/108/trunk/GQMapsCustomerServices/WebContent/WEB-INF/lib/jersey-json-1.9.1.jar
+END
+ehcache-1.1.jar
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/svn/gqm3/!svn/ver/108/trunk/GQMapsCustomerServices/WebContent/WEB-INF/lib/ehcache-1.1.jar
+END
+dom4j-1.6.1.jar
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/svn/gqm3/!svn/ver/108/trunk/GQMapsCustomerServices/WebContent/WEB-INF/lib/dom4j-1.6.1.jar
+END
+asm-3.1.jar
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/svn/gqm3/!svn/ver/108/trunk/GQMapsCustomerServices/WebContent/WEB-INF/lib/asm-3.1.jar
+END
+guava-11.0.2.jar
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/svn/gqm3/!svn/ver/334/trunk/GQMapsCustomerServices/WebContent/WEB-INF/lib/guava-11.0.2.jar
+END
+hibernate3.jar
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/svn/gqm3/!svn/ver/108/trunk/GQMapsCustomerServices/WebContent/WEB-INF/lib/hibernate3.jar
+END
+visualization-datasource-1.1.1.jar
+K 25
+svn:wc:ra_dav:version-url
+V 109
+/svn/gqm3/!svn/ver/334/trunk/GQMapsCustomerServices/WebContent/WEB-INF/lib/visualization-datasource-1.1.1.jar
+END
+hibernate-c3p0-3.3.0.GA.jar
+K 25
+svn:wc:ra_dav:version-url
+V 102
+/svn/gqm3/!svn/ver/513/trunk/GQMapsCustomerServices/WebContent/WEB-INF/lib/hibernate-c3p0-3.3.0.GA.jar
+END
+commons-lang-2.3.jar
+K 25
+svn:wc:ra_dav:version-url
+V 95
+/svn/gqm3/!svn/ver/470/trunk/GQMapsCustomerServices/WebContent/WEB-INF/lib/commons-lang-2.3.jar
+END
+commons-net-2.0.jar
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/svn/gqm3/!svn/ver/108/trunk/GQMapsCustomerServices/WebContent/WEB-INF/lib/commons-net-2.0.jar
+END
+hibernate-annotations.jar
+K 25
+svn:wc:ra_dav:version-url
+V 100
+/svn/gqm3/!svn/ver/108/trunk/GQMapsCustomerServices/WebContent/WEB-INF/lib/hibernate-annotations.jar
+END
+jsr305-1.3.9.jar
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/svn/gqm3/!svn/ver/334/trunk/GQMapsCustomerServices/WebContent/WEB-INF/lib/jsr305-1.3.9.jar
+END
+jsr311-api-0.9.jar
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/svn/gqm3/!svn/ver/108/trunk/GQMapsCustomerServices/WebContent/WEB-INF/lib/jsr311-api-0.9.jar
+END
+hibernate-commons-annotations.jar
+K 25
+svn:wc:ra_dav:version-url
+V 108
+/svn/gqm3/!svn/ver/108/trunk/GQMapsCustomerServices/WebContent/WEB-INF/lib/hibernate-commons-annotations.jar
+END
+gson-2.2.2.jar
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/svn/gqm3/!svn/ver/108/trunk/GQMapsCustomerServices/WebContent/WEB-INF/lib/gson-2.2.2.jar
+END
+jta-1.1.jar
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/svn/gqm3/!svn/ver/108/trunk/GQMapsCustomerServices/WebContent/WEB-INF/lib/jta-1.1.jar
+END
+jersey-bundle-1.9.1.jar
+K 25
+svn:wc:ra_dav:version-url
+V 98
+/svn/gqm3/!svn/ver/108/trunk/GQMapsCustomerServices/WebContent/WEB-INF/lib/jersey-bundle-1.9.1.jar
+END
+slf4j-simple-1.5.5.jar
+K 25
+svn:wc:ra_dav:version-url
+V 97
+/svn/gqm3/!svn/ver/108/trunk/GQMapsCustomerServices/WebContent/WEB-INF/lib/slf4j-simple-1.5.5.jar
+END
+commons-codec-1.4.jar
+K 25
+svn:wc:ra_dav:version-url
+V 96
+/svn/gqm3/!svn/ver/108/trunk/GQMapsCustomerServices/WebContent/WEB-INF/lib/commons-codec-1.4.jar
+END
+commons-collections-3.1.jar
+K 25
+svn:wc:ra_dav:version-url
+V 102
+/svn/gqm3/!svn/ver/108/trunk/GQMapsCustomerServices/WebContent/WEB-INF/lib/commons-collections-3.1.jar
+END
+commons-httpclient-3.1.jar
+K 25
+svn:wc:ra_dav:version-url
+V 101
+/svn/gqm3/!svn/ver/108/trunk/GQMapsCustomerServices/WebContent/WEB-INF/lib/commons-httpclient-3.1.jar
+END
+ejb3-persistence-1.0.2.GA.jar
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/svn/gqm3/!svn/ver/108/trunk/GQMapsCustomerServices/WebContent/WEB-INF/lib/ejb3-persistence-1.0.2.GA.jar
+END
+json-rpc-1.0.jar
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/svn/gqm3/!svn/ver/334/trunk/GQMapsCustomerServices/WebContent/WEB-INF/lib/json-rpc-1.0.jar
+END
+com.ibm.icu_3.4.4.1.jar
+K 25
+svn:wc:ra_dav:version-url
+V 98
+/svn/gqm3/!svn/ver/334/trunk/GQMapsCustomerServices/WebContent/WEB-INF/lib/com.ibm.icu_3.4.4.1.jar
+END
+antlr-2.7.7.jar
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/svn/gqm3/!svn/ver/108/trunk/GQMapsCustomerServices/WebContent/WEB-INF/lib/antlr-2.7.7.jar
+END
+jersey-core-1.9.1.jar
+K 25
+svn:wc:ra_dav:version-url
+V 96
+/svn/gqm3/!svn/ver/108/trunk/GQMapsCustomerServices/WebContent/WEB-INF/lib/jersey-core-1.9.1.jar
+END

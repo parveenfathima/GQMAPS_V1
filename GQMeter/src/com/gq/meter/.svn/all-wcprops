@@ -1,0 +1,35 @@
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/svn/gqm3/!svn/ver/853/trunk/GQMeter/src/com/gq/meter
+END
+NSRGMeter.java
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/svn/gqm3/!svn/ver/850/trunk/GQMeter/src/com/gq/meter/NSRGMeter.java
+END
+ComputerMeter.java
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svn/gqm3/!svn/ver/900/trunk/GQMeter/src/com/gq/meter/ComputerMeter.java
+END
+PrinterMeter.java
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/svn/gqm3/!svn/ver/851/trunk/GQMeter/src/com/gq/meter/PrinterMeter.java
+END
+StorageMeter.java
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/svn/gqm3/!svn/ver/851/trunk/GQMeter/src/com/gq/meter/StorageMeter.java
+END
+GQSNMPMeter.java
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svn/gqm3/!svn/ver/37/trunk/GQMeter/src/com/gq/meter/GQSNMPMeter.java
+END

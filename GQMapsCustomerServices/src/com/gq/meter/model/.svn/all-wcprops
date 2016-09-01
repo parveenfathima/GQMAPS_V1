@@ -1,0 +1,59 @@
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svn/gqm3/!svn/ver/793/trunk/GQMapsCustomerServices/src/com/gq/meter/model
+END
+SysprofileModel.java
+K 25
+svn:wc:ra_dav:version-url
+V 95
+/svn/gqm3/!svn/ver/793/trunk/GQMapsCustomerServices/src/com/gq/meter/model/SysprofileModel.java
+END
+AssetLoadModel.java
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/svn/gqm3/!svn/ver/789/trunk/GQMapsCustomerServices/src/com/gq/meter/model/AssetLoadModel.java
+END
+AssetModel.java
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/svn/gqm3/!svn/ver/789/trunk/GQMapsCustomerServices/src/com/gq/meter/model/AssetModel.java
+END
+SnapshotModel.java
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/svn/gqm3/!svn/ver/789/trunk/GQMapsCustomerServices/src/com/gq/meter/model/SnapshotModel.java
+END
+CustomerServiceModel.java
+K 25
+svn:wc:ra_dav:version-url
+V 100
+/svn/gqm3/!svn/ver/789/trunk/GQMapsCustomerServices/src/com/gq/meter/model/CustomerServiceModel.java
+END
+GoalInputModel.java
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/svn/gqm3/!svn/ver/650/trunk/GQMapsCustomerServices/src/com/gq/meter/model/GoalInputModel.java
+END
+FinalizeGoalModel.java
+K 25
+svn:wc:ra_dav:version-url
+V 97
+/svn/gqm3/!svn/ver/789/trunk/GQMapsCustomerServices/src/com/gq/meter/model/FinalizeGoalModel.java
+END
+AssetEditModel.java
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/svn/gqm3/!svn/ver/789/trunk/GQMapsCustomerServices/src/com/gq/meter/model/AssetEditModel.java
+END
+MapsDomainModel.java
+K 25
+svn:wc:ra_dav:version-url
+V 95
+/svn/gqm3/!svn/ver/789/trunk/GQMapsCustomerServices/src/com/gq/meter/model/MapsDomainModel.java
+END

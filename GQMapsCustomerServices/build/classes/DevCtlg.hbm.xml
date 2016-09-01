@@ -1,0 +1,64 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated Aug 1, 2013 4:22:41 PM by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+    <class name="com.gq.meter.object.DevCtlg" table="dev_ctlg">
+        <id name="ctlgId" type="string">
+            <column name="ctlg_id" length="20" />
+            <generator class="assigned" />
+        </id>
+        <property name="protocolId" type="string">
+            <column name="protocol_id" length="10" not-null="true" />
+        </property>
+        <property name="typeId" type="string">
+            <column name="type_id" length="20"/>
+        </property>
+        <property name="descr" type="string">
+            <column name="descr" length="40" not-null="true" />
+        </property>
+        <property name="idleThreshold" type="short">
+            <column name="idle_threshold" not-null="true" />
+        </property>
+        <property name="loadThreshold" type="short">
+            <column name="load_threshold" not-null="true" />
+        </property>
+        <property name="idleWatt" type="double">
+            <column name="idle_watt" precision="22" scale="0" not-null="true" />
+        </property>
+        <property name="loadWatt" type="double">
+            <column name="load_watt" precision="22" scale="0" not-null="true" />
+        </property>
+        <property name="enPerMinLoad" type="java.lang.Double">
+            <column name="en_per_min_load" precision="22" scale="0" not-null="true">
+                <comment>energy consumption per minute - related only for switch and printer..( it is static value calculated by running the switch and with wysine data)</comment>
+            </column>
+        </property>
+        <property name="enPerMinIdle" type="java.lang.Double">
+            <column name="en_per_min_idle" precision="22" scale="0">
+                <comment>related only to printer</comment>
+            </column>
+        </property>
+        <property name="servrCost" type="java.lang.Double">
+            <column name="servr_cost" precision="22" scale="0">
+                <comment>linked to recommendation( using this server may have high cost like that)</comment>
+            </column>
+        </property>
+        <property name="noOfCore" type="java.lang.Integer">
+            <column name="no_of_core" />
+        </property>
+        <property name="cpu" type="java.lang.Double">
+            <column name="cpu" precision="22" scale="0" />
+        </property>
+        <property name="ram" type="java.lang.Integer">
+            <column name="ram" />
+        </property>
+        <property name="diskGb" type="java.lang.Integer">
+            <column name="disk_gb" />
+        </property>
+        <property name="monthlyRent" type="java.lang.Integer">
+            <column name="monthly_rent" />
+        </property>
+        
+    </class>
+</hibernate-mapping>

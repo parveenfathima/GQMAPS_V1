@@ -1,0 +1,53 @@
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svn/gqm3/!svn/ver/833/trunk/GQMapsRegistrationServices/src/com/gq/meter/model
+END
+EnterpriseMeterModel.java
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/svn/gqm3/!svn/ver/471/trunk/GQMapsRegistrationServices/src/com/gq/meter/model/EnterpriseMeterModel.java
+END
+EnterpriseModel.java
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/svn/gqm3/!svn/ver/833/trunk/GQMapsRegistrationServices/src/com/gq/meter/model/EnterpriseModel.java
+END
+MeterRunModel.java
+K 25
+svn:wc:ra_dav:version-url
+V 97
+/svn/gqm3/!svn/ver/178/trunk/GQMapsRegistrationServices/src/com/gq/meter/model/MeterRunModel.java
+END
+ProtocolModel.java
+K 25
+svn:wc:ra_dav:version-url
+V 97
+/svn/gqm3/!svn/ver/121/trunk/GQMapsRegistrationServices/src/com/gq/meter/model/ProtocolModel.java
+END
+BusinessLineModel.java
+K 25
+svn:wc:ra_dav:version-url
+V 101
+/svn/gqm3/!svn/ver/121/trunk/GQMapsRegistrationServices/src/com/gq/meter/model/BusinessLineModel.java
+END
+EntpSummaryModel.java
+K 25
+svn:wc:ra_dav:version-url
+V 100
+/svn/gqm3/!svn/ver/418/trunk/GQMapsRegistrationServices/src/com/gq/meter/model/EntpSummaryModel.java
+END
+SecurityQuestModel.java
+K 25
+svn:wc:ra_dav:version-url
+V 102
+/svn/gqm3/!svn/ver/121/trunk/GQMapsRegistrationServices/src/com/gq/meter/model/SecurityQuestModel.java
+END
+GateKeeperModel.java
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/svn/gqm3/!svn/ver/253/trunk/GQMapsRegistrationServices/src/com/gq/meter/model/GateKeeperModel.java
+END

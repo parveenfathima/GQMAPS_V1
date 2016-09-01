@@ -1,0 +1,161 @@
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svn/gqm3/!svn/ver/679/trunk/GQMapsCustomerServices/src/com/gq/meter/object
+END
+AssetData.java
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/svn/gqm3/!svn/ver/390/trunk/GQMapsCustomerServices/src/com/gq/meter/object/AssetData.java
+END
+ProtocolCount.java
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/svn/gqm3/!svn/ver/237/trunk/GQMapsCustomerServices/src/com/gq/meter/object/ProtocolCount.java
+END
+CompSnpshtId.java
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/svn/gqm3/!svn/ver/280/trunk/GQMapsCustomerServices/src/com/gq/meter/object/CompSnpshtId.java
+END
+TaskMaster.java
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/svn/gqm3/!svn/ver/403/trunk/GQMapsCustomerServices/src/com/gq/meter/object/TaskMaster.java
+END
+MapsDomainBean.java
+K 25
+svn:wc:ra_dav:version-url
+V 95
+/svn/gqm3/!svn/ver/311/trunk/GQMapsCustomerServices/src/com/gq/meter/object/MapsDomainBean.java
+END
+GetAsset.java
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/svn/gqm3/!svn/ver/329/trunk/GQMapsCustomerServices/src/com/gq/meter/object/GetAsset.java
+END
+Asset.java
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/svn/gqm3/!svn/ver/676/trunk/GQMapsCustomerServices/src/com/gq/meter/object/Asset.java
+END
+AssetLoad.java
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/svn/gqm3/!svn/ver/280/trunk/GQMapsCustomerServices/src/com/gq/meter/object/AssetLoad.java
+END
+GoalSnpsht.java
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/svn/gqm3/!svn/ver/627/trunk/GQMapsCustomerServices/src/com/gq/meter/object/GoalSnpsht.java
+END
+Goal.java
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svn/gqm3/!svn/ver/627/trunk/GQMapsCustomerServices/src/com/gq/meter/object/Goal.java
+END
+OsType.java
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/svn/gqm3/!svn/ver/311/trunk/GQMapsCustomerServices/src/com/gq/meter/object/OsType.java
+END
+AssetImp.java
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/svn/gqm3/!svn/ver/643/trunk/GQMapsCustomerServices/src/com/gq/meter/object/AssetImp.java
+END
+ChartRowHolder.java
+K 25
+svn:wc:ra_dav:version-url
+V 95
+/svn/gqm3/!svn/ver/638/trunk/GQMapsCustomerServices/src/com/gq/meter/object/ChartRowHolder.java
+END
+DevCtlg.java
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/svn/gqm3/!svn/ver/389/trunk/GQMapsCustomerServices/src/com/gq/meter/object/DevCtlg.java
+END
+TaskAssist.java
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/svn/gqm3/!svn/ver/638/trunk/GQMapsCustomerServices/src/com/gq/meter/object/TaskAssist.java
+END
+TaskCheckList.java
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/svn/gqm3/!svn/ver/679/trunk/GQMapsCustomerServices/src/com/gq/meter/object/TaskCheckList.java
+END
+AllCustomerServices.java
+K 25
+svn:wc:ra_dav:version-url
+V 100
+/svn/gqm3/!svn/ver/311/trunk/GQMapsCustomerServices/src/com/gq/meter/object/AllCustomerServices.java
+END
+GoalMaster.java
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/svn/gqm3/!svn/ver/627/trunk/GQMapsCustomerServices/src/com/gq/meter/object/GoalMaster.java
+END
+CompSnpsht.java
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/svn/gqm3/!svn/ver/280/trunk/GQMapsCustomerServices/src/com/gq/meter/object/CompSnpsht.java
+END
+SrvrAppType.java
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/svn/gqm3/!svn/ver/311/trunk/GQMapsCustomerServices/src/com/gq/meter/object/SrvrAppType.java
+END
+SysProfile.java
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/svn/gqm3/!svn/ver/311/trunk/GQMapsCustomerServices/src/com/gq/meter/object/SysProfile.java
+END
+CompType.java
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/svn/gqm3/!svn/ver/676/trunk/GQMapsCustomerServices/src/com/gq/meter/object/CompType.java
+END
+MeterRun.java
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/svn/gqm3/!svn/ver/311/trunk/GQMapsCustomerServices/src/com/gq/meter/object/MeterRun.java
+END
+Protocol.java
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/svn/gqm3/!svn/ver/311/trunk/GQMapsCustomerServices/src/com/gq/meter/object/Protocol.java
+END
+GoalInput.java
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/svn/gqm3/!svn/ver/604/trunk/GQMapsCustomerServices/src/com/gq/meter/object/GoalInput.java
+END
+TemplateTaskDetails.java
+K 25
+svn:wc:ra_dav:version-url
+V 100
+/svn/gqm3/!svn/ver/638/trunk/GQMapsCustomerServices/src/com/gq/meter/object/TemplateTaskDetails.java
+END

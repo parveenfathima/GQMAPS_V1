@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/svn/gqm3/!svn/ver/823/trunk/GQMapsRegistrationServices/src/com/gq/meter/util
+END
+GQRegistrationConstants.java
+K 25
+svn:wc:ra_dav:version-url
+V 106
+/svn/gqm3/!svn/ver/106/trunk/GQMapsRegistrationServices/src/com/gq/meter/util/GQRegistrationConstants.java
+END
+HibernateUtil.java
+K 25
+svn:wc:ra_dav:version-url
+V 95
+/svn/gqm3/!svn/ver/80/trunk/GQMapsRegistrationServices/src/com/gq/meter/util/HibernateUtil.java
+END
+GQGateKeeperConstants.java
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/svn/gqm3/!svn/ver/823/trunk/GQMapsRegistrationServices/src/com/gq/meter/util/GQGateKeeperConstants.java
+END

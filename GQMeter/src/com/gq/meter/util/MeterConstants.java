@@ -4,9 +4,19 @@ import java.util.HashMap;
 
 public class MeterConstants {
 
-    public static final String restURL = "http://cloud.gqexchange.com:8080/GQGatekeeper/";
+    //public static final String restURL = "http://cloud.gqexchange.com:8080/GQGatekeeper/";
 	
-	//public static final String restURL = "http://localhost:8080/GQGatekeeper/";
+	public static final String restURL = "http://gqmaps.com:8080/GQGatekeeper/";
+	
+	//public static final String restURL = "http://54.157.18.70:8080/GQGatekeeper/";
+	
+	public static final String graphiteHOST = "192.168.1.167";
+	
+	public static final int graphitePORT = 2003;
+	
+	public static final int CRON_INIT_VALUE = 1;
+	
+	public static final int CRON_LIMIT = 1; 
 	
     public static final int SPEEDTEST_TRIES = 3;
 

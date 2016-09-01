@@ -1,6 +1,9 @@
 package com.gq.meter;
 
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+import java.net.Socket;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
@@ -211,7 +214,7 @@ public class ComputerMeter implements GQSNMPMeter {
                     oidString = "1.3.6.1.2.1.25.2.3.1";
                     rootOID = new OID(oidString);
                     result = MeterUtils.walk(rootOID, target);
-
+                    
                     if (result != null && !result.isEmpty()) { // 1st if loop starts
                         String variable = null;
 
@@ -219,7 +222,7 @@ public class ComputerMeter implements GQSNMPMeter {
                             variable = ":\\";
                             long windowsDriveSize = getMemorycalc(result, rootOID, variable, false);
                             long usedWindowsDriveSize = getMemorycalc(result, rootOID, variable, true);
-
+                            
                             variable = "physical memory";
                             totalMemory = getMemorycalc(result, rootOID, variable, false);
                             usedMemory = getMemorycalc(result, rootOID, variable, true);
@@ -233,10 +236,12 @@ public class ComputerMeter implements GQSNMPMeter {
                         }// 2nd if loop ends
                         else { // 1st else loop starts
                             variable = "/dev/shm";
-                            long linuxDriveSize = getMemorycalc(result, rootOID, variable, false);
+                            //long linuxDriveSize = getMemorycalc(result, rootOID, variable, false);
+                            long linuxDriveSize = 0;
                             long usedLinuxDriveSize = getMemorycalc(result, rootOID, variable, true);
                             
-
+                            System.out.println(" driver size" + usedLinuxDriveSize);
+                            System.exit(0);
                             variable = "/home";
                             long homeSize = getMemorycalc(result, rootOID, variable, false);
                             long usedHomeSize = getMemorycalc(result, rootOID, variable, true);
@@ -348,7 +353,9 @@ public class ComputerMeter implements GQSNMPMeter {
                     snapShot = new CompSnapshot(id, sysIP, osId, totalMemory, usedMemory, totalVirtualMemory,
                             usedVirtualMemory, totalDiskSpace, usedDiskSpace, cpuLoad, upTime, numLoggedInUsers,
                             numProcesses, networkBytesIn, networkBytesOut, clockSpeed, extras);
-
+                    
+                    pushToGraphite(cpuLoad,usedMemory,usedMemory,networkBytesIn,networkBytesOut,ipAddress);
+                    
                     continue;
 
                 } // main if loop ends here
@@ -484,10 +491,14 @@ public class ComputerMeter implements GQSNMPMeter {
         for (VariableBinding vb : result) {
             totalKeys++;
             String cpuValueStr = vb.getVariable().toString().trim();
+            //System.out.println("cpu value in string" + cpuValueStr);
             long cpuValue = Long.parseLong(cpuValueStr);
             totalCpuValue = totalCpuValue + cpuValue;
         }
+        //System.out.println("total keys" + totalKeys);
+        //System.out.println("total cpu value" + totalCpuValue);
         long finalCpuLoad = totalCpuValue / totalKeys;
+        //System.out.println("final xpu loaD" + finalCpuLoad);
         return finalCpuLoad;
     }
 
@@ -513,6 +524,8 @@ public class ComputerMeter implements GQSNMPMeter {
 
         for (VariableBinding vb : result) { // 1st for loop starts
             String temp = vb.getVariable().toString().trim();
+            System.out.println("oid:" + vb.getOid() + "|");
+            System.out.println("temp " + temp);
             boolean isValid = false;
             
             if (temp.contains("/") && temp.trim().equals(variable)) {
@@ -524,7 +537,8 @@ public class ComputerMeter implements GQSNMPMeter {
             else if (!isValid && temp.trim().toLowerCase().equals(variable)) {
                 isValid = true;
             }
-
+            System.out.println("valid flag" + isValid);
+            
             if (isValid) { // 2nd if loop starts
                 String lastValue = String.valueOf(vb.getOid().last());
                 mulBytesOID = rootId + "." + "4" + "." + lastValue;
@@ -1097,5 +1111,62 @@ public class ComputerMeter implements GQSNMPMeter {
             } // if loop ends
         }// for loop ends
         return processList;
+    }
+    
+    
+ // This method to insert the real time data to Graphite
+    public void pushToGraphite(short cpuLoad, Long usedMem, Long usedDiskSpace, Long networkBytesIn, Long networkBytesOut, String ipAddress) {
+
+    	long graphitePushStartTime = System.currentTimeMillis();
+
+    	String graphiteHost = MeterConstants.graphiteHOST;
+		int graphitePort = MeterConstants.graphitePORT;
+		
+		String key = "";
+		String ipAddr = "";
+		try {
+		    Socket socket = new Socket(graphiteHost, graphitePort);
+		    Writer writer = new OutputStreamWriter(socket.getOutputStream());
+			long curTimeInSecs = System.currentTimeMillis()/1000;
+			ipAddr = ipAddress.substring(ipAddress.lastIndexOf('.')+1, ipAddress.length());
+			
+			//eg: GQMAPS.servers.Desktop_119.CPULOAD
+			//to push the cpuload
+			key = "GQMAPS.Test.Desktop_" + ipAddr + ".CPULOAD" + " " + cpuLoad + " " + curTimeInSecs + "\n";
+			//System.out.println("cpu load  is " + key);
+			writer.write(key);
+			writer.flush();
+			
+			//to push the used memory
+			key = "GQMAPS.Test.Desktop_" + ipAddr + ".MEMORYLOAD" + " " + usedMem + " " + curTimeInSecs + "\n";
+			//System.out.println("Total usage memory  is " + key);
+			writer.write(key);
+			writer.flush();
+			
+			//to push the used diskspace
+			key = "GQMAPS.Test.Desktop_" + ipAddr + ".DISKLOAD" + " " + usedDiskSpace + " " + curTimeInSecs + "\n";
+			//System.out.println("Used disk space is " + key);
+			writer.write(key);
+			writer.flush();
+			
+			//to push network bytes-in
+			key = "GQMAPS.Test.Desktop_" + ipAddr + ".NETWORK_BYTES_IN" + " " + networkBytesIn + " " + curTimeInSecs + "\n";
+			//System.out.println("Used disk space is " + key);
+			writer.write(key);
+			writer.flush();
+			
+			//to push network bytes-out
+			key = "GQMAPS.Test.Desktop_" + ipAddr + ".NETWORK_BYTES_OUT" + " " + networkBytesOut + " " + curTimeInSecs + "\n";
+			//System.out.println("Used disk space is " + key);
+			writer.write(key);
+			writer.flush();
+			
+			long graphitePushEndTime = System.currentTimeMillis();
+			//System.out.println(" [GQMETER] Time taken for push the " + ipAddress + " data to Graphite is : " + (graphitePushEndTime - graphitePushStartTime));
+			
+		}
+		catch(Exception e) {
+			System.out.println("Exception occurred during the graphite data pushing...." + e);
+		}
     }
 }

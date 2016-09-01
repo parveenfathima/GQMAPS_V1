@@ -1,0 +1,59 @@
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svn/gqm3/!svn/ver/722/trunk/GQMapsCustomerUI/WebContent/less
+END
+demo.less
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/svn/gqm3/!svn/ver/722/trunk/GQMapsCustomerUI/WebContent/less/demo.less
+END
+mixins.less
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/svn/gqm3/!svn/ver/722/trunk/GQMapsCustomerUI/WebContent/less/mixins.less
+END
+docs.less
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/svn/gqm3/!svn/ver/722/trunk/GQMapsCustomerUI/WebContent/less/docs.less
+END
+variables.less
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svn/gqm3/!svn/ver/722/trunk/GQMapsCustomerUI/WebContent/less/variables.less
+END
+fonts.less
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svn/gqm3/!svn/ver/722/trunk/GQMapsCustomerUI/WebContent/less/fonts.less
+END
+icon-font.less
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svn/gqm3/!svn/ver/722/trunk/GQMapsCustomerUI/WebContent/less/icon-font.less
+END
+spaces.less
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/svn/gqm3/!svn/ver/722/trunk/GQMapsCustomerUI/WebContent/less/spaces.less
+END
+scaffolding.less
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svn/gqm3/!svn/ver/722/trunk/GQMapsCustomerUI/WebContent/less/scaffolding.less
+END
+flat-ui.less
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svn/gqm3/!svn/ver/722/trunk/GQMapsCustomerUI/WebContent/less/flat-ui.less
+END

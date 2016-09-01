@@ -1,0 +1,67 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated Feb 18, 2013 12:49:24 PM by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+    <class name="com.gq.meter.object.PrinterSnapshot" table="prntr_snpsht">
+        <composite-id name="id" class="com.gq.meter.object.CPNId">
+            <key-property name="runId" type="long">
+                <column name="run_id" />
+            </key-property>
+            <key-property name="assetId" type="string">
+                <column name="asset_id" length="30" />
+            </key-property>
+        </composite-id>
+        <property name="ipAddr" type="string">
+            <column name="ip_addr" length="15" />
+        </property>
+        <property name="totMem" type="java.lang.Long">
+            <column name="tot_mem" />
+        </property>
+        <property name="totDiskSpace" type="java.lang.Long">
+            <column name="tot_disk_space" />
+        </property>
+        <property name="usedMem" type="java.lang.Long">
+            <column name="used_mem" />
+        </property>
+        <property name="usedDiskSpace" type="java.lang.Long">
+            <column name="used_disk_space" />
+        </property>
+        <property name="upTime" type="java.lang.Long">
+            <column name="up_time" />
+        </property>
+        <property name="toner_status" type="string">
+            <column name="toner_status" length="10" />
+        </property>
+        <property name="outOfPaprInd" type="java.lang.Character">
+            <column name="out_of_papr_ind" length="1" />
+        </property>
+        <property name="prntsTknCnt" type="java.lang.Short">
+            <column name="prnts_tkn_cnt" />
+        </property>
+        <!-- <property name="errorCnd" type="string">
+            <column name="error_cnd" length="10" />
+        </property>
+        <property name="oprState" type="string">
+            <column name="opr_state" length="10" />
+        </property>
+        <property name="crntState" type="string">
+            <column name="crnt_state" length="10" />
+        </property> -->
+        <property name="mfgMdl" type="string">
+            <column name="mfg_mdl" length="30" />
+        </property>
+        <property name="clrPrntr" type="string">
+            <column name="clr_prntr" length="1" />
+        </property>
+        <property name="extras" type="string">
+            <column name="extras" length="200" />
+        </property>
+        <property name="prntr_status" type="java.lang.Integer">
+        <column name="prntr_status"/> 
+        </property>
+        <property name="aux_status" type="java.lang.Integer">
+        <column name="aux_status"/> 
+        </property>
+    </class>
+</hibernate-mapping>

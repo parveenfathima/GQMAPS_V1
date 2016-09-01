@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated Jul 26, 2013 10:19:06 AM by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+    <class name="com.gq.meter.xchange.object.GoalSnpsht" table="goal_snpsht" catalog="gqexchange">
+        <id name="snpshtId" type="int">
+            <column name="snpsht_id" />
+            <generator class="assigned" />
+        </id>
+        <many-to-one name="goal" class="Goal" fetch="select">
+            <column name="goal_id" length="10" not-null="true" />
+        </many-to-one>
+        <property name="enterpriseId" type="string">
+        <column name="enterprise_id" length="10" not-null="true"/>
+        </property>
+        <property name="startDate" type="timestamp">
+            <column name="start_date" length="19" not-null="true" />
+        </property>
+        <property name="endDate" type="timestamp">
+            <column name="end_date" length="19">
+                <comment>end date should capture once the goal snapshot is closed</comment>
+            </column>
+        </property>
+        <property name="notes" type="string">
+            <column name="notes" length="50">
+                <comment>notes fro the entire snapshot</comment>
+            </column>
+        </property>
+        <property name="costBenefit" type="java.lang.Integer">
+            <column name="cost_benefit">
+                <comment>total cost benefr of that snapshot</comment>
+            </column>
+        </property>
+        <property name="preResult" type="string">
+            <column name="pre_result" length="200">
+                <comment>before an entry insert into snapshot a trigger executed to calulate the value before applying this task it may pue, cost or any message..</comment>
+            </column>
+        </property>
+        <property name="postResult" type="string">
+            <column name="post_result" length="200">
+                <comment>before capturing end date, trigger executed to calculate the value after applying this task.</comment>
+            </column>
+        </property>
+    </class>
+</hibernate-mapping>

@@ -1,0 +1,107 @@
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svn/gqm3/!svn/ver/888/trunk/GQEntrprseDataProcessor/WebContent/WEB-INF/lib
+END
+gson-2.2.2.jar
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/svn/gqm3/!svn/ver/56/trunk/GQEntrprseDataProcessor/WebContent/WEB-INF/lib/gson-2.2.2.jar
+END
+c3p0-0.9.1.jar
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/svn/gqm3/!svn/ver/511/trunk/GQEntrprseDataProcessor/WebContent/WEB-INF/lib/c3p0-0.9.1.jar
+END
+mysql-connector-java-5.1.17-bin.jar
+K 25
+svn:wc:ra_dav:version-url
+V 110
+/svn/gqm3/!svn/ver/56/trunk/GQEntrprseDataProcessor/WebContent/WEB-INF/lib/mysql-connector-java-5.1.17-bin.jar
+END
+jersey-server-1.9.1.jar
+K 25
+svn:wc:ra_dav:version-url
+V 98
+/svn/gqm3/!svn/ver/56/trunk/GQEntrprseDataProcessor/WebContent/WEB-INF/lib/jersey-server-1.9.1.jar
+END
+jta-1.1.jar
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/svn/gqm3/!svn/ver/56/trunk/GQEntrprseDataProcessor/WebContent/WEB-INF/lib/jta-1.1.jar
+END
+slf4j-simple-1.5.5.jar
+K 25
+svn:wc:ra_dav:version-url
+V 97
+/svn/gqm3/!svn/ver/56/trunk/GQEntrprseDataProcessor/WebContent/WEB-INF/lib/slf4j-simple-1.5.5.jar
+END
+dom4j-1.6.1.jar
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/svn/gqm3/!svn/ver/56/trunk/GQEntrprseDataProcessor/WebContent/WEB-INF/lib/dom4j-1.6.1.jar
+END
+asm-3.1.jar
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/svn/gqm3/!svn/ver/56/trunk/GQEntrprseDataProcessor/WebContent/WEB-INF/lib/asm-3.1.jar
+END
+hibernate3.jar
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/svn/gqm3/!svn/ver/56/trunk/GQEntrprseDataProcessor/WebContent/WEB-INF/lib/hibernate3.jar
+END
+commons-collections-3.1.jar
+K 25
+svn:wc:ra_dav:version-url
+V 102
+/svn/gqm3/!svn/ver/56/trunk/GQEntrprseDataProcessor/WebContent/WEB-INF/lib/commons-collections-3.1.jar
+END
+hibernate-c3p0-3.3.0.GA.jar
+K 25
+svn:wc:ra_dav:version-url
+V 103
+/svn/gqm3/!svn/ver/511/trunk/GQEntrprseDataProcessor/WebContent/WEB-INF/lib/hibernate-c3p0-3.3.0.GA.jar
+END
+antlr-2.7.7.jar
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/svn/gqm3/!svn/ver/56/trunk/GQEntrprseDataProcessor/WebContent/WEB-INF/lib/antlr-2.7.7.jar
+END
+jersey-core-1.9.1.jar
+K 25
+svn:wc:ra_dav:version-url
+V 96
+/svn/gqm3/!svn/ver/56/trunk/GQEntrprseDataProcessor/WebContent/WEB-INF/lib/jersey-core-1.9.1.jar
+END
+gqmeter-objects.jar
+K 25
+svn:wc:ra_dav:version-url
+V 95
+/svn/gqm3/!svn/ver/888/trunk/GQEntrprseDataProcessor/WebContent/WEB-INF/lib/gqmeter-objects.jar
+END
+slf4j-api-1.5.5.jar
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/svn/gqm3/!svn/ver/56/trunk/GQEntrprseDataProcessor/WebContent/WEB-INF/lib/slf4j-api-1.5.5.jar
+END
+javassist-3.4.GA.jar
+K 25
+svn:wc:ra_dav:version-url
+V 95
+/svn/gqm3/!svn/ver/56/trunk/GQEntrprseDataProcessor/WebContent/WEB-INF/lib/javassist-3.4.GA.jar
+END
+log4j-1.2.16.jar
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/svn/gqm3/!svn/ver/76/trunk/GQEntrprseDataProcessor/WebContent/WEB-INF/lib/log4j-1.2.16.jar
+END

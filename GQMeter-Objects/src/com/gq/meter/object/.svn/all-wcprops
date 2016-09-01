@@ -1,0 +1,203 @@
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/svn/gqm3/!svn/ver/772/trunk/GQMeter-Objects/src/com/gq/meter/object
+END
+Power.java
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svn/gqm3/!svn/ver/269/trunk/GQMeter-Objects/src/com/gq/meter/object/Power.java
+END
+CPNId.java
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svn/gqm3/!svn/ver/307/trunk/GQMeter-Objects/src/com/gq/meter/object/CPNId.java
+END
+Computer.java
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/svn/gqm3/!svn/ver/269/trunk/GQMeter-Objects/src/com/gq/meter/object/Computer.java
+END
+SrvrAppType.java
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svn/gqm3/!svn/ver/319/trunk/GQMeter-Objects/src/com/gq/meter/object/SrvrAppType.java
+END
+Protocol.java
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/svn/gqm3/!svn/ver/269/trunk/GQMeter-Objects/src/com/gq/meter/object/Protocol.java
+END
+MeterRun.java
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/svn/gqm3/!svn/ver/307/trunk/GQMeter-Objects/src/com/gq/meter/object/MeterRun.java
+END
+StorageSnpsht.java
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/svn/gqm3/!svn/ver/269/trunk/GQMeter-Objects/src/com/gq/meter/object/StorageSnpsht.java
+END
+CompInstSoftware.java
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/svn/gqm3/!svn/ver/269/trunk/GQMeter-Objects/src/com/gq/meter/object/CompInstSoftware.java
+END
+NSRG.java
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svn/gqm3/!svn/ver/269/trunk/GQMeter-Objects/src/com/gq/meter/object/NSRG.java
+END
+CompConnDeviceId.java
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/svn/gqm3/!svn/ver/772/trunk/GQMeter-Objects/src/com/gq/meter/object/CompConnDeviceId.java
+END
+CompProcessId.java
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/svn/gqm3/!svn/ver/307/trunk/GQMeter-Objects/src/com/gq/meter/object/CompProcessId.java
+END
+SpeedTestSnpshtId.java
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/svn/gqm3/!svn/ver/745/trunk/GQMeter-Objects/src/com/gq/meter/object/SpeedTestSnpshtId.java
+END
+CompSnapshot.java
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/svn/gqm3/!svn/ver/269/trunk/GQMeter-Objects/src/com/gq/meter/object/CompSnapshot.java
+END
+Asset.java
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svn/gqm3/!svn/ver/591/trunk/GQMeter-Objects/src/com/gq/meter/object/Asset.java
+END
+CompAssets.java
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svn/gqm3/!svn/ver/269/trunk/GQMeter-Objects/src/com/gq/meter/object/CompAssets.java
+END
+Printer.java
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svn/gqm3/!svn/ver/269/trunk/GQMeter-Objects/src/com/gq/meter/object/Printer.java
+END
+OsType.java
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svn/gqm3/!svn/ver/269/trunk/GQMeter-Objects/src/com/gq/meter/object/OsType.java
+END
+NSRGConnDeviceId.java
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/svn/gqm3/!svn/ver/307/trunk/GQMeter-Objects/src/com/gq/meter/object/NSRGConnDeviceId.java
+END
+AssetImp.java
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/svn/gqm3/!svn/ver/592/trunk/GQMeter-Objects/src/com/gq/meter/object/AssetImp.java
+END
+DevCtlg.java
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svn/gqm3/!svn/ver/357/trunk/GQMeter-Objects/src/com/gq/meter/object/DevCtlg.java
+END
+AssetErr.java
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/svn/gqm3/!svn/ver/307/trunk/GQMeter-Objects/src/com/gq/meter/object/AssetErr.java
+END
+NSRGSnapshot.java
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/svn/gqm3/!svn/ver/269/trunk/GQMeter-Objects/src/com/gq/meter/object/NSRGSnapshot.java
+END
+CompConnDevice.java
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/svn/gqm3/!svn/ver/304/trunk/GQMeter-Objects/src/com/gq/meter/object/CompConnDevice.java
+END
+CompProcess.java
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svn/gqm3/!svn/ver/269/trunk/GQMeter-Objects/src/com/gq/meter/object/CompProcess.java
+END
+PrinterConnDeviceId.java
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/svn/gqm3/!svn/ver/307/trunk/GQMeter-Objects/src/com/gq/meter/object/PrinterConnDeviceId.java
+END
+SysProfile.java
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svn/gqm3/!svn/ver/269/trunk/GQMeter-Objects/src/com/gq/meter/object/SysProfile.java
+END
+CompType.java
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/svn/gqm3/!svn/ver/269/trunk/GQMeter-Objects/src/com/gq/meter/object/CompType.java
+END
+SpeedTestSnpsht.java
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/svn/gqm3/!svn/ver/745/trunk/GQMeter-Objects/src/com/gq/meter/object/SpeedTestSnpsht.java
+END
+PrinterSnapshot.java
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/svn/gqm3/!svn/ver/269/trunk/GQMeter-Objects/src/com/gq/meter/object/PrinterSnapshot.java
+END
+Storage.java
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svn/gqm3/!svn/ver/269/trunk/GQMeter-Objects/src/com/gq/meter/object/Storage.java
+END
+NSRGConnDevice.java
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/svn/gqm3/!svn/ver/269/trunk/GQMeter-Objects/src/com/gq/meter/object/NSRGConnDevice.java
+END
+PrinterConnDevice.java
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/svn/gqm3/!svn/ver/269/trunk/GQMeter-Objects/src/com/gq/meter/object/PrinterConnDevice.java
+END
+CompInstSoftwareId.java
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/svn/gqm3/!svn/ver/307/trunk/GQMeter-Objects/src/com/gq/meter/object/CompInstSoftwareId.java
+END
