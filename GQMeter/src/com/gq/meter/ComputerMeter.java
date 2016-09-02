@@ -236,12 +236,9 @@ public class ComputerMeter implements GQSNMPMeter {
                         }// 2nd if loop ends
                         else { // 1st else loop starts
                             variable = "/dev/shm";
-                            //long linuxDriveSize = getMemorycalc(result, rootOID, variable, false);
-                            long linuxDriveSize = 0;
+                            long linuxDriveSize = getMemorycalc(result, rootOID, variable, false);
                             long usedLinuxDriveSize = getMemorycalc(result, rootOID, variable, true);
                             
-                            System.out.println(" driver size" + usedLinuxDriveSize);
-                            System.exit(0);
                             variable = "/home";
                             long homeSize = getMemorycalc(result, rootOID, variable, false);
                             long usedHomeSize = getMemorycalc(result, rootOID, variable, true);
